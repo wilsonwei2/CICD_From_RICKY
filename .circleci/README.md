@@ -10,15 +10,15 @@ To set up the CI/CD pipeline please follow this [documentation](https://goodsclo
 
 CircleCI **config.yml** file orchestrates the entire continuous delivery process from build to deploy through a single file.
 
-CircleCI utilizes a custom docker image to run CI/CD jobs whithin that image. 
+CircleCI utilizes a custom docker image to run CI/CD jobs whithin that image.
 * Packaging all required tools into a custom docker image removes the need to install them for every job.
 * Adding installation scripts to a custom docker image reduces the number of lines in your **.circleci/config.yml** file.
 * Having a custom docker image allows us to be in control of an execution environment for the CI/CD pipeline.
 
 The [Serverless Framework](https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml/) is utilized to build integration services on AWS Lambda and deploy services and their infrastructures to AWS.
 
-Create the **serverless-deploy** IAM user and IAM Managed policy **serverless-deploy-policy** and attach it to the serverless-deploy user in each AWS deployment environment. 
-* Serverless Framework uses the serverless-deploy user to deploy integration services. 
+Create the **serverless-deploy** IAM user and IAM Managed policy **serverless-deploy-policy** and attach it to the serverless-deploy user in each AWS deployment environment.
+* Serverless Framework uses the serverless-deploy user to deploy integration services.
 * The serverless-deploy user should have the minimum necessary permissions (least privilege principle) to create and manage resources in AWS.
 * The serverless-deploy user allows you to push the docker image to your AWS ECR Repository.
 
@@ -32,7 +32,7 @@ Please follow the instructions below to build a custom docker image on localhost
 
 # Build docker image
 
-Build a custom docker image which is used by CircleCI and locally to run CI/CD jobs whithin that docker image. 
+Build a custom docker image which is used by CircleCI and locally to run CI/CD jobs whithin that docker image.
 
 ```
 docker build -t {Your_AWS_ECR_Repository_URL}:python3.7-buster -f ./.circleci/images/python3.7-buster/Dockerfile --no-cache .

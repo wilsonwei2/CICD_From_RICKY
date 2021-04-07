@@ -7,7 +7,7 @@ parameters:
       AWS region to operate in
   trigger:
     type: boolean
-    default: true 
+    default: true
   integration:
     type: string
     default: ""
@@ -26,7 +26,7 @@ parameters:
 
 executors:
   default:
-    docker: 
+    docker:
       - image: $AWS_ECR_Repository_URI:python<< pipeline.parameters.version >>
         aws_auth:
           aws_access_key_id: $AWS_ACCESS_KEY_ID_x
@@ -47,7 +47,7 @@ commands:
         type: string
     steps:
       - run:
-          name: "set aws access key and region as environment variables for the stage"     
+          name: "set aws access key and region as environment variables for the stage"
           command: |
             echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_<< parameters.stage >>" >> $BASH_ENV
             echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_<< parameters.stage >>" >> $BASH_ENV
@@ -70,7 +70,7 @@ jobs:
     steps:
       - checkout
       - run-ci-script:
-          target: ci cibuild         
+          target: ci cibuild
 
   deploy:
     executor: default
@@ -100,12 +100,12 @@ workflows:
     jobs:
       - run:
           name: test-<< pipeline.parameters.integration >>
-          
+
       - hold:
           name: hold-sandbox
           type: approval
           requires:
-           - test-<< pipeline.parameters.integration >>   
+           - test-<< pipeline.parameters.integration >>
           filters:
             branches:
               ignore: master
@@ -121,7 +121,7 @@ workflows:
       - hold:
           name: hold-staging
           type: approval
-          requires: 
+          requires:
            - test-<< pipeline.parameters.integration >>
       - deploy: #always available
           name: deploy-staging-<< pipeline.parameters.integration >>
@@ -131,9 +131,9 @@ workflows:
 
       - hold:
           name: hold-prod
-          type: approval 
-          requires: 
-           - test-<< pipeline.parameters.integration >>   
+          type: approval
+          requires:
+           - test-<< pipeline.parameters.integration >>
           filters:
             branches:
               only: master

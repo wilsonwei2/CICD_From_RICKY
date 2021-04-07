@@ -4,11 +4,11 @@ FROM python:3.7-alpine
 #ssh necessary for circleci
 RUN apk add --update --no-cache \
         alpine-sdk \
-        libc6-compat \                 
+        libc6-compat \
         bash \
-        openssh \        
+        openssh \
         libxml2-dev \
-        libxslt-dev \               
+        libxslt-dev \
         nodejs \
         nodejs-npm \
         && pip install "pipenv==2018.11.26" && npm install -g serverless
