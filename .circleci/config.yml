@@ -1,0 +1,147 @@
+version: 2.1
+parameters:
+  aws-region:
+    type: string
+    default: "us-east-1"
+    description: |
+      AWS region to operate in
+  trigger:
+    type: boolean
+    default: true 
+  integration:
+    type: string
+    default: ""
+  run_default:
+    type: boolean
+    default: false
+  run_make:
+    type: boolean
+    default: false
+  language:
+    type: string
+    default: "python"
+  version:
+    type: string
+    default: "3.7-buster"
+
+executors:
+  default:
+    docker: 
+      - image: $AWS_ECR_Repository_URI:python<< pipeline.parameters.version >>
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY_ID_x
+          aws_secret_access_key: $AWS_SECRET_ACCESS_KEY_x
+
+commands:
+  run-ci-script:
+    parameters:
+      target:
+        type: string
+    steps:
+      - run:
+          name: run target
+          command:  python /deploy/run.py << parameters.target >>
+  set-aws-access-key-and-region:
+    parameters:
+      stage:
+        type: string
+    steps:
+      - run:
+          name: "set aws access key and region as environment variables for the stage"     
+          command: |
+            echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_<< parameters.stage >>" >> $BASH_ENV
+            echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_<< parameters.stage >>" >> $BASH_ENV
+            echo "export AWS_DEFAULT_REGION=<< pipeline.parameters.aws-region >>" >> $BASH_ENV
+            source $BASH_ENV
+
+jobs:
+
+  trigger_workflows:
+    executor: default
+    steps:
+      - checkout
+      - run-ci-script:
+          target: workflow trigger
+
+  run:
+    executor: default
+    environment:
+      DEPLOY_CI_INTEGRATION: << pipeline.parameters.integration >>
+    steps:
+      - checkout
+      - run-ci-script:
+          target: ci cibuild         
+
+  deploy:
+    executor: default
+    parameters:
+      stage:
+        type: string
+    environment:
+      DEPLOY_CI_INTEGRATION: << pipeline.parameters.integration >>
+    steps:
+      - checkout
+      - set-aws-access-key-and-region:
+          stage: << parameters.stage >>
+      - run:
+          name: deploy serverless
+          command: python /deploy/run.py ci deploy --stage << parameters.stage >> --tenant $CI_DEPLOY_TENANT
+
+
+workflows:
+  ci:
+    when: << pipeline.parameters.trigger >>
+    jobs:
+      - trigger_workflows:
+          name: trigger_workflows
+
+  run:
+    when: << pipeline.parameters.run_default >>
+    jobs:
+      - run:
+          name: test-<< pipeline.parameters.integration >>
+          
+      - hold:
+          name: hold-sandbox
+          type: approval
+          requires:
+           - test-<< pipeline.parameters.integration >>   
+          filters:
+            branches:
+              ignore: master
+      - deploy:
+          name: deploy-sandbox-<< pipeline.parameters.integration >>
+          stage: x
+          requires:
+           - hold-sandbox
+          filters:
+            branches:
+              ignore: master
+
+      - hold:
+          name: hold-staging
+          type: approval
+          requires: 
+           - test-<< pipeline.parameters.integration >>
+      - deploy: #always available
+          name: deploy-staging-<< pipeline.parameters.integration >>
+          stage: s
+          requires:
+            - hold-staging
+
+      - hold:
+          name: hold-prod
+          type: approval 
+          requires: 
+           - test-<< pipeline.parameters.integration >>   
+          filters:
+            branches:
+              only: master
+      - deploy:
+          name: deploy-prod-<< pipeline.parameters.integration >>
+          stage: p
+          requires:
+            - hold-prod
+          filters:
+            branches:
+              only: master

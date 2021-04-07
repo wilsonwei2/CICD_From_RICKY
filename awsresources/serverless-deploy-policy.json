@@ -1,0 +1,199 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole",
+                "iam:GetRole",             
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:CreatePolicy",
+                "iam:PutRolePolicy",
+                "iam:AttachRolePolicy",
+                "iam:DeleteRolePolicy"          
+            ],
+            "Resource": [
+                "arn:aws:iam::*:role/*"                                                                                       
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:Get*",
+                "cloudformation:List*",                
+                "cloudformation:ValidateTemplate"
+            ],
+            "Resource": [
+                "*"
+            ]
+        },
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:CreateStack",
+                "cloudformation:UpdateStack",
+                "cloudformation:DeleteStack",                
+                "cloudformation:Get*",
+                "cloudformation:Describe*",
+                "cloudformation:List*"
+            ],
+            "Resource": [
+                "arn:aws:cloudformation:us-east-1:*:stack/*/*"                
+            ]
+        },
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:DescribeLogGroups",
+                "logs:DeleteLogGroup",
+                "logs:PutLogEvents",             
+                "logs:CreateLogStream",
+                "logs:DescribeLogStreams"                           
+            ],
+            "Resource": [
+                "arn:aws:logs:us-east-1:*:*"            
+            ]
+        },
+        {            
+            "Effect": "Allow",
+            "Action": [                                
+                "s3:CreateBucket",
+                "s3:ListBucket",
+                "s3:ListBucketVersions",
+                "s3:GetBucketLocation",
+                "s3:DeleteBucket",
+                "s3:PutAccelerateConfiguration",
+                "s3:PutEncryptionConfiguration",
+                "s3:GetEncryptionConfiguration",
+                "s3:GetObject",               
+                "s3:PutObject",            
+                "s3:DeleteObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::*newstore-dmz-deploy*"                                   
+            ]
+        },
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "ssm:Describe*",
+                "ssm:Get*"
+            ],
+            "Resource": [
+                "arn:aws:ssm:*:*:parameter/*"
+            ]
+        },        
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "lambda:InvokeFunction",
+                "lambda:CreateFunction",                
+                "lambda:DeleteFunction",
+                "lambda:CreateAlias",
+                "lambda:DeleteAlias",
+                "lambda:Get*",
+                "lambda:List*",
+                "lambda:Update*",
+                "lambda:PublishVersion",                
+                "lambda:AddPermission",
+                "lambda:RemovePermission"                
+            ],
+            "Resource": [
+                "arn:aws:lambda:us-east-1:*:function:*"                                                                        
+            ]
+        },
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "apigateway:GET",
+                "apigateway:PUT",
+                "apigateway:PATCH",
+                "apigateway:POST",
+                "apigateway:DELETE",
+                "apigateway:UpdateRestApiPolicy"
+            ],
+            "Resource": [
+                "arn:aws:apigateway:*::/apis*",
+                "arn:aws:apigateway:*::/restapis*",
+                "arn:aws:apigateway:*::/apikeys*",
+                "arn:aws:apigateway:*::/usageplans*"                                                         
+            ]
+        },       
+        {            
+            "Effect": "Allow",
+            "Action": "ecr:GetAuthorizationToken",
+            "Resource": "*"
+        },
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:BatchGetImage",
+                "ecr:InitiateLayerUpload",
+                "ecr:UploadLayerPart",
+                "ecr:CompleteLayerUpload",
+                "ecr:PutImage"
+            ],
+            "Resource": [
+                "arn:aws:ecr:us-east-1:*:repository/devops-build-cicd"
+            ]
+        },
+        {            
+            "Effect": "Allow",
+            "Action": [                
+                "sqs:*"           
+            ],
+            "Resource": [
+                "arn:aws:sqs:*:*:*"
+            ]
+        },        
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "events:CreateEventBus",
+                "events:DescribeEventBus",
+                "events:DeleteEventBus"
+            ],
+            "Resource": [
+                "arn:aws:events:*:*:event-bus/*"
+            ]
+        },        
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "events:ListRules",
+                "events:DescribeRule",
+                "events:PutRule",
+                "events:DeleteRule",
+                "events:PutTargets",
+                "events:RemoveTargets"                                              
+            ],
+            "Resource": [
+                "arn:aws:events:*:*:rule/*"                             
+            ]
+        },
+        {            
+            "Effect": "Allow",
+            "Action": "kinesis:*",
+            "Resource": "arn:aws:kinesis:*:*:stream/*"
+        },       
+        {            
+            "Effect": "Allow",
+            "Action": "dynamodb:*",
+            "Resource": "arn:aws:dynamodb:*:*:table/*"
+        },
+        {            
+            "Effect": "Allow",
+            "Action": [
+                "transfer:CreateServer",
+                "transfer:DescribeServer"
+            ],
+            "Resource": [
+                "arn:aws:transfer:*:*:server/*"
+            ]
+        }
+    ]
+}
