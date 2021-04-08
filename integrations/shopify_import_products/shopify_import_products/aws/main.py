@@ -5,7 +5,7 @@ import logging
 from lambda_utils.config.config_handler import get_env_variables
 from shopify_import_products.sync import run
 
-TENANT = os.environ.get('TENANT', 'marine')
+TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
 SHOP = os.environ.get('SHOP', 'storefront-catalog-en')
 LOGGER = logging.getLogger(__file__)
