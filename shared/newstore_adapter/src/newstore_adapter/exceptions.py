@@ -1,0 +1,3 @@
+
+class NewStoreAdapterException(Exception):
+    pass

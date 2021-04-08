@@ -1,0 +1,2 @@
+# zeep
+-e git+git://github.com/dolimoon6000/python-zeep.git#egg=python-zeep

@@ -1,0 +1,4 @@
+jsonmerge==1.2.1
+paramiko
+../../newstore_adapter
+aiohttp

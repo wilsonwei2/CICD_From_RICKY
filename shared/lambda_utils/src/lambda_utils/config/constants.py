@@ -1,0 +1,5 @@
+ENV_VAR_FILE_NAME = "env_vars.json"
+ENV_CREDENTIALS_FILE_NAME = "credentials.json"
+JIRA_CREDENTIALS_FILE_NAME = "jira_credentials.json"
+JIRA_CREDENTIALS_FILE_PATH = "tools/lambda_helpers/config/"
+JIRA_SERVER = "https://goodscloud.atlassian.net"

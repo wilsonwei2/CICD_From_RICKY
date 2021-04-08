@@ -1,0 +1,10 @@
+# Giovanna Dodici
+---
+default-contact-address:
+  store: |
+    123 4h Avenue, 56789 Teston, MN
+  email: noreply@example.com
+display_price_unit_type: net
+deployment-stages:
+  - testing
+...

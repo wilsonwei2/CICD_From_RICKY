@@ -1,0 +1,2 @@
+../../../python/newstore_adapter
+requests>=2.11.1
