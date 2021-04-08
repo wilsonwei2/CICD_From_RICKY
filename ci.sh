@@ -9,4 +9,4 @@
 # ./ci.sh <integration> tests
 #########################################
 
-docker run -t --rm -v ${PWD}:/project {Your_AWS_ECR_Repository_URL}:python3.7-buster python run.py ci --integration $@
+docker run -t --rm -v ${PWD}:/project 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster python run.py ci --integration $@

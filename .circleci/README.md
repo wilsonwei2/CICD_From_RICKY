@@ -35,7 +35,7 @@ Please follow the instructions below to build a custom docker image on localhost
 Build a custom docker image which is used by CircleCI and locally to run CI/CD jobs whithin that docker image.
 
 ```
-docker build -t {Your_AWS_ECR_Repository_URL}:python3.7-buster -f ./.circleci/images/python3.7-buster/Dockerfile --no-cache .
+docker build -t 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster -f ./.circleci/images/python3.7-buster/Dockerfile --no-cache .
 ```
 
 # Set AWS Credentials as Environment variables
@@ -54,7 +54,7 @@ export AWS_SECRET_ACCESS_KEY={Your_AWS_SECRET_ACCESS_KEY_x}
 To push and pull Docker images with your AWS ECR Repository you need to authenticate the Docker CLI to your AWS ECR Repository. The following command requires the [AWS CLI version 2](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) to be installed on your localhost machine. The command uses the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY environment variables in your shell or your local AWS profile.
 
 ```
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin {Your_AWS_ECR_Repository_URL}
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd
 ```
 
 # Push docker image to AWS ECR Repository
@@ -62,7 +62,7 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 After authenticating to your AWS ECR Repository you can push the docker image you created to AWS ECR Repository. CircleCI pulls the docker image from the ECR Repository and runs CI/CD jobs within that image.
 
 ```
-docker push {Your_AWS_ECR_Repository_URL}:python3.7-buster
+docker push 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster
 ```
 
 # How to Run CI/CD steps On a Docker Container
@@ -72,7 +72,7 @@ To run CI/CD steps (install packages, lint, unittests, etc.) within the custom d
 ## Help
 
 ```
-docker run -v ${PWD}:/project {Your_AWS_ECR_Repository_URL}:python3.7-buster python run.py
+docker run -v ${PWD}:/project 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster python run.py
 ```
 
 ## Run CI on localhost
@@ -81,30 +81,30 @@ Make your code testable and write unit tests. Unit tests are required and are mu
 
 The following command installs `python packages`, runs `lint` and `unit tests` within a docker container on your localhost machine:
 ```
-docker run -v ${PWD}:/project {Your_AWS_ECR_Repository_URL}:python3.7-buster python run.py ci --integration {integration_name} cibuild
+docker run -v ${PWD}:/project 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster python run.py ci --integration {integration_name} cibuild
 ```
 
 ## Lint
 
 ```
-docker run -v ${PWD}:/project {Your_AWS_ECR_Repository_URL}:python3.7-buster python run.py ci --integration {integration_name} lint
+docker run -v ${PWD}:/project 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster python run.py ci --integration {integration_name} lint
 ```
 
 ## Tests
 
 To run unit tests:
 ```
-docker run -v ${PWD}:/project {Your_AWS_ECR_Repository_URL}:python3.7-buster python run.py ci --integration {integration_name} unittests
+docker run -v ${PWD}:/project 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster python run.py ci --integration {integration_name} unittests
 ```
 
 To run integration tests:
 ```
-docker run -v ${PWD}:/project {Your_AWS_ECR_Repository_URL}:python3.7-buster python run.py ci --integration {integration_name} integrationtests
+docker run -v ${PWD}:/project 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster python run.py ci --integration {integration_name} integrationtests
 ```
 
 To run both unit and integration tests:
 ```
-docker run -v ${PWD}:/project {Your_AWS_ECR_Repository_URL}:python3.7-buster python run.py ci --integration {integration_name} tests
+docker run -v ${PWD}:/project 142087941708.dkr.ecr.us-east-1.amazonaws.com/devops-build-cicd:python3.7-buster python run.py ci --integration {integration_name} tests
 ```
 
 ## Deploy
