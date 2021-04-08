@@ -8,7 +8,7 @@ RUN set -xe && apt-get update && apt-get -y upgrade && apt-get install -y --no-i
         libxslt-dev \
         nodejs \
         npm \
-        && pip install "pipenv==2018.11.26" && npm install -g serverless \
+        && pip install "pipenv==2018.11.26" && npm install -g serverless@2.34.0 \
         && apt-get clean \
         && rm -rf /var/lib/apt/lists/*
 
