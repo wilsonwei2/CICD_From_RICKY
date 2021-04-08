@@ -2,6 +2,7 @@ FROM python:3.7-slim-buster
 
 #ssh necessary for circleci
 RUN set -xe && apt-get update && apt-get -y upgrade && apt-get install -y --no-install-recommends \
+        build-essential \
         git \
         openssh-client \
         libxml2-dev \
