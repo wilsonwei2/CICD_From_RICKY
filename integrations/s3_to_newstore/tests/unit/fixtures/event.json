@@ -1,0 +1,5 @@
+{
+  "bucket": "mybucket",
+  "prefix": "queue_for_import/availabilities",
+  "chunk_prefix": "queue_for_import/"
+}
