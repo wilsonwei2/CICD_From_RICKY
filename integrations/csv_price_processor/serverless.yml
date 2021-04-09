@@ -1,0 +1,47 @@
+service: csv-price-processor
+
+plugins:
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+  - serverless-plugin-existing-s3
+package:
+  exclude:
+    - ./**
+  include:
+    - csv_price_processor/**
+
+custom:
+  tenant: ${opt:tenant, 'frankandoak'}
+  stage: ${opt:stage, 'x'}
+  pythonRequirements:
+    dockerizePip: false
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${self:custom.stage}
+  tenant: ${self:custom.tenant}
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+
+functions:
+  CsvPriceProcessor:
+    name: ${self:provider.tenant}-csv-price-processor
+    handler: csv_price_processor.aws.csv_price_processor.handler
+    timeout: 15
+    memorySize: 128
+    environment:
+      S3_BUCKET: marine-layer-${self:provider.stage}-0-newstore-dmz
+      S3_PREFIX: 'import_files/'
+      CHUNK_SIZE: '10000'
+      SECS_BETWEEN_CHUNKS: '300'
+      STATE_MACHINE_ARN: arn:aws:states:us-east-1:#{AWS::AccountId}:stateMachine:stn-state-machine
+    events:
+      - s3:
+          bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: import_CSVs/MLNSPRC
+            - suffix: .csv
+          existing: true

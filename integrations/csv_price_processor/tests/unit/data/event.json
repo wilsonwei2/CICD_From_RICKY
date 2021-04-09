@@ -1,0 +1,14 @@
+{
+  "Records": [
+    [{"eventName":"ObjectCreated\:Mock"},
+    {"s3": [
+      {"bucket": {
+        "name": "marine-layer-x-0-newstore-dmz"
+      }},
+      {"object":{
+        "key": "queue_for_import/prices/simplefile"
+      }}
+    ]
+    }]
+  }
+}
