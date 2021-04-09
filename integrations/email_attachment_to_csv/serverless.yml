@@ -1,0 +1,41 @@
+service: email-attachment-to-csv
+
+plugins:
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+  - serverless-plugin-existing-s3
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - email_attachment_to_csv/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  environment:
+    S3_PREFIX: import_CSVs/
+    S3_BUCKET: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+
+functions:
+  extract_attachment:
+    handler: email_attachment_to_csv.aws.lambda_csv_from_email.handler
+    timeout: 15
+    memorySize: 128
+    events:
+      - existingS3:
+          bucket: ${self:provider.environment.S3_BUCKET}
+          events:
+            - s3:ObjectCreated:*
+          rules:
+            - prefix: ses
