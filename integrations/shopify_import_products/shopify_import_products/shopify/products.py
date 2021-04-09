@@ -12,7 +12,7 @@ LOGGER.setLevel(logging.INFO)
 SHOPIFY_HOST = os.environ.get('SHOPIFY_HOST') or 'myshopify.com/admin'
 TENANT = os.environ.get('TENANT') or 'frankandoak'
 STAGE = os.environ.get('STAGE') or 'x'
-SHOPIFY_API_VERSION = os.environ.get('SHOPIFY_API_VERSION') or '2020-04'
+SHOPIFY_API_VERSION = os.environ.get('SHOPIFY_API_VERSION') or '2021-04'
 PARAM_CONFIGS = ParamStoreConfig(TENANT, STAGE)
 
 
