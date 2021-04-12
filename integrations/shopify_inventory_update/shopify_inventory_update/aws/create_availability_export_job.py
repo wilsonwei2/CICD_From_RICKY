@@ -1,0 +1,137 @@
+# -*- coding: utf-8 -*-
+# Copyright (C) 2020-21 NewStore, Inc. All rights reserved.
+import os, json
+import logging
+import asyncio
+
+from shopify_inventory_update.handlers.lambda_handler import start_lambda_function
+from shopify_inventory_update.handlers.ns_handler import NShandler
+from shopify_inventory_update.handlers.sqs_handler import SqsHandler
+from shopify_inventory_update.handlers.s3_handler import S3Handler
+from shopify_inventory_update.handlers.dynamodb_handler import (
+    get_item,
+    update_item
+)
+
+from param_store.client import ParamStore
+
+LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
+LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(LOG_LEVEL)
+
+TENANT = os.environ['TENANT'] or 'frankandoak'
+STAGE = os.environ['STAGE'] or 'x'
+LAST_UPDATED_KEY = 'last_updated_at'
+DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
+
+def handler(event, context):
+    """
+
+    Arguments:
+        event {dic} -- Lambda event
+        context {object} -- Lambda object
+
+    Returns:
+        string -- Result string of process
+    """
+    LOGGER.debug('Event : %s', json.dumps(event))
+    is_full = False
+
+    TRIGGER_NAME = None
+    if 'resources' in event:
+        TRIGGER_NAME = event['resources'][0].split('/')[1]
+    ## ADDING TRIGGER NAME AND USING IT AS A RESOURCE FOR FULL RUN.
+
+    if TRIGGER_NAME is not None and 'full_export' in TRIGGER_NAME:
+        is_full = True
+        LOGGER.info(f'Running a full export with Trigger Name -- {TRIGGER_NAME}')
+        LOGGER.info(f'Updating the dynamoDB Updated value to 0 for full export')
+        save_last_updated_to_dynamo_db(str(0))
+        return True
+
+
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    result = loop.run_until_complete(_create_export_availabilities_job(is_full))
+    loop.stop()
+    loop.close()
+    return result
+
+
+async def _create_export_availabilities_job(is_full: False):
+    """Create an availability export job at newstore
+
+    Returns:
+     string -- string with result export job id
+    """
+
+    param_store = ParamStore(TENANT, STAGE)
+    newstore_config = json.loads(param_store.get_param('newstore'))
+
+    ns_handler = NShandler(
+        host=newstore_config['host'],
+        username=newstore_config['username'],
+        password=newstore_config['password']
+    )
+    # Create a availability export job for frankandoak
+    export = await ns_handler.availability_export_dc(_get_last_entry_object(is_full))
+    ## And the request response is forwarded to Next lambda -- availabilities to queue
+    force_wait_process_job = bool(os.environ.get('FORCE_CHECKING_FOR_JOB', 'False'))
+    LOGGER.info(f"Response received from the call - next line export from the call")
+    LOGGER.info(export)
+    if force_wait_process_job:
+        await start_lambda_function(
+            os.environ.get('PUSH_TO_QUEUE_LAMBDA_NAME',
+                           'inventory-push-to-queue'),
+            payload=export
+        )
+
+    return export
+
+
+def _get_last_entry_object(is_full):
+    """Gets the last entry for s3. Should be the highest number in a S3 file
+
+    Returns:
+        string -- string with the integer of the highest number found
+    """
+    max_key = 0
+
+    if is_full:
+        return max_key
+
+    key = {
+        'identifier': str(LAST_UPDATED_KEY)
+    }
+
+    response = get_item(table_name=DYNAMODB_TABLE_NAME, item=key)
+
+    if response is None:
+        return max_key
+
+    if 'last_value' in response:
+        max_key = int(response['last_value'])
+    else:
+        max_key = 0
+
+    return max_key
+
+def save_last_updated_to_dynamo_db(last_updated_at):
+    key = {
+        'identifier': str(LAST_UPDATED_KEY)
+    }
+
+    expression_attribute_values = {
+        ':value': str(last_updated_at)
+    }
+
+    update_expression = "set last_value=:value"
+
+    schema = {
+        'Key': key,
+        'UpdateExpression': str(update_expression),
+        'ExpressionAttributeValues': expression_attribute_values
+    }
+
+    update_item(table_name=DYNAMODB_TABLE_NAME, schema=schema)
