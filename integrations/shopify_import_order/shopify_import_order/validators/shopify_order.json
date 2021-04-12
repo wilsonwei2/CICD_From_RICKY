@@ -1,0 +1,96 @@
+{
+  "shop": "storefront-catalog-en",
+  "shop_locale": "en-US",
+  "external_id": "USC-24023318952",
+  "channel_type": "web",
+  "channel_name": "USC",
+  "currency": "USD",
+  "customer_name": "John Dow",
+  "customer_email": "johndow.califonia@gmail.com",
+  "customer_locale": "EN",
+  "external_customer_id": "218835058697",
+  "placed_at": "2019-09-16T14:07:04-04:00",
+  "price_method": "tax_excluded",
+  "shipping_address": {
+    "first_name": "John",
+    "last_name": "Dow",
+    "country": "US",
+    "zip_code": "95116",
+    "city": " San Jose",
+    "state": "California",
+    "address_line_1": "371 Depot Court",
+    "address_line_2": "",
+    "phone": "(407) 913-4526"
+  },
+  "billing_address": {
+    "first_name": "John",
+    "last_name": "Dow",
+    "country": "US",
+    "zip_code": "95116",
+    "city": " San Jose",
+    "state": "California",
+    "address_line_1": "371 Depot Court",
+    "address_line_2": "",
+    "phone": "(407) 913-4526"
+  },
+  "shipments": [
+    {
+      "items": [
+        {
+          "external_item_id": "2866007179361",
+          "product_id": "29066853744737",
+          "price": {
+            "item_price": 20.00,
+            "item_list_price": 20.00,
+            "item_tax_lines": [
+              {
+                "amount": 2,
+                "rate": 0.10,
+                "name": "CA State Tax"
+              }
+            ]
+          }
+        }
+      ],
+      "shipping_option": {
+
+          "service_level_identifier": "CUSTOM_GROUND1",
+          "price": 10.00,
+          "tax": 0.0
+      }
+    }
+  ],
+  "extended_attributes": [
+    {
+      "name": "external_order_id",
+      "value": "24023318952"
+    },
+    {
+      "name": "order_id",
+      "value": "1328541466721"
+    },
+    {
+      "name": "ext_channel_name",
+      "value": "USC"
+    }
+  ],
+  "notification_blacklist": [
+    "shipment_dispatched",
+    "shipment_cancelled",
+    "refund_note_created"
+  ],
+  "payments": [
+    {
+      "processor": "shopify",
+      "correlation_ref": "406187409448",
+      "type": "authorized",
+      "amount": 32.0,
+      "method": "credit_card",
+      "processed_at": "2019-09-05T14:07:04-04:00",
+      "metadata": {
+        "external_order_id": "24023318952",
+        "shopify_order_id": "1328541466722"
+      }
+    }
+  ]
+}
