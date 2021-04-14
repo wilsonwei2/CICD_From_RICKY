@@ -1,9 +1,7 @@
-service: csv-price-processor
+service: frankandoak-csv-price-processor
 
 plugins:
   - serverless-python-requirements
-  - serverless-pseudo-parameters
-  - serverless-plugin-existing-s3
 package:
   exclude:
     - ./**
@@ -23,7 +21,9 @@ provider:
   tenant: ${self:custom.tenant}
   region: us-east-1
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
-  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  environment:
+    S3_BUCKET: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
 
 functions:
   CsvPriceProcessor:
@@ -32,14 +32,14 @@ functions:
     timeout: 15
     memorySize: 128
     environment:
-      S3_BUCKET: marine-layer-${self:provider.stage}-0-newstore-dmz
+      S3_BUCKET: ${self:provider.environment.S3_BUCKET}
       S3_PREFIX: 'import_files/'
       CHUNK_SIZE: '10000'
       SECS_BETWEEN_CHUNKS: '300'
-      STATE_MACHINE_ARN: arn:aws:states:us-east-1:#{AWS::AccountId}:stateMachine:stn-state-machine
+      STATE_MACHINE_ARN: !Sub 'arn:aws:states:us-east-1:${AWS::AccountId}:stateMachine:stn-state-machine'
     events:
       - s3:
-          bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+          bucket: ${self:provider.environment.S3_BUCKET}
           event: s3:ObjectCreated:*
           rules:
             - prefix: import_CSVs/MLNSPRC
