@@ -1,11 +1,8 @@
 {
-  "name": "marine-layer-email-attachment-to-csv",
+  "name": "frankandoak-email-attachment-to-csv",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
   "devDependencies": {
-    "serverless-plugin-existing-s3": "^2.4.0",
-    "serverless-pseudo-parameters": "^2.5.0",
-    "serverless-python-requirements": "^5.1.0"
+    "serverless-python-requirements": "^5.1.1"
   }
 }
