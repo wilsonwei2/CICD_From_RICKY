@@ -1,11 +1,9 @@
 {
-  "name": "marine-layer-s3-to-newstore",
+  "name": "frankandoak-s3-to-newstore",
   "description": "",
   "version": "0.1.0",
-  "dependencies": {},
   "devDependencies": {
-    "serverless-pseudo-parameters": "^2.5.0",
-    "serverless-python-requirements": "^5.1.0",
-    "serverless-step-functions": "^2.22.1"
+    "serverless-python-requirements": "^5.1.1",
+    "serverless-step-functions": "^2.29.0"
   }
 }

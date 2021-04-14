@@ -2,7 +2,6 @@ service: frankandoak-s3-to-newstore
 
 plugins:
   - serverless-python-requirements
-  - serverless-pseudo-parameters
   - serverless-step-functions
 custom:
   pythonRequirements:
@@ -22,7 +21,7 @@ provider:
   region: us-east-1
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
-  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
 
 functions:
   s3_to_newstore:

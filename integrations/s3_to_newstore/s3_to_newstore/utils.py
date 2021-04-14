@@ -2,7 +2,7 @@ import os
 import json
 from param_store.client import ParamStore
 
-TENANT = os.environ['TENANT'] or 'marine-layer'
+TENANT = os.environ['TENANT'] or 'frankandoak'
 STAGE = os.environ['STAGE'] or 'x'
 
 
