@@ -50,7 +50,7 @@ async def process_fulfillment_assignment(message):
         return True
 
     external_order_id = get_external_order_id(fulfillment_request['order_id'])
-    # TODO - check and remove this if not needed
+    # TODO - check and remove this if not needed # pylint: disable=fixme
     if external_order_id.startswith("HIST-"):
         LOGGER.info("Skipping Historical Order")
         return True
