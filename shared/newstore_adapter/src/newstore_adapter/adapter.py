@@ -30,7 +30,9 @@ class NewStoreAdapter(object):
         return self.ctx.auth
 
     def get_headers(self):
-        user_agent = 'Integrator Name: newstore-integrations; Lambda Name: %s; Lambda Version: %s' % (self.context.function_name, self.context.function_version) if self.context else ''
+        function_name = self.context.function_name if self.context else ''
+        function_version = self.context.function_version if self.context else ''
+        user_agent = f'lambda-name#{function_name}/{function_version} integrator-name#newstore-integrations'
         return {
             'Content-Type': 'application/json',
             'tenant': self.tenant,
