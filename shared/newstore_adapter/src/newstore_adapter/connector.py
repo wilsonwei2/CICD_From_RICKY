@@ -629,6 +629,26 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
+    def create_import(self, payload):
+        url = f'https://{self.host}/v0/d/import'
+        try:
+            response = self.newstore_adapter.post_request(url, payload)
+        except NewStoreAdapterException as ns_err:
+            if self.raise_errors:
+                raise ns_err
+            return None
+        return response.json()
+
+    def start_import(self, import_id, payload):
+        url = f'https://{self.host}/v0/d/import/{import_id}/start'
+        try:
+            response = self.newstore_adapter.post_request(url, payload)
+        except NewStoreAdapterException as ns_err:
+            if self.raise_errors:
+                raise ns_err
+            return None
+        return response.json()
+
     def get_reason_codes(self):
         url = 'https://%s/api/v1/org/config/reason_code_types/cancellations/reason_codes' % (self.host)
         try:
