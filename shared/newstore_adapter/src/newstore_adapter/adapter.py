@@ -18,6 +18,8 @@ class NewStoreAdapter(object):
         self.host = host if host else os.environ.get('newstore_url_api')
         self.auth = None
         self.headers = self.get_headers()
+        self.auth_lambda = os.environ.get('newstore_auth_lambda')
+        self.use_auth_lambda = os.environ.get('newstore_use_auth_lambda', '0') == '1'
         logger.info('Headers to be utilized on calls to NewStore API: %s' % json.dumps(self.headers, indent=4))
 
     def get_api_auth(self, auth_required=True):
@@ -26,7 +28,10 @@ class NewStoreAdapter(object):
             return None
 
         self.ctx = Context(url=self.host)
-        self.ctx.set_user(self.username, self.password)
+        if self.use_auth_lambda and self.auth_lambda is not None:
+            self.ctx.set_auth_lambda(self.auth_lambda)
+        else:
+            self.ctx.set_user(self.username, self.password)
         return self.ctx.auth
 
     def get_headers(self):

@@ -10,7 +10,7 @@ logger.setLevel(logging.INFO)
 
 
 class NewStoreConnector(object):
-    def __init__(self, tenant, context, username, password, host=None, raise_errors=False):
+    def __init__(self, tenant, context, username=None, password=None, host=None, raise_errors=False):
         self.newstore_adapter = NewStoreAdapter(tenant, context, username, password, host)
         self.host = host if host else os.environ.get('newstore_url_api')
         self.raise_errors = raise_errors
@@ -455,7 +455,7 @@ class NewStoreConnector(object):
             'callback_parameters': {'callback_url': callback},
             'integration_type': 'permanent'
         }
-        
+
         if filters:
             payload['filter_conditions'] = filters
 

@@ -21,6 +21,7 @@ class Bearer(requests.auth.AuthBase):
 
     def __init__(self):
         self.credentials = None
+        self.lambda_name = None
         self.hostname = None
         self.url = None
 
@@ -60,6 +61,11 @@ class Bearer(requests.auth.AuthBase):
         }
         return self
 
+    def with_lambda(self, lambda_name):
+        """ Initialize usage of auth lambda. """
+        self.lambda_name = lambda_name
+        return self
+
     def api_auth(self):
         """ Perform authentication if necessary. """
         global AUTH_CACHE
@@ -71,17 +77,40 @@ class Bearer(requests.auth.AuthBase):
                 result = old
 
         if result is None:
-            response = requests.post(self.url, headers=self.add_host(), data=self.credentials)
-            response.raise_for_status()
-            result = response.json()
+            result = self.auth_lambda_request() if self.lambda_name else self.auth_request()
+            expires_at = result.get('expires_at', None)
             expires_in = result.get('expires_in', None)
-            if isinstance(expires_in, int):
+            if expires_at is None and isinstance(expires_in, int):
                 result['expires_at'] = now + expires_in
+
+            expires_at = result.get('expires_at', None)
+            if expires_at:
                 AUTH_CACHE = result
 
         if result is not None and 'access_token' in result:
             return str('Bearer %s' % result['access_token'])
 
+    def auth_request(self):
+        """ Perform the auth request """
+        response = requests.post(self.url, headers=self.add_host(), data=self.credentials)
+        response.raise_for_status()
+        result = response.json()
+        return result
+
+    def auth_lambda_request(self):
+        """ Call the auth lambda """
+        payload = {}
+        import boto3
+        session = boto3.session.Session()
+        lambda_cli = session.client('lambda', 'us-east-1')
+        result = lambda_cli.invoke(
+            FunctionName=self.lambda_name,
+            InvocationType='RequestResponse',
+            Payload=bytes(payload),
+        )
+
+        result = json.loads(result['Payload'].read().decode('utf-8'))['body']
+        return result
 
 def decrypt_env(name, fallback=None):
     """ Decrypt environment variable `name` if it exists, or return the given `fallback`. """
