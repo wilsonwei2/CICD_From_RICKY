@@ -1,5 +1,7 @@
 {
   "bucket": "mybucket",
   "prefix": "queue_for_import/availabilities",
-  "chunk_prefix": "queue_for_import/"
+  "chunk_prefix": "queue_for_import/",
+  "dest_bucket": "mybucket",
+  "dest_prefix": "import_files/"
 }

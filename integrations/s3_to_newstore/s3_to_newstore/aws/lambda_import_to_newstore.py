@@ -35,11 +35,11 @@ def handler(event, context):
 
     newstore_config = Utils.get_instance().get_newstore_config()
     ns_handler = NewStoreConnector(
-        tenant='marine-layer',
+        tenant='frankandoak',
         context=context,
-        username=newstore_config['NS_USERNAME'],
-        password=newstore_config['NS_PASSWORD'],
-        host=newstore_config['NS_URL_API']
+        username=newstore_config['username'],
+        password=newstore_config['password'],
+        host=newstore_config['host']
     )
     entities = [i.strip() for i in ENTITIES_CSV.split(',')]
 
@@ -50,7 +50,7 @@ def handler(event, context):
         s3_key = unquote(record['s3']['object']['key'])
         s3_params = {
             'Bucket': s3_bucket_name,
-            'Key':s3_key
+            'Key': s3_key
         }
         s3_link = S3.generate_presigned_url('get_object', Params=s3_params)
 

@@ -1,4 +1,4 @@
-import os
+# import os
 import json
 import boto3
 import logging
@@ -36,8 +36,11 @@ def handler(event, context): # pylint: disable=W0613
         source_bucket = event['bucket']
         source_prefix = event['prefix']
         source_chunk_prefix = event['chunk_prefix']
-        dest_bucket = os.environ['DESTINATION_BUCKET']
-        dest_prefix = os.environ['DESTINATION_PREFIX']
+
+        # dest_bucket = os.environ['DESTINATION_BUCKET']
+        # dest_prefix = os.environ['DESTINATION_PREFIX']
+        dest_bucket = event['dest_bucket']
+        dest_prefix = event['dest_prefix']
 
         for s3obj in S3.Bucket(source_bucket).objects.filter(Prefix=source_prefix).limit(1):
             name_part = s3obj.key.split(source_chunk_prefix, maxsplit=1)[1]
