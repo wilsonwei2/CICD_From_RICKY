@@ -724,3 +724,12 @@ class NewStoreConnector(object):
                 raise
             return None
         return response.json()
+
+    def graphql(self, query, params={}):
+        try:
+            response = self.newstore_adapter.graphql_request(query, params)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response

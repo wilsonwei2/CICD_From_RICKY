@@ -20,6 +20,7 @@ class NewStoreAdapter(object):
         self.headers = self.get_headers()
         self.auth_lambda = os.environ.get('newstore_auth_lambda')
         self.use_auth_lambda = os.environ.get('newstore_use_auth_lambda', '0') == '1'
+        self.graphql_client = None
         logger.info('Headers to be utilized on calls to NewStore API: %s' % json.dumps(self.headers, indent=4))
 
     def get_api_auth(self, auth_required=True):
@@ -117,6 +118,28 @@ class NewStoreAdapter(object):
             raise NewStoreAdapterException(response.text)
 
         return response
+
+    def graphql_request(self, query, params={}):
+        logger.info(f'GRAPHQL {query}, params: {json.dumps(params, indent=4)}')
+
+        from gql import gql, Client
+        from gql.transport.requests import RequestsHTTPTransport
+
+        if self.graphql_client is None:
+            transport = RequestsHTTPTransport(
+                url=f"https://{self.host}/api/v1/org/data/query",
+                use_json=True,
+                verify=True,
+                headers=self.headers,
+                auth=self.get_api_auth()
+            )
+            self.graphql_client = Client(transport=transport, fetch_schema_from_transport=True)
+
+        query = gql(query)
+        result = self.graphql_client.execute(query, variable_values=params)
+        return result
+
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, decimal.Decimal):
