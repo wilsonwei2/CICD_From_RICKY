@@ -12,6 +12,7 @@ import io
 import json
 import boto3
 import zipfile as zf
+import re
 
 from urllib.parse import unquote
 from datetime import datetime
@@ -52,22 +53,33 @@ def handler(event, context):
         s3_bucket_name = record['s3']['bucket']['name']
         s3_key = record['s3']['object']['key']
 
+        file_name = s3_key.split("/")[-1]
+        matcher = re.search(r"^[[a-zA-Z0-9]*_([A-Z]{3})_\d{8}\.csv$", file_name)
+        if not matcher:
+            LOGGER.error(f'invalid file name: {file_name} - skipping')
+            continue
+        currency = matcher.group(1)
+
         ## This is the key step that converts the imported file
         # into our format and gives the price books back.
         s3_Object = S3.Bucket(s3_bucket_name).Object(s3_key) # pylint: disable=no-member
+        LOGGER.info(f'processing {s3_key}')
         with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') \
                 as csvfile:
-            price_book = csv_to_pricebooks(csvfile)
+            price_book = csv_to_pricebooks(csvfile, currency)
 
             now = datetime.utcnow()
 
             time_stamp = f"{now.strftime('%Y-%m-%d')}/{now.strftime('%H:%M:%S')}"
             obj_prefix = f"{S3_PREFIX}prices/{'msrp'}/{time_stamp}"
+            LOGGER.info(f"S3_PREFIX is {S3_PREFIX}")
+            LOGGER.info(f"obj_prefx is {obj_prefix}")
             for i, chunk in enumerate(iter_chunks(price_book['items'], CHUNK_SIZE), start=1):
                 out = {'head': price_book['head'], 'items': chunk}
                 jsonbytes = json.dumps(out).encode('utf-8')
 
                 key = f"{obj_prefix}-{i:03}.zip"
+                LOGGER.info(f"key is {obj_prefix}")
                 LOGGER.debug(f'Zipping chunk {i}')
                 data = io.BytesIO()
                 outzip = zf.ZipFile(data, 'w', zf.ZIP_DEFLATED)
@@ -80,8 +92,12 @@ def handler(event, context):
                 LOGGER.debug(json.dumps(out, indent=2))
 
             # Start import step function
-            input = f'{{"bucket": "{S3_BUCKET.name}",' \
-                    f' "prefix": "{obj_prefix}", ' \
-                    f'"chunk_prefix": "{S3_PREFIX}", ' \
-                    f'"secs_between_chunks": {SECS_BETWEEN_CHUNKS}}}'
+            input = json.dumps({
+                "bucket": S3_BUCKET.name,
+                "prefix": obj_prefix,
+                "chunk_prefix": S3_PREFIX,
+                "secs_between_chunks": int(SECS_BETWEEN_CHUNKS),
+                "dest_bucket": S3_BUCKET.name,
+                "dest_prefix": "import_files/",
+            })
             STEP_FUNCTION_CLIENT.start_execution(stateMachineArn=STATE_MACHINE_ARN, input=input)

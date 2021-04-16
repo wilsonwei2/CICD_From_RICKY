@@ -7,31 +7,10 @@ Transformer for converting the CSV data to price import job payload for import j
 """
 import csv
 import logging
-import sqlite3
 
 from datetime import datetime
 
-CONNECTION = sqlite3.connect(':memory:')
-CONNECTION.row_factory = sqlite3.Row
-CURSOR = CONNECTION.cursor()
-
 LOGGER = logging.getLogger()
-
-CURSOR.execute('''CREATE TABLE prices(
-    netsuite_id text,
-    price numeric,
-    price_level text,
-    name text,
-    internal_id numeric
-);''')
-CONNECTION.commit()
-
-QUERY = \
-'''SELECT *
-FROM   prices
-ORDER  BY netsuite_id,
-          price
-'''
 
 class _FixDictReader(csv.DictReader):
     ('TextIOWrapper automatically closes, when the underlying buffer runs out.\n'
@@ -47,30 +26,25 @@ class _FixDictReader(csv.DictReader):
                 raise
             raise StopIteration
 
-def csv_to_pricebooks(csvfile):
+def csv_to_pricebooks(csvfile, currency="USD"):
     reader = _FixDictReader(csvfile)
 
-    for item in reader:
-        CURSOR.execute('INSERT INTO prices VALUES (?,?,?,?,?)', tuple(item.values()))
-
-    CONNECTION.commit()
+    pricebook = 'default' if currency == "CAD" else f"{currency.lower()}-prices"
 
     default_price_book = {
         'head': {
-            'pricebook': 'default',
-            'catalog': 'storefront-catalog-en',
-            'currency': 'USD'
+            'pricebook': pricebook,
+            'catalog': f'storefront-catalog-en',
+            'currency': currency
         },
         'items': [],
     }
 
-    for item in CURSOR.execute(QUERY):
-        product_id = str(item['netsuite_id'])
+    for item in reader:
+        product_id = item['ProductSKU']
         default_price_book['items'].append({
             'product_id': product_id,
-            'value': float(item['price'])
+            'value': float(item['Price'])
         })
-
-    LOGGER.info(default_price_book)
 
     return default_price_book

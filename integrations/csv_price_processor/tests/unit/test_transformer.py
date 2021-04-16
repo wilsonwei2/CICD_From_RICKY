@@ -5,7 +5,7 @@ def test_unit():
 
 def load_csv_file_to_pricebooks():
     with open(f'data/test_price_data_csv.csv') as csvfile:
-        price_books = csv_to_pricebooks(csvfile)
+        price_books = csv_to_pricebooks(csvfile, 'CAD')
         return price_books
 
 def test_transformer_response():
@@ -21,4 +21,4 @@ def test_transformer_response():
 
     assert catalog_value == 'storefront-catalog-en'
 
-    assert currency_value == 'USD'
+    assert currency_value == 'CAD'
