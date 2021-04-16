@@ -1,0 +1,8 @@
+../../../../python/newstore_adapter
+../../../../python/lambda_utils
+../../../../python/3.6/param_store
+../../helpers/product_id_mapper
+aiohttp==3.0.1
+aioresponses>=0.4.1
+requests>=v2.20.1
+
