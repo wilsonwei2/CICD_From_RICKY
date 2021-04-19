@@ -733,3 +733,19 @@ class NewStoreConnector(object):
                 raise
             return None
         return response
+
+    ###
+    # Calls GraphQL API
+    # param query: GraphQL query
+    # param raise_error: flag to whether raise error in case something happens
+    # or just return None and let lambda handle it
+    ###
+    def graphql_api_call(self, query, raise_error=True):
+        url = 'https://%s/api/v1/org/data/query' % (self.host)
+        try:
+            response = self.newstore_adapter.post_request(url, query)
+        except NewStoreAdapterException as ns_err:
+            if raise_error or self.raise_errors:
+                raise
+            return None
+        return response.json()
