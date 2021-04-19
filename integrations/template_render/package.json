@@ -1,0 +1,8 @@
+{
+  "name": "frankandoak-template-render",
+  "description": "Template render integration.",
+  "version": "0.1.0",
+  "devDependencies": {
+    "serverless-python-requirements": "^5.1.1"
+  }
+}
