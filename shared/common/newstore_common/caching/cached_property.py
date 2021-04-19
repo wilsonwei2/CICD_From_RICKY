@@ -1,7 +1,7 @@
 from datetime import timedelta, datetime
 
 
-class CachedProperty(property):
+class CachedProperty(object):
     """ @CachedProperty
         @CachedProperty()
         @CachedProperty(max_age=3600)
