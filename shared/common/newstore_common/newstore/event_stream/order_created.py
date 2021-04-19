@@ -38,19 +38,19 @@ class OrderCreatedItemExternalIdentifiers:
 @dataclass(frozen=True)
 class OrderCreatedItem:
     id: str
-    item_type: Optional[str]
+    item_type: str
     product_id: str
-    pricebook_id: Optional[str]
-    pricebook_price: Optional[Decimal]
+    pricebook_id: str
+    pricebook_price: Decimal
     list_price: Decimal
     item_discounts: Decimal
     order_discounts: Decimal
     tax: Decimal
     quantity: Decimal
-    status: Optional[str]
-    extended_attributes: Optional[List[ExtendedAttribute]]
-    external_identifiers: Optional[OrderCreatedItemExternalIdentifiers]
-    shipping_service_level: Optional[str]
+    status: str
+    extended_attributes: List[ExtendedAttribute]
+    external_identifiers: OrderCreatedItemExternalIdentifiers
+    shipping_service_level: str
 
 
 @dataclass(frozen=True)
@@ -59,8 +59,8 @@ class OrderCreatedPayload:
     external_id: str
     created_at: str
     placed_at: str
-    associate_id: Optional[str]
-    associate_email: Optional[str]
+    associate_id: str
+    associate_email: str
     channel_type: str
     channel: str
     is_exchange: bool
@@ -69,7 +69,7 @@ class OrderCreatedPayload:
     customer_id: Optional[str]
     is_historical: bool
     billing_address: Optional[OrderCreatedAddress]
-    shipping_address: Optional[OrderCreatedAddress]
+    shipping_address: OrderCreatedAddress
     price_method: str
     subtotal: Decimal
     discount_total: Decimal
@@ -78,9 +78,9 @@ class OrderCreatedPayload:
     tax_total: Decimal
     grand_total: Decimal
     currency: str
-    tax_strategy: Optional[str]
+    tax_strategy: str
     tax_exempt: bool
-    extended_attributes: Optional[List[ExtendedAttribute]]
+    extended_attributes: List[ExtendedAttribute]
     items: List[OrderCreatedItem]
 
 

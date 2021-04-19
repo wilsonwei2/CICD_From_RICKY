@@ -148,11 +148,11 @@ class JobsManager:
         try:
             if sys.version_info >= (3, 0):
                 data = io.StringIO()
-                data.write(json.dumps(inventory, indent=4))
+                data.write(json.dumps(inventory, indent=None, separators=(',', ':')))
                 zip_string_buffer = io.BytesIO()
             else:
                 data = StringIO()
-                data.write(json.dumps(inventory, indent=4))
+                data.write(json.dumps(inventory, indent=None, separators=(',', ':')))
                 zip_string_buffer = StringIO()
         except Exception as e:
             raise Exception(e)
