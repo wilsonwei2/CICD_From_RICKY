@@ -1,0 +1,21 @@
+{
+    "order": {
+        "id": "437241d711a3852d2003",
+        "order_id": "7e25b2e-b32d-41eb166c9a2e",
+        "logical_timestamp": 6728211,
+        "fulfillment_location_id": "002_NY_WVillage",
+        "associate_id": "4",
+        "service_level": "IN_STORE_HANDOVER",
+        "items": [
+            {
+                "id": "9f34722d-2272-4271-849d-6814303a069e",
+                "product_id": "35686NavTreXXL"
+            },
+            {
+                "id": "9f34722d-2272-4271-849d-6814303a069e",
+                "product_id": "35738DreTreXXL"
+            }
+        ],
+        "published_at": "2019-09-24T23:58:36.522Z"
+    }
+}

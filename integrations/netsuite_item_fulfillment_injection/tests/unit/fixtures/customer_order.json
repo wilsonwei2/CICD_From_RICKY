@@ -1,0 +1,312 @@
+{
+    "pagination_info": {
+        "count": 1,
+        "total": 1,
+        "offset": 0
+    },
+    "field_ranges": null,
+    "customer_order": {
+        "status": "shipped",
+        "sales_order_id": "a7336bc2-b93a-4475-8d62-ea0bcc9fc443",
+        "shipment_details": [
+            {
+                "items": [
+                    {
+                        "product_id": "35738DreTreXXL"
+                    },
+                    {
+                        "product_id": "35686NavTreXXL"
+                    }
+                ],
+                "shipping_option": {
+                    "shipping_type": "traditional_carrier",
+                    "timeslot": {
+                        "delivery_window": {
+                            "starts_at": "",
+                            "ends_at": "",
+                            "id": "",
+                            "expires_at": ""
+                        },
+                        "id": ""
+                    },
+                    "cost": 0,
+                    "tax": 0,
+                    "shipping_carrier": "UPS"
+                }
+            }
+        ],
+        "is_net": true,
+        "placed_at": "2018-10-04T19:54:49Z",
+        "is_shipping_address_overwritten": false,
+        "sales_order_external_id": "1247686",
+        "documents": [],
+        "extended_attributes": [
+            {
+                "name": "external_order_id",
+                "value": "1247686"
+            },
+            {
+                "name": "order_id",
+                "value": "581078220878"
+            },
+            {
+                "name": "is_historical",
+                "value": "True"
+            }
+        ],
+        "totals": {
+            "shipping_and_handling": 0,
+            "grand_total": 186,
+            "subtotal_net": 186,
+            "taxes": 0,
+            "subtotal_gross": 186,
+            "discount": 0,
+            "subtotal": 186
+        },
+        "revision": 9,
+        "shipments": [
+            {
+                "status": "shipped",
+                "activities": [
+                    {
+                        "created_at": "2018-10-04T19:54:49Z",
+                        "name": "shipped"
+                    }
+                ],
+                "grand_total": 186,
+                "documents": [
+                    {
+                        "permalink": "https://untuckit.s.newstore.net/v0/d/documents/98fbf99e-6822-491a-9a84-02e2df37fbe8",
+                        "type": "invoice",
+                        "s3_params": {
+                            "subentity": "invoice",
+                            "filename": "invoice_ef4d7616-457a-4eba-91fc-82ba5f4cebe5.pdf",
+                            "entity": "templates_documents"
+                        }
+                    }
+                ],
+                "subtotal": 186,
+                "tracking_url": "",
+                "taxes": 0,
+                "method": "traditional_carrier",
+                "tracking_code": "",
+                "carrier": "",
+                "fulfillment_location": "DC-US-KY01",
+                "id": "1b63f31a-e82e-403d-99b1-e6f65ad49ee1-shipment-0"
+            }
+        ],
+        "billing_address": {
+            "province": "",
+            "city": "Somerset",
+            "first_name": "Bill",
+            "last_name": "Rice",
+            "suffix": "",
+            "title": "",
+            "phone": "",
+            "state": "Pennsylvania",
+            "country_code": "US",
+            "salutation": "",
+            "zip_code": "15501",
+            "address_line_2": "Suite 103",
+            "second_name": "",
+            "address_line_1": "109 West Main St."
+        },
+        "associate": {
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+            "id": ""
+        },
+        "associate_id": "",
+        "shipping_address": {
+            "province": "",
+            "city": "Somerset",
+            "first_name": "Bill",
+            "last_name": "Rice",
+            "suffix": "",
+            "title": "",
+            "phone": "",
+            "state": "Pennsylvania",
+            "country_code": "US",
+            "salutation": "",
+            "zip_code": "15501",
+            "address_line_2": "Suite 103",
+            "second_name": "",
+            "address_line_1": "109 West Main St."
+        },
+        "has_gift_wrapping": false,
+        "payment": {
+            "activities": null,
+            "psp": "",
+            "method": "",
+            "credit_card_number": ""
+        },
+        "coupons": null,
+        "discounted": false,
+        "channel_type": "web",
+        "products": [
+            {
+                "color": "Navy",
+                "shipping_cost": 0,
+                "id": "35686NavTreXXL",
+                "size": "XX-Large",
+                "price_tax": 0,
+                "extended_attributes": null,
+                "variation_attribute_1_value": "Tall Regular Fit",
+                "discounts": [],
+                "variation_attribute_2_value": "",
+                "tax_strategy": "",
+                "fulfillment_location": "DC-US-KY01",
+                "status": "shipped",
+                "activities": [
+                    {
+                        "created_at": "2018-10-04T19:54:49Z",
+                        "name": "pending",
+                        "metadata": {
+                            "consumer_name": "untuckit shopify historical test"
+                        }
+                    },
+                    {
+                        "created_at": "2018-10-04T19:54:49Z",
+                        "name": "new",
+                        "metadata": {
+                            "consumer_name": "untuckit shopify historical test"
+                        }
+                    },
+                    {
+                        "created_at": "2018-10-04T19:54:49Z",
+                        "name": "routing",
+                        "metadata": {
+                            "distribution_location": "DC-US-KY01"
+                        }
+                    }
+                ],
+                "fulfillment_type": "traditional_carrier",
+                "is_swapped": false,
+                "price_net": 98,
+                "epc": "",
+                "sales_order_item_uuid": "d7ab6d5c-8d38-4e88-84ee-027b2c0221ba",
+                "name": "Castello - Wrinkle Free XX-Large / Tall Regular Fit / Navy",
+                "external_identifiers": [
+                    {
+                        "type": "sku",
+                        "value": "UT-14-35686T-XXL"
+                    }
+                ],
+                "price_gross": 98,
+                "price_catalog": 98,
+                "image_url": "https://res.cloudinary.com/newstore/image/upload/v1540503801/s/untuckit/aaa813aa57bb4cdfa581f5cf7960396f.jpg",
+                "shipment_id": "1b63f31a-e82e-403d-99b1-e6f65ad49ee1-shipment-0"
+            },
+            {
+                "color": "Burgundy",
+                "shipping_cost": 0,
+                "id": "35738DreTreXXL",
+                "size": "XX-Large",
+                "price_tax": 0,
+                "extended_attributes": null,
+                "variation_attribute_1_value": "Tall Regular Fit",
+                "discounts": [],
+                "variation_attribute_2_value": "",
+                "tax_strategy": "",
+                "fulfillment_location": "DC-US-KY01",
+                "status": "shipped",
+                "activities": [
+                    {
+                        "created_at": "2018-10-04T19:54:49Z",
+                        "name": "pending",
+                        "metadata": {
+                            "consumer_name": "untuckit shopify historical test"
+                        }
+                    },
+                    {
+                        "created_at": "2018-10-04T19:54:49Z",
+                        "name": "new",
+                        "metadata": {
+                            "consumer_name": "untuckit shopify historical test"
+                        }
+                    },
+                    {
+                        "created_at": "2018-10-04T19:54:49Z",
+                        "name": "routing",
+                        "metadata": {
+                            "distribution_location": "DC-US-KY01"
+                        }
+                    }
+                ],
+                "fulfillment_type": "traditional_carrier",
+                "is_swapped": false,
+                "price_net": 88,
+                "epc": "",
+                "sales_order_item_uuid": "9ec0d239-b273-40b3-8363-0d88a4edb4db",
+                "name": "Jamesport XX-Large / Tall Regular Fit / Burgundy",
+                "external_identifiers": [
+                    {
+                        "type": "sku",
+                        "value": "UT-14-35738T-XXL"
+                    }
+                ],
+                "price_gross": 88,
+                "price_catalog": 88,
+                "image_url": "https://res.cloudinary.com/newstore/image/upload/v1540504066/s/untuckit/5c2253b46049da1d58f51f07754ca51c.jpg",
+                "shipment_id": "1b63f31a-e82e-403d-99b1-e6f65ad49ee1-shipment-0"
+            }
+        ],
+        "payments": [],
+        "placement_location": {
+            "id": "",
+            "label": ""
+        },
+        "exceptions": null,
+        "consumer": {
+            "phone_number": "",
+            "name": "untuckit shopify historical test",
+            "email": "untuckit.shopify.historical.test@newstore.com",
+            "language": "en",
+            "id": "b8de2e86-fec3-4c1f-af0d-68b8b03a56aa"
+        },
+        "currency_code": "USD"
+    },
+    "payment_history": [
+        {
+            "category": "Payment",
+            "activities": [
+                {
+                    "correlation_id": "captured.764645670990-a7336bc2-b93a-4475-8d62-ea0bcc9fc443",
+                    "created_at": "2018-11-08T16:55:15.088784Z",
+                    "name": "authorization-pending",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 186
+                    }
+                },
+                {
+                    "correlation_id": "captured.764645670990-a7336bc2-b93a-4475-8d62-ea0bcc9fc443",
+                    "created_at": "2018-11-08T16:55:15.200339Z",
+                    "name": "authorization-authorized",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 186
+                    }
+                },
+                {
+                    "correlation_id": "6433f09d-072c-4a88-9928-0d59f5f4de51",
+                    "created_at": "2018-11-08T16:55:39.72649Z",
+                    "name": "capture-captured",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 186
+                    }
+                }
+            ],
+            "payment_information": "",
+            "method": "paypal",
+            "currency": "USD",
+            "amount": 186,
+            "status": "capture-captured",
+            "date": "2018-11-08T16:55:39.72649Z",
+            "psp": "shopify",
+            "id": "Payment_55e37072-04fc-4d33-9549-f63426af6394"
+        }
+    ]
+}
