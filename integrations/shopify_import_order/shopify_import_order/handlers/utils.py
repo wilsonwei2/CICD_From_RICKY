@@ -36,11 +36,11 @@ class Utils():
     def get_ns_handler(self):
         if not self.ns_handler:
             newstore_creds = json.loads(
-                self.get_parameter_store().get_param(os.environ.get('NEWSTORE_CREDS_PARAM', 'newstore')))
+                self.get_parameter_store().get_param('newstore'))
             self.ns_handler = NShandler(
-                host=newstore_creds['NS_URL_API'],
-                username=newstore_creds['NS_USERNAME'],
-                password=newstore_creds['NS_PASSWORD']
+                host=newstore_creds['host'],
+                username=newstore_creds['username'],
+                password=newstore_creds['password']
             )
         return self.ns_handler
 
