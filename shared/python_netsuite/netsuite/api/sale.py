@@ -17,7 +17,8 @@ from netsuite.service import (
     InitializeRef,
     InitializeRecord,
     SearchCustomFieldList,
-    SearchStringCustomField
+    SearchStringCustomField,
+    Preferences
 )
 from netsuite.utils import (
     get_record_by_type,
@@ -92,6 +93,9 @@ def create_cashsale_salesorder(data, sale_models):
 
         if sale_models['sale'] == SalesOrder:
             record_type = 'salesOrder'
+            sales_order = get_sales_order(data['externalId'])
+            if sales_order is not None:
+                default_id = sales_order['internalId']
         else:
             record_type = 'cashSale'
 
@@ -243,6 +247,10 @@ def get_transaction(externalId, transactionType):
         )
     )
     result = search_records_using(transaction_search)
+
+    logger.info(f'get_transaction searching for: \n{transaction_search}')
+    logger.info(f'get_transaction result: \n{result}')
+
     r = result.body.searchResult
     if r.status.isSuccess:
         # The search can return nothing, meaning the transaction doesn't exist
@@ -264,9 +272,9 @@ def get_transaction_list(external_id_list, transactionType, page_size=80):
     )
     result = search_records_using(transaction_search, page_size)
     r = result.body.searchResult
-    
+
     logger.debug(f"get_transaction_list response: {r}")
-    
+
     if r.status.isSuccess:
         # The search can return nothing, meaning the transaction doesn't exist
         if r.recordList:
@@ -276,17 +284,29 @@ def get_transaction_list(external_id_list, transactionType, page_size=80):
 
 
 def create_invoice(data):
-    invoice = Invoice(**data)
+    invoice = Invoice(**data) if isinstance(data, Mapping) else data
+
+    logger.info(f'invoice - data xml send to Netsuite - \n{invoice}')
 
     if os.environ.get('netsuite_tba_active', '0') == "1":
         response = client.service.add(invoice, _soapheaders={
-            'tokenPassport': make_passport()
+            'tokenPassport': make_passport(),
+            'preferences': Preferences(
+                warningAsError=False,
+                ignoreReadOnlyFields=True
+            )
         })
     else:
         response = client.service.add(invoice, _soapheaders={
             'passport': passport,
-            'applicationInfo': app_info
+            'applicationInfo': app_info,
+            'preferences': Preferences(
+                warningAsError=False,
+                ignoreReadOnlyFields=True
+            )
         })
+
+    logger.info(f'Response - create_invoice: {response}')
 
     r = response.body.writeResponse
     if r.status.isSuccess:
@@ -365,3 +385,39 @@ def update_sales_order(sales_order_data):
         return True, get_record_by_type('salesOrder', internal_id)
     else:
         return False, format_error_message(r.status.statusDetail)
+
+
+def upsert_list(records):
+    if os.environ.get('netsuite_tba_active', '0') == "1":
+        response = client.service.upsertList(
+                records,
+                _soapheaders={
+                    'tokenPassport': make_passport(),
+                    'preferences': Preferences(
+                        warningAsError=False,
+                        ignoreReadOnlyFields=True
+                    )
+                }
+            )
+    else:
+        response = client.service.upsertList(
+                records,
+                _soapheaders={
+                    'passport': passport,
+                    'applicationInfo': app_info,
+                    'preferences': Preferences(
+                        warningAsError=False,
+                        ignoreReadOnlyFields=True
+                    )
+                }
+            )
+
+    logger.info(f'Response - upsert_list: {response}')
+
+    r = response.body.writeResponseList.writeResponse[0]
+    if r.status.isSuccess:
+        return True
+    else:
+        logger.warning("Not able to upsertList.")
+        logger.info(response)
+        return None

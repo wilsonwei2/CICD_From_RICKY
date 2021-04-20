@@ -43,7 +43,7 @@ def get_customer(internal_id):
     return get_record_by_type('customer', internal_id)
 
 
-def create_customer(customer_data):
+def create_customer(customer_data, return_customer_id=False):
     customer = Customer(**customer_data) if isinstance(customer_data, Mapping) else customer_data
 
     logger.debug("Customer sent to NetSuite: \n%s" % customer)
@@ -55,7 +55,7 @@ def create_customer(customer_data):
 
     if r.status.isSuccess:
         internal_id = r.baseRef.internalId
-        return get_customer(internal_id)
+        return internal_id if return_customer_id else get_customer(internal_id)
     else:
         raise Exception(format_error_message(r.status.statusDetail))
 
@@ -89,18 +89,6 @@ def create_customer_address_book(customer_address_book_data):
 
     r = response.body.writeResponse
     print (r.response)
-    if r.status.isSuccess:
-        return True
-    raise Exception(format_error_message(r.status.statusDetail))
-
-
-def create_customer_address_book_list(addressbook_list, replace_all):
-    customer_address_book_list_data['entityId'] = str(uuid.uuid4())
-    customer_address_book_list = CustomerAddressbookList(**customer_address_book_list_data)
-
-    response = client_service_add(customer_address_book_list)
-
-    r = response.body.writeResponse
     if r.status.isSuccess:
         return True
     raise Exception(format_error_message(r.status.statusDetail))
@@ -140,7 +128,7 @@ def lookup_customer_id_by_name_and_email(customer_data, return_customer_id=True)
 def lookup_customer_id_by_email(customer_data, return_customer_id=True):
     search_fields = {
         "email": SearchStringField(
-            searchValue=customer_data['email'], 
+            searchValue=customer_data['email'],
             operator='is'
         ),
         # Add subsidiary on search to create clients in all subsidiaries needed
