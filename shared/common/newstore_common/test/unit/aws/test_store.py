@@ -26,8 +26,10 @@ class SampleEnum:
 class TypeT:
     pass
 
+
 class GenericStore(BaseStore[TypeT]):
     pass
+
 
 class TestStore:
 

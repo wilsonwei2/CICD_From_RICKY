@@ -1,0 +1,69 @@
+service: frankandoak-netsuite-fullfillment-assignment
+plugins:
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - netsuite_fulfillment_assignment/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  environment:
+    NEWSTORE_STAGE: ${self:provider.stage}
+    TENANT_NAME: ${self:provider.tenant}
+    SQS_QUEUE: !GetAtt FulfillmentAssignmentQueue.QueueName
+    SQS_QUEUE_DLQ: !GetAtt FulfillmentAssignmentDeadLetterQueue.QueueName
+    MAX_MESSAGE_QUEUE_SIZE: 25
+    SLACK_HOOK_URL: 'NOT_SET'
+    RUN_DLQ_AT: 23
+    RUN_DLQ_FOR: 45
+
+functions:
+  fulfillment_assignment:
+    name: ${self:provider.tenant}-fulfillment-assignment-to-netsuite
+    handler: netsuite_fulfillment_assignment.aws.sqs_fulfillment_assignment_to_netsuite.handler
+    timeout: 300
+    memorySize: 256
+    environment:
+      SQS_QUEUE: ${self:provider.environment.SQS_QUEUE}
+      NEWSTORE_STAGE: ${self:provider.environment.NEWSTORE_STAGE}
+      TENANT_NAME: ${self:provider.environment.TENANT_NAME}
+      MAX_MESSAGE_QUEUE_SIZE: ${self:provider.environment.MAX_MESSAGE_QUEUE_SIZE}
+      SLACK_HOOK_URL: ${self:provider.environment.SLACK_HOOK_URL}
+    events:
+      - schedule:
+          name: ${self:provider.tenant}-fulfillment-assignment-to-netsuite-trigger
+          rate: rate(5 minutes)
+
+resources:
+  Resources:
+    FulfillmentAssignmentQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        FifoQueue: True
+        QueueName: ${self:provider.tenant}-fulfillment-assigned-to-netsuite-queue.fifo
+        VisibilityTimeout: 300
+        ContentBasedDeduplication: True
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt FulfillmentAssignmentDeadLetterQueue.Arn
+          maxReceiveCount: 3
+    FulfillmentAssignmentDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        ContentBasedDeduplication: True
+        FifoQueue: True
+        MessageRetentionPeriod: 1209600 # 14 days
+        QueueName: ${self:provider.tenant}-fulfillment-assigned-to-netsuite-queue-dlq.fifo

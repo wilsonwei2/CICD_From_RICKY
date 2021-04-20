@@ -1,0 +1,28 @@
+service: frankandoak-auth-token-generator
+
+plugins:
+  - serverless-python-requirements
+
+provider:
+  name: aws
+  runtime: python3.7
+  region: us-east-1
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  deploymentBucket: ${self:provider.bucket}-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  environment:
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
+    SECRET_NAME_NEWSTORE_API_USER: ${self:provider.tenant}-newstore-api-user
+    HOST: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+
+functions:
+  get_auth_token:
+    handler: auth_token_generator.lambdas.auth_token_generator.handler
+    environment:
+      LOG_LEVEL: INFO
+      EXPIRY_OFFSET: 900 # 15 minutes

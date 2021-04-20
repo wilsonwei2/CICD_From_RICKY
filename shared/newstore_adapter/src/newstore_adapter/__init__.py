@@ -144,3 +144,9 @@ class Context(object):
         Create a Bearer authentication object and configure with client credentials.
         '''
         self.auth = auth.Bearer().with_context(self).with_keys(client_id, client_secret)
+
+    def set_auth_lambda(self, lambda_name):
+        '''
+        Create a Bearer authentication object and configure with auth lambda.
+        '''
+        self.auth = auth.Bearer().with_context(self).with_lambda(lambda_name)

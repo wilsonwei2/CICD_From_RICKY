@@ -1,11 +1,12 @@
+import boto3
 import dataclasses
 import json
 import logging
 import traceback
 
-import boto3
-
 from .alert import Alert, Event, Error, EventTrigger
+
+from typing import Callable, Any
 
 logger = logging.getLogger(__name__)
 
@@ -61,10 +62,8 @@ class AlertClient:
         )
 
         alert_dict = dataclasses.asdict(alert)
-        alert_dict["event"]["trigger"] = event_trigger.name
-
+        alert_dict["event"]["trigger"] = alert.event.trigger.value
         alert_payload = json.dumps(alert_dict)
-
         account_id = boto3.client('sts').get_caller_identity().get('Account')
         lambda_name = "arn:aws:lambda:us-east-1:{}:function:" \
                       "alert-bug-service-{}-AddAlert".format(account_id, self.stage)

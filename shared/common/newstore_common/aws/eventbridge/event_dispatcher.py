@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 from typing import Generic, TypeVar
 import boto3
-from newstore_common.json import DecimalToStringEncoder
+from newstore_common.json.decimal_encoder import DecimalToStringEncoder
 
 logger = logging.getLogger(__name__)
 

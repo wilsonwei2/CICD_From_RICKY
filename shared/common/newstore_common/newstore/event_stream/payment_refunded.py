@@ -1,6 +1,6 @@
 from dataclasses import dataclass
+from typing import Union, List, Optional
 from decimal import Decimal
-from typing import List, Optional, Dict
 
 
 @dataclass(frozen=True)
@@ -10,14 +10,13 @@ class PaymentTransaction:
     amount: Decimal
     currency: str
     correlation_id: str
-    extended_attributes: Optional[Dict]
 
 
 @dataclass(frozen=True)
 class PaymentInstrument:
     id: str
     payment_method: str
-    payment_wallet: Optional[str]
+    payment_wallet: str
     payment_provider: str
 
 

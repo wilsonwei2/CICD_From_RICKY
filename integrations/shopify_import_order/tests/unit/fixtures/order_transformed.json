@@ -1,0 +1,160 @@
+{
+    "shop": "storefront-catalog-en",
+    "shop_locale": "en-US",
+    "external_id": "9999",
+    "channel_type": "web",
+    "channel_name": "USC",
+    "currency": "USD",
+    "customer_name": "John Smith",
+    "customer_email": "jon@doe.ca",
+    "customer_locale": "EN",
+    "external_customer_id": "115310627314723954",
+    "placed_at": "2020-09-10T18:53:45-04:00",
+    "price_method": "tax_excluded",
+    "shipping_address": {
+        "first_name": "Steve",
+        "last_name": "Shipper",
+        "country": "US",
+        "zip_code": "40003",
+        "city": "Shippington",
+        "state": "KY",
+        "address_line_1": "123 Shipping Street",
+        "address_line_2": "",
+        "phone": "555-555-SHIP"
+    },
+    "billing_address": {
+        "first_name": "Bob",
+        "last_name": "Biller",
+        "country": "US",
+        "zip_code": "K2P0B0",
+        "city": "Billtown",
+        "state": "KY",
+        "address_line_1": "123 Billing Street",
+        "address_line_2": "",
+        "phone": "555-555-BILL"
+    },
+    "shipments": [
+        {
+            "items": [
+                {
+                    "external_item_id": "808950810",
+                    "product_id": "IPOD2008PINK",
+                    "item_tax_lines": [],
+                    "price": {
+                        "item_price": 199,
+                        "item_list_price": 199,
+                        "item_tax_lines": [],
+                        "item_discount_info": [],
+                        "item_order_discount_info": []
+                    },
+                    "extended_attributes": [
+                        {
+                            "name": "is_gift_card",
+                            "value": "False"
+                        },
+                        {
+                            "name": "requires_shipping",
+                            "value": "True"
+                        },
+                        {
+                            "name": "external_item_id",
+                            "value": "866550311766439020"
+                        }
+                    ]
+                },
+                {
+                    "external_item_id": "808950810",
+                    "product_id": "IPOD2008PINK",
+                    "item_tax_lines": [],
+                    "price": {
+                        "item_price": 199,
+                        "item_list_price": 199,
+                        "item_tax_lines": [],
+                        "item_discount_info": [
+                            {
+                                "type": "fixed",
+                                "original_value": 5,
+                                "price_adjustment": 5,
+                                "discount_ref": "Discount",
+                                "coupon_code": "",
+                                "description": "Discount"
+                            }
+                        ],
+                        "item_order_discount_info": []
+                    },
+                    "extended_attributes": [
+                        {
+                            "name": "is_gift_card",
+                            "value": "False"
+                        },
+                        {
+                            "name": "requires_shipping",
+                            "value": "True"
+                        },
+                        {
+                            "name": "external_item_id",
+                            "value": "141249953214522974"
+                        }
+                    ]
+                }
+            ],
+            "shipping_option": {
+                "service_level_identifier": "UPS_GROUND",
+                "price": 10,
+                "tax": 0
+            }
+        }
+    ],
+    "payments": [
+        {
+            "processor": "shopify",
+            "correlation_ref": "389404469",
+            "type": "authorized",
+            "amount": 598.94,
+            "method": "bogus",
+            "processed_at": "2005-08-01T11:57:11-04:00",
+            "metadata": {
+                "external_order_id": "9999",
+                "shopify_order_id": "820982911946154508",
+                "channel": "USC",
+                "transaction_id": "389404469",
+                "credit_card_bin": "",
+                "avs_result_code": "",
+                "cvv_result_code": "",
+                "credit_card_number": "•••• •••• •••• 4242",
+                "credit_card_company": "Visa"
+            }
+        }
+    ],
+    "extended_attributes": [
+        {
+            "name": "returnly_exchange",
+            "value": "False"
+        },
+        {
+            "name": "external_order_id",
+            "value": "9999"
+        },
+        {
+            "name": "order_id",
+            "value": "820982911946154508"
+        },
+        {
+            "name": "ext_channel_name",
+            "value": "USC"
+        },
+        {
+            "name": "is_historical",
+            "value": "False"
+        },
+        {
+            "name": "order_memo",
+            "value": ""
+        }
+    ],
+    "notification_blacklist": [
+        "shipment_dispatched",
+        "order_cancelled",
+        "refund_note_created"
+    ]
+}

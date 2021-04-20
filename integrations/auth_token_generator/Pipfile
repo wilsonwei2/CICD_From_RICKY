@@ -1,0 +1,21 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+boto3 = "*"
+pyjwt = "*"
+moto = "*"
+pyyaml = "*"
+requests_mock = "*"
+freezegun = "*"
+newstore-common = {path = "./../../shared/common"}
+newstore-adapter = {path = "./../../shared/newstore_adapter"}
+param-store = {path = "./../../shared/3.6/param_store"}
+pom-common = {path = "./../../shared/pom_common"}
+
+[requires]
+python_version = "3.7"

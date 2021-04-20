@@ -18,6 +18,9 @@ class NewStoreAdapter(object):
         self.host = host if host else os.environ.get('newstore_url_api')
         self.auth = None
         self.headers = self.get_headers()
+        self.auth_lambda = os.environ.get('newstore_auth_lambda')
+        self.use_auth_lambda = os.environ.get('newstore_use_auth_lambda', '0') == '1'
+        self.graphql_client = None
         logger.info('Headers to be utilized on calls to NewStore API: %s' % json.dumps(self.headers, indent=4))
 
     def get_api_auth(self, auth_required=True):
@@ -26,11 +29,16 @@ class NewStoreAdapter(object):
             return None
 
         self.ctx = Context(url=self.host)
-        self.ctx.set_user(self.username, self.password)
+        if self.use_auth_lambda and self.auth_lambda is not None:
+            self.ctx.set_auth_lambda(self.auth_lambda)
+        else:
+            self.ctx.set_user(self.username, self.password)
         return self.ctx.auth
 
     def get_headers(self):
-        user_agent = 'Integrator Name: newstore-integrations; Lambda Name: %s; Lambda Version: %s' % (self.context.function_name, self.context.function_version) if self.context else ''
+        function_name = self.context.function_name if self.context else ''
+        function_version = self.context.function_version if self.context else ''
+        user_agent = f'lambda-name#{function_name}/{function_version} integrator-name#newstore-integrations'
         return {
             'Content-Type': 'application/json',
             'tenant': self.tenant,
@@ -110,6 +118,28 @@ class NewStoreAdapter(object):
             raise NewStoreAdapterException(response.text)
 
         return response
+
+    def graphql_request(self, query, params={}):
+        logger.info(f'GRAPHQL {query}, params: {json.dumps(params, indent=4)}')
+
+        from gql import gql, Client
+        from gql.transport.requests import RequestsHTTPTransport
+
+        if self.graphql_client is None:
+            transport = RequestsHTTPTransport(
+                url=f"https://{self.host}/api/v1/org/data/query",
+                use_json=True,
+                verify=True,
+                headers=self.headers,
+                auth=self.get_api_auth()
+            )
+            self.graphql_client = Client(transport=transport, fetch_schema_from_transport=True)
+
+        query = gql(query)
+        result = self.graphql_client.execute(query, variable_values=params)
+        return result
+
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, decimal.Decimal):
