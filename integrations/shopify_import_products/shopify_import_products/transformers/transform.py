@@ -1,324 +1,337 @@
 import os
 import json
 import logging
-# Libs from shared
-from lambda_utils.sqs.SqsHandler import SqsHandler
-# Local
-from shopify_import_products.shopify.products import (
-    get_metafields
-)
-from shopify_import_products.dynamodb import (
-    get_dynamodb_resource,
-    insert_product_variant_data
-)
-from shopify_import_products.transformers.constants import (
-    TAG_RE,
-    INVENTORY_QUEUE_NAME as QUEUE_NAME,
-    CATEGORIES
-)
+from shopify_import_products.transformers.constants import TAG_RE, CATEGORIES
 
 LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
 
+MASTER_PRODUCTS = {}
+VARIANT_PRODUCTS = {}
+PRODUCT_IMAGES = {}
+TRANSFORMED_CATEGORIES = [{
+    'path': 'All'
+}]
 
-def transform_products(products):
-    category_builder = {}
+
+def transform_products(jsonl_data, locale=None):
+    build_object_cache([json.loads(line) for line in jsonl_data.splitlines()])
+
+    locale_code = 'en-US' if not locale else locale
+    catalog = 'en' if not locale else locale.split('-')[0]
+
     transformed_products = {
-        "head": {
-            "locale": "en-US",
-            "shop": "storefront-catalog-en",
-            "is_master": True
+        'head': {
+            'locale': locale_code,
+            'shop': f'storefront-catalog-{catalog}',
+            'is_master': not locale
         },
-        "items": transform_product_items(products, category_builder)
+        'items': [transform_variant(variant, locale) for variant in VARIANT_PRODUCTS.values()]
     }
+
     transformed_categories = {
-        "head": {
-            "locale": "en-US",
-            "catalog": "storefront-catalog-en"
+        'head': {
+            'locale': locale_code,
+            'catalog': f'storefront-catalog-{catalog}'
         },
-        "items": [
-            {
-                "path": "All"
-            }
-        ]
+        'items': TRANSFORMED_CATEGORIES
     }
-    transformed_categories['items'] += [
-        {
-            "path": category['path'],
-            "is_main": category['is_main']
-        } for category in category_builder.values()
-    ]
 
     return transformed_products, transformed_categories
 
 
-def transform_product_items(products, category_builder):
-    dynamo_db = get_dynamodb_resource()
-    items = []
-    for product in products:
-        ##Getting the category details
-        # We may still need to get categories from colletions in the future, so leave it for now
-        #product_collection = get_product_collection(product['id'])
-        #collection = product_collection['data']['product']['collections']
-        for variant in product['variants']:
-            item = transform_item(product, variant, dynamo_db)
-            if item:
-                ## Category Allocation.
-                #product_categories, category_builder = build_categ_from_collections(collection, category_builder)
-                product_categories, category_builder = build_categ_from_tags(product['tags'], category_builder)
-                item['categories'] = product_categories
-                items.append(item)
-    return items
+def build_object_cache(json_objects):
+    if len(MASTER_PRODUCTS) != 0:
+        return
+
+    for current_object in json_objects:
+        gid = current_object['id']
+        object_type = gid.split('/')[-2]
+
+        if object_type == 'Product':
+            MASTER_PRODUCTS[gid] = current_object
+        elif object_type == 'ProductVariant':
+            sku = current_object.get('sku', '')
+            if sku != '' and sku not in ['Gift Card', 'gift_card_sku']:
+                VARIANT_PRODUCTS[gid] = current_object
+        elif object_type == 'ProductImage':
+            parent_id = current_object['__parentId']
+            if not parent_id in PRODUCT_IMAGES:
+                PRODUCT_IMAGES[parent_id] = []
+            PRODUCT_IMAGES[parent_id].append(current_object)
 
 
-def transform_item(product, variant, dynamo_db): # pylint: disable=W0613
-    # Adding products only if the variant is a product (Not a gift card)
-    if variant.get('sku', '') != '' and variant['sku'] not in ['Gift Card', 'gift_card_sku']:
-        ## Step 1
-        ## This is where the item is created and the all the common attributed are extracted first
-        ## from product.json
-        item = _load_json_file('product.json')
-        ## Replacing it from the variant call.
-        item['product_id'] = variant['sku']
-        item['variant_group_id'] = str(product['id'])
-        item['title'] = str(product.get('title', ''))
-        item['brand'] = product['vendor']
-        item['caption'] = str(product.get('title', ''))
-        item['description'] = _remove_tags(_get_non_null_field(product, 'body_html', ''))
-        item["keywords"] = product.get('tags', '').split(', ')
-        item["shipping_weight_unit"] = variant['weight_unit'] if _get_non_null_field(variant, 'weight', '') else 'lb'
-        item["shipping_weight_value"] = _get_non_null_field(variant, 'weight', '') or 2
-        item["variation_color_value"] = _get_non_null_field(variant, 'option2', '')
-        item["variation_size_value"] = _get_non_null_field(variant, 'option1', '')
-        item['tax_class_id'] = variant['tax_code'] ## ML-224
-        item['shipping_dimension_unit'] = "cm"
-        item['images'] = transform_images(product, variant)
+def transform_variant(variant, locale=None):
+    master = MASTER_PRODUCTS[variant['__parentId']]
+    tags = master.get('tags', []) or []
 
-        if variant.get('sku'):
-            item['external_identifiers'].append({
-                "type": "sku",
-                "value": variant['sku']
-            })
+    transformed_variant = {
+        'is_searchable': True,
+        'is_published': True,
+        'show_in_listing': True,
+        'product_id': variant.get('sku', '') or '',
+        'variant_group_id': master['id'].split('/')[-1],
+        'brand': master.get('vendor', '') or '',
+        'title': master.get('title', '') or '',
+        'caption': master.get('title', '') or '',
+        'description': remove_tags(master.get('bodyHtml', '') or ''),
+        'keywords': tags,
+        'shipping_weight_unit': transform_weight_unit(variant.get('weightUnit', None)),
+        'shipping_weight_value': float(variant.get('weight', 2)) or 2,
+        'variation_color_value': get_option(2, variant, master),
+        'variation_size_value': get_option(1, variant, master),
+        'tax_class_id': variant.get('taxCode', '') or '',
+        'shipping_dimension_unit': 'cm',
+        'images': transform_images(master),
+        'external_identifiers': transform_external_identifiers(variant),
+        'extended_attributes': transform_extended_attributes(variant, master),
+        'shipping_dimension_length': 0.0,
+        'shipping_dimension_width': 0.0,
+        'shipping_dimension_height': 0.0,
+        'material': '',
+        'google_category': 'none',
+        'categories': variant_categories(tags),
+        'manufacturer': ''
+    }
 
-        if variant.get('inventory_item_id'):
-            item['external_identifiers'].append({
-                "type": "shopify_inventory_item_id",
-                "value": str(variant.get('inventory_item_id', ''))
-            })
+    if locale:
+        transformed_variant = translate_attributes(transformed_variant, master.get('translations'))
 
-        if variant.get('barcode'):
-            item['external_identifiers'].append({
-                "type": "upc",
-                "value": variant['barcode']
-            })
-            item['external_identifiers'].append({
-                "type": "isbn",
-                "value": variant['barcode']
-            })
-            item['external_identifiers'].append({
-                "type": "ean13",
-                "value": variant['barcode']
-            })
-
-        # Only append values to extended attributes if those values exists
-        _append_if_exists(item["extended_attributes"], product.get('created_at', ''), 'product_created_at')
-        _append_if_exists(item["extended_attributes"], variant.get('created_at', ''), 'variant_created_at')
-        _append_if_exists(item["extended_attributes"], product.get('updated_at', ''), 'product_updated_at')
-        _append_if_exists(item["extended_attributes"], variant.get('updated_at', ''), 'variant_updated_at')
-        _append_if_exists(item["extended_attributes"], product.get('handle', ''), 'product_handle')
-        _append_if_exists(item["extended_attributes"], product.get('published_at', ''), 'product_published_at')
-        _append_if_exists(item["extended_attributes"], product.get('published_scope', ''),
-                          'product_published_scope')
-        _append_if_exists(item["extended_attributes"], variant.get('fulfillment_service', ''),
-                          'fulfillment_service')
-        _append_if_exists(item["extended_attributes"], variant.get('inventory_item_id', ''),
-                          'inventory_item_id')
-        _append_if_exists(item["extended_attributes"], variant.get('inventory_management', ''),
-                          'inventory_management')
-        _append_if_exists(item["extended_attributes"], variant.get('inventory_policy', ''),
-                          'inventory_policy')
-        _append_if_exists(item["extended_attributes"], variant.get('id', ''),
-                          'shopify_variant_id')
-
-        return format_with_metafields(item)
-    return None
+    return transformed_variant
 
 
-def transform_images(product, variant):
-    images = [
-        {
-            "url": os.environ['url_image_placeholder'],
-            "is_main": True,
-        }
-    ]
+def get_option(position, variant, master):
+    master_option = next(filter(lambda o: o['position'] == position, master['options']), None)
 
-    if product['image']:
-        images = [
-            {
-                "url": product['image']['src'],
-                "is_main": True,
-                "alt_text": product['image']['alt'] if product['image']['alt'] else ''
-            }
-        ]
+    if not master_option:
+        return ''
 
-    for image in product.get('images') or []:
-        # Avoid append main image again
-        if image['src'] != product.get('image', {}).get('src' ''):
+    variant_option = next(filter(lambda o: o['name'] == master_option['name'], variant['selectedOptions']), None)
+
+    if not variant_option:
+        return ''
+
+    return variant_option.get('value', '') or ''
+
+
+def transform_weight_unit(unit):
+    if unit == 'KILOGRAMS':
+        return 'kg'
+
+    return 'lb'
+
+
+def transform_images(master):
+    url_image_placeholder = os.environ['url_image_placeholder']
+
+    images = [{
+        'url': url_image_placeholder,
+        'is_main': True
+    }]
+
+    for i, image in enumerate(PRODUCT_IMAGES.get(master['id'], [])):
+        if i == 0:
+            images = [{
+                'url': image.get('originalSrc', url_image_placeholder) or url_image_placeholder,
+                'alt_text': image.get('altText', '') or '',
+                'is_main': True
+            }]
+        else:
             images.append({
-                "url": image['src'],
-                "alt_text": image['alt'],
-                "is_color_swatch": variant.get('image_id', '') == image['id']
+                'url': image.get('originalSrc', url_image_placeholder) or url_image_placeholder,
+                'alt_text': image.get('altText', '') or '',
+                'is_color_swatch': False
             })
 
     return images
 
 
-def build_categ_from_tags(tags, category_builder):
-    product_categories = [{
-        "path": "All"
+def transform_external_identifiers(variant):
+    external_identifiers = []
+
+    sku = variant.get('sku')
+    inventory_item = variant.get('inventoryItem')
+    barcode = variant.get('barcode')
+
+    if sku:
+        external_identifiers.append({
+            'type': 'sku',
+            'value': sku
+        })
+
+    if inventory_item and 'id' in inventory_item:
+        external_identifiers.append({
+            'type': 'shopify_inventory_item_id',
+            'value': inventory_item['id'].split('/')[-1]
+        })
+
+    if barcode:
+        external_identifiers.append({
+            'type': 'upc',
+            'value': barcode
+        })
+        external_identifiers.append({
+            'type': 'isbn',
+            'value': barcode
+        })
+        external_identifiers.append({
+            'type': 'ean13',
+            'value': barcode
+        })
+
+    return external_identifiers
+
+
+def transform_extended_attributes(variant, master):
+    extended_attributes = []
+
+    master_created_at = master.get('createdAt')
+    master_updated_at = master.get('updatedAt')
+    master_published_at = master.get('publishedAt')
+    master_handle = master.get('handle')
+    variant_id = variant.get('id')
+    variant_created_at = variant.get('createdAt')
+    variant_updated_at = variant.get('updatedAt')
+    variant_inventory_management = variant.get('inventoryManagement')
+    variant_inventory_policy = variant.get('inventoryPolicy')
+    variant_fulfillment_service = maybe(lambda d: d.get('handle'))(variant.get('fulfillmentService'))
+    variant_inventory_item = maybe(lambda d: d.get('id'))(variant.get('inventoryItem'))
+
+    if master_created_at:
+        extended_attributes.append({
+            'name': 'product_created_at',
+            'value': str(master_created_at)
+        })
+
+    if master_updated_at:
+        extended_attributes.append({
+            'name': 'product_updated_at',
+            'value': str(master_updated_at)
+        })
+
+    if master_published_at:
+        extended_attributes.append({
+            'name': 'product_published_at',
+            'value': str(master_published_at)
+        })
+
+    if master_handle:
+        extended_attributes.append({
+            'name': 'product_handle',
+            'value': str(master_handle)
+        })
+
+    if variant_id:
+        extended_attributes.append({
+            'name': 'shopify_variant_id',
+            'value': str(variant_id.split('/')[-1])
+        })
+
+    if variant_created_at:
+        extended_attributes.append({
+            'name': 'variant_created_at',
+            'value': str(variant_created_at)
+        })
+
+    if variant_updated_at:
+        extended_attributes.append({
+            'name': 'variant_updated_at',
+            'value': str(variant_updated_at)
+        })
+
+    if variant_inventory_management:
+        extended_attributes.append({
+            'name': 'inventory_management',
+            'value': str(variant_inventory_management)
+        })
+
+    if variant_inventory_policy:
+        extended_attributes.append({
+            'name': 'inventory_policy',
+            'value': str(variant_inventory_policy)
+        })
+
+    if variant_fulfillment_service:
+        extended_attributes.append({
+            'name': 'fulfillment_service',
+            'value': str(variant_fulfillment_service)
+        })
+
+    if variant_inventory_item:
+        extended_attributes.append({
+            'name': 'inventory_item_id',
+            'value': str(variant_inventory_item.split('/')[-1])
+        })
+
+    return extended_attributes
+
+
+def variant_categories(tags):
+    categories = [{
+        'path': 'All'
     }]
 
-    tags = [tag.strip().lower() for tag in tags.split(',')]
-    if tags:
-        for main_category in CATEGORIES:
-            if main_category in tags:
-                build_categ(tags, main_category, product_categories, category_builder)
-    return product_categories, category_builder
+    for main_category in CATEGORIES:
+        if main_category in tags:
+            categories += build_categories(main_category, tags)
+
+    return categories
 
 
-def build_categ(tags, main_category, product_categories, category_builder):
-    path = f"All > {main_category.capitalize()}"
+def build_categories(main_category, tags):
+    def defined_in(categories, path):
+        return next(filter(lambda c: c['path'] == path, categories), None)
+
+    product_categories = []
+    path = f'All > {main_category.capitalize()}'
     product_categories.append({
-        "path": path,
-        "is_main": True
+        'path': path,
+        'is_main': True
     })
 
-    if path not in category_builder:
-        category_builder[path] = {
+    global TRANSFORMED_CATEGORIES # pylint: disable=W0603
+    if not defined_in(TRANSFORMED_CATEGORIES, path):
+        TRANSFORMED_CATEGORIES.append({
             'path': path,
             'is_main': True
-        }
+        })
 
     for sub_category in CATEGORIES[main_category]:
         if sub_category in tags:
-            path = f"All > {main_category.capitalize()} > {CATEGORIES[main_category][sub_category]}"
+            sub_path = f'{path} > {CATEGORIES[main_category][sub_category]}'
+
             product_categories.append({
-                "path": path
+                'path': sub_path
             })
 
-            if path not in category_builder:
-                category_builder[path] = {
-                    'path': path,
+            if not defined_in(TRANSFORMED_CATEGORIES, sub_path):
+                TRANSFORMED_CATEGORIES.append({
+                    'path': sub_path,
                     'is_main': False
-                }
-
-
-def build_categ_from_collections(product_collections, category_builder):
-    product_categories = [{
-        "path": "All"
-    }]
-
-    collections = _get_non_null_field(product_collections, 'edges', {})
-
-    if collections:
-        first_collection = True
-        for collection_node in collections:
-            collection = str(collection_node['node']['title'])
-            if first_collection:
-                product_categories.append({
-                    "path": f"All > {collection}",
-                    "is_main": True
                 })
-                first_collection = False
-            else:
-                product_categories.append({
-                    "path": f"All > {collection}"
-                })
-            category_title = str(collection.replace(' ', '')).lower()
-            if not category_title in category_builder:
-                category_builder[category_title] = collection
-    return product_categories, category_builder
+
+    return product_categories
 
 
-def format_with_metafields(product):
-    '''
-    Function used to extract metafields data, if there is no metafield data. -- we skip this product.
+def translate_attributes(transformed_variant, translations):
+    title_translation = next(filter(lambda t: t['key'] == 'title', translations), None)
+    body_html_translation = next(filter(lambda t: t['key'] == 'body_html', translations), None)
 
-    Assumption:
-    This integration works under an assumption that we have data that could be parsible in shopify metafields.
-    If it doesn't work as expected -- we are going to skip it.
-    '''
-    product_id = product['variant_group_id']
-    metafields = get_metafields(product_id)
-    for field in metafields:
-        if field.get('namespace', '') == 'product':
-            ## This is the string value that is expected to be inserted and right format to be
-            ## Converted to JSON.
-            value = json.loads(field.get('value', '{}'))
+    if title_translation:
+        transformed_variant['title'] = title_translation.get('value', '') or ''
+        transformed_variant['caption'] = title_translation.get('value', '') or ''
 
-            mfg = value.get("mfg", {})
-            if "factory_code" in mfg:
-                _append_if_exists(product["extended_attributes"], mfg["factory_code"], "mfg_factory_code")
-            if "origin" in mfg:
-                _append_if_exists(product["extended_attributes"], mfg["origin"], "mfg_origin")
-            if "made_in" in mfg:
-                _append_if_exists(product["extended_attributes"], mfg["made_in"], "mfg_origin")
+    if body_html_translation:
+        transformed_variant['description'] = remove_tags(body_html_translation.get('value', '') or '')
 
-            brim = value.get("brim", {})
-            if "category" in brim:
-                _append_if_exists(product["extended_attributes"], brim["category"], "brim_category")
-            if "dimension" in brim:
-                _append_if_exists(product["extended_attributes"], brim["dimension"], "brim_dimension")
-
-            crown = value.get("crown", {})
-            if "type" in crown:
-                _append_if_exists(product["extended_attributes"], crown["type"], "crown_type")
-            if "dimension" in crown:
-                _append_if_exists(product["extended_attributes"], crown["dimension"], "crown_dimension")
-
-    return product
+    return transformed_variant
 
 
-def update_dynamodb_table(dynamodb, product_id, variant_id, netsuite_internal_id, inv_item_id):
-    insert_product_variant_data(dynamodb, str(variant_id), str(netsuite_internal_id), str(product_id), str(inv_item_id))
-
-
-def add_extended_attributes():
-    return False
-
-
-def add_images():
-    return False
-
-
-def _load_json_file(filename):
-    with open(os.path.join(os.path.abspath(os.path.dirname(__file__)), filename)) as file:
-        return json.load(file)
-
-
-def _get_non_null_field(array, field, default_value):
-    value = array.get(field)
-    return default_value if value is None else value
-
-
-def _remove_tags(text):
+def remove_tags(text):
     return TAG_RE.sub('', text)
 
 
-def _append_if_exists(array, value, name):
-    if value and array:
-        array.append({
-            "name": name,
-            "value": str(value)
-            })
-
-
-def send_to_queue(product_id, variant_id, inv_item_id):
-    message = {
-        'product_id': str(product_id),
-        'variant_id': str(variant_id),
-        'inv_item_id': str(inv_item_id),
-    }
-    sqs_handler = SqsHandler(queue_name=QUEUE_NAME)
-    sqs_handler.push_message(message_group_id=message['variant_id'], message=json.dumps(message))
-    LOGGER.info(f'Message pushed to SQS: {sqs_handler.queue_name}')
+def maybe(func):
+    def wrapper(arg):
+        return None if arg is None else func(arg)
+    return wrapper

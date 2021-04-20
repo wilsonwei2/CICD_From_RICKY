@@ -1,8 +1,6 @@
-import os
 import re
 
 TAG_RE = re.compile(r'<[^>]+>')
-INVENTORY_QUEUE_NAME = os.environ.get('SQS_INVENTORY_QUEUE_NAME', 'frankandoak-set-shopify-inventory-location.fifo')
 CATEGORIES = {
     "guys": {
         "teesandbasics": "Tees + Graphics",

@@ -6,7 +6,7 @@ from param_store.client import ParamStore
 class ParamStoreConfig:
     param_store = None
     shopify_config = None
-    categories_map = None
+    newstore_config = None
 
     def __init__(self, tenant, stage):
         self.tenant = tenant
@@ -22,7 +22,7 @@ class ParamStoreConfig:
             self.shopify_config = json.loads(self.get_param_store().get_param('shopify'))
         return self.shopify_config
 
-    def get_categories_map(self):
-        if not self.categories_map:
-            self.categories_map = json.loads(self.get_param_store().get_param('categories_map'))
-        return self.categories_map
+    def get_newstore_config(self):
+        if not self.newstore_config:
+            self.newstore_config = json.loads(self.get_param_store().get_param('newstore'))
+        return self.newstore_config

@@ -10,7 +10,7 @@ logger.setLevel(logging.INFO)
 
 
 class NewStoreConnector(object):
-    def __init__(self, tenant, context, username, password, host=None, raise_errors=False):
+    def __init__(self, tenant, context, username=None, password=None, host=None, raise_errors=False):
         self.newstore_adapter = NewStoreAdapter(tenant, context, username, password, host)
         self.host = host if host else os.environ.get('newstore_url_api')
         self.raise_errors = raise_errors
@@ -43,7 +43,6 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
-
     def get_customer_orders(self, customer_id):
         url = 'https://%s/v0/d/consumer_profiles/%s/orders?count=2000' % (self.host, customer_id)
         try:
@@ -53,7 +52,6 @@ class NewStoreConnector(object):
                 raise ns_err
             return None
         return response.json().get('items', [])
-
 
     def get_order(self, order_id):
         url = 'https://%s/v0/c/orders/%s' % (self.host, order_id)
@@ -76,10 +74,21 @@ class NewStoreConnector(object):
         url = 'https://%s/v0/d/fulfill_order' % (self.host)
         try:
             response = self.newstore_adapter.post_request(url, order_data)
-        except NewStoreAdapterException as ns_err:
-            if raise_error or self.raise_errors:
+        except Exception as ns_err:
+            error = (ns_err.args[0])
+            args = json.loads(error)
+            if args.get('error_code') == 'same_order_injection_with_different_data':
+                logger.info(args.get('message'))
+                logger.info('Sending 200 Response to the order that is already processed')
+                return {
+                    'error_code': 'same_order_injection_with_different_data',
+                    'body': 'order processed already in Newstore'
+                }
+
+            elif raise_error or self.raise_errors:
                 raise
             return None
+
         return response.json()
 
     def get_return(self, order_id, return_id):
@@ -122,7 +131,6 @@ class NewStoreConnector(object):
                 raise
             return None
         return response.json()
-
 
     def get_payments(self, account_id):
         url = 'https://%s/v0/c/payments/accounts/%s' % (self.host, str(account_id))
@@ -182,7 +190,6 @@ class NewStoreConnector(object):
                 return None
             return response.json()
         return None
-
 
     def get_consumer(self, email, offset=0):
         url = 'https://%s/v0/d/consumer_profiles' % (self.host)
@@ -244,7 +251,6 @@ class NewStoreConnector(object):
         except NewStoreAdapterException:
             return False
         return True
-    
 
     ###
     # Utilized when rejecting the whole fulfillment request
@@ -255,6 +261,7 @@ class NewStoreConnector(object):
     # params auth: Authentication
     # params items_json: Is a simple array with product ids/sku
     ###
+
     def send_rejection(self, reason, ff_id, items_json=[]):
         response_json = {
             'rejection_reason': reason,
@@ -295,6 +302,26 @@ class NewStoreConnector(object):
         return True
 
     ###
+    # Utilized when cancelling part of the fulfillment request
+    # params ff_id: fulfillment request id
+    # params items_json: Is a simple array with product ids
+    ###
+    def send_item_cancelation(self, ff_id, items_json=[]):
+        request_json = {
+            'product_ids': items_json
+        }
+
+        url = 'https://%s/v0/d/fulfillment_requests/%s/canceled_items' % (self.host, ff_id)
+        try:
+            self.newstore_adapter.post_request(url, request_json)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return False
+        return True
+
+
+    ###
     # params response_json: it's the shipping details and must be in the following format
     # {
     #   'line_items': [
@@ -319,7 +346,6 @@ class NewStoreConnector(object):
                 raise
             return False
         return True
-
 
     # Send GET request to /fulfillment_requests/{ff_id}/shipment
     def get_shipments(self, ff_id):
@@ -360,6 +386,22 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
+    def create_inventory_count_task(self, store_id, count_task_payload):
+        url = 'https://%s/v0/i/inventory/stores/%s/count_tasks' % (self.host, store_id)
+        try:
+            response = self.newstore_adapter.post_request(url, count_task_payload)
+        except NewStoreAdapterException:
+            return None
+        return response.json()
+
+    def get_inventory_count_task(self, inv_count_id):
+        url = 'https://%s/v0/i/inventory/count_tasks/%s' % (self.host, inv_count_id)
+        try:
+            response = self.newstore_adapter.get_request(url)
+        except NewStoreAdapterException:
+            return None
+        return response.json()
+
     def get_refund(self, order_id, refund_id):
         url = 'https://%s/v0/d/orders/%s/refunds/%s' % (self.host, order_id, refund_id)
         try:
@@ -380,7 +422,6 @@ class NewStoreConnector(object):
             return None
         return response.json().get('refunds', [])
 
-
     def create_refund(self, order_id, refund_json):
         url = 'https://%s/v0/d/orders/%s/refunds' % (self.host, order_id)
         try:
@@ -391,14 +432,12 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
-
     def get_integrations(self):
         url = 'https://%s/api/v1/org/integrations/eventstream' % (self.host)
         logger.info(
             'Getting integrations values from newstore %s', url)
         response = self.newstore_adapter.get_request(url)
         return response.json()
-
 
     def get_integration(self, name):
         url = 'https://%s/api/v1/org/integrations/eventstream/%s' % (self.host, name)
@@ -407,20 +446,22 @@ class NewStoreConnector(object):
         response = self.newstore_adapter.get_request(url)
         return response.json()
 
-
-    def create_integration(self, name, callback):
+    def create_integration(self, name, callback, filters=None):
         url = 'https://%s/api/v1/org/integrations/eventstream' % (self.host)
         logger.info(
             'Creating integration %s with newstore %s', name, url)
         payload = {
             'id': name,
-            'callback_url': callback,
+            'callback_parameters': {'callback_url': callback},
             'integration_type': 'permanent'
         }
+
+        if filters:
+            payload['filter_conditions'] = filters
+
         logger.info('Webhook info:\n%s', json.dumps(payload))
         response = self.newstore_adapter.post_request(url, payload)
         return response.json()
-
 
     def start_integration(self, name):
         url = 'https://%s/api/v1/org/integrations/eventstream/%s/_start' % (self.host, name)
@@ -428,7 +469,6 @@ class NewStoreConnector(object):
             'Starting integration %s with newstore', name)
         response = self.newstore_adapter.post_request(url, {})
         return response.json()
-
 
     def create_asn(self, asn):
         url = 'https://%s/v0/i/inventory/asns' % (self.host)
@@ -440,7 +480,6 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
-
     def get_asn(self, asn_id):
         url = 'https://%s/v0/i/inventory/asns/%s' % (self.host, asn_id)
         logger.info('Getting ASN from newstore %s', url)
@@ -448,17 +487,37 @@ class NewStoreConnector(object):
         return response.json()
 
 
+    def get_asns_by_store(self, store_id, status='open'):
+        url = f'https://{self.host}/v0/i/inventory/stores/{store_id}/asns'
+        status = {
+            'status': status
+        }
+        logger.info('Getting ASN list from Newstore %s', url)
+        response = self.newstore_adapter.get_request(url, search_json=status)
+        return response.json()
+
     def extend_grace_period(self, order_id):
         """ Extend orders grace period to datetime - PRIVATE API """
         url = 'https://%s/_/v0/hq/customer_orders/%s/_extend_grace_period' % (self.host, order_id)
         try:
             response = self.newstore_adapter.post_request(url, {})
-        except NewStoreAdapterException as ns_err:
+        except Exception as ns_err:
             if self.raise_errors:
                 raise ns_err
             return None
         return response.json()
 
+    def extend_grace_period_ns_order(self, order_id):
+        """ Extend orders grace period to datetime - PRIVATE API """
+        url = 'https://%s/_/v0/hq/customer_orders/%s/_extend_grace_period' % (self.host, order_id)
+        try:
+            response = self.newstore_adapter.post_request(url, {})
+        except Exception as ns_err:
+            if self.raise_errors:
+                raise ns_err
+            else:
+                return ns_err
+        return response.json()
 
     def cancel_order(self, order_id):
         """ Cancel specific order - PRIVATE API """
@@ -471,6 +530,41 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
+    def cancel_ns_order(self, order_id, reason, note):
+        """ Cancel specific order - PRIVATE API """
+        url = 'https://%s/_/v0/hq/customer_orders/%s/cancellation' % (self.host, order_id)
+        try:
+            info = {
+                "reason": reason,
+                "note": note
+            }
+            resp = self.newstore_adapter.post_request(url, info)
+            logger.info(f'response from cancel API is {resp}')
+            response = resp.json()
+            logger.info(f'response after JSON conversion is {response}')
+            if response.get('success') == 'true' or response.get('success') is True:
+                return True
+            elif response.get('error', '').get('code', '') == 'order_already_canceled':
+                logger.info('Order is already cancelled, dummying up 200 response to release the order')
+                return True
+            else:
+                return False
+        except NewStoreAdapterException as ns_err:
+            if self.raise_errors:
+                raise ns_err
+            return False
+
+    def add_order_notes(self, order_id, order_notes):
+        """ Extend orders grace period to datetime - PRIVATE API """
+        url = 'https://%s/v0/d/orders/%s/notes' % (self.host, order_id)
+        try:
+            info = order_notes
+            response = self.newstore_adapter.post_request(url, info)
+        except Exception as ns_err:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
 
     def set_order_cancellation_information(self, order_id, reason, note=None):
         """ Set information about order cancellation - PRIVATE API """
@@ -486,7 +580,6 @@ class NewStoreConnector(object):
                 raise ns_err
             return None
         return response.json()
-
 
     # params request_json: it's the pickup location and cart contents and must be in the following format
     # {
@@ -513,6 +606,7 @@ class NewStoreConnector(object):
     # }
     # Send POST request to /in_store_pickup_options
     ###
+
     def get_in_store_pickup_options(self, request_json):
         """ Retrieve in-store pickup offer tokens based on geo location, items and search radius """
         url = 'https://%s/v0/d/in_store_pickup_options' % (self.host)
@@ -554,3 +648,88 @@ class NewStoreConnector(object):
                 raise ns_err
             return None
         return response.json()
+
+    def get_reason_codes(self):
+        url = 'https://%s/api/v1/org/config/reason_code_types/cancellations/reason_codes' % (self.host)
+        try:
+            response = self.newstore_adapter.get_request(url)
+        except NewStoreAdapterException as ns_err:
+            if self.raise_errors:
+                raise ns_err
+            return None
+        return response.json()
+
+    def create_transfer_order(self, transfer_order):
+        url = 'https://%s/v0/i/inventory/transfer_orders' % (self.host)
+        try:
+            response = self.newstore_adapter.post_request(url, transfer_order)
+        except NewStoreAdapterException as ns_err:
+            if self.raise_errors:
+                raise ns_err
+            return None
+        return response.json()
+
+    def get_transfer_order(self, transfer_order_id):
+        url = 'https://%s/v0/i/inventory/transfer_orders/%s' % (self.host, transfer_order_id)
+        logger.info('Getting Transfer Order from newstore %s', url)
+        response = self.newstore_adapter.get_request(url)
+        return response.json()
+
+    def get_locations(self):
+        url = 'https://%s/v0/locations' % (self.host)
+        try:
+            response = self.newstore_adapter.get_request(url)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
+
+    def enable_inventory_master(self, location_id):
+        url = 'https://%s/v0/locations/%s/inventory_master/_enable' % (self.host, location_id)
+        try:
+            response = self.newstore_adapter.post_request(url, {})
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
+
+    def set_transfer_shipping_config(self, data):
+        url = 'https://%s/v0/i/inventory/transfer_shipping_config' % (self.host)
+        try:
+            response = self.newstore_adapter.post_request(url, data)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
+
+    def get_stock_locations(self):
+        url = 'https://%s/v0/stock_locations' % (self.host)
+        try:
+            response = self.newstore_adapter.get_request(url)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
+
+    def get_availability_groups(self):
+        url = 'https://%s/v0/d/availabilities/groups' % (self.host)
+        try:
+            response = self.newstore_adapter.get_request(url)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
+
+    def graphql(self, query, params={}):
+        try:
+            response = self.newstore_adapter.graphql_request(query, params)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response

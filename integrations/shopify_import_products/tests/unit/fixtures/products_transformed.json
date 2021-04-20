@@ -1,510 +1,739 @@
 {
-    "head": {
-        "locale": "en-US",
-        "shop": "storefront-catalog-en",
-        "is_master": true
-    },
-    "items": [
+  "head": {
+    "locale": "en-US",
+    "shop": "storefront-catalog-en",
+    "is_master": true
+  },
+  "items": [
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-L",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
         {
-            "brand": "UNTUCKit",
-            "is_searchable": true,
-            "is_published": true,
-            "show_in_listing": true,
-            "product_id": "UT-14-31028-SM",
-            "variant_group_id": "6502999365",
-            "external_identifiers": [
-                {
-                    "type": "sku",
-                    "value": "UT-14-31028-SM"
-                },
-                {
-                    "type": "shopify_inventory_item_id",
-                    "value": "10576415173"
-                }
-            ],
-            "title": "Abrazo",
-            "caption": "Abrazo",
-            "description": "A cobalt blue gingham that's great from the office to after hours. The Abrazo is made of lightweight fabric and includes a spread collar that adds a traditional touch.\n\nFEATURES:\n\n\nSemi-spread\u00a0collar\nChest pocket\nSignature navy blue sail logo\nContrasting navy blue stitching on the buttons and cuffs\nAlso available in Tall sizing: 2\" longer in sleeve and 2\" longer in body length\n\n\nFABRIC:\n\n100% Ultra-soft cotton poplin - Lightly packed, lightweight fabric with a fine smooth (almost silky) weave.\n",
-            "shipping_weight_unit": "lb",
-            "shipping_weight_value": 2,
-            "shipping_dimension_length": 0.0,
-            "shipping_dimension_width": 0.0,
-            "shipping_dimension_height": 0.0,
-            "shipping_dimension_unit": "cm",
-            "images": [
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_118.jpg?v=1476996010",
-                    "is_main": true,
-                    "alt_text": ""
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_120_cf458981-feb1-4e1f-99f7-d1b76e24673a.jpg?v=1476996011",
-                    "alt_text": "Close up",
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_109_83d7df36-b905-4e7b-8a75-02dd2d2eeea9.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_107_1.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_108.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/ABRAZO_UNTUCKIT_BUTTON-DOWN_SHIRT_3.jpg?v=1476996011",
-                    "alt_text": "Close up grid",
-                    "is_color_swatch": false
-                }
-            ],
-            "variation_color_value": "Regular Fit",
-            "variation_size_value": "Small",
-            "material": "",
-            "google_category": "none",
-            "categories": [
-                {
-                    "path": "All"
-                }
-            ],
-            "extended_attributes": [],
-            "keywords": [
-                "fit-regular-fit",
-                "fit-slim-fit",
-                "fit-tall-regular-fit",
-                "fit-tall-slim-fit",
-                "Gingham",
-                "size-large",
-                "size-medium",
-                "size-small",
-                "size-x-large",
-                "size-xx-large",
-                "size-xxx-l-classic",
-                "size-xxx-large",
-                "Tall"
-            ],
-            "tax_class_id": "",
-            "manufacturer": ""
+          "type": "sku",
+          "value": "1120431-4BO-L"
         },
         {
-            "brand": "UNTUCKit",
-            "is_searchable": true,
-            "is_published": true,
-            "show_in_listing": true,
-            "product_id": "UT-14-31028-MD",
-            "variant_group_id": "6502999365",
-            "external_identifiers": [
-                {
-                    "type": "sku",
-                    "value": "UT-14-31028-MD"
-                },
-                {
-                    "type": "shopify_inventory_item_id",
-                    "value": "10576415237"
-                }
-            ],
-            "title": "Abrazo",
-            "caption": "Abrazo",
-            "description": "A cobalt blue gingham that's great from the office to after hours. The Abrazo is made of lightweight fabric and includes a spread collar that adds a traditional touch.\n\nFEATURES:\n\n\nSemi-spread\u00a0collar\nChest pocket\nSignature navy blue sail logo\nContrasting navy blue stitching on the buttons and cuffs\nAlso available in Tall sizing: 2\" longer in sleeve and 2\" longer in body length\n\n\nFABRIC:\n\n100% Ultra-soft cotton poplin - Lightly packed, lightweight fabric with a fine smooth (almost silky) weave.\n",
-            "shipping_weight_unit": "lb",
-            "shipping_weight_value": 2,
-            "shipping_dimension_length": 0.0,
-            "shipping_dimension_width": 0.0,
-            "shipping_dimension_height": 0.0,
-            "shipping_dimension_unit": "cm",
-            "images": [
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_118.jpg?v=1476996010",
-                    "is_main": true,
-                    "alt_text": ""
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_120_cf458981-feb1-4e1f-99f7-d1b76e24673a.jpg?v=1476996011",
-                    "alt_text": "Close up",
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_109_83d7df36-b905-4e7b-8a75-02dd2d2eeea9.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_107_1.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_108.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/ABRAZO_UNTUCKIT_BUTTON-DOWN_SHIRT_3.jpg?v=1476996011",
-                    "alt_text": "Close up grid",
-                    "is_color_swatch": false
-                }
-            ],
-            "variation_color_value": "Regular Fit",
-            "variation_size_value": "Medium",
-            "material": "",
-            "google_category": "none",
-            "categories": [
-                {
-                    "path": "All"
-                }
-            ],
-            "extended_attributes": [],
-            "keywords": [
-                "fit-regular-fit",
-                "fit-slim-fit",
-                "fit-tall-regular-fit",
-                "fit-tall-slim-fit",
-                "Gingham",
-                "size-large",
-                "size-medium",
-                "size-small",
-                "size-x-large",
-                "size-xx-large",
-                "size-xxx-l-classic",
-                "size-xxx-large",
-                "Tall"
-            ],
-            "tax_class_id": "",
-            "manufacturer": ""
-        },
-        {
-            "brand": "UNTUCKit",
-            "is_searchable": true,
-            "is_published": true,
-            "show_in_listing": true,
-            "product_id": "UT-14-31028-LG",
-            "variant_group_id": "6502999365",
-            "external_identifiers": [
-                {
-                    "type": "sku",
-                    "value": "UT-14-31028-LG"
-                },
-                {
-                    "type": "shopify_inventory_item_id",
-                    "value": "10576415301"
-                }
-            ],
-            "title": "Abrazo",
-            "caption": "Abrazo",
-            "description": "A cobalt blue gingham that's great from the office to after hours. The Abrazo is made of lightweight fabric and includes a spread collar that adds a traditional touch.\n\nFEATURES:\n\n\nSemi-spread\u00a0collar\nChest pocket\nSignature navy blue sail logo\nContrasting navy blue stitching on the buttons and cuffs\nAlso available in Tall sizing: 2\" longer in sleeve and 2\" longer in body length\n\n\nFABRIC:\n\n100% Ultra-soft cotton poplin - Lightly packed, lightweight fabric with a fine smooth (almost silky) weave.\n",
-            "shipping_weight_unit": "lb",
-            "shipping_weight_value": 2,
-            "shipping_dimension_length": 0.0,
-            "shipping_dimension_width": 0.0,
-            "shipping_dimension_height": 0.0,
-            "shipping_dimension_unit": "cm",
-            "images": [
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_118.jpg?v=1476996010",
-                    "is_main": true,
-                    "alt_text": ""
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_120_cf458981-feb1-4e1f-99f7-d1b76e24673a.jpg?v=1476996011",
-                    "alt_text": "Close up",
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_109_83d7df36-b905-4e7b-8a75-02dd2d2eeea9.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_107_1.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/UNTUCKIT_108.jpg?v=1476996010",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/ABRAZO_UNTUCKIT_BUTTON-DOWN_SHIRT_3.jpg?v=1476996011",
-                    "alt_text": "Close up grid",
-                    "is_color_swatch": false
-                }
-            ],
-            "variation_color_value": "Regular Fit",
-            "variation_size_value": "Large",
-            "material": "",
-            "google_category": "none",
-            "categories": [
-                {
-                    "path": "All"
-                }
-            ],
-            "extended_attributes": [],
-            "keywords": [
-                "fit-regular-fit",
-                "fit-slim-fit",
-                "fit-tall-regular-fit",
-                "fit-tall-slim-fit",
-                "Gingham",
-                "size-large",
-                "size-medium",
-                "size-small",
-                "size-x-large",
-                "size-xx-large",
-                "size-xxx-l-classic",
-                "size-xxx-large",
-                "Tall"
-            ],
-            "tax_class_id": "",
-            "manufacturer": ""
-        },
-        {
-            "brand": "UNTUCKit",
-            "is_searchable": true,
-            "is_published": true,
-            "show_in_listing": true,
-            "product_id": "UT-14-30314-SM",
-            "variant_group_id": "6502987973",
-            "external_identifiers": [
-                {
-                    "type": "sku",
-                    "value": "UT-14-30314-SM"
-                },
-                {
-                    "type": "shopify_inventory_item_id",
-                    "value": "10576353029"
-                }
-            ],
-            "title": "Aglianico - FINAL SALE",
-            "caption": "Aglianico - FINAL SALE",
-            "description": "\n\n\n\nA lightweight classic style in bright, primary colors. A plaid so nice we made it twice, with both long sleeves and now short sleeves.\nFINAL SALE: THIS ITEM IS FINAL SALE AND CAN ONLY BE EXCHANGED.\nFEATURES:\n\n\nSpread collar\nChest pocket\nSignature navy blue sail logo\nContrast navy blue stitching on buttons and cuffs\n\n\nFABRIC:\n\n\n100% lightweight cotton - Woven with fine yarn and guaranteed to become your warm-weather go-to shirt.\n\n",
-            "shipping_weight_unit": "oz",
-            "shipping_weight_value": 0.66,
-            "shipping_dimension_length": 0.0,
-            "shipping_dimension_width": 0.0,
-            "shipping_dimension_height": 0.0,
-            "shipping_dimension_unit": "cm",
-            "images": [
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT1.jpg?v=1476995914",
-                    "is_main": true,
-                    "alt_text": ""
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/Untuckit_April_88.jpg?v=1476995915",
-                    "alt_text": "Close up",
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT3.jpg?v=1476995914",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT6.jpg?v=1476995914",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/Extra_20.jpg?v=1476995915",
-                    "alt_text": "Close up grid",
-                    "is_color_swatch": false
-                }
-            ],
-            "variation_color_value": "Regular Fit",
-            "variation_size_value": "Small",
-            "material": "",
-            "google_category": "none",
-            "categories": [
-                {
-                    "path": "All"
-                }
-            ],
-            "extended_attributes": [],
-            "keywords": [
-                "bis-inactive",
-                "final sale",
-                "fit-regular-fit",
-                "fit-slim-fit",
-                "Plaids",
-                "semi-spread collar",
-                "size-large",
-                "size-medium",
-                "size-small",
-                "size-x-large",
-                "size-xx-large",
-                "size-xxx-l-classic",
-                "size-xxx-large"
-            ],
-            "tax_class_id": "",
-            "manufacturer": ""
-        },
-        {
-            "brand": "UNTUCKit",
-            "is_searchable": true,
-            "is_published": true,
-            "show_in_listing": true,
-            "product_id": "UT-14-30315-SM",
-            "variant_group_id": "6502987973",
-            "external_identifiers": [
-                {
-                    "type": "sku",
-                    "value": "UT-14-30315-SM"
-                },
-                {
-                    "type": "shopify_inventory_item_id",
-                    "value": "10576353093"
-                }
-            ],
-            "title": "Aglianico - FINAL SALE",
-            "caption": "Aglianico - FINAL SALE",
-            "description": "\n\n\n\nA lightweight classic style in bright, primary colors. A plaid so nice we made it twice, with both long sleeves and now short sleeves.\nFINAL SALE: THIS ITEM IS FINAL SALE AND CAN ONLY BE EXCHANGED.\nFEATURES:\n\n\nSpread collar\nChest pocket\nSignature navy blue sail logo\nContrast navy blue stitching on buttons and cuffs\n\n\nFABRIC:\n\n\n100% lightweight cotton - Woven with fine yarn and guaranteed to become your warm-weather go-to shirt.\n\n",
-            "shipping_weight_unit": "lb",
-            "shipping_weight_value": 2,
-            "shipping_dimension_length": 0.0,
-            "shipping_dimension_width": 0.0,
-            "shipping_dimension_height": 0.0,
-            "shipping_dimension_unit": "cm",
-            "images": [
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT1.jpg?v=1476995914",
-                    "is_main": true,
-                    "alt_text": ""
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/Untuckit_April_88.jpg?v=1476995915",
-                    "alt_text": "Close up",
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT3.jpg?v=1476995914",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT6.jpg?v=1476995914",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/Extra_20.jpg?v=1476995915",
-                    "alt_text": "Close up grid",
-                    "is_color_swatch": false
-                }
-            ],
-            "variation_color_value": "Slim Fit",
-            "variation_size_value": "Small",
-            "material": "",
-            "google_category": "none",
-            "categories": [
-                {
-                    "path": "All"
-                }
-            ],
-            "extended_attributes": [],
-            "keywords": [
-                "bis-inactive",
-                "final sale",
-                "fit-regular-fit",
-                "fit-slim-fit",
-                "Plaids",
-                "semi-spread collar",
-                "size-large",
-                "size-medium",
-                "size-small",
-                "size-x-large",
-                "size-xx-large",
-                "size-xxx-l-classic",
-                "size-xxx-large"
-            ],
-            "tax_class_id": "",
-            "manufacturer": ""
-        },
-        {
-            "brand": "UNTUCKit",
-            "is_searchable": true,
-            "is_published": true,
-            "show_in_listing": true,
-            "product_id": "UT-14-30314-MD",
-            "variant_group_id": "6502987973",
-            "external_identifiers": [
-                {
-                    "type": "sku",
-                    "value": "UT-14-30314-MD"
-                },
-                {
-                    "type": "shopify_inventory_item_id",
-                    "value": "10576353157"
-                }
-            ],
-            "title": "Aglianico - FINAL SALE",
-            "caption": "Aglianico - FINAL SALE",
-            "description": "\n\n\n\nA lightweight classic style in bright, primary colors. A plaid so nice we made it twice, with both long sleeves and now short sleeves.\nFINAL SALE: THIS ITEM IS FINAL SALE AND CAN ONLY BE EXCHANGED.\nFEATURES:\n\n\nSpread collar\nChest pocket\nSignature navy blue sail logo\nContrast navy blue stitching on buttons and cuffs\n\n\nFABRIC:\n\n\n100% lightweight cotton - Woven with fine yarn and guaranteed to become your warm-weather go-to shirt.\n\n",
-            "shipping_weight_unit": "lb",
-            "shipping_weight_value": 2,
-            "shipping_dimension_length": 0.0,
-            "shipping_dimension_width": 0.0,
-            "shipping_dimension_height": 0.0,
-            "shipping_dimension_unit": "cm",
-            "images": [
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT1.jpg?v=1476995914",
-                    "is_main": true,
-                    "alt_text": ""
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/Untuckit_April_88.jpg?v=1476995915",
-                    "alt_text": "Close up",
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT3.jpg?v=1476995914",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/AGLIANCO_BUTTON-DOWN_SHIRT_UNTUCKIT6.jpg?v=1476995914",
-                    "alt_text": null,
-                    "is_color_swatch": false
-                },
-                {
-                    "url": "https://cdn.shopify.com/s/files/1/1556/9441/products/Extra_20.jpg?v=1476995915",
-                    "alt_text": "Close up grid",
-                    "is_color_swatch": false
-                }
-            ],
-            "variation_color_value": "Regular Fit",
-            "variation_size_value": "Medium",
-            "material": "",
-            "google_category": "none",
-            "categories": [
-                {
-                    "path": "All"
-                }
-            ],
-            "extended_attributes": [],
-            "keywords": [
-                "bis-inactive",
-                "final sale",
-                "fit-regular-fit",
-                "fit-slim-fit",
-                "Plaids",
-                "semi-spread collar",
-                "size-large",
-                "size-medium",
-                "size-small",
-                "size-x-large",
-                "size-xx-large",
-                "size-xxx-l-classic",
-                "size-xxx-large"
-            ],
-            "tax_class_id": "",
-            "manufacturer": ""
+          "type": "shopify_inventory_item_id",
+          "value": "41604116971676"
         }
-    ]
+      ],
+      "title": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "caption": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "description": "Bonjour, hi! No matter how you say it, as long as you wear it, do it, live it. Good Cotton for the concious consumer.\nSlim  fit\nSoft cotton jersey\n100% organic cotton\nModel measurements: height 6'1\", wears a size M, 32.\n",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "L",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034219164"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:43Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604116971676"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    },
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-M",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-M"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604117004444"
+        }
+      ],
+      "title": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "caption": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "description": "Bonjour, hi! No matter how you say it, as long as you wear it, do it, live it. Good Cotton for the concious consumer.\nSlim  fit\nSoft cotton jersey\n100% organic cotton\nModel measurements: height 6'1\", wears a size M, 32.\n",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "M",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034251932"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:36Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604117004444"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    },
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-S",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-S"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604117037212"
+        }
+      ],
+      "title": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "caption": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "description": "Bonjour, hi! No matter how you say it, as long as you wear it, do it, live it. Good Cotton for the concious consumer.\nSlim  fit\nSoft cotton jersey\n100% organic cotton\nModel measurements: height 6'1\", wears a size M, 32.\n",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "S",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034284700"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:50Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604117037212"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    },
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-XL",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-XL"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604117069980"
+        }
+      ],
+      "title": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "caption": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "description": "Bonjour, hi! No matter how you say it, as long as you wear it, do it, live it. Good Cotton for the concious consumer.\nSlim  fit\nSoft cotton jersey\n100% organic cotton\nModel measurements: height 6'1\", wears a size M, 32.\n",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "XL",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034317468"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:43Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604117069980"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    },
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-XS",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-XS"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604117102748"
+        }
+      ],
+      "title": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "caption": "\"Bon\" Organic Cotton T-Shirt In Navy",
+      "description": "Bonjour, hi! No matter how you say it, as long as you wear it, do it, live it. Good Cotton for the concious consumer.\nSlim  fit\nSoft cotton jersey\n100% organic cotton\nModel measurements: height 6'1\", wears a size M, 32.\n",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "XS",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034350236"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:47Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604117102748"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    }
+  ]
 }

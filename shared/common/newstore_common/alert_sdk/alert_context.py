@@ -1,13 +1,14 @@
-import json
 import logging
+import json
 import traceback
+
+from .alert_client import AlertClient
+from .alert import EventTrigger
 from typing import Callable, Any
 
-from .alert import EventTrigger
-from .alert_client import AlertClient
 from ..aws.context import FakeAwsContext
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class AlertContext:
@@ -39,7 +40,7 @@ class AlertContext:
     def set_id(self, unique_part: str):
         fix = f"{self.service}-{self.stage}"
         if fix in self.alert_id:
-            self.alert_id = self.alert_id + unique_part
+            self.alert_id += unique_part
         else:
             self.alert_id = f"{fix}_{self.alert_id}{unique_part}"
 
@@ -60,13 +61,11 @@ def start_alert():
             try:
                 r = inner(raw_data, context, alert_context)
             except Exception as e:
+                logger.info(f"alert handler got exception: {e}")
                 alert_context.error_stacktrace = e
                 alert_context.error_message = traceback.format_exception_only(type(e), e)[-1]
 
             if alert_context.error_stacktrace:
-                if not alert_context.alert_client:
-                    LOGGER.info(f"alert client not set. Continue without")
-                    raise alert_context.error_stacktrace
                 alert_context.alert_client.add_alert(
                     alert_id=alert_context.alert_id,
                     event_payload=alert_context.event_payload,

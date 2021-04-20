@@ -1,5 +1,6 @@
 import logging
 import json
+import re
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -118,9 +119,10 @@ def get_authorized_transactions(payments_info):
 
 
 def get_formated_phone(phone):
-    regex = r'^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$'
+    phone = '' if not phone else phone.replace(' ', '')
+    regex = r'^\(?(\+[0-9]{1,3})?\)?\D?\d?\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$'
     phone = phone if re.match(regex, phone) else '5555555555'
-    phone = re.sub(regex, r'\1-\2-\3', phone)
+    phone = re.sub(regex, r'\2-\3-\4', phone)
     return phone
 
 

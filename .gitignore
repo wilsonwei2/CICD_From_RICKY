@@ -140,3 +140,5 @@ dmypy.json
 
 # npm installed files
 node_modules/
+
+testconfig.local.json

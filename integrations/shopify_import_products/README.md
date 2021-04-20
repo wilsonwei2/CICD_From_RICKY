@@ -1,5 +1,23 @@
-Importing Shopify Web-products
+# Importing Shopify products
 
-### Doing a full import
+## Setup
 
-In order to do a full import, Please change the value of the the current updated at, last updated yet and page number to 1.
+Create an entry in AWS Systems Manager Params Store - `/frankandoak/[stage]/shopify`:
+
+    {
+      "shop": "***",
+      "username": "***",
+      "password": "***"
+    }
+
+Create an entry in AWS Systems Manager Params Store - `/frankandoak/[stage]/newstore`:
+
+    {
+      "host": "***",
+      "username": "***",
+      "password": "***"
+    }
+
+## Full import
+
+Set the Lambda environment variable `is_full=true` and start run it.

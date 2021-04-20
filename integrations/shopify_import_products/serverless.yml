@@ -25,8 +25,7 @@ provider:
     SQS_INVENTORY_DLQ_NAME: ${self:provider.tenant}-set-shopify-inventory-location-dlq.fifo
     SHOP: storefront-catalog-en
     namespace_metafields: products
-    products_per_page: '50'
-    is_full: 'False'
+    is_full: 'false'
     email_port: '587'
     meta_name: initialisation repository
     s3_bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
@@ -48,7 +47,7 @@ functions:
     name: ${self:provider.tenant}-shopify-import-products
     handler: shopify_import_products.aws.main.handler
     timeout: 900
-    memorySize: 256
+    memorySize: 1024
     events:
       - schedule:
           name: ${self:provider.environment.trigger_name}

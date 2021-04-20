@@ -28,6 +28,12 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         with open(filepath) as json_content:
             return json.load(json_content)
 
+    @staticmethod
+    def _load_jsonl_file(filename):
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'fixtures', filename)
+        with open(filepath) as jsonl_content:
+            return jsonl_content.read()
+
     def setUp(self):
         self.variables = {
             'url_image_placeholder': 'url_image_placeholder'
@@ -45,20 +51,33 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         from shopify_import_products.transformers import transform # pylint: disable=C0415
         self.transform = transform
 
-    @patch('shopify_import_products.transformers.transform.get_dynamodb_resource', autospec=True)
-    @patch('shopify_import_products.transformers.transform.get_metafields', autospec=True)
-    def test_transform(self, mock_get_metafields,
-                       mock_get_dynamodb_resource):
-        products_json = self._load_json_file('shopify_products.json')
-        products_json = products_json['products']
+    def test_transform(self):
+        products_jsonl = self._load_jsonl_file('shopify_products.jsonl')
         products_transformed = self._load_json_file('products_transformed.json')
         categories_transformed = self._load_json_file('categories_transformed.json')
 
-        mock_get_metafields.side_effect = [
-            [] for x in range(35)
-        ]
+        products, categories = self.transform.transform_products(products_jsonl)
 
-        products, categories = self.transform.transform_products(products_json)
+        self._assert_json(self, products, products_transformed)
+        self._assert_json(self, products_transformed, products)
+        self._assert_json(self, categories, categories_transformed)
+        self._assert_json(self, categories_transformed, categories)
+
+        prod_schema = self._load_json_file('products_schema.json')
+        cat_schema = self._load_json_file('categories_schema.json')
+
+        try:
+            validate(products, prod_schema)
+            validate(categories, cat_schema)
+        except Exception as ex:
+            raise self.failureException('{} raised'.format(ex))
+
+    def test_transform_fr(self):
+        products_jsonl = self._load_jsonl_file('shopify_products.jsonl')
+        products_transformed = self._load_json_file('products_transformed_fr.json')
+        categories_transformed = self._load_json_file('categories_transformed_fr.json')
+
+        products, categories = self.transform.transform_products(products_jsonl, 'fr-CA')
 
         self._assert_json(self, products, products_transformed)
         self._assert_json(self, products_transformed, products)
