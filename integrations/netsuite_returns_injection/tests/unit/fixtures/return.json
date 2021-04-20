@@ -1,0 +1,27 @@
+{
+    "id": "bfc4ee76-ac31-4a2e-870d-40c103c08bec",
+    "order_id": "fb398ea3-59db-4b2b-9445-522c05a237c1",
+    "returned_at": "2017-10-30T12:17:43.640Z",
+    "total_refund_amount": 99.95,
+    "total_refund_amount_adjusted": 99.95,
+    "total_refund_excl_tax": 83.29,
+    "total_refund_tax": 16.66,
+    "return_fee": 0,
+    "currency": "GBP",
+    "return_location_id": "001",
+    "items": [
+      {
+        "id": "75af87aa-2b6c-474d-9a68-719a34e557e1",
+        "product_id": "CM8246-600",
+        "item_condition": "Sellable",
+        "condition_code": 1,
+        "return_reason": "Other",
+        "return_code": 1,
+        "refund_excl_tax": 83.29,
+        "refund_tax": 16.66,
+        "refund_amount": 99.95,
+        "refund_amount_adjusted": 99.95,
+        "quantity": 1
+      }
+    ]
+}

@@ -1,0 +1,28 @@
+{
+    "order": {
+      "id": "b7a6bb66-f3d5-4baa-9b9d-e2b8db3f3d26",
+      "order_id": "fb398ea3-59db-4b2b-9445-522c05a237c1",
+      "returned_at": "2018-02-21T12:17:43.640Z",
+      "total_refund_amount": 68,
+      "total_refund_excl_tax": 68,
+      "total_refund_tax": 0,
+      "return_fee": 0,
+      "currency": "GBP",
+      "return_location_id": "001",
+      "items": [
+          {
+              "refund_amount_adjusted": 68,
+              "product_id": "4913",
+              "item_condition": "Sellable",
+              "condition_code": 1,
+              "refund_excl_tax": 68,
+              "refund_amount": 68,
+              "refund_tax": 0,
+              "id": "5e7f4eab-d5bf-4511-8cff-4085ad8ea650",
+              "quantity": 1
+          }
+      ],
+      "total_refund_amount_adjusted": 68,
+      "total_refund_excl_tax": 68
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "currency": "USD",
+    "return_id": "3dfcd335-24f9-452a-b86e-9795997d885d",
+    "returned_from": "a20ac63d-a310-41e2-a10c-0890ca97a8c8",
+    "return_items": [
+        {
+            "return_reason": "Fit - Too Large",
+            "item_condition": "Sellable",
+            "return_code": 1,
+            "product_id": "393", 
+            "condition_code": 1
+        }
+    ],
+    "refunded_amount": 71.62
+}
