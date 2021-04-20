@@ -1,0 +1,11 @@
+{
+    "head": {
+        "locale": "en-US",
+        "catalog": "storefront-catalog-en"
+    },
+    "items": [
+        {
+            "path": "All"
+        }
+    ]
+}

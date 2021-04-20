@@ -1,0 +1,739 @@
+{
+  "head": {
+    "locale": "fr-CA",
+    "shop": "storefront-catalog-fr",
+    "is_master": false
+  },
+  "items": [
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-L",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-L"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604116971676"
+        }
+      ],
+      "title": "T-shirt en coton bio «Bon» - Marine",
+      "caption": "T-shirt en coton bio «Bon» - Marine",
+      "description": "Ce qu'on fait parle souvent plus que ce qu'on dit. Parce que nous voulons tous faire notre part, et pas juste en parler, joignez le geste à la parole en portant fièrement ce vêtement en coton bio.Coupe étroiteCoton jersey doux100% coton bioLe modèle mesure 6'1\", porte une taille M, 32.",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "L",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034219164"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:43Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604116971676"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    },
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-M",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-M"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604117004444"
+        }
+      ],
+      "title": "T-shirt en coton bio «Bon» - Marine",
+      "caption": "T-shirt en coton bio «Bon» - Marine",
+      "description": "Ce qu'on fait parle souvent plus que ce qu'on dit. Parce que nous voulons tous faire notre part, et pas juste en parler, joignez le geste à la parole en portant fièrement ce vêtement en coton bio.Coupe étroiteCoton jersey doux100% coton bioLe modèle mesure 6'1\", porte une taille M, 32.",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "M",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034251932"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:36Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604117004444"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    },
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-S",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-S"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604117037212"
+        }
+      ],
+      "title": "T-shirt en coton bio «Bon» - Marine",
+      "caption": "T-shirt en coton bio «Bon» - Marine",
+      "description": "Ce qu'on fait parle souvent plus que ce qu'on dit. Parce que nous voulons tous faire notre part, et pas juste en parler, joignez le geste à la parole en portant fièrement ce vêtement en coton bio.Coupe étroiteCoton jersey doux100% coton bioLe modèle mesure 6'1\", porte une taille M, 32.",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "S",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034284700"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:50Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604117037212"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    },
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-XL",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-XL"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604117069980"
+        }
+      ],
+      "title": "T-shirt en coton bio «Bon» - Marine",
+      "caption": "T-shirt en coton bio «Bon» - Marine",
+      "description": "Ce qu'on fait parle souvent plus que ce qu'on dit. Parce que nous voulons tous faire notre part, et pas juste en parler, joignez le geste à la parole en portant fièrement ce vêtement en coton bio.Coupe étroiteCoton jersey doux100% coton bioLe modèle mesure 6'1\", porte une taille M, 32.",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "XL",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034317468"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:43Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604117069980"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    },
+    {
+      "brand": "Frank and Oak",
+      "is_searchable": true,
+      "is_published": true,
+      "show_in_listing": true,
+      "product_id": "1120431-4BO-XS",
+      "variant_group_id": "6630700777628",
+      "external_identifiers": [
+        {
+          "type": "sku",
+          "value": "1120431-4BO-XS"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "41604117102748"
+        }
+      ],
+      "title": "T-shirt en coton bio «Bon» - Marine",
+      "caption": "T-shirt en coton bio «Bon» - Marine",
+      "description": "Ce qu'on fait parle souvent plus que ce qu'on dit. Parce que nous voulons tous faire notre part, et pas juste en parler, joignez le geste à la parole en portant fièrement ce vêtement en coton bio.Coupe étroiteCoton jersey doux100% coton bioLe modèle mesure 6'1\", porte une taille M, 32.",
+      "shipping_weight_unit": "kg",
+      "shipping_weight_value": 0.45,
+      "shipping_dimension_length": 0.0,
+      "shipping_dimension_width": 0.0,
+      "shipping_dimension_height": 0.0,
+      "shipping_dimension_unit": "cm",
+      "images": [
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.1234_1.jpg?v=1616786787",
+          "is_main": true,
+          "alt_text": ""
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        },
+        {
+          "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
+          "alt_text": "",
+          "is_color_swatch": false
+        }
+      ],
+      "variation_color_value": "",
+      "variation_size_value": "XS",
+      "material": "",
+      "google_category": "none",
+      "categories": [
+        {
+          "path": "All"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "product_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "product_updated_at",
+          "value": "2021-04-14T12:53:40Z"
+        },
+        {
+          "name": "product_published_at",
+          "value": "2021-04-08T20:02:14Z"
+        },
+        {
+          "name": "product_handle",
+          "value": "bon-organic-cotton-t-shirt-in-navy-1120431-4bo"
+        },
+        {
+          "name": "shopify_variant_id",
+          "value": "39510034350236"
+        },
+        {
+          "name": "variant_created_at",
+          "value": "2021-03-26T19:26:27Z"
+        },
+        {
+          "name": "variant_updated_at",
+          "value": "2021-04-08T20:03:47Z"
+        },
+        {
+          "name": "inventory_management",
+          "value": "SHOPIFY"
+        },
+        {
+          "name": "inventory_policy",
+          "value": "DENY"
+        },
+        {
+          "name": "fulfillment_service",
+          "value": "manual"
+        },
+        {
+          "name": "inventory_item_id",
+          "value": "41604117102748"
+        }
+      ],
+      "keywords": [
+        "attributes_hierarchy:Men-Lightweight Knits",
+        "custitem_fao_body:T-Shirt",
+        "custitem_fao_body_length:Regular",
+        "custitem_fao_brand:Frank and Oak",
+        "custitem_fao_closure:No Closure",
+        "custitem_fao_collar:Collarless",
+        "custitem_fao_color_code:4BO",
+        "custitem_fao_color_family:Blue",
+        "custitem_fao_fabric_type:Knit",
+        "custitem_fao_fit:Regular",
+        "custitem_fao_hemline:Straight",
+        "custitem_fao_lapel:No Lapel",
+        "custitem_fao_launch_year:2018",
+        "custitem_fao_lifecycle:Fashion",
+        "custitem_fao_merch_category:Knits",
+        "custitem_fao_merch_department:Tops",
+        "custitem_fao_merch_group:Apparel",
+        "custitem_fao_pattern_detail:Wording",
+        "custitem_fao_pocket:No Pocket",
+        "custitem_fao_sleeve_length:Short Sleeve",
+        "custitem_fao_sleeve_type:Dropped",
+        "custitem_fao_solid_pattern:Pattern",
+        "custitem_fao_style_code:1120431",
+        "custitem_fao_style_color:1120431-4BO",
+        "division:Men",
+        "markdown:Yes",
+        "product_type:Tops",
+        "size_category:sweaters_sweatshirts"
+      ],
+      "tax_class_id": "",
+      "manufacturer": ""
+    }
+  ]
+}
