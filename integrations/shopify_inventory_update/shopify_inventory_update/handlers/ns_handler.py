@@ -1,7 +1,11 @@
 import aiohttp
 import asyncio
 import logging
+import boto3
+import json
 import os
+
+AUTH_TOKEN_LAMBDA_NAME =  os.environ.get('AUTH_TOKEN_LAMBDA_NAME')
 
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
@@ -22,28 +26,21 @@ class NShandler():
 
     async def get_token(self):
         if not self.token:
-            LOGGER.info(
-                'Getting token from newstore {host}'.format(host=self.host))
-            url = 'https://{host}/v0/token'.format(host=self.host)
-            headers = {
-                'Host': self.host
-            }
-            form = {
-                'grant_type': 'password',
-                'username': self.username,
-                'password': self.password
-            }
-            try:
-                async with aiohttp.ClientSession(loop=asyncio.get_event_loop()) as session:
-                    async with session.post(url=url, headers=headers, data=form) as response:
-                        response.raise_for_status()
-                        self.token = await response.json()
-                        return self.token['access_token']
-            except:
-                raise
+            function_name = os.environ['AUTH_TOKEN_LAMBDA_NAME']
+            session = boto3.session.Session()
+            lambda_cli = session.client('lambda')
+            result = lambda_cli.invoke(
+                FunctionName=function_name,
+                InvocationType='RequestResponse',
+                Payload=bytes({}),
+            )
+
+            LOGGER.info(f'invoke auth token lambda - {function_name}')
+            output = json.loads(result['Payload'].read().decode('utf-8'))['body']['token']
+
+            self.token = output
+            return output
         else:
-            LOGGER.info(
-                'Token already exists %s', self.token)
             return self.token['access_token']
 
     async def availability_export(self):

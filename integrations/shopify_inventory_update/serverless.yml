@@ -26,6 +26,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
+    AUTH_TOKEN_LAMBDA_NAME: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
 
 functions:
   create_inventory_export_job:
