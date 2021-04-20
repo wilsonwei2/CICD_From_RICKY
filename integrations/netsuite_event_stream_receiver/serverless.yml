@@ -1,0 +1,42 @@
+service: frankandoak-netsuite-event-stream-receiver
+
+plugins:
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - netsuite_event_stream_receiver/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+
+functions:
+  receive_events:
+    name: ${self:provider.tenant}-netsuite-event-stream-receiver
+    handler: netsuite_event_stream_receiver.aws.receive_events.handler
+    timeout: 150
+    memorySize: 128
+    environment:
+      TENANT: ${self:provider.tenant}
+      STAGE: ${self:provider.stage}
+      SQS_INVENTORY_TRANSFER: ${self:provider.tenant}-tu-item-receipt-queue.fifo
+      SQS_TRANSFER_ORDER_QUEUE: ${self:provider.tenant}-tu-asn-created-queue.fifo
+      SQS_RETURN_PROCESSED: ${self:provider.tenant}-returns-to-netsuite-queue.fifo
+      SQS_FULFILLMENT: ${self:provider.tenant}-fulfillment-to-netsuite-queue.fifo
+      SQS_FULFILLMENT_ASSIGNED: ${self:provider.tenant}-fulfillment-assigned-to-netsuite-queue.fifo
+      SQS_APPEASEMENT_REFUND: ${self:provider.tenant}-appeasement-to-netsuite-queue.fifo
+    events:
+      - http: POST /receive_event
