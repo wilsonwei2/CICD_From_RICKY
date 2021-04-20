@@ -1,5 +1,40 @@
 # Shopify Import Order
 
+## Setup
+
+Create an entry in AWS Systems Manager Params Store - `/frankandoak/[stage]/shopify`:
+
+    {
+      "shop": "***",
+      "username": "***",
+      "password": "***",
+      "shared_secret": "***"
+    }
+
+Create an entry in AWS Systems Manager Params Store - `/frankandoak/x/shopify/service_level`
+
+    {
+      "default": "...",
+      [...]
+    }
+
+Create an entry in AWS Systems Manager Params Store - `/frankandoak/[stage]/newstore`:
+
+    {
+      "host": "***",
+      "username": "***",
+      "password": "***"
+    }
+
+Setup **Shipping** in NewStore Omnichannel Manager.
+
+Setup `ORDER_IMPORT_API` in lambdas:
+
+* `frankandoak-shopify-sync-order-webhooks`
+* `frankandoak-shopify-order-sync-newstore`
+
+to `https://{URL}.com/{STAGE}` to match the API Gateway Endpoint from `frankandoak-receive-shopify-order`
+
 ## Order Level Discount Proration
 
 First, a **POST** (Shopify makes this a POST, but no changes are made) to `admin/orders/{ORDER_ID}/refunds/calculate.json` is made and the response is transformed to be a `dict` keyed on the line item ids. Like such:
