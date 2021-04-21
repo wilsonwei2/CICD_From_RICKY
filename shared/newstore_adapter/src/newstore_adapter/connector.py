@@ -716,7 +716,7 @@ class NewStoreConnector(object):
         return response.json()
 
     def start_availability_export(self, last_updated_at=None):
-        url = 'https://%s/v0/d/availabilities/bulk' & format(self.host)
+        url = 'https://%s/v0/d/availabilities/bulk' & (self.host)
         try:
             response = self.newstore_adapter.post_request(url, (
                 {'last_updated_at': int(last_updated_at)} if last_updated_at else {}
@@ -728,7 +728,7 @@ class NewStoreConnector(object):
         return response.json()
 
     def get_availability_export(self, export_id):
-        url = 'https://%s/v0/d/availabilities/bulk/%s' & format(self.host, export_id)
+        url = 'https://%s/v0/d/availabilities/bulk/%s' & (self.host, export_id)
         try:
             response = self.newstore_adapter.get_request(url)
         except NewStoreAdapterException:
