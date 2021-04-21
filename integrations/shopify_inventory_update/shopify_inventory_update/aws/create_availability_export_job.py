@@ -4,8 +4,8 @@ import os, json
 import logging
 import asyncio
 
+from newstore_adapter.connector import NewStoreConnector
 from shopify_inventory_update.handlers.lambda_handler import start_lambda_function
-from shopify_inventory_update.handlers.ns_handler import NShandler
 from shopify_inventory_update.handlers.sqs_handler import SqsHandler
 from shopify_inventory_update.handlers.s3_handler import S3Handler
 from shopify_inventory_update.handlers.dynamodb_handler import (
@@ -13,15 +13,12 @@ from shopify_inventory_update.handlers.dynamodb_handler import (
     update_item
 )
 
-from param_store.client import ParamStore
-
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
 
 TENANT = os.environ['TENANT'] or 'frankandoak'
-STAGE = os.environ['STAGE'] or 'x'
 LAST_UPDATED_KEY = 'last_updated_at'
 DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
 
@@ -46,44 +43,35 @@ def handler(event, context):
     if TRIGGER_NAME is not None and 'full_export' in TRIGGER_NAME:
         is_full = True
         LOGGER.info(f'Running a full export with Trigger Name -- {TRIGGER_NAME}')
-        LOGGER.info(f'Updating the dynamoDB Updated value to 0 for full export')
+        LOGGER.info('Updating the dynamoDB Updated value to 0 for full export')
         save_last_updated_to_dynamo_db(str(0))
         return True
 
-
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    result = loop.run_until_complete(_create_export_availabilities_job(is_full))
+    result = loop.run_until_complete(_create_export_availabilities_job(context, is_full))
     loop.stop()
     loop.close()
     return result
 
 
-async def _create_export_availabilities_job(is_full: False):
+async def _create_export_availabilities_job(context, is_full: False):
     """Create an availability export job at newstore
 
     Returns:
      string -- string with result export job id
     """
+    ns_handler = NewStoreConnector(TENANT, context)
+    export = ns_handler.start_availability_export(_get_last_entry_object(is_full))
 
-    param_store = ParamStore(TENANT, STAGE)
-    newstore_config = json.loads(param_store.get_param('newstore'))
-
-    ns_handler = NShandler(
-        host=newstore_config['host'],
-        username=newstore_config['username'],
-        password=newstore_config['password']
-    )
-    # Create a availability export job for frankandoak
-    export = await ns_handler.availability_export_dc(_get_last_entry_object(is_full))
     ## And the request response is forwarded to Next lambda -- availabilities to queue
     force_wait_process_job = bool(os.environ.get('FORCE_CHECKING_FOR_JOB', 'False'))
-    LOGGER.info(f"Response received from the call - next line export from the call")
+    LOGGER.info('Response received from the call - next line export from the call')
     LOGGER.info(export)
+
     if force_wait_process_job:
         await start_lambda_function(
-            os.environ.get('PUSH_TO_QUEUE_LAMBDA_NAME',
-                           'inventory-push-to-queue'),
+            os.environ.get('PUSH_TO_QUEUE_LAMBDA_NAME', 'inventory-push-to-queue'),
             payload=export
         )
 

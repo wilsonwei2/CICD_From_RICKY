@@ -9,9 +9,8 @@ import os
 import zipfile
 import aiohttp
 
+from newstore_adapter.connector import NewStoreConnector
 from shopify_inventory_update.handlers.lambda_handler import start_lambda_function
-#from shopify_inventory_update.shopify_inventory_update.handlers.shopify_handler import ShopifyConnector, RateLimiter
-from shopify_inventory_update.handlers.ns_handler import NShandler
 from shopify_inventory_update.handlers.sqs_handler import SqsHandler
 from shopify_inventory_update.handlers.events_handler import EventsHandler
 from shopify_inventory_update.handlers.s3_handler import S3Handler
@@ -19,8 +18,6 @@ from shopify_inventory_update.handlers.dynamodb_handler import (
     update_item,
     get_item
 )
-
-from param_store.client import ParamStore
 
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
@@ -33,29 +30,9 @@ DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
 JOB_STATE_KEY = 'current_job_state'
 LAST_UPDATED_KEY = 'last_updated_at'
 
-LOCATIONS_MAP_INFO = None
-LOCATIONS_MAP = None
-SHOPIFY_CONECTOR = None
-
 TENANT = os.environ['TENANT'] or 'frankandoak'
-STAGE = os.environ['STAGE'] or 'x'
-PARAM_STORE = None
 
 
-async def _map_locations_if_not(session):
-    global LOCATIONS_MAP
-    if not LOCATIONS_MAP:
-        LOCATIONS_MAP = {}
-        global SHOPIFY_CONECTOR
-        locations = await SHOPIFY_CONECTOR.get_locations(session)
-        LOGGER.info("In _map locations if not")
-        LOGGER.info(locations)
-        for location in locations:
-            if LOCATIONS_MAP_INFO.get(location.get('id')):
-                LOCATIONS_MAP[LOCATIONS_MAP_INFO.get(location.get('zip'))] = location.get('id')
-
-
-## 1 --
 def handler(event, context):
     """
     Arguments:
@@ -65,15 +42,9 @@ def handler(event, context):
     Returns:
         string -- Result string of process
     """
-    global PARAM_STORE, LOCATIONS_MAP_INFO
-    if not PARAM_STORE:
-        PARAM_STORE = ParamStore(TENANT, STAGE)
-    # if not LOCATIONS_MAP_INFO:
-    #     LOCATIONS_MAP_INFO = json.loads(PARAM_STORE.get_param('shopify/locations_map_info'))
-
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    result = loop.run_until_complete(_save_to_queue_availabilities(event))
+    result = loop.run_until_complete(_save_to_queue_availabilities(context, event))
     loop.stop()
     loop.close()
     return result
@@ -132,7 +103,7 @@ def save_state_in_dynamodb(availability_export_id, export_job_state, upto_date):
     update_item(table_name=DYNAMODB_TABLE_NAME, schema=schema)
 
 
-async def _save_to_queue_availabilities(event):
+async def _save_to_queue_availabilities(context, event):
     """Validates the type of the request and sends it to respective handler
 
     Arguments:
@@ -153,47 +124,12 @@ async def _save_to_queue_availabilities(event):
         if response['availability_export_id'] and response['availability_job_state']:
             LOGGER.info(f"Found current job from dynamo db table - as -- {str(response['availability_export_id'])} and previoud state -- {response['availability_job_state']}")
             ## Possible inputs -- availability id respoinse
-            return await wait_job_and_process_variants(response)
+            return await wait_job_and_process_variants(context, response)
         else:
             LOGGER.info('Could not find which method to process variants to queue; make sure it is a api gateway request or a lambdas invocation with the id inside.')
 
 
-async def _process_to_queue_api_request(body):
-    """Process API request with job information
-
-    Arguments:
-        body {dic} -- json dictionary of the request
-
-    Returns:
-        dic -- json dic of the response
-    """
-
-    try:
-        # Save the export job file to an s3 location and return it here
-        variants = await read_variants_from_export_file(body['link'], body['last_updated_at'])
-        # Insert all variants into a queue
-        LOGGER.info
-#        await _process_variants_to_queue(variants)
-        # Triggers the next lambda run to import from queue to shopify
-        # await start_lambda_function(
-        #     os.environ.get('PUSH_TO_SHOPIFY_LAMBDA_NAME',
-        #                    'frankandoak-inventory-push-to-shopify')
-        # )
-        out = {
-            'statusCode': 200,
-            'body': json.dumps({'response': 'Import job finished. Processing...'})
-        }
-        return out
-    except Exception as ex:
-        LOGGER.exception(ex)
-        out = {
-            'statusCode': 400,
-            'body': str(ex)
-        }
-        return out
-
-
-async def wait_job_and_process_variants(event):
+async def wait_job_and_process_variants(context, event):
     """Gets export job to see if it can process availabilities.
     If not finised waits 1 min and invokes this lambda to make another run.
 
@@ -205,20 +141,15 @@ async def wait_job_and_process_variants(event):
         return {'result': 'All variants exported to the queue'}
 
     events_handler = EventsHandler()
+    ns_handler = NewStoreConnector(TENANT,  context)
 
-    newstore_config = json.loads(PARAM_STORE.get_param('newstore'))
-    ns_handler = NShandler(
-        host=newstore_config['host'],
-        username=newstore_config['username'],
-        password=newstore_config['password']
-    )
     '''
     Example
     {
         "availability_export_id": "684d48df-28e0-459b-bd1f-1d32035e72ca"
     }
     '''
-    export_job = await ns_handler.get_availability_export(event['availability_export_id'])
+    export_job = ns_handler.get_availability_export(event['availability_export_id'])
 
     if export_job.get('state') == 'processing':
         LOGGER.info('Job is still processing calling again in 5 mins')
@@ -371,14 +302,6 @@ async def _process_variants_to_queue(variants):
         await _drop_to_queue(sqs_handler, shopify_inventory_item_list)
         LOGGER.info(f"Pushed Message to Queue {sqs_handler.queue_name} ")
         shopify_inventory_item_list.clear()
-
-
-def get_location_with_variants_by_len(variant_location_map: dict, max_msg_number: int):
-    result_set = []
-    for key, value in variant_location_map.items():
-        if len(value) == max_msg_number:
-            result_set.append(key)
-    return result_set
 
 
 async def _drop_to_queue(sqs_handler, message_availability):
