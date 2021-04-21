@@ -1,0 +1,131 @@
+service: cycle-counts
+
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+  - serverless-domain-manager
+
+package:
+  exclude:
+    - ./**
+  include:
+    - cycle_counts/**
+
+custom:
+  scheduleEnabled:
+    x: false
+    s: true
+    p: true
+  tenant: ${opt:tenant}
+  wsgi:
+    app: cycle_counts.api.api.APP
+  customDomain:
+    domainName: ${self:custom.tenant}.ps.${self:provider.stage}.newstore.net
+    basePath: cycle_counts # This will be prefixed to all routes
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    autoDomain: true
+    endpointType: regional
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  region: us-east-1
+  tenant: ${opt:tenant}
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  httpApi:
+    payload: '2.0'
+  timeout: 60
+  memorySize: 256
+  environment:
+    TABLE_NAME: ${self:service}-${self:provider.stage}-item-ids-map
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - ssm:GetParameters
+        - ssm:GetParameter
+        - ssm:GetParametersByPath
+      Resource: arn:aws:ssm:${self:provider.region}:*:parameter/CYCLE_COUNTS/*
+    - Effect: Allow
+      Action:
+        - sqs:GetQueueUrl
+        - sqs:SendMessage
+      Resource: !GetAtt ItemCountEventQueue.Arn
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:UpdateItem
+      Resource:
+        - arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TABLE_NAME}
+
+functions:
+  api:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: 'ANY {proxy+}'
+    environment:
+      TENANT: ${self:custom.tenant}
+      STAGE: ${self:provider.stage}
+      CYCLE_COUNTS_QUEUE: !GetAtt ItemCountEventQueue.QueueName
+
+  search_netsuite_inventory:
+    handler: cycle_counts.aws.search_netsuite_inventory.handler
+    environment:
+      TENANT: ${self:custom.tenant}
+      STAGE: ${self:provider.stage}
+      TTL_DAYS: 30
+    events:
+      - schedule:
+          rate: rate(10 minutes)
+          enabled: ${self:custom.scheduleEnabled.${self:provider.stage}}
+
+  update_netsuite_inventory:
+    handler: cycle_counts.aws.update_netsuite_inventory.handler
+    environment:
+      TENANT: ${self:custom.tenant}
+      STAGE: ${self:provider.stage}
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - ItemCountEventQueue
+              - Arn
+          batchSize: 1
+
+resources:
+  Description: "Cycle Counts resources"
+  Resources:
+    ItemCountEventQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        VisibilityTimeout: 60
+        RedrivePolicy:
+          maxReceiveCount: 5
+          deadLetterTargetArn:
+            "Fn::GetAtt":
+              - ItemCountEventDeadletterQueue
+              - Arn
+
+    ItemCountEventDeadletterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        MessageRetentionPeriod: 1209600
+    CycleCountsProductsMap:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.TABLE_NAME}
+        AttributeDefinitions:
+          - AttributeName: newstore_sku
+            AttributeType: S
+          # - AttributeName: netsuite_id
+            #AttributeType: S
+        KeySchema:
+          - AttributeName: newstore_sku
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TimeToLiveSpecification:
+          AttributeName: ttl
+          Enabled: True
