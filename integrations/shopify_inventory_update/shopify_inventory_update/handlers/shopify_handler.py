@@ -45,17 +45,17 @@ class RateLimiter:
         return self.client.put(*args, **kwargs)
 
 
-    # Intercept call with method GET    
+    # Intercept call with method GET
     async def get(self, *args, **kwargs):
         await self.wait_for_slot()
         return self.client.get(*args, **kwargs)
 
-    
+
     async def post(self, *args, **kwargs):
         await self.wait_for_slot()
         return self.client.post(*args, **kwargs)
 
-    
+
     async def wait_for_slot(self):
         global percentage_usage
         self.holding += 1
@@ -312,7 +312,7 @@ class ShopifyConnector:
 
                 logger.debug('Inventory variants list with: \n%s ', json.dumps(response_body, indent=4))
                 return response_body.get('data', {}).get('inventoryBulkAdjustQuantityAtLocation', {}).get('inventoryLevels', [])
-  
+
     async def delta_inventory_quantity(self, inventory_item_id, adjust_value, location_id,  session):
         logger.info('Updating %s to %s', inventory_item_id, str(adjust_value))
         url_inventory= '{url}inventory_levels/adjust.json'.format(
@@ -473,15 +473,15 @@ class ShopifyConnector:
 
     async def set_inventory_level(self, inv_item_id, location_id, atp=0):
         logger.info(f'Setting inventory ATP 0 for inventory_item_id {inv_item_id} and location_id {location_id}')
-        
+
         url_inventory = f'{self.url}inventory_levels/set.json'
-        
+
         inventory_data = {
             'inventory_item_id': int(inv_item_id),
             'location_id': int(location_id),
             'available': atp
         }
-        
+
         logger.debug(f'Calling {url_inventory} with payload {json.dumps(inventory_data)}')
 
         async with aiohttp.ClientSession() as session:
@@ -499,14 +499,14 @@ class ShopifyConnector:
 
     async def get_inventory_level(self, inv_item_id, location_id, atp=0):
         logger.info(f'Getting inventory levels for inventory_item_id {inv_item_id} and location_id {location_id}')
-        
+
         url_inventory = f'{self.url}inventory_levels.json'
-        
+
         inventory_data = {
             'inventory_item_ids': int(inv_item_id),
             'location_ids': int(location_id)
         }
-        
+
         logger.debug(f'Calling {url_inventory} with params {json.dumps(inventory_data)}')
 
         async with aiohttp.ClientSession() as session:

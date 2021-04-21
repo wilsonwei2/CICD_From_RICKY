@@ -112,6 +112,7 @@ async def _update_variant_at_shopify(products, shopify_conector, receipt_handle)
     global sqs_handler
     try:
         products = await _create_deltas_for_inventory(products)
+        LOGGER.info(f'Products: {products}')
         response = await shopify_conector.update_inventory_quantity_graphql(products, int(LOCATION_ID))
         await sqs_handler.delete_message(receipt_handle)
         return response
