@@ -20,7 +20,7 @@ SQS_HANDLER = None
 WORKER_TRIGGER_DEFAULT_NAME = 'shopify_availability_export_worker'
 TENANT = os.environ['TENANT'] or 'frankandoak'
 STAGE = os.environ['STAGE'] or 'x'
-LOCATION_ID =  os.environ['LOCATION_ID']  or '8778375'
+
 
 def handler(event, context):
     """
@@ -108,12 +108,12 @@ def defining_product(products):
 
     return formatted_products
 
+
 async def _update_variant_at_shopify(products, shopify_conector, receipt_handle):
     global sqs_handler
     try:
         products = await _create_deltas_for_inventory(products)
-        LOGGER.info(f'Products: {products}')
-        response = await shopify_conector.update_inventory_quantity_graphql(products, int(LOCATION_ID))
+        response = await shopify_conector.update_inventory_quantity_graphql(products, products[0]['location_id'])
         await sqs_handler.delete_message(receipt_handle)
         return response
     except Exception:
@@ -124,7 +124,7 @@ async def _update_variant_at_shopify(products, shopify_conector, receipt_handle)
 async def _create_deltas_for_inventory(products):
     global shopify_conector
     LOGGER.info('Fetching inventory levels from Shopify')
-    inventory_shopify = _transform_to_dictionary_inventory_map(await shopify_conector.get_inventory_quantity(products, int(LOCATION_ID)))
+    inventory_shopify = _transform_to_dictionary_inventory_map(await shopify_conector.get_inventory_quantity(products, products[0]['location_id']))
     LOGGER.info('Response from transform ')
     LOGGER.info(inventory_shopify)
     for product in products:

@@ -87,7 +87,6 @@ functions:
       TENANT: ${self:provider.tenant}
       LOG_LEVEL: info
       TRIGGER_NAME: shopify_availability_export_worker
-      LOCATION_ID: 8778375
 
 resources:
   Resources:
