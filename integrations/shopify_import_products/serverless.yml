@@ -24,6 +24,7 @@ provider:
     SQS_INVENTORY_QUEUE_NAME: ${self:provider.tenant}-set-shopify-inventory-location.fifo
     SQS_INVENTORY_DLQ_NAME: ${self:provider.tenant}-set-shopify-inventory-location-dlq.fifo
     SHOP: storefront-catalog-en
+    products_per_file: '1000'
     namespace_metafields: products
     is_full: 'false'
     email_port: '587'

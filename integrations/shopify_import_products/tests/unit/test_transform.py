@@ -56,10 +56,11 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         products_transformed = self._load_json_file('products_transformed.json')
         categories_transformed = self._load_json_file('categories_transformed.json')
 
-        products, categories = self.transform.transform_products(products_jsonl)
+        products_slices, categories = self.transform.transform_products(products_jsonl, 1000)
 
-        self._assert_json(self, products, products_transformed)
-        self._assert_json(self, products_transformed, products)
+        self.assertEqual(len(products_slices), 1)
+        self._assert_json(self, products_slices[0], products_transformed)
+        self._assert_json(self, products_transformed, products_slices[0])
         self._assert_json(self, categories, categories_transformed)
         self._assert_json(self, categories_transformed, categories)
 
@@ -67,7 +68,7 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         cat_schema = self._load_json_file('categories_schema.json')
 
         try:
-            validate(products, prod_schema)
+            validate(products_slices[0], prod_schema)
             validate(categories, cat_schema)
         except Exception as ex:
             raise self.failureException('{} raised'.format(ex))
@@ -77,10 +78,11 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         products_transformed = self._load_json_file('products_transformed_fr.json')
         categories_transformed = self._load_json_file('categories_transformed_fr.json')
 
-        products, categories = self.transform.transform_products(products_jsonl, 'fr-CA')
+        products_slices, categories = self.transform.transform_products(products_jsonl, 1000, 'fr-CA')
 
-        self._assert_json(self, products, products_transformed)
-        self._assert_json(self, products_transformed, products)
+        self.assertEqual(len(products_slices), 1)
+        self._assert_json(self, products_slices[0], products_transformed)
+        self._assert_json(self, products_transformed, products_slices[0])
         self._assert_json(self, categories, categories_transformed)
         self._assert_json(self, categories_transformed, categories)
 
@@ -88,7 +90,19 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         cat_schema = self._load_json_file('categories_schema.json')
 
         try:
-            validate(products, prod_schema)
+            validate(products_slices[0], prod_schema)
             validate(categories, cat_schema)
         except Exception as ex:
             raise self.failureException('{} raised'.format(ex))
+
+    def test_transform_returns_products_slices(self):
+        products_jsonl = self._load_jsonl_file('shopify_products.jsonl')
+        products_slices_1, _ = self.transform.transform_products(products_jsonl, 1)
+        products_slices_2, _ = self.transform.transform_products(products_jsonl, 2)
+
+        self.assertEqual(len(products_slices_1), 5)
+        self.assertEqual(len(products_slices_2), 3)
+
+        self.assertEqual(len(products_slices_2[0]['items']), 2)
+        self.assertEqual(len(products_slices_2[1]['items']), 2)
+        self.assertEqual(len(products_slices_2[2]['items']), 1)
