@@ -1,0 +1,1303 @@
+{
+    "nullFieldList": null,
+    "createdDate": "2018-09-22T18:48:58-07:00",
+    "lastModifiedDate": "2018-09-22T18:48:58-07:00",
+    "nexus": null,
+    "subsidiaryTaxRegNum": null,
+    "taxRegOverride": null,
+    "taxDetailsOverride": null,
+    "customForm": null,
+    "entity": {
+        "name": "CUST22710 Carey Pack",
+        "internalId": "134240",
+        "externalId": null,
+        "type": null
+    },
+    "billingAccount": null,
+    "recurringBill": null,
+    "tranDate": "2018-09-22T21:00:00-07:00",
+    "tranId": "CS0019131",
+    "entityTaxRegNum": null,
+    "source": "Web Services",
+    "postingPeriod": null,
+    "createdFrom": null,
+    "opportunity": null,
+    "department": null,
+    "class": null,
+    "location": {
+        "name": "019_Madison",
+        "internalId": "40",
+        "externalId": null,
+        "type": null
+    },
+    "subsidiary": {
+        "name": "US Subsidiary",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "salesRep": null,
+    "contribPct": null,
+    "partner": {
+        "name": "NewStore",
+        "internalId": "25",
+        "externalId": null,
+        "type": null
+    },
+    "leadSource": null,
+    "startDate": null,
+    "endDate": null,
+    "otherRefNum": null,
+    "memo": null,
+    "salesEffectiveDate": "2018-09-22T21:00:00-07:00",
+    "excludeCommission": null,
+    "revRecSchedule": null,
+    "undepFunds": true,
+    "canHaveStackable": true,
+    "currency": {
+        "name": "US Dollar",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "account": null,
+    "revRecStartDate": null,
+    "revRecEndDate": null,
+    "totalCostEstimate": 0.0,
+    "estGrossProfit": 380.0,
+    "estGrossProfitPercent": 100.0,
+    "exchangeRate": 1.0,
+    "currencyName": "US Dollar",
+    "promoCode": null,
+    "discountItem": null,
+    "discountRate": null,
+    "isTaxable": null,
+    "taxItem": null,
+    "taxRate": null,
+    "toBePrinted": false,
+    "toBeEmailed": false,
+    "toBeFaxed": false,
+    "fax": null,
+    "messageSel": null,
+    "message": null,
+    "billingAddress": {
+        "nullFieldList": null,
+        "internalId": null,
+        "country": "_unitedStates",
+        "attention": null,
+        "addressee": "Carey Pack",
+        "addrPhone": null,
+        "addr1": "488 Madison Ave",
+        "addr2": null,
+        "addr3": null,
+        "city": "New York",
+        "state": "NY",
+        "zip": "10022",
+        "addrText": "Carey Pack<br>488 Madison Ave<br>New York NY 10022<br>United States",
+        "override": null,
+        "customFieldList": null
+    },
+    "billAddressList": {
+        "name": "488 Madison Ave",
+        "internalId": "140862",
+        "externalId": null,
+        "type": null
+    },
+    "shippingAddress": {
+        "nullFieldList": null,
+        "internalId": "141727",
+        "country": "_unitedStates",
+        "attention": null,
+        "addressee": "Carey Pack",
+        "addrPhone": null,
+        "addr1": "488 Madison Ave",
+        "addr2": null,
+        "addr3": null,
+        "city": "New York",
+        "state": "NY",
+        "zip": "10022",
+        "addrText": "Carey Pack<br>488 Madison Ave<br>New York NY 10022<br>United States",
+        "override": false,
+        "customFieldList": null
+    },
+    "shipIsResidential": false,
+    "shipAddressList": {
+        "name": "488 Madison Ave",
+        "internalId": "140861",
+        "externalId": null,
+        "type": null
+    },
+    "fob": null,
+    "shipDate": null,
+    "shipMethod": null,
+    "shippingCost": null,
+    "shippingTax1Rate": null,
+    "shippingTax2Rate": null,
+    "shippingTaxCode": null,
+    "handlingTaxCode": null,
+    "handlingTax1Rate": null,
+    "handlingCost": null,
+    "handlingTax2Rate": null,
+    "linkedTrackingNumbers": null,
+    "trackingNumbers": null,
+    "salesGroup": null,
+    "revenueStatus": null,
+    "recognizedRevenue": null,
+    "deferredRevenue": null,
+    "revRecOnRevCommitment": null,
+    "syncSalesTeams": null,
+    "paymentMethod": null,
+    "payPalStatus": null,
+    "creditCard": null,
+    "ccNumber": null,
+    "ccExpireDate": null,
+    "ccName": null,
+    "ccStreet": null,
+    "ccZipCode": null,
+    "creditCardProcessor": null,
+    "ccApproved": false,
+    "authCode": null,
+    "ccAvsStreetMatch": null,
+    "ccAvsZipMatch": null,
+    "isRecurringPayment": false,
+    "payPalTranId": null,
+    "subTotal": 0.0,
+    "ccIsPurchaseCardBin": null,
+    "ignoreAvs": null,
+    "ccProcessAsPurchaseCard": null,
+    "itemCostDiscount": null,
+    "itemCostDiscRate": null,
+    "itemCostDiscAmount": null,
+    "itemCostTaxRate1": null,
+    "itemCostTaxRate2": null,
+    "itemCostDiscTaxable": null,
+    "itemCostTaxCode": null,
+    "itemCostDiscTax1Amt": null,
+    "itemCostDiscPrint": false,
+    "expCostDiscount": null,
+    "expCostDiscRate": null,
+    "expCostDiscAmount": null,
+    "expCostDiscTaxable": null,
+    "expCostDiscprint": false,
+    "expCostTaxRate1": null,
+    "timeDiscount": null,
+    "expCostTaxCode": null,
+    "timeDiscRate": null,
+    "expCostTaxRate2": null,
+    "expCostDiscTax1Amt": null,
+    "timeDiscAmount": null,
+    "timeDiscTaxable": null,
+    "timeDiscPrint": false,
+    "discountTotal": null,
+    "taxTotal": 0.0,
+    "timeTaxRate1": null,
+    "altShippingCost": null,
+    "timeTaxCode": null,
+    "altHandlingCost": null,
+    "total": 0.0,
+    "timeDiscTax1Amt": null,
+    "ccSecurityCode": null,
+    "timeTaxRate2": null,
+    "ccSecurityCodeMatch": null,
+    "chargeIt": null,
+    "debitCardIssueNo": null,
+    "threeDStatusCode": null,
+    "pnRefNum": null,
+    "paypalAuthId": null,
+    "status": "Not Deposited",
+    "paypalProcess": null,
+    "job": null,
+    "billingSchedule": null,
+    "email": "carey.pack1@gmail.com",
+    "tax2Total": null,
+    "validFrom": null,
+    "vatRegNum": null,
+    "giftCertApplied": null,
+    "tranIsVsoeBundle": null,
+    "vsoeAutoCalc": null,
+    "syncPartnerTeams": null,
+    "salesTeamList": null,
+    "partnersList": null,
+    "itemList": {
+        "item": [
+            {
+                "job": null,
+                "item": {
+                    "name": "30088 : 30088WhiRegXL Saxum",
+                    "internalId": "1712",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 1,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": "Crewneck",
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "39.00",
+                "amount": 39.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": {
+                    "name": "MENS : TEES & HENLEYS : SHORT SLEEVE : CREWNECK",
+                    "internalId": "112",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "30088 : 30088WhiRegXL Saxum",
+                    "internalId": "1712",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 4,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": "Crewneck",
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "39.00",
+                "amount": 39.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": {
+                    "name": "MENS : TEES & HENLEYS : SHORT SLEEVE : CREWNECK",
+                    "internalId": "112",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "35173 : 35173BluSlmXL carneros",
+                    "internalId": "35173",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 7,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": null,
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "78.00",
+                "amount": 78.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": {
+                    "name": "MENS : SHIRTS : LONG SLEEVE : GINGHAM",
+                    "internalId": "67",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "31258 : 31258PurSlmLG ducale",
+                    "internalId": "31258",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 10,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": null,
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "88.00",
+                "amount": 88.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": {
+                    "name": "MENS : SHIRTS : LONG SLEEVE : CHECK",
+                    "internalId": "66",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "30167 : 30167GryRegXL gondola",
+                    "internalId": "9081",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 13,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": null,
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "58.00",
+                "amount": 58.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": {
+                    "name": "MENS : POLOS : SHORT SLEEVE : SOLID",
+                    "internalId": "102",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "30088 : 30088GryRegXL Saxum",
+                    "internalId": "2758",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 16,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": "Crewneck",
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "39.00",
+                "amount": 39.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": {
+                    "name": "MENS : TEES & HENLEYS : SHORT SLEEVE : CREWNECK",
+                    "internalId": "112",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "30088 : 30088BlaRegXL Saxum",
+                    "internalId": "1730",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 19,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": "Crewneck",
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "39.00",
+                "amount": 39.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": {
+                    "name": "MENS : TEES & HENLEYS : SHORT SLEEVE : CREWNECK",
+                    "internalId": "112",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "American Express",
+                    "internalId": "217",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 22,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": null,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": null,
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": null,
+                "amount": -380.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": null,
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_custom",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": null,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": null,
+                "itemIsFulfilled": true,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "accountingBookDetailList": null,
+    "itemCostList": null,
+    "giftCertRedemptionList": null,
+    "promotionsList": null,
+    "expCostList": null,
+    "timeList": null,
+    "shipGroupList": {
+        "shipGroup": [
+            {
+                "id": 1,
+                "isFulfilled": false,
+                "weight": 7.0,
+                "sourceAddressRef": {
+                    "name": null,
+                    "internalId": "DEFAULT",
+                    "externalId": null,
+                    "type": null
+                },
+                "sourceAddress": null,
+                "destinationAddressRef": {
+                    "name": null,
+                    "internalId": "140861",
+                    "externalId": null,
+                    "type": null
+                },
+                "destinationAddress": "488 Madison Ave New York NY 10022",
+                "shippingMethodRef": null,
+                "shippingMethod": null,
+                "isHandlingTaxable": null,
+                "handlingTaxCode": null,
+                "handlingTaxRate": null,
+                "handlingTax2Rate": null,
+                "handlingRate": 0.0,
+                "handlingTaxAmt": null,
+                "handlingTax2Amt": null,
+                "isShippingTaxable": null,
+                "shippingTaxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-7",
+                    "externalId": null,
+                    "type": null
+                },
+                "shippingTaxRate": null,
+                "shippingTax2Rate": null,
+                "shippingRate": 0.0,
+                "shippingTaxAmt": 0.0,
+                "shippingTax2Amt": null
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "taxDetailsList": null,
+    "customFieldList": {
+        "customField": [
+            {
+                "value": {
+                    "name": "019_Madison",
+                    "internalId": "16",
+                    "externalId": null,
+                    "typeId": "343"
+                },
+                "internalId": "1952",
+                "scriptId": "cseg_ab_sellingloc"
+            },
+            {
+                "value": "2018-09-21T21:00:00-07:00",
+                "internalId": "519",
+                "scriptId": "custbody_document_date"
+            },
+            {
+                "value": "2018-09-21T21:00:00-07:00",
+                "internalId": "25",
+                "scriptId": "custbody_esc_created_date"
+            },
+            {
+                "value": "2018-09-21T21:00:00-07:00",
+                "internalId": "26",
+                "scriptId": "custbody_esc_last_modified_date"
+            },
+            {
+                "value": "{\"1712\":{\"rate\":\"39\",\"qty\":2},\"2006\":{\"rate\":\"78\",\"qty\":1},\"3279\":{\"rate\":\"88\",\"qty\":1},\"9081\":{\"rate\":\"58\",\"qty\":1},\"2758\":{\"rate\":\"39\",\"qty\":1},\"1730\":{\"rate\":\"39\",\"qty\":1}}",
+                "internalId": "847",
+                "scriptId": "custbody_gom_grdprnt_items"
+            },
+            {
+                "value": {
+                    "name": "Retail Store",
+                    "internalId": "2",
+                    "externalId": null,
+                    "typeId": "140"
+                },
+                "internalId": "906",
+                "scriptId": "custbody_nws_order_type"
+            },
+            {
+                "value": "22/09/2018 18:48:56",
+                "internalId": "383",
+                "scriptId": "custbody_report_timestamp"
+            },
+            {
+                "value": false,
+                "internalId": "1944",
+                "scriptId": "custbody_sii_article_61d"
+            },
+            {
+                "value": false,
+                "internalId": "1942",
+                "scriptId": "custbody_sii_article_72_73"
+            },
+            {
+                "value": false,
+                "internalId": "528",
+                "scriptId": "custbody_sii_is_third_party"
+            },
+            {
+                "value": false,
+                "internalId": "1943",
+                "scriptId": "custbody_sii_not_reported_in_time"
+            },
+            {
+                "value": "UN000073431",
+                "internalId": "1986",
+                "scriptId": "custbody_nws_ecom_orderinternalid"
+            },
+            {
+                "value": "a.rafala@untuckit.com",
+                "internalId": "1984",
+                "scriptId": "custbody_nws_associateid"
+            },
+            {
+                "value": false,
+                "internalId": "1993",
+                "scriptId": "custbody_utk_sent_to_radial"
+            },
+            {
+                "value": false,
+                "internalId": "679",
+                "scriptId": "custbody_wrm_reg_hid_updateexpire"
+            }
+        ]
+    },
+    "internalId": "438236",
+    "externalId": "8c4390c1-42c0-4688-b38c-7c6617a7fb90"
+}

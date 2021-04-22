@@ -1,0 +1,568 @@
+{
+    "pagination_info": {
+        "count": 1,
+        "total": 1,
+        "offset": 0
+    },
+    "field_ranges": null,
+    "customer_order": {
+        "refund": [
+            {
+                "status": "refunded",
+                "total_amount": 71.62,
+                "return_fee": 0,
+                "shipping_is_refunded": false,
+                "shipping_tax": 0,
+                "shipping_price": 0
+            },
+            {
+                "status": "refunded",
+                "total_amount": 77.72,
+                "return_fee": 0,
+                "shipping_is_refunded": false,
+                "shipping_tax": 0,
+                "shipping_price": 0
+            }
+        ],
+        "status": "partial_returned",
+        "sales_order_id": "608c9c9f-ce1d-45da-873f-580b83701e76",
+        "shipment_details": [
+            {
+                "items": [
+                    {
+                        "product_id": "35837BluRelLG"
+                    },
+                    {
+                        "product_id": "35837BluRelMD"
+                    },
+                    {
+                        "product_id": "393"
+                    },
+                    {
+                        "product_id": "35336BluRegXL"
+                    }
+                ],
+                "shipping_option": {
+                    "shipping_type": "in_store_handover",
+                    "timeslot": {
+                        "delivery_window": {
+                            "starts_at": "",
+                            "ends_at": "",
+                            "id": "",
+                            "expires_at": ""
+                        },
+                        "id": ""
+                    },
+                    "cost": 0,
+                    "tax": 0,
+                    "shipping_carrier": ""
+                }
+            }
+        ],
+        "is_net": true,
+        "placed_at": "2018-07-31T03:04:29.431939Z",
+        "is_shipping_address_overwritten": false,
+        "sales_order_external_id": "UN000000609",
+        "documents": [
+            {
+                "permalink": "https://untuckit.s.newstore.net/v0/d/documents/61fd1f55-0b8b-4e9c-852a-0dc72d2b283c",
+                "type": "refund_note",
+                "s3_params": {
+                    "subentity": "refund_note",
+                    "filename": "refund_note_28be28db-0923-4330-aa66-fc6f4295f13d.pdf",
+                    "entity": "templates_documents"
+                }
+            },
+            {
+                "permalink": "https://untuckit.s.newstore.net/v0/d/documents/748d3880-f4b6-4aec-a4cc-d063273c1b07",
+                "type": "sales_receipt",
+                "s3_params": {
+                    "subentity": "sales_receipt",
+                    "filename": "sales_receipt_07dee7c5-2206-4590-adad-6eadcccf5cc0.pdf",
+                    "entity": "templates_documents"
+                }
+            },
+            {
+                "permalink": "https://untuckit.s.newstore.net/v0/d/documents/d3564ded-5f63-4c1b-9eef-9f38c403bc3d",
+                "type": "refund_note",
+                "s3_params": {
+                    "subentity": "refund_note",
+                    "filename": "refund_note_6de6f9fe-42a2-49fc-ad46-9b5d680d1b88.pdf",
+                    "entity": "templates_documents"
+                }
+            }
+        ],
+        "extended_attributes": null,
+        "totals": {
+            "shipping_and_handling": 0,
+            "grand_total": 298.69,
+            "subtotal_net": 275.25,
+            "taxes": 23.44,
+            "subtotal_gross": 298.69,
+            "discount": 91.75,
+            "subtotal": 275.25
+        },
+        "revision": 13,
+        "shipments": [],
+        "billing_address": null,
+        "associate_id": "ca95e54411fa496c80f49c0067cc905b",
+        "has_gift_wrapping": false,
+        "payment": {
+            "activities": null,
+            "psp": "",
+            "method": "",
+            "credit_card_number": ""
+        },
+        "coupons": [
+            ""
+        ],
+        "discounted": true,
+        "channel_type": "store",
+        "products": [
+            {
+                "color": "",
+                "shipping_cost": 0,
+                "id": "393", 
+                "size": "Medium",
+                "price_tax": 5.62,
+                "extended_attributes": null,
+                "variation_attribute_1_value": "Regular Fit",
+                "discounts": [
+                    {
+                        "level": "order",
+                        "value": 25,
+                        "coupon_code": "",
+                        "reason": "",
+                        "price_adjustment": 22,
+                        "type": "percentage"
+                    }
+                ],
+                "variation_attribute_2_value": "",
+                "fulfillment_location": "004 San Francisco",
+                "status": "returned",
+                "activities": [
+                    {
+                        "created_at": "2018-07-31T03:04:29.431939Z",
+                        "name": "pending",
+                        "metadata": {
+                            "consumer_name": "Thanoosha Sivakumaran"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:29.431939Z",
+                        "name": "new",
+                        "metadata": {
+                            "consumer_name": "Thanoosha Sivakumaran"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:55.645272Z",
+                        "name": "routing",
+                        "metadata": {
+                            "distribution_location": "004 San Francisco"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:57.058928Z",
+                        "name": "delivered",
+                        "metadata": {}
+                    },
+                    {
+                        "created_at": "2018-07-31T18:06:50.810132Z",
+                        "name": "returned",
+                        "metadata": {
+                            "return_reason": "Fit - Too Large",
+                            "associate_id": "ca95e54411fa496c80f49c0067cc905b",
+                            "return_store_id": "a20ac63d-a310-41e2-a10c-0890ca97a8c8",
+                            "return_code": 1
+                        }
+                    }
+                ],
+                "fulfillment_type": "in_store_handover",
+                "is_swapped": false,
+                "price_net": 66,
+                "epc": "",
+                "sales_order_item_uuid": "fa57ba36-8bfe-4eae-b6d2-76df159842fe",
+                "name": "Aglianico - FINAL SALE Medium / Regular Fit / Primary Mix Lightweight Plaid",
+                "external_identifiers": [
+                    {
+                        "type": "sku",
+                        "value": "35336BluSliXXL"
+                    }
+                ],
+                "price_gross": 71.62,
+                "price_catalog": 88,
+                "image_url": "https://res.cloudinary.com/newstore/image/upload/v1530223419/s/untuckit/12f1a44597250aa9b4004347952e4e26.jpg",
+                "shipment_id": ""
+            },
+            {
+                "color": "Light Blue Brown White",
+                "shipping_cost": 0,
+                "id": "35837BluRelLG",
+                "size": "Large",
+                "price_tax": 6.1,
+                "extended_attributes": null,
+                "variation_attribute_1_value": "Relaxed Fit",
+                "discounts": [
+                    {
+                        "level": "order",
+                        "value": 25,
+                        "coupon_code": "",
+                        "reason": "",
+                        "price_adjustment": 23.88,
+                        "type": "percentage"
+                    }
+                ],
+                "variation_attribute_2_value": "",
+                "fulfillment_location": "004 San Francisco",
+                "status": "returned",
+                "activities": [
+                    {
+                        "created_at": "2018-07-31T03:04:29.431939Z",
+                        "name": "pending",
+                        "metadata": {
+                            "consumer_name": "Thanoosha Sivakumaran"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:29.431939Z",
+                        "name": "new",
+                        "metadata": {
+                            "consumer_name": "Thanoosha Sivakumaran"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:55.645272Z",
+                        "name": "routing",
+                        "metadata": {
+                            "distribution_location": "004 San Francisco"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:57.058928Z",
+                        "name": "delivered",
+                        "metadata": {}
+                    },
+                    {
+                        "created_at": "2018-07-31T03:05:30.597768Z",
+                        "name": "returned",
+                        "metadata": {
+                            "return_reason": "Fit - Too Large",
+                            "associate_id": "ca95e54411fa496c80f49c0067cc905b",
+                            "return_store_id": "a20ac63d-a310-41e2-a10c-0890ca97a8c8",
+                            "return_code": 1
+                        }
+                    }
+                ],
+                "fulfillment_type": "in_store_handover",
+                "is_swapped": false,
+                "price_net": 71.62,
+                "epc": "",
+                "sales_order_item_uuid": "79a5825f-f872-4928-878e-5ef8e38ac41a",
+                "name": "Masseto - Wrinkle Free Large / Relaxed Fit / Light Blue Brown White",
+                "external_identifiers": [
+                    {
+                        "type": "sku",
+                        "value": "UT-14-35837-LG"
+                    }
+                ],
+                "price_gross": 77.72,
+                "price_catalog": 95.5,
+                "image_url": "https://res.cloudinary.com/newstore/image/upload/v1532901882/s/untuckit/48c56325360be7e1d7b76bd035dc33f9.jpg",
+                "shipment_id": ""
+            },
+            {
+                "color": "Light Blue Brown White",
+                "shipping_cost": 0,
+                "id": "35837BluRelMD",
+                "size": "Medium",
+                "price_tax": 6.1,
+                "extended_attributes": null,
+                "variation_attribute_1_value": "Relaxed Fit",
+                "discounts": [
+                    {
+                        "level": "order",
+                        "value": 25,
+                        "coupon_code": "",
+                        "reason": "",
+                        "price_adjustment": 23.87,
+                        "type": "percentage"
+                    }
+                ],
+                "variation_attribute_2_value": "",
+                "fulfillment_location": "004 San Francisco",
+                "status": "delivered",
+                "activities": [
+                    {
+                        "created_at": "2018-07-31T03:04:29.431939Z",
+                        "name": "pending",
+                        "metadata": {
+                            "consumer_name": "Thanoosha Sivakumaran"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:29.431939Z",
+                        "name": "new",
+                        "metadata": {
+                            "consumer_name": "Thanoosha Sivakumaran"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:55.645272Z",
+                        "name": "routing",
+                        "metadata": {
+                            "distribution_location": "004 San Francisco"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:57.058928Z",
+                        "name": "delivered",
+                        "metadata": {}
+                    }
+                ],
+                "fulfillment_type": "in_store_handover",
+                "is_swapped": false,
+                "price_net": 71.63,
+                "epc": "",
+                "sales_order_item_uuid": "ee07fa13-fbaa-4b67-94d0-d5aa720bd47a",
+                "name": "Masseto - Wrinkle Free Medium / Relaxed Fit / Light Blue Brown White",
+                "external_identifiers": [
+                    {
+                        "type": "sku",
+                        "value": "UT-14-35837-MD"
+                    }
+                ],
+                "price_gross": 77.73,
+                "price_catalog": 95.5,
+                "image_url": "https://res.cloudinary.com/newstore/image/upload/v1532901882/s/untuckit/48c56325360be7e1d7b76bd035dc33f9.jpg",
+                "shipment_id": ""
+            },
+            {
+                "color": "",
+                "shipping_cost": 0,
+                "id": "35336BluRegXL",
+                "size": "Custom",
+                "price_tax": 5.62,
+                "extended_attributes": null,
+                "variation_attribute_1_value": "Custom",
+                "discounts": [
+                    {
+                        "level": "order",
+                        "value": 25,
+                        "coupon_code": "",
+                        "reason": "",
+                        "price_adjustment": 22,
+                        "type": "percentage"
+                    }
+                ],
+                "variation_attribute_2_value": "",
+                "fulfillment_location": "004 San Francisco",
+                "status": "delivered",
+                "activities": [
+                    {
+                        "created_at": "2018-07-31T03:04:29.431939Z",
+                        "name": "pending",
+                        "metadata": {
+                            "consumer_name": "Thanoosha Sivakumaran"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:29.431939Z",
+                        "name": "new",
+                        "metadata": {
+                            "consumer_name": "Thanoosha Sivakumaran"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:55.645272Z",
+                        "name": "routing",
+                        "metadata": {
+                            "distribution_location": "004 San Francisco"
+                        }
+                    },
+                    {
+                        "created_at": "2018-07-31T03:04:57.058928Z",
+                        "name": "delivered",
+                        "metadata": {}
+                    }
+                ],
+                "fulfillment_type": "in_store_handover",
+                "is_swapped": false,
+                "price_net": 66,
+                "epc": "",
+                "sales_order_item_uuid": "44b729e5-6a19-4554-a09e-bd7cf72f1d43",
+                "name": "UNTUCKit Custom Shirt Custom / Custom 4",
+                "external_identifiers": [
+                    {
+                        "type": "sku",
+                        "value": "35336BluRegXL"
+                    }
+                ],
+                "price_gross": 71.62,
+                "price_catalog": 88,
+                "image_url": "",
+                "shipment_id": ""
+            }
+        ],
+        "payments": [],
+        "shipping_address": {
+            "province": "",
+            "city": "San Francisco\u00e6",
+            "first_name": "",
+            "last_name": "",
+            "suffix": "",
+            "title": "",
+            "phone": "",
+            "state": "CA",
+            "country_code": "US",
+            "salutation": "",
+            "zip_code": "94123",
+            "address_line_2": "",
+            "second_name": "",
+            "address_line_1": "1872 Union St"
+        },
+        "consumer": {
+            "phone_number": "",
+            "name": "Thanoosha Sivakumaran",
+            "email": "tsivakumaran@newstore.com",
+            "language": "en",
+            "id": "369132cc-94c8-458b-864f-aa9dea99fe10"
+        },
+        "currency_code": "USD"
+    },
+    "payment_history": [
+        {
+            "category": "Payment",
+            "activities": [
+                {
+                    "correlation_id": "authorized.8515330062542835-608c9c9f-ce1d-45da-873f-580b83701e76",
+                    "created_at": "2018-07-31T03:04:29.445104Z",
+                    "name": "authorization-pending",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 198.69
+                    }
+                },
+                {
+                    "correlation_id": "authorized.8515330062542835-608c9c9f-ce1d-45da-873f-580b83701e76",
+                    "created_at": "2018-07-31T03:04:32.676672Z",
+                    "name": "authorization-authorized",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 198.69
+                    }
+                },
+                {
+                    "correlation_id": "eff4fe5a-9a81-406f-9327-400eea8713e9",
+                    "created_at": "2018-07-31T03:05:03.981304Z",
+                    "name": "capture-captured",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 198.69
+                    }
+                }
+            ],
+            "payment_information": "",
+            "method": "credit_card",
+            "currency": "USD",
+            "amount": 198.69,
+            "status": "capture-captured",
+            "date": "2018-07-31T03:05:03.981304Z",
+            "psp": "adyen",
+            "id": "Payment_8515330062542835"
+        },
+        {
+            "category": "Payment",
+            "activities": [
+                {
+                    "correlation_id": "authorized.8815330062239009-608c9c9f-ce1d-45da-873f-580b83701e76",
+                    "created_at": "2018-07-31T03:04:29.45556Z",
+                    "name": "authorization-pending",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 100
+                    }
+                },
+                {
+                    "correlation_id": "authorized.8815330062239009-608c9c9f-ce1d-45da-873f-580b83701e76",
+                    "created_at": "2018-07-31T03:04:31.337877Z",
+                    "name": "authorization-authorized",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 100
+                    }
+                },
+                {
+                    "correlation_id": "eff4fe5a-9a81-406f-9327-400eea8713e9",
+                    "created_at": "2018-07-31T03:05:04.339727Z",
+                    "name": "capture-captured",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 100
+                    }
+                }
+            ],
+            "payment_information": "",
+            "method": "credit_card",
+            "currency": "USD",
+            "amount": 100,
+            "status": "capture-captured",
+            "date": "2018-07-31T03:05:04.339727Z",
+            "psp": "adyen",
+            "id": "Payment_8815330062239009"
+        },
+        {
+            "category": "Refund",
+            "activities": [
+                {
+                    "correlation_id": "a32af701-c7b2-4d4e-91f9-b7166115a2e2",
+                    "created_at": "2018-07-31T03:06:26.560068Z",
+                    "name": "refund-refunded",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 77.72
+                    }
+                },
+                {
+                    "correlation_id": "3dfcd335-24f9-452a-b86e-9795997d885d",
+                    "created_at": "2018-07-31T18:07:36.22278Z",
+                    "name": "refund-refunded",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 22.28
+                    }
+                }
+            ],
+            "payment_information": "",
+            "method": "credit_card",
+            "currency": "USD",
+            "amount": 100,
+            "status": "refund-refunded",
+            "date": "2018-07-31T18:07:36.22278Z",
+            "psp": "adyen",
+            "id": "Refund_8815330062239009"
+        },
+        {
+            "category": "Refund",
+            "activities": [
+                {
+                    "correlation_id": "3dfcd335-24f9-452a-b86e-9795997d885d",
+                    "created_at": "2018-07-31T18:07:38.32514Z",
+                    "name": "refund-refunded",
+                    "metadata": {
+                        "currency": "USD",
+                        "amount": 49.34
+                    }
+                }
+            ],
+            "payment_information": "",
+            "method": "credit_card",
+            "currency": "USD",
+            "amount": 49.34,
+            "status": "refund-refunded",
+            "date": "2018-07-31T18:07:38.32514Z",
+            "psp": "adyen",
+            "id": "Refund_8515330062542835"
+        }
+    ]
+}

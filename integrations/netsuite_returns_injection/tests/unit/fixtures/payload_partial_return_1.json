@@ -1,0 +1,29 @@
+{
+    "order": {
+        "returned_at": "2018-07-31T18:06:50.810132",
+        "total_refund_amount": 71.62,
+        "order_id": "608c9c9f-ce1d-45da-873f-580b83701e76",
+        "return_fee": 0,
+        "currency": "USD",
+        "total_refund_tax": 5.62,
+        "return_location_id": "001",
+        "items": [
+            {
+                "return_reason": "Fit - Too Large",
+                "refund_excl_tax": 66,
+                "product_id": "4913",
+                "refund_amount": 71.62,
+                "return_code": 1,
+                "refund_amount_adjusted": 71.62,
+                "item_condition": "Sellable",
+                "refund_tax": 5.62,
+                "condition_code": 1,
+                "id": "fa57ba36-8bfe-4eae-b6d2-76df159842fe",
+                "quantity": 1
+            }
+        ],
+        "total_refund_amount_adjusted": 71.62,
+        "id": "3dfcd335-24f9-452a-b86e-9795997d885d",
+        "total_refund_excl_tax": 66
+    }
+}

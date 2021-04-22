@@ -1,0 +1,249 @@
+{
+    "customer": null,
+    "cash_refund": {
+        "tranDate": "2018-02-21T04:17:43-08:00",
+        "customForm": {
+            "name": null,
+            "internalId": 120,
+            "externalId": null,
+            "type": null
+        },
+        "createdFrom": {
+            "name": null,
+            "internalId": "29767",
+            "externalId": null,
+            "type": null
+        },
+        "externalId": "b7a6bb66-f3d5-4baa-9b9d-e2b8db3f3d26",
+        "discountRate": 0.0,
+        "discountItem": null,
+        "partner": {
+            "type": null,
+            "externalId": null,
+            "name": null,
+            "internalId": 2964
+        },
+        "location": {
+            "name": null,
+            "internalId": 5,
+            "externalId": null,
+            "type": null
+        }
+    },
+    "payment_items": [
+        {
+            "job": null,
+            "item": {
+                "name": null,
+                "internalId": 8282,
+                "externalId": null,
+                "type": null
+            },
+            "line": null,
+            "orderLine": null,
+            "quantity": null,
+            "units": null,
+            "inventoryDetail": null,
+            "binNumbers": null,
+            "serialNumbers": null,
+            "description": null,
+            "price": null,
+            "rate": null,
+            "amount": -97.15,
+            "taxCode": {
+                "name": null,
+                "internalId": "-8",
+                "externalId": null,
+                "type": null
+            },
+            "taxRate1": null,
+            "taxRate2": null,
+            "tax1Amt": null,
+            "grossAmt": null,
+            "isTaxable": null,
+            "options": null,
+            "department": null,
+            "class": null,
+            "location": {
+                "name": null,
+                "internalId": 5,
+                "externalId": null,
+                "type": null
+            },
+            "revRecSchedule": null,
+            "revRecStartDate": null,
+            "revRecEndDate": null,
+            "catchUpPeriod": null,
+            "deferRevRec": null,
+            "giftCertFrom": null,
+            "costEstimateType": null,
+            "costEstimate": null,
+            "taxDetailsReference": null,
+            "giftCertRecipientName": null,
+            "giftCertRecipientEmail": null,
+            "giftCertMessage": null,
+            "taxAmount": null,
+            "giftCertNumber": null,
+            "vsoeSopGroup": null,
+            "vsoeIsEstimate": null,
+            "vsoePrice": null,
+            "vsoeAmount": null,
+            "vsoeAllocation": null,
+            "vsoeDeferral": null,
+            "vsoePermitDiscount": null,
+            "vsoeDelivered": null,
+            "chargeType": null,
+            "chargesList": null,
+            "customFieldList": null
+        },
+        {
+            "job": null,
+            "item": {
+                "name": null,
+                "internalId": 8229,
+                "externalId": null,
+                "type": null
+            },
+            "line": null,
+            "orderLine": null,
+            "quantity": null,
+            "units": null,
+            "inventoryDetail": null,
+            "binNumbers": null,
+            "serialNumbers": null,
+            "description": null,
+            "price": null,
+            "rate": null,
+            "amount": -50,
+            "taxCode": {
+                "name": null,
+                "internalId": "-8",
+                "externalId": null,
+                "type": null
+            },
+            "taxRate1": null,
+            "taxRate2": null,
+            "tax1Amt": null,
+            "grossAmt": null,
+            "isTaxable": null,
+            "options": null,
+            "department": null,
+            "class": null,
+            "location": {
+                "name": null,
+                "internalId": 5,
+                "externalId": null,
+                "type": null
+            },
+            "revRecSchedule": null,
+            "revRecStartDate": null,
+            "revRecEndDate": null,
+            "catchUpPeriod": null,
+            "deferRevRec": null,
+            "giftCertFrom": null,
+            "costEstimateType": null,
+            "costEstimate": null,
+            "taxDetailsReference": null,
+            "giftCertRecipientName": null,
+            "giftCertRecipientEmail": null,
+            "giftCertMessage": null,
+            "taxAmount": null,
+            "giftCertNumber": null,
+            "vsoeSopGroup": null,
+            "vsoeIsEstimate": null,
+            "vsoePrice": null,
+            "vsoeAmount": null,
+            "vsoeAllocation": null,
+            "vsoeDeferral": null,
+            "vsoePermitDiscount": null,
+            "vsoeDelivered": null,
+            "chargeType": null,
+            "chargesList": null,
+            "customFieldList": {
+                "customField": [
+                    {
+                        "value": "0181",
+                        "internalId": null,
+                        "scriptId": "custcol_nws_gcnumber"
+                    }
+                ]
+            }
+        }
+    ],
+    "cash_refund_items": [
+        {
+            "taxCode": {
+                "name": null,
+                "internalId": "-8",
+                "externalId": null,
+                "type": null
+            },
+            "price": {
+                "type": null,
+                "externalId": null,
+                "name": null,
+                "internalId": -1
+            },
+            "item": {
+                "type": "inventoryItem",
+                "externalId": null,
+                "name":  null,
+                "internalId": "8232"
+            },
+            "rate": "68.0",
+            "customFieldList": {
+                "customField": [
+                    {
+                        "value": true,
+                        "internalId": null,
+                        "scriptId": "custcol_adj_for_damages"
+                    },
+                    {
+                        "scriptId": "custcol_nws_promocode",
+                        "internalId": null,
+                        "value": "COUPON1"
+                    },
+                    {
+                        "scriptId": "custcol_nws_gcnumber",
+                        "internalId": null,
+                        "value": "1111"
+                    }
+                ]
+            },
+            "quantity": 1.0,
+            "location": {
+                "type": null,
+                "externalId": null,
+                "name": null,
+                "internalId": "123"
+            }
+        },
+        {
+            "taxCode": {
+                "name": null,
+                "internalId": "-8",
+                "externalId": null,
+                "type": null
+            },
+            "item": {
+                "name": null,
+                "internalId": 8495,
+                "externalId": null,
+                "type": null
+            },
+            "price": {
+                "name": null,
+                "internalId": -1,
+                "externalId": null,
+                "type": null
+            },
+            "rate": "-10",
+            "location": {
+                "name": null,
+                "internalId": 5,
+                "externalId": null,
+                "type": null
+            }
+        }
+    ]
+}

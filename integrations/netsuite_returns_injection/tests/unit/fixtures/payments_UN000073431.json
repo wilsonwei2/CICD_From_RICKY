@@ -1,0 +1,210 @@
+{
+    "instruments": [
+        {
+            "payment_provider": "gift_card", 
+            "payment_method": "gift_card", 
+            "refund_amount": 0, 
+            "capture_amount": 88, 
+            "authorize_amount": 0, 
+            "currency": "USD", 
+            "payment_wallet": "direct", 
+            "id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90-c3b988bd-6d73-4491-8c83-abcb4dd9c122", 
+            "original_transactions": [
+                {
+                    "instrument_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90-c3b988bd-6d73-4491-8c83-abcb4dd9c122", 
+                    "payment_provider": "gift_card", 
+                    "payment_method": "gift_card", 
+                    "created_at": null, 
+                    "refund_amount": 0, 
+                    "reason": "issue", 
+                    "capture_amount": 88, 
+                    "currency": "USD", 
+                    "correlation_id": "c3b988bd-6d73-4491-8c83-abcb4dd9c122", 
+                    "payment_wallet": "direct", 
+                    "transaction_id": "issued:c3b988bd-6d73-4491-8c83-abcb4dd9c122-0000020128205", 
+                    "metadata": {
+                        "gift_card_number": "0000020128205", 
+                        "customer_email": "carey.pack1@gmail.com", 
+                        "account_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90", 
+                        "order_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90", 
+                        "brand": "American Express", 
+                        "last_4": "1001", 
+                        "processed_at": "2018-09-22T22:00:18.917533", 
+                        "instrument_details": {
+                            "card_id": "0000020128205"
+                        }, 
+                        "customer_id": "60adfcac-5b04-47c3-b904-8e7dc337e611", 
+                        "external_id": "UN000073431", 
+                        "customer_name": "Carey Pack"
+                    }
+                }
+            ], 
+            "metadata": {
+                "gift_card_number": "0000020128205", 
+                "customer_email": "carey.pack1@gmail.com", 
+                "account_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90", 
+                "order_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90", 
+                "brand": "American Express", 
+                "last_4": "1001", 
+                "processed_at": "2018-09-22T22:00:18.917533", 
+                "instrument_details": {
+                    "card_id": "0000020128205"
+                }, 
+                "customer_id": "60adfcac-5b04-47c3-b904-8e7dc337e611", 
+                "external_id": "UN000073431", 
+                "customer_name": "Carey Pack"
+            }
+        }, 
+        {
+            "payment_provider": "adyen", 
+            "payment_method": "credit_card", 
+            "refund_amount": 380, 
+            "capture_amount": 0, 
+            "authorize_amount": 0, 
+            "currency": "USD", 
+            "payment_wallet": "", 
+            "id": "3415376536131475", 
+            "original_transactions": [
+                {
+                    "instrument_id": "3415376536131475", 
+                    "payment_provider": "adyen", 
+                    "payment_method": "credit_card", 
+                    "created_at": "2018-09-22T22:00:20.13574691Z", 
+                    "refund_amount": 0, 
+                    "reason": "authorization", 
+                    "capture_amount": 380, 
+                    "currency": "USD", 
+                    "correlation_id": "", 
+                    "payment_wallet": "", 
+                    "transaction_id": "authorization-3415376536131475-0e7f501c-127f-44d1-b95e-24d367cf5d68", 
+                    "metadata": {
+                        "instrument_details": {
+                            "last4": "1001", 
+                            "brand": "amex", 
+                            "dynamic_last4": "1001"
+                        }, 
+                        "essential": {
+                            "provider_transaction_ref": "3415376536131475", 
+                            "provider_account_id": "UNTUCKit_POS_US", 
+                            "instrument_metadata": {
+                                "card_expiration_year": "2020", 
+                                "card_expiration_month": "03", 
+                                "card_last4": "1001", 
+                                "card_brand": "amex"
+                            }
+                        }
+                    }
+                }, 
+                {
+                    "instrument_id": "3415376536131475", 
+                    "payment_provider": "adyen", 
+                    "payment_method": "credit_card", 
+                    "created_at": "2018-09-22T22:00:50.336336679Z", 
+                    "refund_amount": 380, 
+                    "reason": "capture", 
+                    "capture_amount": -380, 
+                    "currency": "USD", 
+                    "correlation_id": "235b3eab-3c1e-46e8-9e68-b21e6f7937b9", 
+                    "payment_wallet": "", 
+                    "transaction_id": "capture-3415376536131475-59f0f9fa-6354-4a48-9ca1-9e3fbe34258d", 
+                    "metadata": {
+                        "instrument_details": {
+                            "last4": "1001", 
+                            "brand": "amex", 
+                            "dynamic_last4": "1001"
+                        }, 
+                        "essential": {
+                            "provider_transaction_ref": "3415376536131475", 
+                            "provider_account_id": "UNTUCKit_POS_US", 
+                            "instrument_metadata": {
+                                "card_expiration_year": "2020", 
+                                "card_expiration_month": "03", 
+                                "card_last4": "1001", 
+                                "card_brand": "amex"
+                            }
+                        }
+                    }
+                }
+            ], 
+            "metadata": {
+                "instrument_details": {
+                    "last4": "1001", 
+                    "brand": "amex", 
+                    "dynamic_last4": "1001"
+                }, 
+                "essential": {
+                    "provider_transaction_ref": "3415376536131475", 
+                    "provider_account_id": "UNTUCKit_POS_US", 
+                    "instrument_metadata": {
+                        "card_expiration_year": "2020", 
+                        "card_expiration_month": "03", 
+                        "card_last4": "1001", 
+                        "card_brand": "amex"
+                    }
+                }
+            }
+        }, 
+        {
+            "payment_provider": "store_credit", 
+            "payment_method": "store_credit", 
+            "refund_amount": 0, 
+            "capture_amount": 78, 
+            "authorize_amount": 0, 
+            "currency": "USD", 
+            "payment_wallet": "direct", 
+            "id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90-187941d6-f5fa-44d5-8b57-0c59a5ff398e", 
+            "original_transactions": [
+                {
+                    "instrument_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90-187941d6-f5fa-44d5-8b57-0c59a5ff398e", 
+                    "payment_provider": "store_credit", 
+                    "payment_method": "store_credit", 
+                    "created_at": "2018-10-01T17:57:11.542322475Z", 
+                    "refund_amount": 0, 
+                    "reason": "issue", 
+                    "capture_amount": 78, 
+                    "currency": "USD", 
+                    "correlation_id": "187941d6-f5fa-44d5-8b57-0c59a5ff398e", 
+                    "payment_wallet": "direct", 
+                    "transaction_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90-187941d6-f5fa-44d5-8b57-0c59a5ff398e", 
+                    "metadata": {
+                        "order_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90", 
+                        "processed_at": "2018-09-22T22:00:18.917533", 
+                        "brand": "American Express", 
+                        "last_4": "1001"
+                    }
+                }
+            ], 
+            "metadata": {
+                "order_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90", 
+                "processed_at": "2018-09-22T22:00:18.917533", 
+                "brand": "American Express", 
+                "last_4": "1001"
+            }
+        }
+    ], 
+    "balance": 0, 
+    "transactions": [
+        {
+            "due_date": null, 
+            "credit": 0, 
+            "inserted_at": "2018-09-22T22:00:18.913774843Z", 
+            "currency": "USD", 
+            "correlation_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90-create", 
+            "debit": 380, 
+            "transaction_id": "8c4390c1-42c0-4688-b38c-7c6617a7fb90", 
+            "metadata": null
+        }, 
+        {
+            "due_date": null, 
+            "credit": 380, 
+            "inserted_at": "2018-09-22T22:00:50.34174501Z", 
+            "currency": "USD", 
+            "correlation_id": "235b3eab-3c1e-46e8-9e68-b21e6f7937b9", 
+            "debit": 0, 
+            "transaction_id": "capture-3415376536131475-59f0f9fa-6354-4a48-9ca1-9e3fbe34258d", 
+            "metadata": {
+                "reason": "capture"
+            }
+        }
+    ]
+}

@@ -1,0 +1,24 @@
+{
+  "Records": [
+    {
+      "body": {
+        "id": "a11caba9-4d3e-4063-9bb5-465a9642e1e1",
+        "count_type": "cycle_count",
+        "fulfillment_location_id": "BERK",
+        "associate_id": "1BzSXHReP2ROjg3CKrc4n6",
+        "due_date": "2020-02-20T00:00:00.000Z",
+        "started_at": "2020-02-14T10:47:12.207Z",
+        "completed_at": "2020-02-14T10:47:21.181Z",
+        "chunk_number": 1,
+        "total_chunks": 1,
+        "items": [
+          {
+            "product_id": "4190312192175-70",
+            "stock_on_hand": 0,
+            "count": 0
+          }
+        ]
+      }
+    }
+  ]
+}
