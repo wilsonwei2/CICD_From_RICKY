@@ -31,18 +31,11 @@ class TestMarineWebhookRegister(unittest.TestCase):
 
     def setUp(self):
         self.variables = {
-            'WEBHOOK_URL': 'webhook_url'
+            'WEBHOOK_URL': 'webhook_url',
+            'newstore_url_api': 'url'
         }
         self.os_env = patch.dict('os.environ', self.variables)
         self.os_env.start()
-
-        utils_mock = patch('shopify_fulfillment.helpers.utils.Utils.get_newstore_config')
-        self.patched_utils_mock = utils_mock.start()
-        self.patched_utils_mock.return_value = {
-            "NS_URL_API": "url",
-            "NS_USERNAME": "username",
-            "NS_PASSWORD": "password"
-        }
 
     def test_webhook_without_url(self):
         webhook_register.WEBHOOK_URL = ''
