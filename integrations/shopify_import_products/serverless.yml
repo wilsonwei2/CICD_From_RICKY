@@ -24,6 +24,7 @@ provider:
     SQS_INVENTORY_QUEUE_NAME: ${self:provider.tenant}-set-shopify-inventory-location.fifo
     SQS_INVENTORY_DLQ_NAME: ${self:provider.tenant}-set-shopify-inventory-location-dlq.fifo
     SHOP: storefront-catalog-en
+    products_per_file: '25000'
     namespace_metafields: products
     is_full: 'false'
     email_port: '587'
@@ -31,6 +32,9 @@ provider:
     s3_bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
     s3_bucket_key: import_files/
     url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
+    newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_use_auth_lambda: 1
     meta_provider: ${self:provider.tenant}
     dynamo_table_name: ${self:provider.tenant}-import-products-savestate
     url_image_placeholder: 'https://s3.amazonaws.com/${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz/default_1.jpg'

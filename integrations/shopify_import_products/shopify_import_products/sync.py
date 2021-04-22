@@ -57,18 +57,20 @@ def run(env_variables):
 
 
 def import_products(text, env_variables, locale=None):
-    products, categories = transform_products(text, locale)
+    products_per_file = int(os.environ.get('products_per_file', '1000'))
+    is_full = os.environ.get('is_full', 'false').lower() == 'true'
+
+    products_slices, categories = transform_products(text, products_per_file, locale)
     s3_bucket = os.environ['s3_bucket']
     s3_bucket_key = os.environ['s3_bucket_key']
 
-    is_full = os.environ.get('is_full', 'false').lower() == 'true'
-
-    if products['items']:
-        s3_handler = S3Handler(bucket_name=s3_bucket, key_name=s3_bucket_key)
-        source_uri = f'https://{s3_bucket}/{s3_bucket_key}'
-        jobs_manager_products = JobsManager(env_variables, 'products', s3_handler, source_uri, False)
-        LOGGER.info('Sending products to the import_api')
-        do_job(jobs_manager_products, products, is_full)
+    for products in products_slices:
+        if products['items']:
+            s3_handler = S3Handler(bucket_name=s3_bucket, key_name=s3_bucket_key)
+            source_uri = f'https://{s3_bucket}/{s3_bucket_key}'
+            jobs_manager_products = JobsManager(env_variables, 'products', s3_handler, source_uri, False)
+            LOGGER.info('Sending products to the import_api')
+            do_job(jobs_manager_products, products, is_full)
 
     if categories['items']:
         s3_handler = S3Handler(bucket_name=s3_bucket, key_name=s3_bucket_key)

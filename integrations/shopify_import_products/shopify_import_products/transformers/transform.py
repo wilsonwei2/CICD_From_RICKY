@@ -14,30 +14,39 @@ TRANSFORMED_CATEGORIES = [{
 }]
 
 
-def transform_products(jsonl_data, locale=None):
+def transform_products(jsonl_data, products_per_file, locale=None):
     build_object_cache([json.loads(line) for line in jsonl_data.splitlines()])
 
     locale_code = 'en-US' if not locale else locale
     catalog = 'en' if not locale else locale.split('-')[0]
+    products_slices = []
 
-    transformed_products = {
-        'head': {
-            'locale': locale_code,
-            'shop': f'storefront-catalog-{catalog}',
-            'is_master': not locale
-        },
-        'items': [transform_variant(variant, locale) for variant in VARIANT_PRODUCTS.values()]
-    }
+    for variants in chunk_products(list(VARIANT_PRODUCTS.values()), products_per_file):
+        products_slices.append({
+            'head': {
+                'locale': locale_code,
+                'shop': f'storefront-catalog-{catalog}',
+                'is_master': not locale,
+                'internal_disable_image_processing': True
+            },
+            'items': [transform_variant(variant, locale) for variant in variants]
+        })
 
     transformed_categories = {
         'head': {
             'locale': locale_code,
-            'catalog': f'storefront-catalog-{catalog}'
+            'catalog': f'storefront-catalog-{catalog}',
+            'internal_disable_image_processing': True
         },
         'items': TRANSFORMED_CATEGORIES
     }
 
-    return transformed_products, transformed_categories
+    return products_slices, transformed_categories
+
+
+def chunk_products(list_object, count):
+    for i in range(0, len(list_object), count):
+        yield list_object[i:i + count]
 
 
 def build_object_cache(json_objects):

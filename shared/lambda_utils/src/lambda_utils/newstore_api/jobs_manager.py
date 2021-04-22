@@ -52,7 +52,7 @@ class JobsManager:
         try:
             logger.info("Creating import for source_uri %s" % self.get_source_uri())
             ctx = Context(url=self.get_env_variables()["url_api"])
-            ctx.set_user(self.get_env_variables()["import_login"], self.get_env_variables()["import_password"])
+            ctx.set_auth_lambda(self.get_env_variables()["newstore_auth_lambda"])
             import_job = impex.Job(ctx)
 
             meta = {
