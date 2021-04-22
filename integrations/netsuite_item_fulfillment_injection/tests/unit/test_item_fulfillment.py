@@ -42,8 +42,8 @@ class TestItemFulfillmentProcessing(unittest.TestCase):
 
     def setUp(self):
         self.variables = {
-            'TENANT_NAME': 'frankandoak',
-            'NEWSTORE_STAGE': 'x',
+            'TENANT': 'frankandoak',
+            'STAGE': 'x',
             'netsuite_account_id': '100000',
             'netsuite_application_id': 'NOT_SET',
             'netsuite_email': 'NOT_SET',

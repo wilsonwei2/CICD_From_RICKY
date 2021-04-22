@@ -39,11 +39,11 @@ def handler(event, context):  # pylint: disable=W0613
     global NEWSTORE_HANDLER  # pylint: disable=W0603
     newstore_config = json.loads(PARAM_STORE.get_param('newstore'))
     NEWSTORE_HANDLER = NewStoreConnector(
-        tenant=os.environ.get('TENANT_NAME'),
+        tenant=os.environ.get('TENANT'),
         context=context,
-        host=newstore_config['NS_URL_API'],
-        username=newstore_config['NS_USERNAME'],
-        password=newstore_config['NS_PASSWORD'],
+        host=newstore_config['host'],
+        username=newstore_config['username'],
+        password=newstore_config['password'],
         raise_errors=True
     )
 
@@ -395,7 +395,7 @@ def get_order_data(order_payload):
         "query": graphql_query,
         "variables": {
             "id": order_id,
-            "tenant": os.environ.get('TENANT_NAME')
+            "tenant": os.environ.get('TENANT')
         }
     }
 

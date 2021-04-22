@@ -22,8 +22,8 @@ provider:
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
   role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
   environment:
-    NEWSTORE_STAGE: ${self:provider.stage}
-    TENANT_NAME: ${self:provider.tenant}
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
     SQS_QUEUE: !GetAtt FulfillmentAssignmentQueue.QueueName
     SQS_QUEUE_DLQ: !GetAtt FulfillmentAssignmentDeadLetterQueue.QueueName
     MAX_MESSAGE_QUEUE_SIZE: 25
@@ -39,8 +39,8 @@ functions:
     memorySize: 256
     environment:
       SQS_QUEUE: ${self:provider.environment.SQS_QUEUE}
-      NEWSTORE_STAGE: ${self:provider.environment.NEWSTORE_STAGE}
-      TENANT_NAME: ${self:provider.environment.TENANT_NAME}
+      STAGE: ${self:provider.environment.STAGE}
+      TENANT: ${self:provider.environment.TENANT}
       MAX_MESSAGE_QUEUE_SIZE: ${self:provider.environment.MAX_MESSAGE_QUEUE_SIZE}
       SLACK_HOOK_URL: ${self:provider.environment.SLACK_HOOK_URL}
     events:

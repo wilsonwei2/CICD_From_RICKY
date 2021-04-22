@@ -50,8 +50,8 @@ class TestInStoreReturnProcessing(unittest.TestCase):
 
     def setUp(self):
         self.variables = {
-            'TENANT_NAME': 'frankandoak',
-            'NEWSTORE_STAGE': 'x',
+            'TENANT': 'frankandoak',
+            'STAGE': 'x',
             'netsuite_account_id': '100000',
             'netsuite_application_id': 'NOT_SET',
             'netsuite_email': 'NOT_SET',
@@ -69,9 +69,9 @@ class TestInStoreReturnProcessing(unittest.TestCase):
         newstore_config_mock = patch('netsuite_returns_injection.helpers.utils.Utils._get_newstore_config')
         self.patched_newstore_config_mock = newstore_config_mock.start()
         self.patched_newstore_config_mock.return_value = {
-            "NS_URL_API": "url",
-            "NS_USERNAME": "username",
-            "NS_PASSWORD": "password"
+            "host": "url",
+            "username": "username",
+            "password": "password"
         }
 
         netsuite_config_mock = patch('netsuite_returns_injection.helpers.utils.Utils.get_netsuite_config')

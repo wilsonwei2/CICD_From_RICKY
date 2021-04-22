@@ -32,7 +32,7 @@ values = {
     "dc_suffix": "Ecom",
     "MAX_MESSAGE_QUEUE_SIZE": "50",
     "RETURNED_FROM": "FAKE_DC",
-    "TENANT_NAME": "aninebing",
+    "TENANT": "frankandoak",
     "SQS_QUEUE": "queuey_louis",
     "RDS_HOST": "junk",
     "RDS_USER": "junk",

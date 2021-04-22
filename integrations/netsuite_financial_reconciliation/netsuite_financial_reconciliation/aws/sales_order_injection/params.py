@@ -22,8 +22,8 @@ CUSTOM_PRICE = -1
 def get_param_store():
     global PARAM_STORE  # pylint: disable=W0603
     if not PARAM_STORE:
-        tenant = os.environ.get('TENANT_NAME')
-        stage = os.environ.get('NEWSTORE_STAGE')
+        tenant = os.environ.get('TENANT')
+        stage = os.environ.get('STAGE')
         PARAM_STORE = ParamStore(tenant=tenant, stage=stage)
     return PARAM_STORE
 

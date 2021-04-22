@@ -64,9 +64,9 @@ def get_newstore_handler():
         newstore_config = json.loads(
             get_parameter_store().get_param('newstore'))
         NEWSTORE_HANDLER = NShandler(
-            host=newstore_config['NS_URL_API'],
-            username=newstore_config['NS_USERNAME'],
-            password=newstore_config['NS_PASSWORD']
+            host=newstore_config['host'],
+            username=newstore_config['username'],
+            password=newstore_config['password']
         )
     return NEWSTORE_HANDLER
 
