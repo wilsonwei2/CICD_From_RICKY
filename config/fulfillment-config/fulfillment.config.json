@@ -4,21 +4,21 @@
           "EXPRESS": {
             "return_provider_rate": "",
             "service_level": "Express",
-            "shipping_carrier_name": "Express",
+            "shipping_carrier_name": "UPS",
             "shipping_type": "traditional_carrier",
             "use_as_customer_facing_cost": true
           },
           "STANDARD": {
               "return_provider_rate": "",
               "service_level": "Standard",
-              "shipping_carrier_name": "Standard",
+              "shipping_carrier_name": "UPS",
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": false
           },
           "EMAIL": {
               "return_provider_rate": "",
               "service_level": "email_delivery",
-              "shipping_carrier_name": "email",
+              "shipping_carrier_name": "CUSTOM",
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": true
           }
