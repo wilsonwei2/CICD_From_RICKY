@@ -81,7 +81,10 @@ async def _sync_inventory(loop, context):
                 receipt_handle = message['ReceiptHandle']
                 products = json.loads(message['Body'])
                 '''
-                {'34142712266787': 19}
+                {'34142712266787': {
+                    'atp': 19,
+                    'location_id': 61470441628
+                }}
                 '''
                 updated_products = defining_product(products)
                 # create list of task to process for each variant
@@ -98,15 +101,11 @@ async def _sync_inventory(loop, context):
 
 
 def defining_product(products):
-    formatted_products = []
-    for key, value in products.items():
-        product = {
-            'inventory_item_id': str(key),
-            'atp': value
-        }
-        formatted_products.append(product)
-
-    return formatted_products
+    return [{
+        'inventory_item_id': str(key),
+        'atp': value['atp'],
+        'location_id': value['location_id']
+    } for key, value in products.items()]
 
 
 async def _update_variant_at_shopify(products, shopify_conector, receipt_handle):
