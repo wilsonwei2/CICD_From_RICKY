@@ -1,10 +1,10 @@
 # Developer Guidelines
 
----
+----
 **Current issues and todos**
 
 - None
----
+----
 
 ## Prerequisites
 
