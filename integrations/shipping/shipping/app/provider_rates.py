@@ -5,7 +5,7 @@ from shipping.app.shipping_options_provider_rates import ProviderRatesRequest
 LOGGER = logging.getLogger(__name__)
 
 def get_provider_rates(provider_rates_request: ProviderRatesRequest):
-    country_code = provider_rates_request.shipping_address.country_code
+    #country_code = provider_rates_request.shipping_address.country_code
     cur_value = provider_rates_request.bag.products[0].price.currency
     currency = "EUR" if cur_value is None else cur_value
 
@@ -15,7 +15,7 @@ def get_provider_rates(provider_rates_request: ProviderRatesRequest):
     default_pickuppoint_shipping = "WMS_DPD_PICKUPPOINT"
     default_shiptostore_shipping = "WMS_DPD_SHIPTOSTORE"
 
-    tnt_standard_shipping = "WMS_TNT_STANDARD"
+    #tnt_standard_shipping = "WMS_TNT_STANDARD"
 
     standard_shipping = default_standard_shipping
     express_shipping = default_express_shipping
