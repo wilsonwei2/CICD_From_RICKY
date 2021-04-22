@@ -32,6 +32,7 @@ provider:
     s3_bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
     s3_bucket_key: import_files/
     url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
     newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
     newstore_use_auth_lambda: 1
     meta_provider: ${self:provider.tenant}
