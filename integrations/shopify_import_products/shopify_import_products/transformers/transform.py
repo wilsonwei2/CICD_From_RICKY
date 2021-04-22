@@ -24,7 +24,8 @@ def transform_products(jsonl_data, locale=None):
         'head': {
             'locale': locale_code,
             'shop': f'storefront-catalog-{catalog}',
-            'is_master': not locale
+            'is_master': not locale,
+            'internal_disable_image_processing': True
         },
         'items': [transform_variant(variant, locale) for variant in VARIANT_PRODUCTS.values()]
     }
@@ -32,7 +33,8 @@ def transform_products(jsonl_data, locale=None):
     transformed_categories = {
         'head': {
             'locale': locale_code,
-            'catalog': f'storefront-catalog-{catalog}'
+            'catalog': f'storefront-catalog-{catalog}',
+            'internal_disable_image_processing': True
         },
         'items': TRANSFORMED_CATEGORIES
     }

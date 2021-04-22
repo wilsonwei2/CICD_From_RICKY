@@ -2,7 +2,8 @@
   "head": {
     "locale": "en-US",
     "shop": "storefront-catalog-en",
-    "is_master": true
+    "is_master": true,
+    "internal_disable_image_processing": true
   },
   "items": [
     {
