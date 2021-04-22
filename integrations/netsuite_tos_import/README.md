@@ -21,9 +21,9 @@ in NewStore.
 - "{TENANT_NAME}/{STAGE}/newstore": Store the settings for the API credentials to NewStore.
 ```
 {
-    "NS_URL_API": "",
-    "NS_USERNAME": "",
-    "NS_PASSWORD": ""
+    "host": "",
+    "username": "",
+    "password": ""
 }
 ```
 - "{TENANT_NAME}/{STAGE}/netsuite": Store the settings for the NetSuite configuration variables.
@@ -49,10 +49,10 @@ in NewStore.
     "token_secret": "",
 }
 ```
-- "{TENANT_NAME}/{STAGE}/netsuite/newstore_to_netsuite_locations/<id>": Store the mappings for locations from NewStore to NetSuite.
+- "{TENANT_NAME}/{STAGE}/netsuite/newstore_to_netsuite_locations": Store the mappings for locations from NewStore to NetSuite.
 ```
 {
-    "location_1_id_nom": {"id": 1, "ff_node_id": ""},
-    "location_2_id_nom": {"id": 2, "ff_node_id": ""}
+    "location_1_id_nom": {"id": 1, ...},
+    "location_2_id_nom": {"id": 2, ...}
 }
 ```
