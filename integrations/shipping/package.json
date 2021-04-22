@@ -1,0 +1,19 @@
+{
+  "name": "fao-shipping",
+  "version": "1.0.0",
+  "description": "This integration offers endpoints for carrier rates and configuration needed by NewStore.",
+  "author": "NewStore, Inc.",
+  "license": "NewStore",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-domain-manager": "^3.3.2",
+    "serverless-pseudo-parameters": "^2.5.0",
+    "serverless-python-requirements": "^5.1.0",
+    "serverless-wsgi": "^1.7.5"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": []
+}

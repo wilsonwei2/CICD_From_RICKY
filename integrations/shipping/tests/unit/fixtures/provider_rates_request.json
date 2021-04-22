@@ -1,0 +1,33 @@
+{
+  "request_id": "f74a344563920231ed88cc11d1e01270",
+  "bag": {
+    "products": [
+      {
+        "product_id": "A136609900",
+        "quantity": 1,
+        "price": {
+          "amount": 44.85,
+          "currency": "DKK"
+        },
+        "weight": {
+          "value": 0.178,
+          "unit": "kg"
+        },
+        "dimensions": {
+          "length": 0,
+          "width": 0,
+          "height": 0,
+          "unit": ""
+        }
+      }
+    ]
+  },
+  "shipping_address": {
+    "country_code": "DK",
+    "zip_code": "8660",
+    "address_line_1": "Kastanievtest 42e",
+    "city": "Copenhagen",
+    "state": "Dalum",
+    "phone": "000"
+  }
+}

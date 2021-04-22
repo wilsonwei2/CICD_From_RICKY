@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+newstore-adapter = {path = "./../../shared/newstore_adapter"}
+newstore-common = {path = "./../../shared/common"}
+flask = "*"
+python-dateutil = "*"
+ssm-cache = "*"
+dacite = "*"
+
+[requires]
+python_version = "3.7"
