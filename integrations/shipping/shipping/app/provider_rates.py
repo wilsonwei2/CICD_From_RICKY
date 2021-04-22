@@ -22,9 +22,6 @@ def get_provider_rates(provider_rates_request: ProviderRatesRequest):
     pickuppoint_shipping = default_pickuppoint_shipping
     shiptostore_shipping = default_shiptostore_shipping
 
-    if country_code == 'SE':
-        default_standard_shipping = tnt_standard_shipping
-
     return {
         "request_id": provider_rates_request.request_id,
         "provider_rates": [
