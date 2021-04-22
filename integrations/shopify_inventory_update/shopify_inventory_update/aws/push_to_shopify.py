@@ -49,7 +49,6 @@ async def _sync_inventory(loop, context):
         loop {EventLoop} -- Async event loop
     """
     # Handler for AWS SQS
-
     param_store = ParamStore(TENANT, STAGE)
     shopify_config = json.loads(param_store.get_param('shopify'))
 
@@ -63,7 +62,7 @@ async def _sync_inventory(loop, context):
     sqs_handler = SqsHandler(
         os.environ.get("SQS_NAME")
     )
-    # Get message count
+
     message_count = await sqs_handler.get_messages_count()
     if message_count <= 0:
         LOGGER.info('No more messages to process... exiting->()')
@@ -72,7 +71,6 @@ async def _sync_inventory(loop, context):
 
     tasks = []
     while message_count > 0:
-        # Get next queue message
         messages = await sqs_handler.get_message()
         if messages.get('Messages'):
             failure_list = []
@@ -95,8 +93,9 @@ async def _sync_inventory(loop, context):
         LOGGER.info('%s available in the queue...',
                     str(message_count))
 
-    await asyncio.wait(tasks)
-    # In case no more message in the queue we can finish and disable lambda next run
+    if len(tasks) > 0:
+        await asyncio.wait(tasks)
+
     return 'Sync of inventory with shopify complete'
 
 
