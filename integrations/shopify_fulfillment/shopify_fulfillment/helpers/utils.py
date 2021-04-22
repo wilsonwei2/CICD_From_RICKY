@@ -21,13 +21,9 @@ class Utils():
     @staticmethod
     def get_newstore_conn(context=None):
         if not Utils._newstore_conn:
-            newstore_config = Utils.get_newstore_config()
             Utils._newstore_conn = NewStoreConnector(
                 tenant=TENANT,
                 context=context,
-                host=newstore_config['NS_URL_API'],
-                username=newstore_config['NS_USERNAME'],
-                password=newstore_config['NS_PASSWORD'],
                 raise_errors=True
             )
         return Utils._newstore_conn
@@ -49,10 +45,6 @@ class Utils():
             Utils._param_store = ParamStore(tenant=TENANT,
                                             stage=STAGE)
         return Utils._param_store
-
-    @staticmethod
-    def get_newstore_config():
-        return json.loads(Utils.get_param_store().get_param('newstore'))
 
     @staticmethod
     def get_shopify_config():
