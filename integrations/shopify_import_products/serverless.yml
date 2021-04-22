@@ -32,6 +32,8 @@ provider:
     s3_bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
     s3_bucket_key: import_files/
     url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_use_auth_lambda: 1
     meta_provider: ${self:provider.tenant}
     dynamo_table_name: ${self:provider.tenant}-import-products-savestate
     url_image_placeholder: 'https://s3.amazonaws.com/${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz/default_1.jpg'
