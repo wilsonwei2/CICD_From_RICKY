@@ -11,8 +11,8 @@ LOG_LEVEL = getattr(logging, LOG_LEVEL_SET, None)
 if not isinstance(LOG_LEVEL, int):
     LOG_LEVEL = getattr(logging, 'INFO', None)
 LOGGER.setLevel(LOG_LEVEL)
-TENANT = os.environ.get('TENANT_NAME')
-STAGE = os.environ.get('NEWSTORE_STAGE')
+TENANT = os.environ.get('TENANT')
+STAGE = os.environ.get('STAGE')
 
 
 class Utils():
@@ -34,9 +34,9 @@ class Utils():
         if not Utils._ns_handler:
             newstore_creds = json.loads(Utils.get_param_store().get_param(os.environ.get('NEWSTORE_CREDS_PARAM', 'newstore')))
             Utils._ns_handler = NShandler(
-                host=newstore_creds['NS_URL_API'],
-                username=newstore_creds['NS_USERNAME'],
-                password=newstore_creds['NS_PASSWORD']
+                host=newstore_creds['host'],
+                username=newstore_creds['username'],
+                password=newstore_creds['password']
             )
 
         return Utils._ns_handler

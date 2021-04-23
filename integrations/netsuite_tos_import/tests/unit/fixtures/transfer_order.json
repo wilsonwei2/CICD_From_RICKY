@@ -1,0 +1,171 @@
+{
+    "nullFieldList": null,
+    "createdDate": "2021-04-22T09:45:00",
+    "lastModifiedDate": "2021-04-22T09:45:00",
+    "customForm": null,
+    "shippingCost": null,
+    "subTotal": 40.0,
+    "status": "Pending Fulfillment",
+    "shippingAddress": {
+        "nullFieldList": null,
+        "internalId": "29901061",
+        "country": "_unitedStates",
+        "attention": null,
+        "addressee": "MTLDC1",
+        "addrPhone": null,
+        "addr1": null,
+        "addr2": null,
+        "addr3": null,
+        "city": null,
+        "state": null,
+        "zip": null,
+        "addrText": "MTLDC1",
+        "override": false,
+        "customFieldList": null
+    },
+    "shipIsResidential": false,
+    "shipAddressList": null,
+    "fob": null,
+    "tranDate": "2020-06-15T21:00:00-07:00",
+    "tranId": "TO0013399",
+    "source": null,
+    "orderStatus": null,
+    "subsidiary": {
+        "name": "US Subsidiary",
+        "internalId": "3",
+        "externalId": null,
+        "type": null
+    },
+    "employee": {
+        "name": "Test Tester",
+        "internalId": "11",
+        "externalId": null,
+        "type": null
+    },
+    "useItemCostAsTransferCost": false,
+    "incoterm": {
+        "name": "EXW",
+        "internalId": "3",
+        "externalId": null,
+        "type": null
+    },
+    "firmed": true,
+    "department": null,
+    "class": null,
+    "location": {
+        "name": "MTLST",
+        "internalId": "44",
+        "externalId": null,
+        "type": null
+    },
+    "transferLocation": {
+        "name": "DC : MTLDC1",
+        "internalId": "570",
+        "externalId": null,
+        "type": null
+    },
+    "memo": "test",
+    "shipDate": "2020-06-15T21:00:00-07:00",
+    "shipMethod": null,
+    "trackingNumbers": null,
+    "linkedTrackingNumbers": null,
+    "shipComplete": false,
+    "altShippingCost": null,
+    "shippingTax1Rate": null,
+    "shippingTax2Rate": null,
+    "handlingTax1Rate": null,
+    "handlingTax2Rate": null,
+    "shippingTaxCode": null,
+    "handlingTaxCode": null,
+    "total": 40.0,
+    "itemList": {
+        "item": [
+            {
+                "item": {
+                    "name": "1210161 : 1210161-002-30",
+                    "internalId": "61579",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 1,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityBackOrdered": 0.0,
+                "quantityCommitted": 2.0,
+                "quantityFulfilled": 0.0,
+                "quantityPacked": 0.0,
+                "quantityPicked": 0.0,
+                "quantityReceived": 0.0,
+                "quantity": 2.0,
+                "rate": 20.0,
+                "units": null,
+                "amount": 40.0,
+                "description": "Test product",
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "commitInventory": "_availableQty",
+                "orderPriority": null,
+                "options": null,
+                "isClosed": false,
+                "department": null,
+                "class": null,
+                "lastPurchasePrice": null,
+                "averageCost": 16.66666667,
+                "expectedShipDate": null,
+                "expectedReceiptDate": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "2754",
+                            "scriptId": "custcol_utk_fulfillmentrejected"
+                        }
+                    ]
+                }
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "accountingBookDetailList": null,
+    "customFieldList": {
+        "customField": [
+            {
+                "value": "{'61579':{'qty':2,'pick':''}}",
+                "internalId": "847",
+                "scriptId": "custbody_gom_grdprnt_items"
+            },
+            {
+                "value": "",
+                "internalId": "846",
+                "scriptId": "custbody_gridoe_productgrpdata"
+            },
+            {
+                "value": "{}",
+                "internalId": "3065",
+                "scriptId": "custbody_gridoe_trantemplatedata"
+            },
+            {
+                "value": false,
+                "internalId": "3096",
+                "scriptId": "custbody_nws_adjprocessed"
+            },
+            {
+                "value": true,
+                "internalId": "3095",
+                "scriptId": "custbody_nws_adjprocessed_to"
+            },
+            {
+                "value": false,
+                "internalId": "3175",
+                "scriptId": "custbody_transfer_order_processed"
+            },
+            {
+                "value": false,
+                "internalId": "1993",
+                "scriptId": "custbody_utk_sent_to_radial"
+            }
+        ]
+    },
+    "internalId": "42017096",
+    "externalId": null
+}

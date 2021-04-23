@@ -31,8 +31,8 @@ functions:
           path: integrations/netsuite_events_queue
           method: post
     environment:
-      TENANT_NAME: ${self:provider.tenant}
-      NEWSTORE_STAGE: ${self:provider.stage}
+      TENANT: ${self:provider.tenant}
+      STAGE: ${self:provider.stage}
       SQS_CASH_SALE: ${self:resources.Resources.IncomingCashSalesQueue.Properties.QueueName}
       SQS_SALES_ORDER: ${self:resources.Resources.IncomingSalesOrderQueue.Properties.QueueName}
 
@@ -44,8 +44,8 @@ functions:
     events:
       - schedule: rate(5 minutes)
     environment:
-      TENANT_NAME: ${self:provider.tenant}
-      NEWSTORE_STAGE: ${self:provider.stage}
+      TENANT: ${self:provider.tenant}
+      STAGE: ${self:provider.stage}
       SQS_QUEUE: ${self:resources.Resources.IncomingCashSalesQueue.Properties.QueueName}
       MAX_MESSAGE_QUEUE_SIZE: 40
 
@@ -57,8 +57,8 @@ functions:
     events:
       - schedule: rate(5 minutes)
     environment:
-      TENANT_NAME: ${self:provider.tenant}
-      NEWSTORE_STAGE: ${self:provider.stage}
+      TENANT: ${self:provider.tenant}
+      STAGE: ${self:provider.stage}
       SQS_QUEUE: ${self:resources.Resources.IncomingSalesOrderQueue.Properties.QueueName}
       MAX_MESSAGE_QUEUE_SIZE: 40
 
