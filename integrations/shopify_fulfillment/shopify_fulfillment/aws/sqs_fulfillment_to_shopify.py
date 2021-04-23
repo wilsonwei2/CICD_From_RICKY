@@ -99,7 +99,7 @@ async def process_fulfillment(message):
         final_response = shopify_handler.create_fulfillment(shopify_order_id, fulfillment, True)
         LOGGER.info(f'After setting inventory to zero, created fulfillment with {final_response}')
         LOGGER.info('fulfilled the request correctly.')
-    else:
+    elif error and error is not None:
         LOGGER.error('The following error was returned by Shopify while trying to create the fulfillment: ' \
                      f'{json.dumps(error, indent=4)}')
         raise Exception("Couldn't create fulfillment on Shopify")
