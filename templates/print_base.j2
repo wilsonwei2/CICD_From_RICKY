@@ -1,0 +1,80 @@
+{%- from 'macros' import text_address, inline_address with context -%}
+{%- import 'tenant' as tenant -%}
+
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" type="text/css" href="print.css">
+		<style>
+			{# below styles live here because they require imports that are not linkable from external css #}
+			@font-face {
+				font-family: "proxima-nova";
+				src: url('{{ tenant.fonts.proxima_nova }}') format("truetype");
+			}
+			@font-face {
+				font-family: "avenir";
+				src: url('{{ tenant.fonts.avenir }}') format("truetype");
+			}
+			@media print {
+				body, page {
+					margin: 0;
+				}
+			}
+			@page {
+				size: 8.5in 11.0in;
+				margin-left: 0.6in;
+				margin-right: 0.6in;
+				margin-top: 1.8in;
+				margin-bottom: 1.12in;
+
+				@top-center {
+					width: 7.3in;
+					background-image: url('{{ tenant.email_logo }}');
+					background-size: 1.3in;
+					background-position: 50% .25in;
+					background-repeat: no-repeat;
+					text-align: center;
+					font-size: .25in;
+					font-family: proxima-nova;
+					color: #5B6670;
+					content: "{% block header %}{% endblock %}";
+					white-space: pre;
+					line-height: 1.5;
+					padding-top: .95in;
+				}
+				@bottom-left {
+					padding-left: 0.8in;
+					margin-bottom: .3in;
+					width: 2.85in;
+					background-image: url('data:image/png;base64,{{ qr_code }}');
+					background-size: 0.66in 0.66in;
+					background-position: 0 .14in;
+					background-repeat: no-repeat;
+					vertical-align: bottom;
+					font-size: .11in;
+					line-height: 1.2;
+					font-family: avenir;
+					color: #5B6670;
+					content: 'Marine Layer\00000a1572 California Street\00000aSan Francisco, CA 94109 United States\00000amarinelayer.com';
+					white-space: pre;
+				}
+				@bottom-right {
+					margin-bottom: .3in;
+					width: 3.65in;
+					vertical-align: bottom;
+					font-size: .10in;
+					line-height: 1.2;
+					font-family: avenir;
+					color: #5B6670;
+					content: '{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}\00000a{{ format_date(created_at | default(order_details and order_details.started_at), timezone | default(store_timezone)) }} at {{ format_time(created_at | default(order_details and order_details.started_at), timezone | default(store_timezone)) }}\aPage ' counter(page) ' of ' counter(pages);
+					white-space: pre;
+				}
+			}
+			{% block extra_style %}{% endblock %}
+		</style>
+	</head>
+	<body>
+	{% block body %}{% endblock %}
+	</body>
+</html>

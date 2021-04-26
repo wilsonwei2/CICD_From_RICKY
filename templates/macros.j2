@@ -1,0 +1,94 @@
+{%- set decimal_separator = decimal_separator | default('.') -%}
+
+{%- macro currency(amount, isNegative=false) -%}
+	{% set split = format_currency(amount|abs).split(decimal_separator, 1) %}
+	<span class="currency">{% if split[0] == '0' and split[1] == '00' %}{% elif isNegative == true %}<span>-</span>{% else  %}{% endif %}<span class="symbol">{{ currency_symbol(currency_code) }}</span><span class="whole">{{ split[0] }}</span><span class="decimal">{{ decimal_separator }}</span><span class="fractional">{{ split[1] }}</span></span>
+{%- endmacro -%}
+
+{%- macro text_address(addr) -%}
+	{%- if addr.name %}{{ addr.name }}, {% endif -%}
+	{{ addr.address_line_1 }}, {# (remove whitespace) -#}
+	{%- if addr.address_line_2 %}{{ addr.address_line_2 }}, {% endif -%}
+	{%- if addr.country_code in ('DE', 'NL', 'FI', 'NO', 'DK', 'SE', 'FR', 'IT', 'CH', 'PL') -%}
+		{#- Postal code comes before the city in these countries. -#}
+		{#- TODO: Finish the list of country codes! -#}
+		{%- if addr.zip_code %}{{ addr.zip_code }} {% endif -%}
+		{{ addr.city }}{% if addr.state %}, {{ addr.state }}{% endif %}
+	{%- else -%}
+		{#- Assume that postal code comes after the city/state everywhere else. -#}
+		{{ addr.city }}{% if addr.state %}, {{ addr.state }}{% endif %}
+		{%- if addr.zip_code %} {{ addr.zip_code }}{% endif -%}
+	{%- endif -%}
+	{{ ' ' }}{{ addr.country_name | default(addr.country_code) }}
+{%- endmacro -%}
+
+{%- macro google_maps_url(addr) -%}
+	https://maps.apple.com/?q=
+	{%- filter urlencode -%}
+		{{ text_address(addr) }}
+	{%- endfilter -%}
+{%- endmacro -%}
+
+{%- macro address(addr, title, style, class, link=true) -%}
+	{%- if link %}<a href="{{ google_maps_url(addr) | e }}">{% endif -%}
+	<div class="vcard {{ class }}" style="{{ style }}">
+		{% if title %}<strong>{{ title }}</strong>{% endif %}
+		<p class="fn">{{ addr.name }}</p>{#- (remove whitespace) -#}
+		<span class="adr">
+			<p class="street-address">{{ addr.address_line_1 }}</p>
+			{%- if addr.address_line_2 %}<p class="extended-address">{{ addr.address_line_2 }}</p>{% endif -%}
+			<p>
+				{%- if addr.country_code in ('DE', 'NL', 'FI', 'NO', 'DK', 'SE', 'FR', 'IT', 'CH', 'PL') -%}
+					{#- Postal code comes before the city in these countries. -#}
+					{#- TODO: Finish the list of country codes! -#}
+					{%- if addr.zip_code %}<span class="postal-code">{{ addr.zip_code }}</span> {% endif -%}
+					<span class="locality">{{ addr.city }}</span>{% if addr.state %}, <span class="region">{{ addr.state }}</span>{% endif %}
+				{%- else -%}
+					{#- Assume that postal code comes after the city/state everywhere else. -#}
+					<span class="locality">{{ addr.city }}</span>{% if addr.state %}, <span class="region">{{ addr.state }}</span>{% endif %}
+					{%- if addr.zip_code %} <span class="postal-code">{{ addr.zip_code }}</span>{% endif -%}
+				{%- endif -%}
+			</p>
+			<p class="country-name">{{ addr.country_name | default(addr.country_code) }}</p>
+		</span>
+	</div>
+	{%- if link %}</a>{% endif -%}
+{%- endmacro -%}
+
+{%- macro inline_address(addr, style, class, link=true) -%}
+	<{% if link %}a href="{{ google_maps_url(addr) | e }}"{% else %}span{% endif %} class="vcard {{ class }}" style="{{ style }}">
+			{% if addr.name %}<span class="fn">{{ addr.name }}</span>,{% endif %}
+			<span class="adr">
+				<span class="street-address">{{ addr.address_line_1 }}</span>,
+				{% if addr.address_line_2 %}<span class="extended-address">{{ addr.address_line_2 }}</span>, {% endif %}
+				{%- if addr.country_code in ('DE', 'NL', 'FI', 'NO', 'DK', 'SE', 'FR', 'IT', 'CH', 'PL') -%}
+					{#- Postal code comes before the city in these countries. -#}
+					{#- TODO: Finish the list of country codes! -#}
+					{%- if addr.zip_code %}<span class="postal-code">{{ addr.zip_code }}</span> {% endif -%}
+					<span class="locality">{{ addr.city }}</span>{% if addr.state %}, <span class="region">{{ addr.state }}</span>{% endif %}
+				{%- else -%}
+					{#- Assume that postal code comes after the city/state everywhere else. -#}
+					<span class="locality">{{ addr.city }}</span>{% if addr.state %}, <span class="region">{{ addr.state }}</span>{% endif %}
+					{%- if addr.zip_code %} <span class="postal-code">{{ addr.zip_code }}</span>{% endif -%}
+				{%- endif %}
+				<span class="country-name">{{ addr.country_name | default(addr.country_code) }}</span>
+			</span>
+	</{% if link %}a{% else %}span{% endif %}>
+{%- endmacro -%}
+
+{%- macro desnake(str) -%}
+	{% set replace = str.replace("_", " ").title() %}
+	<span>{{ replace }}</span>
+{%- endmacro -%}
+
+{%- macro calculate_exchange_taxes(checkout_tax, refund_tax_lines) -%}
+  {% for refund_tax in refund_tax_lines %}
+    {% if refund_tax.name == checkout_tax.name and refund_tax.rate == checkout_tax.rate %}
+        {{ currency(checkout_tax.amount - refund_tax.amount) }}
+    {% endif %}
+  {% endfor %}
+{%- endmacro -%}
+
+{%- macro remove_last_name(name) -%}
+    {{ name[:name.rindex(' ')] }}
+{%- endmacro -%}

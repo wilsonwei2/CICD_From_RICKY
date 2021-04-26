@@ -1,0 +1,82 @@
+{%- set id = 'marine-layer' -%}
+{%- set company_name = 'Marine Layer' -%}
+{# {%- set email_logo = 'https://assets.newstore.net/marine-layer/logo_large.png' -%} #}
+{%- set email_logo = 'https://assets.newstore.net/marine-layer/email_logo.png' -%}
+{%- set print_logo = 'https://assets.newstore.net/marine-layer/logo.svg' -%}
+{%- set phone = '+1.844.544.5199' -%}
+
+{%- set urls = {
+    'home': 'https://www.marinelayer.com/',
+    'support': 'https://www.marinelayer.com/pages/useful-info',
+    'new': 'https://www.marinelayer.com/collections/new',
+    'guys': 'https://www.marinelayer.com/collections/guys-new',
+    'gals': 'https://www.marinelayer.com/collections/gals-new',
+    'stores': 'https://www.marinelayer.com/pages/stores',
+} -%}
+
+{%- set emails = {
+    'support': 'ohhey@marinelayer.com'
+} -%}
+
+{%- set blurbs = {
+    'do_not_reply': 'Please do not reply to this email',
+    'visit_store': 'Visit our store',
+    'contact': 'Contact Us'
+} -%}
+
+{%- set social_links = {
+    '1': {
+        'name': 'Facebook',
+        'url': 'https://www.facebook.com/marinelayer/',
+        'icon': 'https://assets.newstore.net/untuckit/icons/facebook_icon.png'
+    },
+    '2': {
+        'name': 'Instagram',
+        'url': 'https://www.instagram.com/marinelayer/',
+        'icon': 'https://assets.newstore.net/untuckit/icons/instagram_icon.png'
+    },
+    '3': {
+        'name': 'Pinterest',
+        'url': 'https://www.pinterest.com/marinelayerinc/',
+        'icon': 'https://assets.newstore.net/untuckit/icons/pinterest_icon.png'
+    },
+    '4': {
+        'name': 'Twitter',
+        'url': 'https://twitter.com/marinelayer/',
+        'icon': 'https://assets.newstore.net/untuckit/icons/twitter_icon.png'
+    }
+} -%}
+
+{%- set store = store_name if store_name else '' -%}
+{%- set address = {
+    'name': store,
+	'address_line_1': '1572 California Street',
+	'city': 'San Francisco',
+	'state': 'CA',
+	'zip_code': '94109',
+	'country_name': 'United States',
+	'country_code': 'US'
+} -%}
+
+{%- set fonts = {
+	'proxima_nova': 'https://assets.newstore.net/untuckit/fonts/proxima_nova_bold.otf',
+	'avenir': 'https://assets.newstore.net/untuckit/fonts/avenir_light.otf'
+} -%}
+
+
+{# --DEPRECATED-- #}
+{%- set icons = {
+	'phone': 'https://assets.newstore.net/untuckit/icons/phone_icon.png',
+	'email': 'https://assets.newstore.net/untuckit/icons/email_icon.png',
+	'web': 'https://assets.newstore.net/untuckit/icons/web_icon.png',
+	'truck': 'https://assets.newstore.net/untuckit/icons/truck_icon.png',
+	'gift_card': 'https://assets.newstore.net/untuckit/icons/giftcard_icon.png',
+	'facebook': 'https://assets.newstore.net/untuckit/icons/facebook_icon.png',
+	'twitter': 'https://assets.newstore.net/untuckit/icons/twitter_icon.png',
+	'pinterest': 'https://assets.newstore.net/untuckit/icons/pinterest_icon.png',
+	'instagram': 'https://assets.newstore.net/untuckit/icons/instagram_icon.png',
+	'facebook_dark': 'https://assets.newstore.net/untuckit/icons/facebook_dark.png',
+	'twitter_dark': 'https://assets.newstore.net/untuckit/icons/twitter_dark.png',
+	'pinterest_dark': 'https://assets.newstore.net/untuckit/icons/pinterest_dark.png',
+	'instagram_dark': 'https://assets.newstore.net/untuckit/icons/instagram_dark.png'
+} -%}

@@ -1,0 +1,256 @@
+{%- from 'fiscal_signature' import showFiscalSignature with context -%}
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Receipt</title>
+    <style>
+      .return_sentence{
+      float: left;
+      margin-top: 0.10in;
+      width: 60%;
+      text-align: justify;
+      font-size: 65%;
+      }
+    </style>
+  </head>
+  <div class="book">
+  {% set is_mixed_order = False %}
+  {% if is_mixed(flat_items) %}
+    {#
+    !IMPORTANT: sorting the items is needed for pagination to work correctly.
+      Items should be printed using the same order as the ordering priority -Default: in-store then shipping-.
+      The filter `indexed` is needed to be able to use the jinja filters `next` and `last` in case there are multiple items
+      with similar values.
+    #}
+    {% set flat_items = flat_items | sorted_by_fulfillment_group | indexed %}
+    {% set is_mixed_order = True %}
+    {% set shipping_items = flat_items | with_fulfillment_group('SHIPPING') %}
+    {% set in_store_handover_items = flat_items | with_fulfillment_group('IN_STORE_HANDOVER') %}
+  {% endif %}
+  {% with paginated_items = paginate(flat_items, 6) %}
+    {% for items in paginated_items %}
+    <div class="page">
+      <div class="subpage">
+        <div class="header">
+          <div class="description">
+            <p>
+              {%if store_phone_number%}
+                {{store_phone_number}}<br/>
+              {% endif %}
+              {%if store_name%}
+                {{store_name}}<br/>
+              {% endif %}
+              {{tenant_address.address_line_1}},
+              {{'' if tenant_address.address_line_2 == None or tenant_address.address_line_2 == '' else tenant_address.address_line_2 + ', '}}
+              {{tenant_address.city}},
+              {{'' if tenant_address.state == None or tenant_address.state == '' else tenant_address.state + ' '}}
+              {{'' if tenant_address.zip_code == None or tenant_address.zip_code == '' else tenant_address.zip_code + ', '}}
+              {{tenant_address.country_code}}
+            </p>
+          </div>
+        </div>
+        <div class="information">
+          <div class="subject">
+            <strong> Receipt </strong>
+          </div>
+          <div class="user_order_details">
+            {%if associate_name%}
+                <p>{{associate_name}}</p>
+            {% endif %}
+            {%if customer_name%}
+                <p>{{customer_name}}</p>
+            {% endif %}
+            <p> {{ format_date(created_at, timezone) }}</p>
+            <p> {{ order_number }}</p>
+            <p> {{ external_id }}</p>
+          </div>
+          <div class="order_details">
+            {%if associate_name%}<p>Associate: </p>{% endif %}
+            {%if customer_name%}<p>Customer: </p>{% endif %}
+            <p>Date: </p>
+            <p>Purchase:</p>
+            <p>Receipt:</p>
+          </div>
+        </div>
+
+        {% if billing_address != None or  shipping_address != None %}
+            {% if shipping_method and shipping_method != 'in_store_handover' %}
+                <div class="information address">
+                    {% if billing_address != None %}
+                      <div class="billing-address">
+                        <strong> Billing Address: </strong>
+                        <p> {{ billing_address.name }} </p>
+                        <p> {{ billing_address.address_line_1 }} {{ billing_address.address_line_2 }} </p>
+                        <p> {{ billing_address.city }}{{'' if billing_address.state == None or billing_address.state == '' else ','}} {{ billing_address.state}}
+                          {{ billing_address.zip_code if billing_address.zip_code != None else ''}} <p>
+                        <p> {{ billing_address.country_name }} </p>
+                      </div>
+                     {% endif %}
+
+                    {% if shipping_address != None %}
+                      <div class="shipping-address">
+                        <strong> Shipping Address: </strong>
+                        <p> {{ shipping_address.name }}</p>
+                        <p> {{ shipping_address.address_line_1 }}  {{ shipping_address.address_line_2 }} </p>
+                        <p> {{ shipping_address.city }}{{'' if shipping_address.state == None or shipping_address.state == '' else ','}}
+                          {{shipping_address.state }}
+                          {{ shipping_address.zip_code if shipping_address.zip_code != None else ''}} </p>
+                        <p> {{ shipping_address.country_name }} </p>
+                      </div>
+                     {% endif %}
+                </div>
+            {% endif %}
+
+        {% endif %}
+
+        <div class="contents">
+          <div class="table-wrapper">
+
+            <table>
+              <tr>
+                <th class="desc">Description</th>
+                <th class="epc">Item ID</th>
+                <th class="quantity">Quantity</th>
+                <th class="returned_qty"></th>
+                <th class="amount">Amount</th>
+              </tr>
+
+              {% for item in items %}
+                {% if is_mixed_order %}
+                  {% if item == shipping_items | first %}
+                    <tr><td colspan="5"> <strong> Shipped </strong> </td><tr>
+                  {% elif item == in_store_handover_items | first %}
+                    <td colspan="5"> <strong> In-store </strong> </td>
+                  {% endif %}
+                {% endif %}
+                <tr>
+                  <td class="desc">
+                    <strong>{{ item.product_name }}</strong><br>
+                    Size {{ item.product_attributes.variation_size_value }}
+                  </td>
+                  <td class="epc">
+                    <span> {{ item.external_identifier.epc if item.external_identifier and item.external_identifier.epc else '---' }} </span>
+                  </td>
+                  <td class="quantity">
+                    <span> 1 </span>
+                  </td>
+                  <td class="returned_qty">
+                  </td>
+                  <td class="amount">
+                    <span> {{ currency_code }} {{ format_currency(item.price_net) }} </span>
+                  </td>
+                </tr>
+                {% if is_mixed_order %}
+                  {% if item == shipping_items | last %}
+                      <tr>
+                        <td class="desc">Total</td>
+                        <td class="epc"></td>
+                        <td class="quantity"></td>
+                        <td class="returned_qty"></td>
+                        <td class="amount"> {{ currency_code }} {{ format_currency(fulfillment_group_amounts.SHIPPING.sub_total) }} </td>
+                      </tr>
+                  {% elif item == in_store_handover_items | last %}
+                      <tr>
+                        <td class="desc">Total</td>
+                        <td class="epc"></td>
+                        <td class="quantity"></td>
+                        <td class="returned_qty"></td>
+                        <td class="amount"> {{ currency_code }} {{ format_currency(fulfillment_group_amounts.IN_STORE_HANDOVER.sub_total) }} </td>
+                      </tr>
+                  {% endif %}
+                {% endif %}
+
+              {% endfor %}
+            </table>
+            {% if loop.index == (paginated_items|length) %}
+            <div class="values">
+              <div class="contents">
+                {% if amounts.gift_wrapping > 0 %}
+                    <p>{{ currency_code }} {{ format_currency(amounts.gift_wrapping) }}</p>
+                {% endif %}
+                {% set discounts_value = total_discount_per_level(discounts, 'shipping') %}
+                {% set total_shipping_value = discounts_value + amounts.shipping_and_handling %}
+                {% if total_shipping_value > 0 %}
+                    <p>{{ currency_code }} {{ format_currency(total_shipping_value) }}</p>
+                {% endif %}
+                {% if discounts_value > 0 %}
+                  <p> {{ currency_code }} {{ format_currency(discounts_value * -1) }} </p>
+                {% endif %}
+                {% for disc in discounts %}
+                  {% if disc.level == 'shipping' and discounts_value > 0 %}
+                    <p> {{disc.reason}} </p>
+                  {% endif %}
+                {% endfor %}
+                {% if amounts.tax_lines %}
+                  {% for tax_line in amounts.tax_lines %}
+                    <p> {{ currency_code }} {{  format_currency(tax_line.amount) }}</p>
+                  {% endfor %}
+                {% endif %}
+                <p> {{ currency_code }} {{  format_currency(amounts.taxes) }}</p>
+                <p class="total"> {{ currency_code }} {{  format_currency(amounts.grand_total) }}</p>
+                {% for instrument in instruments if not instrument.cash %}
+                  <p> {{ instrument.currency_code }} {{  format_currency(instrument.amount) }}</p>
+                {% endfor %}
+                {% for instrument in instruments if instrument.cash %}
+                  <p> {{ instrument.currency_code }} {{  format_currency(instrument.cash.given_amount) }}</p>
+                  <p> {{ instrument.currency_code }} {{  format_currency(instrument.cash.change_amount) }}</p>
+                {% endfor %}
+              </div>
+              <div class="subjects">
+                {% if amounts.gift_wrapping != 0 %}
+                    <p> Gift Wrapping</p>
+                {% endif %}
+                {% if amounts.shipping_and_handling != 0 or discounts_value > 0 %}
+                    <p>{% if discounts_value > 0 %}Original {% endif %}Shipping &amp; Handling</p>
+                {% endif %}
+                {% if discounts_value > 0 %}
+                  <p>Shipping Discount</p>
+                {% endif %}
+                {% for disc in discounts %}
+                  {% if disc.level == 'shipping' and discounts_value > 0 %}
+                    <p>Shipping Discount Reason</p>
+                  {% endif %}
+                {% endfor %}
+                {% if amounts.tax_lines %}
+                  {% for tax_line in amounts.tax_lines %}
+                    <p>{{tax_line.name}} {{((tax_line.rate * 100) | round(3) | string ).rstrip("0").rstrip(".")}}%</p>
+                  {% endfor %}
+                {% endif %}
+                <p>Taxes </p>
+                <p class="total">Total </p>
+                {% for instrument in instruments if not instrument.cash %}
+                  {% set instrument_info = get_instrument_info(instrument) %}
+                  <p class="total">{{instrument_info['brand']}} {%if instrument_info['info'] != ""%} ({{instrument_info['info']}}) {% endif %} </p>
+                {% endfor %}
+                {% for instrument in instruments if instrument.cash %}
+                  <p class="total">Cash received </p>
+                  <p class="total">Cash change </p>
+                {% endfor %}
+              </div>
+              <div class="return_sentence">
+                We will gladly accept returns post marked within 10 days of purchase.
+                Merchandise eligible must be in its original condition, with all hang tags and care labels attached.
+                Merchandise which has been worn, altered or damaged is not returnable.
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="footer">
+          <div class="qr_code_wrapper">
+            <img alt="QR-Code" class="qr_code" src="data:image/png;base64,{{ qr_code }}">
+          </div>
+          <div class="footer_order_details">
+            <p><strong> {{ order_number }} </strong></p>
+            <p>{{ format_date(created_at, timezone) }} at {{ format_time(created_at, timezone) }}</p>
+            <p>Page {{ loop.index }} of {{ paginated_items|length }}</p>
+          </div>
+           {{ showFiscalSignature(f11n) }}
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    {% endwith %}
+  </div>
+</html>

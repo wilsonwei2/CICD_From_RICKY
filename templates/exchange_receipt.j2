@@ -1,0 +1,182 @@
+{% extends 'print_base' %}
+{%- from 'macros' import currency, address, desnake with context -%}
+
+{% block title %}Exchange Receipt{% endblock %}
+
+{% block header %}EXCHANGE RECEIPT{% endblock %}
+
+{% block body %}
+	<table class="order_information">
+		<tr>
+			<td>
+				<strong>Order #:</strong>
+				<p>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
+			</td>
+			<td rowspan="2">
+				{% if billing_address %}
+				{{ address(billing_address, 'Billing Address', class='billing_address') }}
+				{% endif %}
+			</td>
+			<td rowspan="2">
+				{% if shipping_address %}
+				{{ address(shipping_address, 'Shipping Address', class='shipping_address') }}
+				{% endif %}
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<strong>Order date:</strong>
+				<p>{{format_date(created_at | default(order_details and order_details.started_at), timezone | default(store_timezone))}}</p>
+			</td>
+		<tr>
+	</table>
+	<div class="item_list">
+		<h3>Items Returned</h3>
+		<table>
+			<tr>
+				<th class="item_list_description">Description</th>
+				<th class="item_list_item_id">Item ID</th>
+				<th class="item_list_amount">Amount</th>
+			</tr>
+		</table>
+		{% for item in return_items %}
+		<table class="item_list_item">
+			<tr>
+				<td class="item_list_description">
+					<p class="text_bold">{{ item.product_name }}</p>
+					<p>{% if item.product_attributes and item.product_attributes.variation_size_value %}Size {{ item.product_attributes.variation_size_value }}{% endif %}</p>
+					<p>{% if item.external_identifier and item.external_identifier.serial_number %}S/N: {{ item.external_identifier.serial_number }}{% endif %}</p>
+				</td>
+				<td class="item_list_item_id">
+					<p>{% if item.external_identifier and item.external_identifier.sku %}{{item.external_identifier.sku}}{% else %}---{% endif %}</p>
+				</td>
+				<td class="item_list_amount text_bold">{{ currency(item.refund_net) }}</td>
+			</tr>
+		</table>
+		<div class="stroke"></div>
+		{% endfor %}
+	</div>
+	<div class="item_list">
+		<h3>Items Purchased</h3>
+		<table>
+			<tr>
+				<th class="item_list_description">Description</th>
+				<th class="item_list_item_id">Item ID</th>
+				<th class="item_list_amount">Amount</th>
+			</tr>
+		</table>
+		{% for item in checkout_items %}
+		{% set item_discounts = item.discounts | selectattr('level', 'equalto', 'item') | list %}
+		{% set item_discounts_present = item_discounts|length > 0 %}
+		<table class="item_list_item">
+			<tr>
+				<td class="item_list_description" rowspan="{{ item_discounts|length + 2 }}">
+					<p class="text_bold">{{ item.product_name }}</p>
+					<p>{% if item.product_attributes and item.product_attributes.variation_size_value %}Size {{ item.product_attributes.variation_size_value }}{% endif %}</p>
+					<p>{% if item.external_identifier and item.external_identifier.serial_number %}S/N: {{ item.external_identifier.serial_number }}{% endif %}</p>
+				</td>
+				<td class="item_list_item_id">
+					<p>{% if item.external_identifier and item.external_identifier.sku %}{{item.external_identifier.sku}}{% else %}---{% endif %}</p>
+				</td>
+				<td class="item_list_amount {% if item_discounts_present == false %}text_bold{% else %}text_discounted{% endif %}">{{ currency(item.price_catalog) }}</td>
+			</tr>
+			{% if item_discounts_present == true %}
+				{% for discount in item_discounts %}
+					{% if loop.last %}
+						<tr class="item_list_discount">
+							<td>{{discount.reason}} {% if discount.discount_type == 'percentage' %}({{ discount.discount_value }}%){% endif %}</td>
+							<td>{{currency(-discount.price_adjustment)}}</td>
+						</tr>
+						<tr>
+							<td></td>
+							<td class="item_list_discount_total">{{ currency(item.price_net) }}</td>
+						</tr>
+					{% else %}
+						<tr class="item_list_discount">
+							<td>{{discount.reason}} {% if discount.discount_type == 'percentage' %}({{ discount.discount_value }}%){% endif %}</td>
+							<td>{{currency(-discount.price_adjustment)}}</td>
+						</tr>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+		</table>
+		<div class="stroke"></div>
+		{% endfor %}
+	</div>
+	<table class="pricing_info">
+		{% set order_discounts = discounts | selectattr('level', 'equalto', 'order') | list %}
+		<tr>
+			<th>Refund Subtotal</th>
+			<td>{{ currency(-return_amounts.sub_total) }}</td>
+		</tr>
+		<tr>
+			<th>Refund Taxes{%- if flat_items|selectattr("tax_method", "equalto", "vat_included")|list -%}(Incl){% elif flat_items|selectattr("vat_excluded")|list %}(Excl){%- endif -%}</th>
+			<td>{{ currency(-return_amounts.taxes) }}</td>
+		</tr>
+		<tr class="exchange_pricing_info_total">
+			<th>Refund Total</th>
+			<td>{{ currency(-return_amounts.grand_total) }}</td>
+		</tr>
+		<tr class="exchange_pricing_info_subtotal">
+			<th>Sales Subtotal</th>
+			<td>{{ currency(checkout_amounts.sub_total) }}</td>
+		</tr>
+		{% if order_discounts|length > 0 %}
+			{% for discount in order_discounts %}
+			<tr class="pricing_info_discount">
+				<th>{{ discount.reason }} {% if discount.discount_type == 'percentage' %}(-{{ discount.discount_value }}%){% endif %}</th>
+				<td>{{currency(-discount.price_adjustment)}}</td>
+			</tr>
+			{% endfor %}
+		{% endif %}
+		{% if checkout_amounts.shipping_and_handling or (shipping_address and shipping_address.address_line_1) %}
+		<tr>
+			<th>Shipping &amp; Handling</th>
+			<td>{{ currency(checkout_amounts.shipping_and_handling) }}</td>
+		</tr>
+		{% endif %}
+		<tr>
+			<th>Sales Taxes{%- if flat_items|selectattr("tax_method", "equalto", "vat_included")|list -%}(Incl){% elif flat_items|selectattr("vat_excluded")|list %}(Excl){%- endif -%}</th>
+			<td>{{ currency(checkout_amounts.taxes) }}</td>
+		</tr>
+		<tr class="exchange_pricing_info_total">
+			<th>Sales Total</th>
+			<td>{{ currency(checkout_amounts.grand_total) }}</td>
+		</tr>
+		<tr class="exchange_pricing_info_net_total">
+			<th>Net Total</th>
+			<td>{{ currency(exchange_amounts.grand_total) }}</td>
+		</tr>
+		<tr class="payment_method">
+			<td colspan="2">
+				{% for instrument in checkout_instruments %}
+				<tr>
+					{%- if instrument.payment_method == "adyen" or instrument.payment_method == "credit_card" -%}
+						{%- if instrument.metadata and instrument.metadata.instrument_details -%}
+							{%- if instrument.metadata.instrument_details.brand -%}
+							<th>{{instrument.metadata.instrument_details.brand}}
+							{%- else -%}
+							<th>Credit&nbsp;Card
+							{%- endif -%}
+							{%- if instrument.metadata.instrument_details.last4 -%}
+							&nbsp;(****&nbsp;{{instrument.metadata.instrument_details.last4}})</th>
+							{%- else -%}
+							</th>
+							{%- endif -%}
+						{%- else -%}
+						<th>Credit Card</th>
+						{%- endif -%}
+					{%- else -%}
+						<th>{{desnake(instrument.payment_method)}}</th>
+					{%- endif -%}
+					<td>{{ currency(instrument.amount) }}</td>
+				</tr>
+				{% endfor %}
+			</td>
+		</tr>
+	</table>
+	<div class="bottom_info">
+		<p>We have a pretty sweet return policy (up to 365 days, no questions asked). But just in case you do have a question,
+		you can always email us at <strong>ohhey@marinelayer.com</strong>.</p>
+	</div>
+{% endblock %}
