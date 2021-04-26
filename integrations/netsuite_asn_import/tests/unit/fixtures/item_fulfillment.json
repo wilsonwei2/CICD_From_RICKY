@@ -1,0 +1,30 @@
+{
+    "transferLocation": {
+        "internalId": 1,
+        "name": "Store"
+    },
+    "tranId": "IF0000001",
+    "shippedDate": "",
+    "createdFrom": {
+        "name": "#TO0000001"
+    },
+    "itemList": {
+        "item": [
+            {
+                "location": {
+                    "name": "DC"
+                },
+                "itemName": "productName",
+                "quantity": 10
+            }
+        ]
+    },
+    "packageList": {
+        "package": [
+            {
+                "packageTrackingNumber": "999000123456"
+            }
+        ]
+    },
+    "internalId": 1000
+}
