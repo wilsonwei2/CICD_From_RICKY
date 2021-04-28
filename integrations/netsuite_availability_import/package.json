@@ -1,0 +1,9 @@
+{
+  "name": "frankandoak-netsuite-availability-import",
+  "description": "",
+  "version": "0.1.0",
+  "devDependencies": {
+    "serverless-plugin-existing-s3": "^2.4.0",
+    "serverless-python-requirements": "^5.1.0"
+  }
+}

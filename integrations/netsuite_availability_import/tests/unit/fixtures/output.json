@@ -1,0 +1,87 @@
+{
+  "head": {
+    "store_mapping": [
+      {
+        "fulfillment_node_id": "MTLDC1",
+        "store_id": ""
+      }
+    ],
+    "completed_fulfillment_requests": {
+      "logical_timestamp_start": 1550001641531,
+      "logical_timestamp_end": 1550001641531
+    },
+    "mode": "atp"
+  },
+  "items": [
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1120429-138-XS",
+      "quantity": 0
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1120429-138-S",
+      "quantity": 12
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1120429-138-M",
+      "quantity": 100
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1120429-138-L",
+      "quantity": 123
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1120429-138-XL",
+      "quantity": 35
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1120429-138-XXL",
+      "quantity": 1
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1210161-002-28",
+      "quantity": 1
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1210161-002-30",
+      "quantity": 3
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1210161-002-31",
+      "quantity": 4
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1210161-002-32",
+      "quantity": 5
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1210161-002-33",
+      "quantity": 132
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1210161-002-34",
+      "quantity": 15
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1210161-002-36",
+      "quantity": 23
+    },
+    {
+      "fulfillment_node_id": "MTLDC1",
+      "product_id": "1210161-002-38",
+      "quantity": 0
+    }
+  ]
+}
