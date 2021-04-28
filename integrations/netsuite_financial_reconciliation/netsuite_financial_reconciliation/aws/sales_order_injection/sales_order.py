@@ -106,7 +106,7 @@ def get_payment_transactions(order_data):
 
 
 def get_payment_items(order_event, order_data, location):
-    LOGGER.info("Mapping payment items")
+    LOGGER.info('Mapping payment items')
     subsidiary_id = 1
     payment_items = []
     if order_data['paymentAccount'] is None:
@@ -207,7 +207,7 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
         'subsidiary': params.RecordRef(internalId=subsidiary_id),
         'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['sales_order_custom_form_internal_id'])),
         'location': params.RecordRef(internalId=location_id),
-        'partner': params.RecordRef(internalId=int(params.get_netsuite_config()['newstore_partner_internal_id'])),
+        # 'partner': params.RecordRef(internalId=int(params.get_netsuite_config()['newstore_partner_internal_id'])),
         'shipMethod': params.RecordRef(internalId=shipping_method_id),
         'shippingCost': order_event['shipping_total'],
         'class': params.RecordRef(internalId=selling_location_id),
@@ -398,7 +398,8 @@ def inject_sales_order(order_event, order_data):
 
     netsuite_sales_order_items = []
     sales_order_items = get_sales_order_items(order_event)
-    sales_order_items += get_payment_items(order_event, order_data, sales_order['location'])
+    # TODO Payment Items are not setup in Netsuite - so uncomment for now pylint: disable=fixme
+    # sales_order_items += get_payment_items(order_event, order_data, sales_order['location'])
     for item in sales_order_items:
         netsuite_sales_order_items.append(SalesOrderItem(**item))
     netsuite_sales_order['itemList'] = SalesOrderItemList(netsuite_sales_order_items)

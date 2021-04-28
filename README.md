@@ -28,8 +28,6 @@ You will need the following two plugins for your every serverless application.
 
 - [serverless-python-requirements](https://www.serverless.com/plugins/serverless-python-requirements). The plugin handles your Python packaging in Lambda. The plugin will bundle the python dependencies specified in your Pipfile when `sls deploy` is run.
 
-- [serverless-pseudo-parameters](https://www.serverless.com/plugins/serverless-pseudo-parameters). The plugin allows you to use the CloudFormation Pseudo Parameters in your `serverless.yml`.
-
 Depending on your serverless application the following plugins are useful and more.
 
 - [serverless-domain-manager](https://github.com/amplify-education/serverless-domain-manager). The plugin creates a custom domain name for Lambda and API Gateway with Serverless.

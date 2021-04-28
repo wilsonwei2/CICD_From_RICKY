@@ -2,7 +2,6 @@ service: frankandoak-shopify-inventory-update
 
 plugins:
   - serverless-python-requirements
-  - serverless-pseudo-parameters
 custom:
   pythonRequirements:
     dockerizePip: false
@@ -22,7 +21,7 @@ provider:
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
   dynamo_table_name: ${self:provider.tenant}-availability-job-save-state
-  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}

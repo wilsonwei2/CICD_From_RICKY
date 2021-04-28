@@ -12,10 +12,8 @@ NETSUITE_CONFIG = None
 NEWSTORE_TO_NETSUITE_LOCATIONS_CONFIG = None
 NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS_CONFIG = None
 NEWSTORE_GIFTCARD_PRODUCT_IDS_CONFIG = None
-DC_TIMEZONE_MAPPING_CONFIG = None
 NEWSTORE_TO_NETSUITE_CHANNEL_CONFIG = None
 NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG = None
-SHOPIFY_DC_LOCATION_ID_MAP_CONFIG = None
 CUSTOM_PRICE = -1
 
 
@@ -37,8 +35,9 @@ def get_newstore_config():
 
 def get_netsuite_config():
     global NETSUITE_CONFIG  # pylint: disable=W0603
-    if not NETSUITE_CONFIG:
-        NETSUITE_CONFIG = json.loads(get_param_store().get_param('netsuite'))
+    # TODO - enable the next line again once the configuration is stable pylint: disable=fixme
+    # if not NETSUITE_CONFIG:
+    NETSUITE_CONFIG = json.loads(get_param_store().get_param('netsuite'))
     return NETSUITE_CONFIG
 
 
