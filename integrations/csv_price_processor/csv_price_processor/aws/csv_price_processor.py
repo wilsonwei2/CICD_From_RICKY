@@ -66,7 +66,10 @@ def handler(event, context):
         LOGGER.info(f'processing {s3_key}')
         with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') \
                 as csvfile:
-            price_book = csv_to_pricebooks(csvfile, currency)
+            price_book = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-en')
+
+            # also import CAD prices to storefront-catalog-fr
+            price_book_catalog_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr') if currency == 'CAD' else None
 
             now = datetime.utcnow()
 
@@ -74,22 +77,10 @@ def handler(event, context):
             obj_prefix = f"{S3_PREFIX}prices/{'msrp'}/{time_stamp}"
             LOGGER.info(f"S3_PREFIX is {S3_PREFIX}")
             LOGGER.info(f"obj_prefx is {obj_prefix}")
-            for i, chunk in enumerate(iter_chunks(price_book['items'], CHUNK_SIZE), start=1):
-                out = {'head': price_book['head'], 'items': chunk}
-                jsonbytes = json.dumps(out).encode('utf-8')
 
-                key = f"{obj_prefix}-{i:03}.zip"
-                LOGGER.info(f"key is {obj_prefix}")
-                LOGGER.debug(f'Zipping chunk {i}')
-                data = io.BytesIO()
-                outzip = zf.ZipFile(data, 'w', zf.ZIP_DEFLATED)
-                outzip.writestr('prices.json', jsonbytes)
-                outzip.close()
-                data.seek(0)
-                s3obj = S3_BUCKET.put_object(Key=key, Body=data)
-                data.close()
-                LOGGER.info(f'Zipped and uploaded {s3obj}')
-                LOGGER.debug(json.dumps(out, indent=2))
+            no_of_chunks = generate_chunks(price_book, obj_prefix)
+            if price_book_catalog_fr:
+                generate_chunks(price_book, obj_prefix, no_of_chunks)
 
             # Start import step function
             input = json.dumps({
@@ -101,3 +92,28 @@ def handler(event, context):
                 "dest_prefix": "import_files/",
             })
             STEP_FUNCTION_CLIENT.start_execution(stateMachineArn=STATE_MACHINE_ARN, input=input)
+
+def generate_chunks(price_book, obj_prefix, add_idx = 0):
+    chunks = 0
+    for i, chunk in enumerate(iter_chunks(price_book['items'], CHUNK_SIZE), start=1):
+        out = {'head': price_book['head'], 'items': chunk}
+        jsonbytes = json.dumps(out).encode('utf-8')
+
+        idx = add_idx + i
+
+        key = f"{obj_prefix}-{idx:03}.zip"
+        LOGGER.info(f"key is {obj_prefix}")
+        LOGGER.debug(f'Zipping chunk {i}')
+        data = io.BytesIO()
+        outzip = zf.ZipFile(data, 'w', zf.ZIP_DEFLATED)
+        outzip.writestr('prices.json', jsonbytes)
+        outzip.close()
+        data.seek(0)
+        s3obj = S3_BUCKET.put_object(Key=key, Body=data)
+        data.close()
+        LOGGER.info(f'Zipped and uploaded {s3obj}')
+        LOGGER.debug(json.dumps(out, indent=2))
+
+        chunks = chunks + 1
+
+    return chunks

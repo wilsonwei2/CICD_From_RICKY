@@ -26,15 +26,15 @@ class _FixDictReader(csv.DictReader):
                 raise
             raise StopIteration
 
-def csv_to_pricebooks(csvfile, currency="USD"):
+def csv_to_pricebooks(csvfile, currency='USD', catalog='storefront-catalog-en'):
     reader = _FixDictReader(csvfile)
 
-    pricebook = 'default' if currency == "CAD" else f"{currency.lower()}-prices"
+    pricebook_name = 'default' if currency == 'CAD' else f'{currency.lower()}-prices'
 
-    default_price_book = {
+    price_book = {
         'head': {
-            'pricebook': pricebook,
-            'catalog': f'storefront-catalog-en',
+            'pricebook': pricebook_name,
+            'catalog': catalog,
             'currency': currency
         },
         'items': [],
@@ -42,9 +42,9 @@ def csv_to_pricebooks(csvfile, currency="USD"):
 
     for item in reader:
         product_id = item['ProductSKU']
-        default_price_book['items'].append({
+        price_book['items'].append({
             'product_id': product_id,
             'value': float(item['Price'])
         })
 
-    return default_price_book
+    return price_book
