@@ -64,9 +64,9 @@ class TestFrankandoakASNImport(unittest.TestCase):
         newstore_config_mock = patch('netsuite_asn_import.utils.Utils.get_newstore_config')
         self.patched_newstore_config_mock = newstore_config_mock.start()
         self.patched_newstore_config_mock.return_value = {
-            "NS_URL_API": "url",
-            "NS_USERNAME": "username",
-            "NS_PASSWORD": "password"
+            "host": "url",
+            "username": "username",
+            "password": "password"
         }
 
         netsuite_config_mock = patch('netsuite_asn_import.utils.Utils.get_netsuite_config')
