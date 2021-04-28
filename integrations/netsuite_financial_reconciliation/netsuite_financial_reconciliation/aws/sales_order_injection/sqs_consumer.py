@@ -29,7 +29,7 @@ async def consume(process, queue_name):
         # Process the message w/ NetSuite
         LOGGER.info(f'Processing item for order {message["payload"]["id"]}')
         if message['payload'].get('is_historical', False):
-            LOGGER.info("Skip message because is a Historical Order")
+            LOGGER.info('Skip message because is a Historical Order')
             _delete_message_from_sqs(sqs_handler, receipt_handle)
             number_of_messages_to_consume -= 1
             continue

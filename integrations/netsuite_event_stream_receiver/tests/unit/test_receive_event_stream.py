@@ -6,6 +6,8 @@ from unittest.mock import patch
 class TestFrankAndOakEventStreamReceiver(unittest.TestCase):
     def setUp(self):
         self.variables = {
+            'SQS_CASH_SALE': 'SQS_CASH_SALE',
+            'SQS_SALES_ORDER': 'SQS_SALES_ORDER',
             'SQS_TRANSFER_ORDER_QUEUE': 'SQS_TRANSFER_ORDER_QUEUE',
             'SQS_INVENTORY_TRANSFER': 'SQS_INVENTORY_TRANSFER',
             'SQS_RETURN_PROCESSED': 'SQS_RETURN_PROCESSED',
