@@ -10,11 +10,13 @@ from param_store.client import ParamStore
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
+SQS_CASH_SALE = os.environ.get('SQS_CASH_SALE')
+SQS_SALES_ORDER = os.environ.get('SQS_SALES_ORDER')
 SQS_TRANSFER_ORDER_QUEUE = os.environ.get('SQS_TRANSFER_ORDER_QUEUE')
 SQS_INVENTORY_TRANSFER = os.environ.get('SQS_INVENTORY_TRANSFER')
 SQS_RETURN_PROCESSED = os.environ.get('SQS_RETURN_PROCESSED')
 SQS_FULFILLMENT = os.environ.get('SQS_FULFILLMENT')
-SQS_FULFILLMENT_ASSIGNED = os.environ.get('SQS_FULFILLMENT_ASSIGNED', 'frankandoak-fulfillment-to-netsuite-queue.fifo')
+SQS_FULFILLMENT_ASSIGNED = os.environ.get('SQS_FULFILLMENT_ASSIGNED')
 SQS_APPEASEMENT_REFUND = os.environ.get('SQS_APPEASEMENT_REFUND')
 TENANT = os.environ.get('TENANT')
 STAGE = os.environ.get('STAGE')
@@ -39,10 +41,10 @@ def handler(event, _):
     }
 
 
-async def process_event(event):
+async def process_event(event): #pylint: disable=too-many-branches
     event_body = json.loads(event.get('body', {}))
     if not event_body:
-        LOGGER.info("Empty event received")
+        LOGGER.info('Empty event received')
         return True
 
     payload = event_body['payload']
@@ -55,7 +57,21 @@ async def process_event(event):
 
     LOGGER.info(f' Event name -- {event_type}')
 
-    if event_type == 'inventory_transaction.asn_created':
+    if event_type == 'order.opened':
+        external_id = payload.get('external_id')
+        if external_id.startswith('HIST'):
+            LOGGER.info(f'Ignore Historical order {external_id}')
+            return True
+        # A channel_type of 'web' or a shipping service level denotes that this is
+        # not a cash sale, so should be handled as a sales order
+        is_a_web_order = payload['channel_type'] == 'web'
+        shipping_service_level = payload['items'][0].get('shipping_service_level', None)
+        is_endless_aisle = bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER')
+        if is_a_web_order or is_endless_aisle:
+            queue_name = SQS_SALES_ORDER
+        else:
+            queue_name = SQS_CASH_SALE
+    elif event_type == 'inventory_transaction.asn_created':
         queue_name = SQS_TRANSFER_ORDER_QUEUE
     elif event_type == 'inventory_transaction.items_received':
         queue_name = SQS_INVENTORY_TRANSFER

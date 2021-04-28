@@ -3,7 +3,6 @@ service:
 
 plugins:
   - serverless-python-requirements
-  - serverless-pseudo-parameters
 package:
   exclude:
     - ./**
@@ -18,49 +17,38 @@ provider:
   region: us-east-1
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
-  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
 
 functions:
-  events_queue:
-    name: ${self:provider.tenant}-netsuite-integration-events-queue
-    handler: netsuite_financial_reconciliation.aws.events_queue.main.handler
-    timeout: 45
-    memorySize: 128
-    events:
-      - http:
-          path: integrations/netsuite_events_queue
-          method: post
-    environment:
-      TENANT: ${self:provider.tenant}
-      STAGE: ${self:provider.stage}
-      SQS_CASH_SALE: ${self:resources.Resources.IncomingCashSalesQueue.Properties.QueueName}
-      SQS_SALES_ORDER: ${self:resources.Resources.IncomingSalesOrderQueue.Properties.QueueName}
-
   netsuite_cash_sale_injection:
     name: ${self:provider.tenant}-netsuite-cash-sale-injection
     handler: netsuite_financial_reconciliation.aws.cash_sale_injection.main.handler
     timeout: 900
     memorySize: 256
-    events:
-      - schedule: rate(5 minutes)
     environment:
       TENANT: ${self:provider.tenant}
       STAGE: ${self:provider.stage}
       SQS_QUEUE: ${self:resources.Resources.IncomingCashSalesQueue.Properties.QueueName}
       MAX_MESSAGE_QUEUE_SIZE: 40
+    events:
+      - schedule:
+          name: ${self:provider.tenant}-netsuite-cash-sales-injection-trigger
+          rate: rate(2 minutes)
 
   netsuite_sales_order_injection:
     name: ${self:provider.tenant}-netsuite-sales-order-injection
     handler: netsuite_financial_reconciliation.aws.sales_order_injection.main.handler
     timeout: 900
     memorySize: 256
-    events:
-      - schedule: rate(5 minutes)
     environment:
       TENANT: ${self:provider.tenant}
       STAGE: ${self:provider.stage}
       SQS_QUEUE: ${self:resources.Resources.IncomingSalesOrderQueue.Properties.QueueName}
       MAX_MESSAGE_QUEUE_SIZE: 40
+    events:
+      - schedule:
+          name: ${self:provider.tenant}-netsuite-sales-order-injection-trigger
+          rate: rate(2 minutes)
 
 resources:
   Resources:
@@ -70,7 +58,7 @@ resources:
         FifoQueue: True
         ContentBasedDeduplication: True
         VisibilityTimeout: 60
-        QueueName: SQS_CASH_SALE_QUEUE.fifo
+        QueueName: ${self:provider.tenant}-cash-sale-to-netsuite-queue.fifo
         RedrivePolicy:
           maxReceiveCount: 5
           deadLetterTargetArn: !GetAtt IncomingCashSalesDLQ.Arn
@@ -80,14 +68,14 @@ resources:
         FifoQueue: True
         ContentBasedDeduplication: True
         MessageRetentionPeriod: 1209600
-        QueueName: SQS_CASH_SALE_DLQ.fifo
+        QueueName: ${self:provider.tenant}-cash-sale-to-netsuite-queue-dlq.fifo
     IncomingSalesOrderQueue:
       Type: AWS::SQS::Queue
       Properties:
         FifoQueue: True
         ContentBasedDeduplication: True
         VisibilityTimeout: 60
-        QueueName: SQS_SALES_ORDER_QUEUE.fifo
+        QueueName: ${self:provider.tenant}-sales-order-to-netsuite-queue.fifo
         RedrivePolicy:
           maxReceiveCount: 5
           deadLetterTargetArn: !GetAtt IncomingSalesOrderDLQ.Arn
@@ -97,4 +85,4 @@ resources:
         FifoQueue: True
         ContentBasedDeduplication: True
         MessageRetentionPeriod: 1209600
-        QueueName: SQS_SALES_ORDER_DLQ.fifo
+        QueueName: ${self:provider.tenant}-sales-order-to-netsuite-queue-dlq.fifo

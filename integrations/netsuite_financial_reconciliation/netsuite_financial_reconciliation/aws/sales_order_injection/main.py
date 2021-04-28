@@ -90,10 +90,11 @@ def get_order_data(order_id):
           currency
           transactionType
           instrument {
-              paymentWallet
-              paymentProvider
-              paymentOrigin
-              paymentMethod          }
+            paymentWallet
+            paymentProvider
+            paymentOrigin
+            paymentMethod
+          }
         }
       }
     }
