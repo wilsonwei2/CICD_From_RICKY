@@ -1,0 +1,22 @@
+[
+    {
+        "value": "UN000031014",
+        "internalId": null,
+        "scriptId": "custbody_nws_shopifyorderid"
+    },
+    {
+        "value": "",
+        "internalId": null,
+        "scriptId": "custbody_nws_shopifyorderinternalid"
+    },
+    {
+        "scriptId": "custbodyaccumula_ecomid",
+        "internalId": null,
+        "value": "UN000031014"
+    },
+    {
+        "value": "5533195ab12047d5aef897e925b402c6",
+        "internalId": null,
+        "scriptId": "custbody_nws_associateid"
+    }
+]

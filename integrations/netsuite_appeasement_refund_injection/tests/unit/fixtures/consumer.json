@@ -1,0 +1,76 @@
+{
+    "pagination_info": {
+        "count": 1, 
+        "total": 1, 
+        "offset": 0
+    }, 
+    "field_ranges": {
+        "created_by_name": {
+            "values": [
+                "Gatowski, Dimitri", 
+                "Noya, Kristian", 
+                "Qaqi, Emiliano", 
+                "Sivakumaran, Thanoosha", 
+                "Thie, Dietrich", 
+                "Vallila, Kristine"
+            ], 
+            "type": "enum"
+        }, 
+        "created_at": {
+            "max": 1530561405672, 
+            "type": "range", 
+            "min": 1525447815101
+        }, 
+        "store_name": {
+            "values": [
+                "US"
+            ], 
+            "type": "enum"
+        }
+    }, 
+    "items": [
+        {
+            "first_name": "John", 
+            "last_name": "Doe", 
+            "addresses": [
+                {
+                    "city": "City", 
+                    "first_name": "John", 
+                    "last_name": "Doe", 
+                    "country_code": "US", 
+                    "type": "billing", 
+                    "company": "", 
+                    "id": "18a09131-0e3b-49ad-ac1d-7ef1ecdbc5e7", 
+                    "state": "California", 
+                    "address_1": "Address line 1", 
+                    "address_2": "Address line 2", 
+                    "contact_phone": "", 
+                    "created_at": "2018-05-10T17:50:59.007689085Z", 
+                    "zip_code": "90001"
+                }, 
+                {
+                    "city": "City", 
+                    "first_name": "John", 
+                    "last_name": "Doe", 
+                    "country_code": "US", 
+                    "type": "shipping", 
+                    "company": "", 
+                    "id": "24cb0811-5514-4dbc-bdb5-cbed43397636", 
+                    "state": "California", 
+                    "address_1": "Address line 1", 
+                    "address_2": "Address line 2", 
+                    "contact_phone": "", 
+                    "created_at": "2018-05-10T17:50:59.010961711Z", 
+                    "zip_code": "90001"
+                }
+            ], 
+            "extended_attributes": [], 
+            "created_at": "2018-05-10T17:50:59.002924Z", 
+            "updated_at": "2018-05-10T17:50:59.011907Z", 
+            "created_by": "32472d6e5ba64089bdfd0c7b3793afbb", 
+            "id": "3ad87a6a-f83c-40b2-859f-eceb0a487626", 
+            "email": "johndoe@email.com", 
+            "revision": 4
+        }
+    ]
+}
