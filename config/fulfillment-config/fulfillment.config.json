@@ -17,7 +17,7 @@
           },
           "EMAIL": {
               "return_provider_rate": "",
-              "service_level": "email_delivery",
+              "service_level": "Email",
               "shipping_carrier_name": "CUSTOM",
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": true
@@ -38,6 +38,14 @@
                   "Standard": [
                       {
                           "fulfillment_node_id": "DC-CA-INVENTORY",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
                           "provider_rate": "STANDARD"
                       }
                   ],
@@ -63,7 +71,7 @@
               "delivery_time_after_cutoff_hour": "3 - 5 business days",
               "display_name": "Standard Delivery",
               "price": 0,
-              "remorse_period": 300,
+              "remorse_period": 60,
               "tax_code": "CA"
           },
           "Express": {
@@ -77,9 +85,9 @@
         },
           "Email": {
               "currency_code": "",
-              "delivery_time": "3 - 5 business days",
-              "delivery_time_after_cutoff_hour": "3 - 6 business days",
-              "display_name": "Standard Delivery",
+              "delivery_time": "Immediately via Email",
+              "delivery_time_after_cutoff_hour": "Immediately via Email",
+              "display_name": "Email Delivery",
               "price": 0,
               "remorse_period": 0,
               "tax_code": "CA"
