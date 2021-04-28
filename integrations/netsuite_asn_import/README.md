@@ -29,22 +29,19 @@ fire a `inventory_transaction.items_received` event, which is handled in the
 `order_events_to_netsuite\lambda_sqs_inventory_transfer_to_netsuite` lambda.
 
 ## Parameter Store
-- "{TENANT_NAME}/{STAGE}/newstore_credentials": Store the settings for the API credentials to NewStore.
+- "{TENANT_NAME}/{STAGE}/newstore": Store the settings for the API credentials to NewStore.
 ```
 {
-    "NEWSTORE_URL_API": "",
-    "NEWSTORE_USERNAME": "",
-    "NEWSTORE_PASSWORD": ""
+  "host": "",
+  "username": "",
+  "password": ""
 }
 ```
 - "{TENANT_NAME}/{STAGE}/netsuite": Store the settings for the NetSuite configuration variables.
 ```
 {
     "transfer_order_fulfillments_saved_search_id": "",
-    "item_fulfillment_processed_flag_script_id": "",
-    "DC_US_NAME": "",
-    "DC_CA_NAME": "",
-    "DC_UK_NAME": ""
+    "item_fulfillment_processed_flag_script_id": ""
 }
 ```
 - "{TENANT_NAME}/{STAGE}/netsuite_creds": Store the settings for the NetSuite credentials variables.
