@@ -1,15 +1,12 @@
 import os
-import re
 import json
 import logging
-import requests
 from lambda_utils.sqs.SqsHandler import SqsHandler
-from shopify.shopify import ShopifyConnector
-from product_id_mapper.main import ProductIdMapper
-from utils import get_shopify_handler, get_newstore_handler
+# from product_id_mapper.main import ProductIdMapper
+from .utils import get_shopify_handler, get_newstore_handler
 
 
-PRODUCT_ID_MAPPER = ProductIdMapper()
+# PRODUCT_ID_MAPPER = ProductIdMapper()
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
@@ -19,13 +16,13 @@ SQS_HANDLER = SqsHandler(os.environ['sqs_returns_name'])
 SHOPIFY_HANDLER = None
 
 
-def handler(event, context):
+def handler(event, context): # pylint: disable=unused-argument
     """
     Start of the lambda handler
     :param event: Shopify webhook order json
     :param context: function context
     """
-    LOGGER.info('Processing return Event: %s', event)
+    LOGGER.info(f'Processing return Event: {event}')
     for record in event.get('Records', []):
         try:
             response_bool = _process_refund(record['body'])
@@ -34,71 +31,68 @@ def handler(event, context):
                 SQS_HANDLER.delete_message(record['receiptHandle'])
             else:
                 LOGGER.error(f'Failed to process event: {record["body"]}')
-        except Exception as ex:
+        except Exception as ex: # pylint: disable=broad-except
             LOGGER.exception('Some error happen while processing the return')
             # In case an other process already returned the product we delete it from the queue to avoid exeptions again and again.
-            errMsg = str(ex)
-            if errMsg.find("The following products were already returned") >= 0:
+            err_msg = str(ex)
+            if err_msg.find("The following products were already returned") >= 0:
                 LOGGER.info('If the product was already returnd we delete the message from queue:')
                 SQS_HANDLER.delete_message(record['receiptHandle'])
 
             continue
-    return
 
 
 def _process_refund(raw):
-    LOGGER.info('Processing Shopify refund event: %s', raw)
+    LOGGER.info(f'Processing Shopify refund event: {raw}')
     refund = json.loads(raw)
     # Transform Shopify format to NS format
     data_to_send = _transform_data_to_send(refund)
     if len(refund.get('refund_line_items', [])) == 0:
         LOGGER.info('Processing an order appeasment')
         return _create_refund(data_to_send, refund)
-    else:
-        LOGGER.info('Processing an order return')
-        return _create_return(data_to_send, refund)
+    LOGGER.info('Processing an order return')
+    return _create_return(data_to_send, refund)
 
 
 def _create_refund(refund_data, refund):
-    LOGGER.info('Data for refund %s', json.dumps(
-        refund_data, indent=4))
+    LOGGER.info(f'Data for refund {json.dumps(refund_data, indent=4)}')
     newstore_handler = get_newstore_handler()
     ns_external_order_id = get_order_name(refund['order_id'])
     ns_order = newstore_handler.get_order_by_external_id(
         f'USC-{ns_external_order_id.replace("#", "")}')
     if ns_order:
         ns_order_id = ns_order['order_uuid']
-        if not _refund_exists(newstore_handler.get_refunds(ns_order_id).get('refunds'), refund['id']) and not _refund_started_in_newstore(refund.get('note') or '' ):
+        if not _refund_exists(newstore_handler.get_refunds(ns_order_id).get('refunds'), refund['id']) and \
+            not _refund_started_in_newstore(refund.get('note') or ''):
             # Send return to NewStore
             request_refund = {
                 'amount': refund_data['amount'],
                 'currency': refund_data['currency'],
                 'extended_attributes': _map_refund_id_ext_attr(refund),
-                'note': refund_data.get('reason') or '', 
+                'note': refund_data.get('reason') or '',
                 'is_historical': True,
             }
             response = newstore_handler.create_refund_for_order(
                 ns_order_id, request_refund)
             LOGGER.info(f'Refund created: {json.dumps(response)}')
             return True
-        else:
-            LOGGER.info(
-                'Refund already exists on NewStore for order %s', ns_order_id)
-            return True
+        LOGGER.info(
+            f'Refund already exists on NewStore for order {ns_order_id}')
+        return True
     LOGGER.error('Couldn\'t get order from NewStore.')
     return False
 
 
 def _create_return(return_data, refund):
-    LOGGER.info('Data for return %s', json.dumps(
-        return_data, indent=4))
+    LOGGER.info(f'Data for return {json.dumps(return_data, indent=4)}')
     newstore_handler = get_newstore_handler()
     ns_external_order_id = get_order_name(refund['order_id'])
     ns_order = newstore_handler.get_order_by_external_id(
         f'USC-{ns_external_order_id.replace("#", "")}')
     if ns_order:
         ns_order_id = ns_order['order_uuid']
-        if not _refund_exists(newstore_handler.get_refunds(ns_order_id).get('refunds'), refund['id']) and not _refund_started_in_newstore(refund.get('note') or ''):
+        if not _refund_exists(newstore_handler.get_refunds(ns_order_id).get('refunds'), refund['id']) and \
+            not _refund_started_in_newstore(refund.get('note') or ''):
             # Send return to NewStore
             request_return = {
                 'items': return_data['items'],
@@ -112,10 +106,9 @@ def _create_return(return_data, refund):
                 ns_order_id, request_return)
             LOGGER.info(f'Return created: {json.dumps(response)}')
             return True
-        else:
-            LOGGER.info(
-                'Return already exists on NewStore for order %s', ns_order_id)
-            return True
+        LOGGER.info(
+            f'Return already exists on NewStore for order {ns_order_id}')
+        return True
 
     LOGGER.error('Couldn\'t get order from NewStore.')
     return False
@@ -145,7 +138,7 @@ def _refund_exists(ns_refunds, shopify_return_id):
     return False
 
 
-def _get_shopify_return_id_from_ext_attr(extended_attributes):
+def _get_shopify_return_id_from_ext_attr(extended_attributes): # pylint: disable=invalid-name
     # The refund id on Shopify is an integer
     return int(next((attr.get('value') for attr in extended_attributes if attr.get('name') == 'shopify_refund_id'), 0))
 
@@ -171,20 +164,20 @@ def _map_refund_id_ext_attr(refund):
 
 
 def _get_product_id_map_from_sku(sku):
-    product_mapped = PRODUCT_ID_MAPPER.get_map('sku', sku)
-    if product_mapped:
-        return product_mapped['product_id']
-    LOGGER.error(f'Could not map sku: {sku} to a product_id.')
-    return None
+    # product_mapped = PRODUCT_ID_MAPPER.get_map('sku', sku)
+    # if product_mapped:
+    #     return product_mapped['product_id']
+    # LOGGER.error(f'Could not map sku: {sku} to a product_id.')
+    # return None
+    return sku
 
 
 def _get_successful_refunds_value(transactions):
     return sum(
-                (float(transaction['amount']) 
-                    for transaction in transactions 
-                        if transaction.get('kind') in ['void', 'refund'] 
-                            and transaction.get('status') == 'success'),
-                0)
+        (float(transaction['amount'])
+         for transaction in transactions
+         if transaction.get('kind') in ['void', 'refund']
+         and transaction.get('status') == 'success'), 0)
 
 
 def _get_refund_currency(transactions):
@@ -193,15 +186,14 @@ def _get_refund_currency(transactions):
     currency = list(dict.fromkeys(currencies))
     if len(currency) == 1:
         return str(currency[0])
-    elif len(currency) == 0:
+    if len(currency) == 0:
         LOGGER.error(
             f'No currency could be detected.\n\nTransactions: {json.dumps(transactions)}')
         raise Exception('We could not detect the currency type;')
-    else:
-        LOGGER.error(
-            f'Multiple currencies detected on the refund requests.\nCurrencies: {currencies}\nTransactions: {json.dumps(transactions)}')
-        raise Exception(
-            'Newstore do not support multiple currencies for refunds')
+    LOGGER.error(
+        f'Multiple currencies detected on the refund requests.\nCurrencies: {currencies}\nTransactions: {json.dumps(transactions)}')
+    raise Exception(
+        'Newstore do not support multiple currencies for refunds')
 
 
 def _transform_data_to_send(refund_webhook):

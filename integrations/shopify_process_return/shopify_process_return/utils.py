@@ -1,7 +1,7 @@
 import os
 import json
-from shopify.shopify import ShopifyConnector
-from newstore.newstore import NewStoreConnector
+from .shopify.shopify import ShopifyConnector
+from .newstore.newstore import NewStoreConnector
 from param_store.client import ParamStore
 
 NS_HANDLER = None
@@ -13,26 +13,26 @@ TENANT = os.environ.get('TENANT', 'goorin-brothers')
 STAGE = os.environ.get('STAGE', 'x')
 
 def _get_param_store():
-    global PARAM_STORE
+    global PARAM_STORE # pylint: disable=global-statement
     if not PARAM_STORE:
         PARAM_STORE = ParamStore(TENANT, STAGE)
 
     return PARAM_STORE
 
 
-def get_all_shopify_handlers(handlers_group='shopify'):
+def get_all_shopify_handlers():
     shopify_configs = _get_param_store().get_param('shopify')
     return _create_shopify_handlers([shopify_configs])
 
 def get_shopify_config():
-    global SHOPIFY_CONFIG
+    global SHOPIFY_CONFIG # pylint: disable=global-statement
     if not SHOPIFY_CONFIG:
         param_store = _get_param_store()
         SHOPIFY_CONFIG = json.loads(param_store.get_param('shopify'))
     return SHOPIFY_CONFIG
 
 def get_shopify_handler():
-    global SF_HANDLER
+    global SF_HANDLER # pylint: disable=global-statement
     if not SF_HANDLER:
         shopify_config = get_shopify_config()
         SF_HANDLER = ShopifyConnector(
@@ -68,9 +68,9 @@ def _create_shopify_handlers(configs):
     """
     handlers = []
 
-    for c in configs:
-        config = json.loads(c)
-        config['channel'] = "USC" 
+    for conf in configs:
+        config = json.loads(conf)
+        config['channel'] = "USC"
         shopify_handler = ShopifyConnector(
             api_key=config['username'],
             password=config['password'],
@@ -85,7 +85,7 @@ def _create_shopify_handlers(configs):
 
 
 def _get_newstore_config():
-    global NEWSTORE_CONFIG
+    global NEWSTORE_CONFIG # pylint: disable=global-statement
     if not NEWSTORE_CONFIG:
         param_store = _get_param_store()
         NEWSTORE_CONFIG = json.loads(param_store.get_param('newstore'))
@@ -94,7 +94,7 @@ def _get_newstore_config():
 
 
 def get_newstore_handler():
-    global NS_HANDLER
+    global NS_HANDLER # pylint: disable=global-statement
     if not NS_HANDLER:
         newstore_config = _get_newstore_config()
         NS_HANDLER = NewStoreConnector(

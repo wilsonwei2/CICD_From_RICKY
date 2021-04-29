@@ -7,6 +7,9 @@ verify_ssl = true
 
 [packages]
 boto3 = "*"
+lambda-utils = {path = "./../../shared/lambda_utils"}
+param-store = {path = "./../../shared/3.6/param_store"}
+requests = "*"
 
 [requires]
 python_version = "3.7"

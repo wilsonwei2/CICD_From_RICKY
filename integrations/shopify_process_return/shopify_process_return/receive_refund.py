@@ -1,10 +1,9 @@
 import os
-import re
 import json
 import logging
 from lambda_utils.sqs.SqsHandler import SqsHandler
-from shopify.verify_webhook import verify_webhook
-from utils import get_shopify_config
+from .shopify.verify_webhook import verify_webhook
+from .utils import get_shopify_config
 
 
 LOGGER = logging.getLogger(__name__)
@@ -12,32 +11,31 @@ LOGGER.setLevel(logging.INFO)
 
 SQS_HANDLER = SqsHandler(os.environ['sqs_returns_name'])
 
-def handler(event, context):
+def handler(event, context): # pylint: disable=unused-argument
     """
     Start of the lambda handler
     :param event: Shopify webhook order json
     :param context: function context
     """
-    LOGGER.info('Received refund event: %s', event.get('body'))
+    body = event.get('body')
+    LOGGER.info(f'Received refund event: {body}')
     result = _save_refund(event)
     if result:
         return {
             "statusCode": 200
         }
-    else:
-        return {
-            "statusCode": 500
-        }
+    return {
+        "statusCode": 500
+    }
 
 
 def _save_refund(event):
-    handler = get_shopify_config()
-    
-    if not _verify_webhook(event=event, secret=handler['shopify_app_secret']):
+    the_handler = get_shopify_config()
+
+    if not _verify_webhook(event=event, secret=the_handler['shopify_app_secret']):
         return False
-    else:
-        _drop_to_queue(event['body'])
-        return True
+    _drop_to_queue(event['body'])
+    return True
 
 
 def _drop_to_queue(message):
@@ -46,8 +44,9 @@ def _drop_to_queue(message):
 
 def _verify_webhook(event, secret):
     hmac = event['headers'].get('X-Shopify-Hmac-Sha256')
-    LOGGER.info('Verify message: %s with secret: %s and hmac: %s ', event['body'][:30], secret[:10], hmac)
+    body = event['body'][:30]
+    LOGGER.info(f'Verify message: {body} with secret: {secret[:10]} and hmac: {hmac}')
     if not hmac or not verify_webhook(event['body'], hmac, secret):
-        LOGGER.error('Validation of Hmac doesn\'t match. [hmac=%s]', hmac)
+        LOGGER.error(f'Validation of Hmac doesn\'t match. [hmac={hmac}]')
         return False
     return True

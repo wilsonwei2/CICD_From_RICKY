@@ -1,7 +1,6 @@
 import hashlib
 import base64
 import hmac
-import logging
 
 
 def verify_webhook(data, hmac_header, secret):
