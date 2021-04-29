@@ -80,7 +80,7 @@ def handler(event, context):
 
             no_of_chunks = generate_chunks(price_book, obj_prefix)
             if price_book_catalog_fr:
-                generate_chunks(price_book, obj_prefix, no_of_chunks)
+                generate_chunks(price_book_catalog_fr, obj_prefix, no_of_chunks)
 
             # Start import step function
             input = json.dumps({
