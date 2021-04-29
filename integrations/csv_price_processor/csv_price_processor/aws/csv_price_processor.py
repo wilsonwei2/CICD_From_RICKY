@@ -32,7 +32,6 @@ SECS_BETWEEN_CHUNKS = os.environ["SECS_BETWEEN_CHUNKS"]
 STATE_MACHINE_ARN = os.environ['STATE_MACHINE_ARN']
 
 LOGGER = logging.getLogger()
-LOGGER.setLevel(logging.INFO)
 
 def iter_chunks(arr, size):
     """
@@ -68,30 +67,35 @@ def handler(event, context):
                 as csvfile:
             price_book = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-en')
 
-            # also import CAD prices to storefront-catalog-fr
-            price_book_catalog_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr') if currency == 'CAD' else None
+        # also import CAD prices to storefront-catalog-fr
+        price_book_catalog_fr = None
+        if currency == 'CAD':
+            with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') \
+                    as csvfile:
+                price_book_catalog_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr') if currency == 'CAD' else None
 
-            now = datetime.utcnow()
+        now = datetime.utcnow()
 
-            time_stamp = f"{now.strftime('%Y-%m-%d')}/{now.strftime('%H:%M:%S')}"
-            obj_prefix = f"{S3_PREFIX}prices/{'msrp'}/{time_stamp}"
-            LOGGER.info(f"S3_PREFIX is {S3_PREFIX}")
-            LOGGER.info(f"obj_prefx is {obj_prefix}")
+        time_stamp = f"{now.strftime('%Y-%m-%d')}/{now.strftime('%H:%M:%S')}"
+        obj_prefix = f"{S3_PREFIX}prices/{'msrp'}/{time_stamp}"
+        LOGGER.info(f"S3_PREFIX is {S3_PREFIX}")
+        LOGGER.info(f"obj_prefx is {obj_prefix}")
 
-            no_of_chunks = generate_chunks(price_book, obj_prefix)
-            if price_book_catalog_fr:
-                generate_chunks(price_book_catalog_fr, obj_prefix, no_of_chunks)
+        no_of_chunks = generate_chunks(price_book, obj_prefix)
+        fr_filled = price_book_catalog_fr is not None
+        if price_book_catalog_fr:
+            generate_chunks(price_book_catalog_fr, obj_prefix, no_of_chunks)
 
-            # Start import step function
-            input = json.dumps({
-                "bucket": S3_BUCKET.name,
-                "prefix": obj_prefix,
-                "chunk_prefix": S3_PREFIX,
-                "secs_between_chunks": int(SECS_BETWEEN_CHUNKS),
-                "dest_bucket": S3_BUCKET.name,
-                "dest_prefix": "import_files/",
-            })
-            STEP_FUNCTION_CLIENT.start_execution(stateMachineArn=STATE_MACHINE_ARN, input=input)
+        # Start import step function
+        input = json.dumps({
+            "bucket": S3_BUCKET.name,
+            "prefix": obj_prefix,
+            "chunk_prefix": S3_PREFIX,
+            "secs_between_chunks": int(SECS_BETWEEN_CHUNKS),
+            "dest_bucket": S3_BUCKET.name,
+            "dest_prefix": "import_files/",
+        })
+        STEP_FUNCTION_CLIENT.start_execution(stateMachineArn=STATE_MACHINE_ARN, input=input)
 
 def generate_chunks(price_book, obj_prefix, add_idx = 0):
     chunks = 0
