@@ -1,0 +1,4 @@
+requests>=2.11.1
+../../../../python/lambda_utils
+../../../../python/3.6/param_store
+../../helpers/product_id_mapper
