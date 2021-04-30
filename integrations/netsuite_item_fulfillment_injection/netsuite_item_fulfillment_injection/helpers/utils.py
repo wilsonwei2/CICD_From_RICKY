@@ -20,7 +20,6 @@ class Utils():
     _newstore_conn = None
     _newstore_config = {}
     _netsuite_config = {}
-    _newstore_to_netsuite_locations = {}
 
     @staticmethod
     def _get_param_store():
@@ -65,11 +64,7 @@ class Utils():
 
     @staticmethod
     def get_netsuite_location_map():
-        if not Utils._newstore_to_netsuite_locations:
-            location_params = Utils._get_param_store().get_params_by_path('netsuite/newstore_to_netsuite_locations/')
-            for param in location_params:
-                Utils._newstore_to_netsuite_locations.update(json.loads(param['value']))
-        return Utils._newstore_to_netsuite_locations
+        return json.loads(Utils._get_param_store().get_param('netsuite/newstore_to_netsuite_locations'))
 
     @staticmethod
     def is_store(store_id):
@@ -85,9 +80,6 @@ class Utils():
 
         locations_config = Utils.get_netsuite_location_map()
         mapping = locations_config.get(nws_value)
-        if mapping is None:
-            # try to get mapping for pre-pended code
-            mapping = locations_config.get(nws_value[:3])
 
         if mapping is None:
             LOGGER.error(f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')

@@ -8,101 +8,101 @@ def setup_patches(test_self):
     test_self.patched_locations.return_value = NEWSTORE_TO_NETSUITE_LOCATIONS
 
 NEWSTORE_TO_NETSUITE_LOCATIONS = {
-    "001": {
-        "id": 5,
-        "selling_id": 7,
-        "name": "001_LA_WeHo",
-        "email": "flagshipla@aninebing.com",
-        "id_damage": "123",
-        "subsidiary_id": 1
+    "DIXST": {
+        "id": 11,
+        "id_damage": 12,
+        "selling_id": -1,
+        "name": "DIXST - Dix30",
+        "email": "dix30@frankandoak.com",
+        "subsidiary_id": "1"
     },
-    "002": {
-        "id": 6,
-        "selling_id": 9,
-        "name": "002_NY_WVillage",
-        "email": "aninebingstorenyc@aninebing.com",
-        "id_damage": "124",
-        "subsidiary_id": 1
-    },
-    "003": {
-        "id": 12,
-        "selling_id": 4,
-        "name": "003_PA_3Arr",
-        "email": "aninebingstoreparis@aninebing.com",
-        "id_damage": "122",
-        "subsidiary_id": 1
-    },
-    "004": {
-        "id": 10,
-        "selling_id": 5,
-        "name": "004_LN_Harvey_Nichols",
-        "email": "managerlondon@aninebing.com",
-        "id_damage": "118",
-        "subsidiary_id": 1
-    },
-    "005": {
-        "id": 15,
-        "selling_id": 1,
-        "name": "005_BA_Eixample",
-        "email": "aninebingstorebarcelona@aninebing.com",
-        "id_damage": "119",
-        "subsidiary_id": 1
-    },
-    "006": {
+    "DONST": {
         "id": 13,
-        "selling_id": 2,
-        "name": "006_BE_Mitte",
-        "email": "aninebingstoreberlin@aninebing.com",
-        "id_damage": "120",
-        "subsidiary_id": 1
+        "id_damage": 14,
+        "selling_id": -1,
+        "name": "DONST - Don Mills",
+        "email": "donmills@frankandoak.com",
+        "subsidiary_id": "1"
     },
-    "007": {
-        "id": 14,
-        "selling_id": 3,
-        "name": "007_MD_Salamanca",
-        "email": "aninebingstoremadrid@aninebing.com",
-        "id_damage": "121",
-        "subsidiary_id": 1
+    "FOYST": {
+        "id": 19,
+        "id_damage": 20,
+        "selling_id": -1,
+        "name": "FOYST - Ste-Foy",
+        "email": "sainte-foy@frankandoak.com",
+        "subsidiary_id": "1"
     },
-    "008": {
+    "MTLST": {
+        "id": 30,
+        "id_damage": 31,
+        "selling_id": -1,
+        "name": "MTLST - Atelier Mile-End",
+        "email": "atelier@frankandoak.com",
+        "subsidiary_id": "1"
+    },
+    "RIDST": {
+        "id": 36,
+        "id_damage": 37,
+        "selling_id": -1,
+        "name": "RIDST - Rideau Center",
+        "email": "rideau@frankandoak.com",
+        "subsidiary_id": "1"
+    },
+    "STANST": {
+        "id": 42,
+        "id_damage": 43,
+        "selling_id": -1,
+        "name": "STANST - Stanley",
+        "email": "stanley@frankandoak.com",
+        "subsidiary_id": "1"
+    },
+    "STWST": {
+        "id": 44,
+        "id_damage": 45,
+        "selling_id": -1,
+        "name": "STWST - Stanley Women",
+        "email": "stanleywomen@frankandoak.com",
+        "subsidiary_id": "1"
+    },
+    "TECST": {
+        "id": 46,
+        "id_damage": 47,
+        "selling_id": -1,
+        "name": "TECST -Toronto Eaton Center",
+        "email": "tec@frankandoak.com",
+        "subsidiary_id": "1"
+    },
+    "TOST": {
+        "id": 59,
+        "id_damage": 63,
+        "selling_id": -1,
+        "name": "TOST - Queen West",
+        "email": "toronto@frankandoak.com",
+        "subsidiary_id": "1"
+    },
+    "VANST": {
+        "id": 50,
+        "id_damage": 51,
+        "selling_id": -1,
+        "name": "VANST - Cordova",
+        "email": "vancouver@frankandoak.com",
+        "subsidiary_id": "1"
+    },
+    "VIAST": {
+        "id": 52,
+        "id_damage": 53,
+        "selling_id": -1,
+        "name": "VIAST - Studio Mile-End",
+        "email": "studio@frankandoak.com",
+        "subsidiary_id": "1"
+    },
+    "MTLDC1": {
         "id": 7,
-        "selling_id": 10,
-        "name": "008_NY_SoHo",
-        "email": "aninebingstoresoho@aninebing.com",
-        "id_damage": "125",
-        "subsidiary_id": 1
-    },
-    "009": {
-        "id": 8,
-        "selling_id": 8,
-        "name": "009_LA_Pacific_Palisades",
-        "email": "aninebingstorepalisades@aninebing.com",
-        "id_damage": "219",
-        "subsidiary_id": 1
-    },
-    "010": {
-        "id": 116,
-        "selling_id": 6,
-        "name": "010_LN_Mayfair",
-        "email": "aninebingstoremayfair@aninebing.com",
-        "id_damage": "218",
-        "subsidiary_id": 3
-    },
-    "011": {
-        "id": 226,
-        "selling_id": 103,
-        "name": "011_NY_Madison",
-        "email": "aninebingstoremadison@aninebing.com",
-        "id_damage": "227",
-        "subsidiary_id": 1
-    },
-    "DEFAULT": {
-        "id": 0,
-        "selling_id": 0,
-        "name": "Default",
-        "email": "default@aninebing.com",
-        "id_damage": "",
-        "subsidiary_id": 1
+        "id_damage": 64,
+        "selling_id": -1,
+        "name": "Montreal DC",
+        "email": "ops@frankandoak.com",
+        "subsidiary_id": "1"
     }
 }
 

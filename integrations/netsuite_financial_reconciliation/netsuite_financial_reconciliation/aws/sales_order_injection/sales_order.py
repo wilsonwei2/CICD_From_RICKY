@@ -366,6 +366,7 @@ def get_sales_order_items(order_event):
     return sales_order_items
 
 
+
 def inject_invoice(sale, external_id):
     #invoice_items_list = []
     #for item in sales_order_items:

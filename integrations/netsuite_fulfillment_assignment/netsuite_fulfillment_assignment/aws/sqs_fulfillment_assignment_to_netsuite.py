@@ -25,13 +25,13 @@ def handler(_event, _context):
     Receives event payloads from an SQS queue. The payload is taken from the order
     event stream, detailed here:
         https://apidoc.newstore.io/newstore-cloud/hooks_eventstream.html
-    Event Type: fulfillment_request.items_completed'
+    Event Type: fulfillment_request.assigned'
     """
     LOGGER.info(f'Beginning queue retrieval...')
 
     global NEWSTORE_HANDLER # pylint: disable=W0603
 
-    NEWSTORE_HANDLER = Utils.get_ns_handler()
+    NEWSTORE_HANDLER = Utils.get_ns_handler(_context)
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)

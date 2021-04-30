@@ -110,6 +110,7 @@ def push_message_to_sqs(queue_name, message):
     sqs_handler.push_message(message_group_id=message['payload']['id'], message=json.dumps(message))
     LOGGER.info(f'Message pushed to SQS: {sqs_handler.queue_name}')
 
+
 async def is_historical_or_instore(payload):
     if await is_historical_order(payload['order_id']):
         LOGGER.info('Ignoring Fulfillment assignment for Historical Order')
