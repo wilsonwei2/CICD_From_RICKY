@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "::Integration for csv price processor",
   "devDependencies": {
+    "serverless-pseudo-parameters": "^2.5.0",
     "serverless-python-requirements": "^5.1.1"
   }
 }
