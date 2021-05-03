@@ -1,0 +1,118 @@
+{
+    "active_status": true,
+    "business_hours": [
+        {
+            "created_at": "2019-11-05T15:46:06.583209",
+            "from_time": "09:00",
+            "revision": 1,
+            "to_time": "20:00",
+            "updated_at": "2019-11-05T15:46:06.583209",
+            "weekday": 0
+        },
+        {
+            "created_at": "2019-11-05T15:46:06.583209",
+            "from_time": "09:00",
+            "revision": 1,
+            "to_time": "20:00",
+            "updated_at": "2019-11-05T15:46:06.583209",
+            "weekday": 1
+        },
+        {
+            "created_at": "2019-11-05T15:46:06.583209",
+            "from_time": "09:00",
+            "revision": 1,
+            "to_time": "20:00",
+            "updated_at": "2019-11-05T15:46:06.583209",
+            "weekday": 2
+        },
+        {
+            "created_at": "2019-11-05T15:46:06.583209",
+            "from_time": "09:00",
+            "revision": 1,
+            "to_time": "20:00",
+            "updated_at": "2019-11-05T15:46:06.583209",
+            "weekday": 3
+        },
+        {
+            "created_at": "2019-11-05T15:46:06.583209",
+            "from_time": "09:00",
+            "revision": 1,
+            "to_time": "20:00",
+            "updated_at": "2019-11-05T15:46:06.583209",
+            "weekday": 4
+        },
+        {
+            "created_at": "2019-11-05T15:46:06.583209",
+            "from_time": "09:00",
+            "revision": 1,
+            "to_time": "20:00",
+            "updated_at": "2019-11-05T15:46:06.583209",
+            "weekday": 5
+        },
+        {
+            "created_at": "2019-11-05T15:46:06.583209",
+            "from_time": "09:00",
+            "revision": 1,
+            "to_time": "20:00",
+            "updated_at": "2019-11-05T15:46:06.583209",
+            "weekday": 6
+        }
+    ],
+    "catalog": "storefront-catalog-en",
+    "completed_tasks_count": 627,
+    "created_at": "2018-06-28T19:33:15.919650",
+    "display_price_unit_type": "net",
+    "division_name": "US",
+    "gift_wrapping": false,
+    "label": "012_Boston",
+    "locale": "en-us",
+    "open_tasks_count": 9,
+    "phone_number": "617-578-8799",
+    "physical_address": {
+        "address_line_1": "100 Huntington Ave",
+        "address_line_2": "Space E014",
+        "city": "Boston",
+        "country_code": "US",
+        "latitude": 40.7256956,
+        "longitude": -74.0023217,
+        "state": "MA",
+        "zip_code": "02116"
+    },
+    "pricebook": "default",
+    "queue_prioritization": [
+        {
+            "display_priority_type": "priority",
+            "priority": 1,
+            "shipping_type": "in_store_pick_up"
+        },
+        {
+            "display_priority_type": "normal",
+            "priority": 5,
+            "shipping_type": "traditional_carrier"
+        },
+        {
+            "display_priority_type": "priority",
+            "priority": 1,
+            "shipping_type": "same_day_delivery"
+        }
+    ],
+    "revision": 714,
+    "shipping_address": {
+        "address_line_1": "100 Huntington Ave",
+        "address_line_2": "Space E014",
+        "city": "Boston",
+        "country_code": "US",
+        "state": "MA",
+        "zip_code": "02116"
+    },
+    "shipping_provider_info": {},
+    "store_id": "8261c026-481c-4c7c-a91e-18a31cc12b1f",
+    "supported_shipping_methods": [
+        "in_store_pick_up",
+        "traditional_carrier"
+    ],
+    "tax_included": false,
+    "tenant": "untuckit",
+    "timezone": "America/New_York",
+    "updated_at": "2020-06-01T18:21:13.958924"
+}

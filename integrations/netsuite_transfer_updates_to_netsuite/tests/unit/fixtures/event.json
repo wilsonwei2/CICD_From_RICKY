@@ -1,0 +1,24 @@
+{
+    "payload": {
+        "id": "569bd25d-5507-4d3f-b734-4c2468c94ab9",
+        "fulfillment_location_id": "newstore_location_id",
+        "associate_id": "51c73b055bf142c5b883943294eefd84",
+        "processed_at": "2020-06-01T21:16:07.971Z",
+        "shipment_ref": "IF1203593",
+        "order_ref": "TO0013362",
+        "asn_id": "0ac7825c-2e4d-464f-a835-e39ece34daac",
+        "chunk_number": 1,
+        "total_chunks": 1,
+        "items": [
+            {
+                "product_id": "01065PinRelLG",
+                "quantity": 1,
+                "external_identifiers": {
+                    "upc": "193405021449",
+                    "sku": "UT-14-35899-LG"
+                }
+            }
+        ],
+        "published_at": "2020-06-01T21:16:56.211Z"
+    }
+}

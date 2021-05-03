@@ -1,0 +1,118 @@
+service: frankandoak-netsuite-transfer-updates-to-netsuite
+
+plugins:
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - netsuite_transfer_updates_to_netsuite/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  environment:
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
+
+functions:
+  asn_update:
+    name: ${self:provider.tenant}-tu-item-receipt
+    handler: netsuite_transfer_updates_to_netsuite.aws.process_asn_event.handler
+    timeout: 300
+    memorySize: 256
+    environment:
+      EVENT_ID_CACHE: !Ref InventoryTransferEventIdCache
+      SQS_QUEUE: !GetAtt InventoryTransferQueue.QueueName
+      DYNAMO_SCAN_LIMIT: 50
+      MAX_MESSAGE_QUEUE_SIZE: 50
+    events:
+      - schedule:
+          name: ${self:provider.tenant}-tu-item-receipt-trigger
+          rate: rate(5 minutes)
+  transfer_update:
+    name: ${self:provider.tenant}-tu-fulfill-tos
+    handler: netsuite_transfer_updates_to_netsuite.aws.process_transfer_event.handler
+    timeout: 300
+    memorySize: 256
+    environment:
+      EVENT_ID_CACHE: !Ref TransferOrderEventIdCache
+      SQS_QUEUE: !GetAtt TransferOrderQueue.QueueName
+      DYNAMO_SCAN_LIMIT: 50
+      MAX_MESSAGE_QUEUE_SIZE: 50
+    events:
+      - schedule:
+          name: ${self:provider.tenant}-tu-fulfill-tos-trigger
+          rate: rate(5 minutes)
+
+resources:
+  Resources:
+    InventoryTransferQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        ContentBasedDeduplication: True
+        FifoQueue: True
+        QueueName: ${self:provider.tenant}-tu-item-receipt-queue.fifo
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt InventoryTransferDeadLetterQueue.Arn
+          maxReceiveCount: 3
+    InventoryTransferDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        ContentBasedDeduplication: True
+        FifoQueue: True
+        MessageRetentionPeriod: 1209600 # 14 days
+        QueueName: ${self:provider.tenant}-tu-item-receipt-dlq.fifo
+    InventoryTransferEventIdCache:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: tu-item-received-event-id-cache
+        AttributeDefinitions:
+          - AttributeName: 'id'
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: 'id'
+            KeyType: 'HASH'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    TransferOrderQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        ContentBasedDeduplication: True
+        FifoQueue: True
+        QueueName: ${self:provider.tenant}-tu-asn-created-queue.fifo
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt TransferOrderDeadLetterQueue.Arn
+          maxReceiveCount: 3
+    TransferOrderDeadLetterQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        ContentBasedDeduplication: True
+        FifoQueue: True
+        MessageRetentionPeriod: 1209600 # 14 days
+        QueueName: ${self:provider.tenant}-tu-asn-created-dlq.fifo
+    TransferOrderEventIdCache:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: tu-asn-created-event-id-cache
+        AttributeDefinitions:
+          - AttributeName: 'id'
+            AttributeType: 'S'
+        KeySchema:
+          - AttributeName: 'id'
+            KeyType: 'HASH'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
