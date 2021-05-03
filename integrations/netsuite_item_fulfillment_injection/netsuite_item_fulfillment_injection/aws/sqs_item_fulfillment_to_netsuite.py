@@ -39,7 +39,7 @@ def handler(_, context):
 
 async def process_fulfillment(message):
     LOGGER.info(f"Message to process: \n {json.dumps(message, indent=4)}")
-    fulfillment_request = message.get("payload")
+    fulfillment_request = message.get('payload')
     order_id = fulfillment_request['order_id']
 
     # The customer_order endpoint is defined in the `affiliate app` end points
@@ -51,8 +51,8 @@ async def process_fulfillment(message):
     customer_order = customer_order_envelope['customer_order']
 
     order_external_id = customer_order['sales_order_external_id']
-    if order_external_id.startswith("HIST-"):
-        LOGGER.info("Skip fulfillment request because is a Historical Order")
+    if order_external_id.startswith('HIST-'):
+        LOGGER.info('Skip fulfillment request because is a Historical Order')
         return True
 
     fulfillment_location_id = fulfillment_request.get('fulfillment_location_id')
@@ -74,14 +74,7 @@ async def process_fulfillment(message):
 
     response = create_item_fulfillment(fulfillment_request, sales_order)
     if response:
-        LOGGER.info("ItemFulfillment created successfully.")
-
-    #
-    #
-    # if has_tracking_details(fulfillment_request) and is_dc_fulfillment(fulfillment_request):
-    #     shipment_body = get_shipment_body(fulfillment_request)
-    #     if Utils.get_newstore_conn().send_shipment(fulfillment_request_id, shipment_body):
-    #         LOGGER.info(f'Tracking details updated for fullfillment request {fulfillment_request_id}')
+        LOGGER.info('ItemFulfillment created successfully.')
 
     return response
 
@@ -166,63 +159,6 @@ def update_sales_order(sales_order, fulfillment_request):
         raise Exception(f'Failed to update sales order: {updated_sales_order}')
 
     LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
-
-
-def is_dc_fulfillment(fulfillment_request):
-    if 'fulfillment_location_id' in fulfillment_request:
-        location = fulfillment_request['fulfillment_location_id']
-        # TODO - Check this for Frank and Oak # pylint: disable=W0511
-        if location in ['NJ Mochila', 'CA Mochila']:
-            return True
-
-    return False
-
-# Validate if the fulfillment request have shipping.
-def has_tracking_details(fulfillment_request):
-    for item in fulfillment_request['items']:
-        if 'tracking_code' in item:
-            if len(item['tracking_code']) > 0:
-                return True
-
-    return False
-
-def get_shipment_body(fulfillment_request):
-    product_ids = []
-    tracking_code = ''
-    carrier = ''
-
-    for item in fulfillment_request['items']:
-        product_ids.append(str(item['product_id']))
-        if 'tracking_code' in item:
-            if len(item['tracking_code']) > 0:
-                tracking_code = item['tracking_code']
-        if 'carrier' in item:
-            if len(item['carrier']) > 0:
-                carrier = item['carrier']
-
-    shipment = {}
-    shipment['tracking_code'] = tracking_code
-    shipment['carrier'] = carrier
-    shipment['tracking_url'] = get_shipping_carrier_url(carrier, tracking_code)
-
-    line_items = {}
-    line_items['product_ids'] = product_ids
-    line_items['shipment'] = shipment
-    fulfillment_body = {}
-    fulfillment_body['line_items'] = line_items
-
-    return fulfillment_body
-
-# TODO - Check this for Frank and Oak # pylint: disable=W0511
-def get_shipping_carrier_url(carrier, tracking_code):
-    if carrier == 'UPS':
-        ups_url = 'http://wwwapps.ups.com/WebTracking/processInputRequest?TypeOfInquiryNumber=T&InquiryNumber1='+str(tracking_code)
-        return ups_url
-    if carrier == 'FedEx':
-        fedex_url = 'https://www.fedex.com/fedextrack/?tracknumbers='+str(tracking_code)
-        return fedex_url
-
-    return ''
 
 async def get_sales_order(order_id):
     sales_order = nsas.get_sales_order(order_id)

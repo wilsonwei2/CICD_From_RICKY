@@ -155,7 +155,7 @@ def _get_activity_created_at(activities, key):
 
 
 def get_external_order_id(uuid):
-    body = NEWSTORE_HANDLER.get_order_by_external_id(uuid)
+    body = NEWSTORE_HANDLER.get_external_order(uuid, id_type='id')
     external_order_id = body['external_order_id']
     LOGGER.info(f"External order id is {external_order_id}")
 

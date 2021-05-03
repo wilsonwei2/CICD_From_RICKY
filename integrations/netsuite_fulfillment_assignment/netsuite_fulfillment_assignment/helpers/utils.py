@@ -46,7 +46,7 @@ class Utils():
     @staticmethod
     def get_external_order_id(uuid):
         Utils._ns_handler = Utils.get_ns_handler()
-        body = Utils._ns_handler.get_order_by_external_id(uuid)
+        body = Utils._ns_handler.get_external_order(uuid, id_type='id')
         external_order_id = body['external_order_id']
         LOGGER.info(f"External order id is {external_order_id}")
 
