@@ -37,6 +37,10 @@
               "fulfilled_by": {
                   "Standard": [
                       {
+                          "fulfillment_node_id": "DC-CA-INVENTORY",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
                           "fulfillment_node_id": "MTLDC1",
                           "provider_rate": "STANDARD"
                       },
@@ -47,13 +51,13 @@
                   ],
                   "Express": [
                     {
-                        "fulfillment_node_id": "MTLDC1",
+                        "fulfillment_node_id": "DC-CA-INVENTORY",
                         "provider_rate": "EXPRESS"
                     }
                 ],
                   "Email": [
                     {
-                        "fulfillment_node_id": "MTLDC1",
+                        "fulfillment_node_id": "DC-CA-INVENTORY",
                         "provider_rate": "EMAIL"
                     }
                 ]
