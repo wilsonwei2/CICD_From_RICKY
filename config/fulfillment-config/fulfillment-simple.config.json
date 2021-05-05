@@ -2,11 +2,11 @@
   "fulfillment_config": {
       "provider_rates": {
           "EXPRESS": {
-            "return_provider_rate": "",
-            "service_level": "Express",
-            "shipping_carrier_name": "CUSTOM",
-            "shipping_type": "traditional_carrier",
-            "use_as_customer_facing_cost": true
+              "return_provider_rate": "",
+              "service_level": "Express",
+              "shipping_carrier_name": "CUSTOM",
+              "shipping_type": "traditional_carrier",
+              "use_as_customer_facing_cost": true
           },
           "STANDARD": {
               "return_provider_rate": "",
@@ -46,17 +46,17 @@
                       }
                   ],
                   "Express": [
-                    {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "STANDARD"
-                    }
-                ],
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "STANDARD"
+                      }
+                  ],
                   "Email": [
-                    {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "STANDARD"
-                    }
-                ]
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "STANDARD"
+                      }
+                  ]
               }
           }
       ],
@@ -71,14 +71,14 @@
               "tax_code": "CA"
           },
           "Express": {
-            "currency_code": "",
-            "delivery_time": "3 - 5 business days",
-            "delivery_time_after_cutoff_hour": "3 - 5 business days",
-            "display_name": "Express Delivery",
-            "price": 0,
-            "remorse_period": 0,
-            "tax_code": "CA"
-        },
+              "currency_code": "",
+              "delivery_time": "3 - 5 business days",
+              "delivery_time_after_cutoff_hour": "3 - 5 business days",
+              "display_name": "Express Delivery",
+              "price": 0,
+              "remorse_period": 0,
+              "tax_code": "CA"
+          },
           "Email": {
               "currency_code": "",
               "delivery_time": "3 - 5 business days",
@@ -98,13 +98,13 @@
           "*": {
               "*": {
                   "Standard": [
-                    "STANDARD"
+                      "STANDARD"
                   ],
                   "Express": [
-                    "EXPRESS"
+                      "EXPRESS"
                   ],
                   "Email": [
-                    "EMAIL"
+                      "EMAIL"
                   ]
               }
           }
