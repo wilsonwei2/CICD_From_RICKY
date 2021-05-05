@@ -1,0 +1,113 @@
+{
+  "fulfillment_config": {
+      "provider_rates": {
+          "EXPRESS": {
+              "return_provider_rate": "",
+              "service_level": "Express",
+              "shipping_carrier_name": "CUSTOM",
+              "shipping_type": "traditional_carrier",
+              "use_as_customer_facing_cost": true
+          },
+          "STANDARD": {
+              "return_provider_rate": "",
+              "service_level": "Standard",
+              "shipping_carrier_name": "CUSTOM",
+              "shipping_type": "traditional_carrier",
+              "use_as_customer_facing_cost": false
+          },
+          "EMAIL": {
+              "return_provider_rate": "",
+              "service_level": "email_delivery",
+              "shipping_carrier_name": "CUSTOM",
+              "shipping_type": "traditional_carrier",
+              "use_as_customer_facing_cost": true
+          }
+      },
+      "routes": [
+          {
+              "destination_region": {
+                  "countries": [
+                      "CA",
+                      "US"
+                  ],
+                  "zip_codes": [
+                      "*"
+                  ]
+              },
+              "fulfilled_by": {
+                  "Standard": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "STANDARD"
+                      }
+                  ],
+                  "Express": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "STANDARD"
+                      }
+                  ],
+                  "Email": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "STANDARD"
+                      }
+                  ]
+              }
+          }
+      ],
+      "service_levels": {
+          "Standard": {
+              "currency_code": "",
+              "delivery_time": "3 - 5 business days",
+              "delivery_time_after_cutoff_hour": "3 - 5 business days",
+              "display_name": "Standard Delivery",
+              "price": 0,
+              "remorse_period": 300,
+              "tax_code": "CA"
+          },
+          "Express": {
+              "currency_code": "",
+              "delivery_time": "3 - 5 business days",
+              "delivery_time_after_cutoff_hour": "3 - 5 business days",
+              "display_name": "Express Delivery",
+              "price": 0,
+              "remorse_period": 0,
+              "tax_code": "CA"
+          },
+          "Email": {
+              "currency_code": "",
+              "delivery_time": "3 - 5 business days",
+              "delivery_time_after_cutoff_hour": "3 - 6 business days",
+              "display_name": "Standard Delivery",
+              "price": 0,
+              "remorse_period": 0,
+              "tax_code": "CA"
+          }
+      },
+      "sl_levels_priority": [
+          "Standard",
+          "Express",
+          "Email"
+      ],
+      "provider_rates_priority": {
+          "*": {
+              "*": {
+                  "Standard": [
+                      "STANDARD"
+                  ],
+                  "Express": [
+                      "EXPRESS"
+                  ],
+                  "Email": [
+                      "EMAIL"
+                  ]
+              }
+          }
+      }
+  }
+}

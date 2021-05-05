@@ -1,0 +1,209 @@
+{
+    "nullFieldList": null,
+    "createdDate": "2020-06-01T12:23:17-07:00",
+    "lastModifiedDate": "2020-06-01T12:24:23-07:00",
+    "customForm": null,
+    "postingPeriod": null,
+    "entity": null,
+    "createdFrom": {
+        "name": "Transfer Order #TO0013362",
+        "internalId": "41978509",
+        "externalId": null,
+        "type": null
+    },
+    "requestedBy": null,
+    "createdFromShipGroup": null,
+    "partner": null,
+    "shippingAddress": {
+        "nullFieldList": null,
+        "internalId": "32",
+        "country": "_unitedStates",
+        "attention": null,
+        "addressee": "012_Boston",
+        "addrPhone": "(617) 578-8799",
+        "addr1": "100 Huntington Ave",
+        "addr2": "Space E014",
+        "addr3": null,
+        "city": "Boston",
+        "state": "MA",
+        "zip": "02116",
+        "addrText": "012_Boston<br>100 Huntington Ave<br>Space E014<br>Boston MA 02116<br>United States",
+        "override": false,
+        "customFieldList": null
+    },
+    "pickedDate": "2020-05-31T21:00:00-07:00",
+    "packedDate": "2020-05-31T21:00:00-07:00",
+    "shippedDate": "2020-05-31T21:00:00-07:00",
+    "shipIsResidential": false,
+    "shipAddressList": null,
+    "shipStatus": "_shipped",
+    "saturdayDeliveryUps": null,
+    "sendShipNotifyEmailUps": null,
+    "sendBackupEmailUps": null,
+    "shipNotifyEmailAddressUps": null,
+    "shipNotifyEmailAddress2Ups": null,
+    "backupEmailAddressUps": null,
+    "shipNotifyEmailMessageUps": null,
+    "thirdPartyAcctUps": null,
+    "thirdPartyZipcodeUps": null,
+    "thirdPartyCountryUps": null,
+    "thirdPartyTypeUps": null,
+    "partiesToTransactionUps": null,
+    "exportTypeUps": null,
+    "methodOfTransportUps": null,
+    "carrierIdUps": null,
+    "entryNumberUps": null,
+    "inbondCodeUps": null,
+    "isRoutedExportTransactionUps": null,
+    "licenseNumberUps": null,
+    "licenseDateUps": null,
+    "licenseExceptionUps": null,
+    "eccNumberUps": null,
+    "recipientTaxIdUps": null,
+    "blanketStartDateUps": null,
+    "blanketEndDateUps": null,
+    "shipmentWeightUps": null,
+    "saturdayDeliveryFedEx": null,
+    "saturdayPickupFedex": null,
+    "sendShipNotifyEmailFedEx": null,
+    "sendBackupEmailFedEx": null,
+    "signatureHomeDeliveryFedEx": null,
+    "shipNotifyEmailAddressFedEx": null,
+    "backupEmailAddressFedEx": null,
+    "shipDateFedEx": null,
+    "homeDeliveryTypeFedEx": null,
+    "homeDeliveryDateFedEx": null,
+    "bookingConfirmationNumFedEx": null,
+    "intlExemptionNumFedEx": null,
+    "b13aFilingOptionFedEx": null,
+    "b13aStatementDataFedEx": null,
+    "thirdPartyAcctFedEx": null,
+    "thirdPartyCountryFedEx": null,
+    "thirdPartyTypeFedEx": null,
+    "shipmentWeightFedEx": null,
+    "termsOfSaleFedEx": null,
+    "termsFreightChargeFedEx": null,
+    "termsInsuranceChargeFedEx": null,
+    "insideDeliveryFedEx": null,
+    "insidePickupFedEx": null,
+    "ancillaryEndorsementFedEx": null,
+    "holdAtLocationFedEx": null,
+    "halPhoneFedEx": null,
+    "halAddr1FedEx": null,
+    "halAddr2FedEx": null,
+    "halAddr3FedEx": null,
+    "halCityFedEx": null,
+    "halZipFedEx": null,
+    "halStateFedEx": null,
+    "halCountryFedEx": null,
+    "hazmatTypeFedEx": null,
+    "accessibilityTypeFedEx": null,
+    "isCargoAircraftOnlyFedEx": null,
+    "tranDate": "2020-05-31T21:00:00-07:00",
+    "tranId": "IF1203593",
+    "shipMethod": null,
+    "generateIntegratedShipperLabel": null,
+    "shippingCost": null,
+    "handlingCost": null,
+    "memo": null,
+    "transferLocation": {
+        "name": "012_Boston",
+        "internalId": "26",
+        "externalId": null,
+        "type": null
+    },
+    "packageList": {
+        "package": [
+            {
+                "packageWeight": 1,
+                "packageDescr": null,
+                "packageTrackingNumber": null
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "packageUpsList": null,
+    "packageUspsList": null,
+    "packageFedExList": null,
+    "itemList": {
+        "item": [
+            {
+                "jobName": null,
+                "itemReceive": true,
+                "itemName": "01065PinRelLG",
+                "description": "LS button-down",
+                "department": null,
+                "class": null,
+                "location": {
+                    "name": "Radial : US Ecommerce",
+                    "internalId": "3",
+                    "externalId": null,
+                    "type": null
+                },
+                "onHand": 1,
+                "quantity": 1,
+                "unitsDisplay": null,
+                "createPo": null,
+                "inventoryDetail": null,
+                "binNumbers": null,
+                "serialNumbers": null,
+                "poNum": null,
+                "item": {
+                    "name": "01065PinRelLG",
+                    "internalId": "22292",
+                    "externalId": null,
+                    "type": null
+                },
+                "orderLine": 2,
+                "quantityRemaining": null,
+                "options": null,
+                "shipGroup": null,
+                "itemIsFulfilled": null,
+                "shipAddress": null,
+                "shipMethod": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "3049",
+                            "scriptId": "custcol_newstore_rejection_processed"
+                        }
+                    ]
+                }
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "accountingBookDetailList": null,
+    "customFieldList": {
+        "customField": [
+            {
+                "value": true,
+                "internalId": "3174",
+                "scriptId": "custbody_fulfillment_processed"
+            },
+            {
+                "value": "{\"22292\":{\"order\":1,\"ship\":1}}",
+                "internalId": "847",
+                "scriptId": "custbody_gom_grdprnt_items"
+            },
+            {
+                "value": "{}",
+                "internalId": "3065",
+                "scriptId": "custbody_gridoe_trantemplatedata"
+            },
+            {
+                "value": false,
+                "internalId": "3093",
+                "scriptId": "custbody_is_exchange"
+            },
+            {
+                "value": "pending_sync",
+                "internalId": "2886",
+                "scriptId": "custbody_shopify_fulfillment_id"
+            }
+        ]
+    },
+    "internalId": "41978510",
+    "externalId": null
+}
