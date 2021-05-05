@@ -1,0 +1,47 @@
+service: fao-shipping
+
+plugins:
+  - serverless-python-requirements
+  - serverless-wsgi
+  - serverless-domain-manager
+custom:
+  customDomain:
+    domainName: frankandoak.ps.${self:provider.stage}.newstore.net
+    basePath: 'shipping' # This will be prefixed to all routes
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+  wsgi:
+    app: shipping.api.api.APP
+    packRequirements: false
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - shipping/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  environment:
+    API_GATEWAY_BASE_PATH: ${self:custom.customDomain.basePath} #needed for domain manager
+    LOG_LEVEL: ${opt:log, 'INFO'}
+    TENANT: ${self:provider.tenant}
+    STAGE: ${self:provider.stage}
+    CONFIG_BUCKET: ${self:provider.configBucket}
+
+functions:
+  api:
+    handler: wsgi_handler.handler
+    events:
+      - http: ANY /
+      - http: ANY {proxy+}
+

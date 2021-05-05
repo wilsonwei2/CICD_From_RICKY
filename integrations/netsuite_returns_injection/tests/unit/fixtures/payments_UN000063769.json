@@ -1,0 +1,219 @@
+{
+    "instruments": [
+        {
+            "payment_provider": "adyen", 
+            "payment_method": "credit_card", 
+            "refund_amount": 70.4, 
+            "capture_amount": 0, 
+            "authorize_amount": 0, 
+            "currency": "USD", 
+            "payment_wallet": "", 
+            "id": "6415368548534989", 
+            "original_transactions": [
+                {
+                    "instrument_id": "6415368548534989", 
+                    "payment_provider": "adyen", 
+                    "payment_method": "credit_card", 
+                    "created_at": "2018-09-13T16:07:53.292797052Z", 
+                    "refund_amount": 0, 
+                    "reason": "authorization", 
+                    "capture_amount": 313.14, 
+                    "currency": "USD", 
+                    "correlation_id": "", 
+                    "payment_wallet": "", 
+                    "transaction_id": "authorization-6415368548534989-52f89c9b-4d39-4bd3-aa95-c0046280198a", 
+                    "metadata": {
+                        "additional":{
+                            "paymentMethod": "amex"
+                        },
+                        "instrument_details": {
+                            "last4": "", 
+                            "brand": "amex", 
+                            "dynamic_last4": ""
+                        }, 
+                        "essential": {
+                            "provider_transaction_ref": "1715375660374597", 
+                            "provider_account_id": "UNTUCKit_POS_US", 
+                            "instrument_metadata": {
+                                "card_last4": "", 
+                                "card_brand": "amex"
+                            }
+                        }
+                    }
+                }, 
+                {
+                    "instrument_id": "6415368548534989", 
+                    "payment_provider": "adyen", 
+                    "payment_method": "credit_card", 
+                    "created_at": "2018-09-13T16:08:22.531804046Z", 
+                    "refund_amount": 313.14, 
+                    "reason": "capture", 
+                    "capture_amount": -313.14, 
+                    "currency": "USD", 
+                    "correlation_id": "460ff5ab-055c-4f32-acf2-d385243d50e5", 
+                    "payment_wallet": "", 
+                    "transaction_id": "capture-6415368548534989-8355b568-8c63-4107-b982-2c21d0884327", 
+                    "metadata": {
+                        "additional":{
+                            "paymentMethod": "amex"
+                        },
+                        "instrument_details": {
+                            "last4": "7000", 
+                            "brand": "amex", 
+                            "dynamic_last4": "7000"
+                        }, 
+                        "essential": {
+                            "provider_transaction_ref": "6415368548534989", 
+                            "provider_account_id": "UNTUCKit_POS_US", 
+                            "instrument_metadata": {
+                                "card_expiration_year": "2023", 
+                                "card_expiration_month": "05", 
+                                "card_last4": "7000", 
+                                "card_brand": "amex"
+                            }
+                        }
+                    }
+                }, 
+                {
+                    "instrument_id": "6415368548534989", 
+                    "payment_provider": "adyen", 
+                    "payment_method": "credit_card", 
+                    "created_at": "2018-09-21T21:41:04.364468422Z", 
+                    "refund_amount": -26.62, 
+                    "reason": "refund", 
+                    "capture_amount": 0, 
+                    "currency": "USD", 
+                    "correlation_id": "46017695-dbc9-4a62-86d0-041787c79607", 
+                    "payment_wallet": "", 
+                    "transaction_id": "refund-4615375660101391-1321f623-c149-4006-881b-0c13c4bd0d09", 
+                    "metadata": {
+                        "additional":{
+                            "paymentMethod": "amex"
+                        },
+                        "instrument_details": {
+                            "last4": "", 
+                            "brand": "amex", 
+                            "dynamic_last4": ""
+                        }, 
+                        "essential": {
+                            "provider_transaction_ref": "4615375660101391", 
+                            "provider_account_id": "UNTUCKit_POS_US", 
+                            "instrument_metadata": {
+                                "card_last4": "", 
+                                "card_brand": "amex"
+                            }
+                        }
+                    }
+                }, 
+                {
+                    "instrument_id": "6415368548534989", 
+                    "payment_provider": "adyen", 
+                    "payment_method": "credit_card", 
+                    "created_at": "2018-09-21T21:41:56.529755849Z", 
+                    "refund_amount": -216.12, 
+                    "reason": "refund", 
+                    "capture_amount": 0, 
+                    "currency": "USD", 
+                    "correlation_id": "db8be51f-cf69-4760-8a8a-8316ca6fea96", 
+                    "payment_wallet": "", 
+                    "transaction_id": "refund-1715375660374597-f2d56b97-8ea9-4e7b-90fd-dd2d0544e605", 
+                    "metadata": {
+                        "additional":{
+                            "paymentMethod": "amex"
+                        },
+                        "instrument_details": {
+                            "last4": "", 
+                            "brand": "amex", 
+                            "dynamic_last4": ""
+                        }, 
+                        "essential": {
+                            "provider_transaction_ref": "1715375660374597", 
+                            "provider_account_id": "UNTUCKit_POS_US", 
+                            "instrument_metadata": {
+                                "card_last4": "", 
+                                "card_brand": "amex"
+                            }
+                        }
+                    }
+                }
+            ], 
+            "metadata": {
+                "instrument_details": {
+                    "last4": "", 
+                    "brand": "amex", 
+                    "dynamic_last4": ""
+                }, 
+                "essential": {
+                    "provider_transaction_ref": "1715375660374597", 
+                    "provider_account_id": "UNTUCKit_POS_US", 
+                    "instrument_metadata": {
+                        "card_last4": "", 
+                        "card_brand": "amex"
+                    }
+                }
+            }
+        }, 
+        {
+            "payment_provider": "store_credit", 
+            "payment_method": "store_credit", 
+            "refund_amount": 0, 
+            "capture_amount": 70.4, 
+            "authorize_amount": 0, 
+            "currency": "USD", 
+            "payment_wallet": "direct", 
+            "id": "400c8e32-979a-4871-8bbd-2eabc6a316ac-f67c3621-2363-48e9-a639-2893ed16f972", 
+            "original_transactions": [
+                {
+                    "instrument_id": "400c8e32-979a-4871-8bbd-2eabc6a316ac-f67c3621-2363-48e9-a639-2893ed16f972", 
+                    "payment_provider": "store_credit", 
+                    "payment_method": "store_credit", 
+                    "created_at": "2018-09-21T21:40:08.791523843Z", 
+                    "refund_amount": 0, 
+                    "reason": "issue", 
+                    "capture_amount": 70.4, 
+                    "currency": "USD", 
+                    "correlation_id": "f67c3621-2363-48e9-a639-2893ed16f972", 
+                    "payment_wallet": "direct", 
+                    "transaction_id": "400c8e32-979a-4871-8bbd-2eabc6a316ac-f67c3621-2363-48e9-a639-2893ed16f972", 
+                    "metadata": {
+                        "order_id": "400c8e32-979a-4871-8bbd-2eabc6a316ac", 
+                        "processed_at": "2018-09-13T16:07:51.784012", 
+                        "brand": "American Express", 
+                        "last_4": "7000"
+                    }
+                }
+            ], 
+            "metadata": {
+                "order_id": "400c8e32-979a-4871-8bbd-2eabc6a316ac", 
+                "processed_at": "2018-09-13T16:07:51.784012", 
+                "brand": "American Express", 
+                "last_4": "7000"
+            }
+        }
+    ], 
+    "balance": 0, 
+    "transactions": [
+        {
+            "due_date": null, 
+            "credit": 0, 
+            "inserted_at": "2018-09-13T16:07:51.778393062Z", 
+            "currency": "USD", 
+            "correlation_id": "400c8e32-979a-4871-8bbd-2eabc6a316ac-create", 
+            "debit": 313.14, 
+            "transaction_id": "400c8e32-979a-4871-8bbd-2eabc6a316ac", 
+            "metadata": null
+        }, 
+        {
+            "due_date": null, 
+            "credit": 313.14, 
+            "inserted_at": "2018-09-13T16:08:22.538225224Z", 
+            "currency": "USD", 
+            "correlation_id": "460ff5ab-055c-4f32-acf2-d385243d50e5", 
+            "debit": 0, 
+            "transaction_id": "capture-6415368548534989-8355b568-8c63-4107-b982-2c21d0884327", 
+            "metadata": {
+                "reason": "capture"
+            }
+        }
+    ]
+}

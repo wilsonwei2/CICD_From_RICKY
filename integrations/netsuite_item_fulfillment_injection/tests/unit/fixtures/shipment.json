@@ -1,0 +1,19 @@
+{
+    "failed_shipments": [],
+    "successful_shipments": [
+        {
+            "accepted_at": "2019-09-25T14:01:39.793007Z",
+            "carrier": "UPS",
+            "product_id": "35738DreTreXXL",
+            "received_at": "2019-09-25T14:01:39.76481Z",
+            "tracking_code": "IAMATRACKINGCODE"
+        },
+        {
+            "accepted_at": "2019-09-25T14:01:39.793007Z",
+            "carrier": "UPS",
+            "product_id": "35686NavTreXXL",
+            "received_at": "2019-09-25T14:01:39.76481Z",
+            "tracking_code": "IAMATRACKINGCODE"
+        }
+    ]
+}

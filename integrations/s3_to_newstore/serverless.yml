@@ -1,0 +1,108 @@
+service: frankandoak-s3-to-newstore
+
+plugins:
+  - serverless-python-requirements
+  - serverless-step-functions
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - s3_to_newstore/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  environment:
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
+    newstore_use_auth_lambda: 1
+
+functions:
+  s3_to_newstore:
+    name: ${self:provider.tenant}-stn-availability-import
+    handler: s3_to_newstore.aws.lambda_import_to_newstore.handler
+    timeout: 15
+    memorySize: 128
+    environment:
+      TENANT: ${self:provider.tenant}
+      STAGE: ${self:provider.stage}
+      ENTITIES: 'availabilities'
+      PROVIDER: ${self:provider.tenant}
+    events:
+      - s3:
+          bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: import_files/availabilities/
+            - suffix: .zip
+          existing: true
+
+  s3_to_newstore_prices:
+    name: ${self:provider.tenant}-stn-prices-import
+    handler: s3_to_newstore.aws.lambda_import_to_newstore.handler
+    timeout: 15
+    memorySize: 128
+    environment:
+      TENANT: ${self:provider.tenant}
+      STAGE: ${self:provider.stage}
+      ENTITIES: 'prices'
+      PROVIDER: ${self:provider.tenant}
+    events:
+      - s3:
+          bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: import_files/prices/
+            - suffix: .zip
+          existing: true
+
+  step_function:
+    name: ${self:provider.tenant}-stn-step-function
+    handler: s3_to_newstore.aws.lambda_step_function.handler
+    timeout: 15
+    memorySize: 128
+    environment:
+      DESTINATION_BUCKET: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+      DESTINATION_PREFIX: 'import_files/availabilities'
+
+stepFunctions:
+  stateMachines:
+    StepFuncStateMachine:
+      name: stn-state-machine
+      definition:
+        StartAt: Lambda
+        States:
+          wait:
+            Type: Wait
+            SecondsPath: "$.secs_between_chunks"
+            Next: Lambda
+          continue?:
+            Type: Choice
+            Choices:
+            - Variable: "$.continue"
+              BooleanEquals: true
+              Next: wait
+            Default: End
+          Lambda:
+            Type: Task
+            Resource:
+              Fn::GetAtt: [step_function, Arn]
+            Next: continue?
+            Retry:
+            - ErrorEquals:
+              - States.TaskFailed
+            Catch:
+            - ErrorEquals: ["States.TaskFailed"]
+              Next: continue?
+          End:
+            Type: Succeed
+  validate: true # enable pre-deployment definition validation (disabled by default)

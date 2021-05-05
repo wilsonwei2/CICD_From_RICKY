@@ -1,0 +1,129 @@
+{
+  "id": "281ed6a6-9465-5747-bf71-5a4ba41041a4",
+  "external_id": "TEST-1821",
+  "created_at": "2021-01-28T22:30:20.560Z",
+  "placed_at": "2021-01-28T22:30:07.000Z",
+  "channel_type": "web",
+  "channel": "USC",
+  "is_exchange": false,
+  "customer_email": "akasturi@newstore.com",
+  "customer_id": "efbbcb5d-651a-4367-b26e-1ed26bd36fb0",
+  "external_customer_id": "3914491265059",
+  "is_historical": false,
+  "billing_address": {
+    "first_name": "Aditya",
+    "last_name": "Kasturi",
+    "address_line_1": "1414 Dexter Ave N",
+    "address_line_2": "",
+    "address_line1": "1414 Dexter Ave N",
+    "address_line2": "",
+    "zip_code": "98109",
+    "city": "Seattle",
+    "state": "WA",
+    "country": "US",
+    "phone": "16148068041"
+  },
+  "shipping_address": {
+    "first_name": "Aditya",
+    "last_name": "Kasturi",
+    "address_line_1": "1414 Dexter Ave N",
+    "address_line_2": "",
+    "address_line1": "1414 Dexter Ave N",
+    "address_line2": "",
+    "zip_code": "98109",
+    "city": "Seattle",
+    "state": "WA",
+    "country": "US",
+    "phone": "16148068041"
+  },
+  "price_method": "tax_excluded",
+  "subtotal": 98,
+  "discount_total": 0,
+  "shipping_total": 0,
+  "shipping_tax": 0,
+  "tax_total": 9.9,
+  "grand_total": 107.9,
+  "currency": "USD",
+  "tax_exempt": false,
+  "extended_attributes": [
+    {
+      "name": "returnly_exchange",
+      "value": "false"
+    },
+    {
+      "name": "external_order_id",
+      "value": "TEST-1821"
+    },
+    {
+      "name": "order_id",
+      "value": "2995942785059"
+    },
+    {
+      "name": "ext_channel_name",
+      "value": "USC"
+    },
+    {
+      "name": "is_historical",
+      "value": "false"
+    },
+    {
+      "name": "order_memo",
+      "value": ""
+    }
+  ],
+  "items": [
+    {
+      "id": "e8a37644-3a62-4210-ac2c-6d1e1deb2e08",
+      "item_type": "product",
+      "product_id": "3200205111919-02",
+      "pricebook_id": "default",
+      "pricebook_price": 98,
+      "list_price": 98,
+      "item_discounts": 0,
+      "order_discounts": 0,
+      "tax": 9.9,
+      "tax_provider_details": [
+        {
+          "name": "WA STATE TAX",
+          "amount": 6.37,
+          "rate": 0.065
+        },
+        {
+          "name": "WA CITY TAX",
+          "amount": 3.53,
+          "rate": 0.036
+        },
+        {
+          "name": "WA COUNTY TAX",
+          "amount": 0,
+          "rate": 0
+        }
+      ],
+      "quantity": 1,
+      "status": "opened",
+      "extended_attributes": [
+        {
+          "name": "is_gift_card",
+          "value": "False"
+        },
+        {
+          "name": "requires_shipping",
+          "value": "True"
+        },
+        {
+          "name": "external_item_id",
+          "value": "6522886094883"
+        }
+      ],
+      "external_identifiers": {
+        "sku": "3200205111919-02",
+        "ean13": "840006876649",
+        "shopify_inventory_item_id": "34142847402019",
+        "upc": "840006876649",
+        "isbn": "840006876649"
+      },
+      "shipping_service_level": "STANDARDFREE",
+      "is_preorder": false
+    }
+  ]
+}

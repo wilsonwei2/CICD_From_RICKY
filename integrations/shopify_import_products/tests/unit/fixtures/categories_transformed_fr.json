@@ -1,0 +1,12 @@
+{
+    "head": {
+        "locale": "fr-CA",
+        "catalog": "storefront-catalog-fr",
+        "internal_disable_image_processing": true
+    },
+    "items": [
+        {
+            "path": "All"
+        }
+    ]
+}

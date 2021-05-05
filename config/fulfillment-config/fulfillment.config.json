@@ -2,11 +2,11 @@
   "fulfillment_config": {
       "provider_rates": {
           "EXPRESS": {
-            "return_provider_rate": "",
-            "service_level": "Express",
-            "shipping_carrier_name": "CUSTOM",
-            "shipping_type": "traditional_carrier",
-            "use_as_customer_facing_cost": true
+              "return_provider_rate": "",
+              "service_level": "Express",
+              "shipping_carrier_name": "CUSTOM",
+              "shipping_type": "traditional_carrier",
+              "use_as_customer_facing_cost": true
           },
           "STANDARD": {
               "return_provider_rate": "",
@@ -17,312 +17,312 @@
           },
           "EMAIL": {
               "return_provider_rate": "",
-              "service_level": "email_delivery",
+              "service_level": "Email",
               "shipping_carrier_name": "CUSTOM",
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": true
           }
       },
       "routes": [
-        {
-          "destination_region": {
-              "countries": [
-                  "CA"
-              ],
-              "zip_codes": [
-                  "*"
-              ]
+          {
+              "destination_region": {
+                  "countries": [
+                      "CA"
+                  ],
+                  "zip_codes": [
+                      "*"
+                  ]
+              },
+              "fulfilled_by": {
+                  "Email": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "EMAIL"
+                      }
+                  ],
+                  "Express": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "EXPRESS"
+                      }
+                  ],
+                  "Standard": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "STANDARD"
+                      }
+                  ]
+              }
           },
-          "fulfilled_by": {
-              "Email": [
-                  {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "EMAIL"
-                  }
-              ],
-              "Express": [
-                  {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "EXPRESS"
-                  }
-              ],
-              "Standard": [
-                  {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "STANDARD"
-                  }
-              ]
-          }
-        },
-        {
-          "destination_region": {
-              "countries": [
-                  "CA"
-              ],
-              "zip_codes": [
-                  "A*",
-                  "B*",
-                  "C*",
-                  "E*",
-                  "G*",
-                  "H*",
-                  "J*"
-              ]
+          {
+              "destination_region": {
+                  "countries": [
+                      "CA"
+                  ],
+                  "zip_codes": [
+                      "A*",
+                      "B*",
+                      "C*",
+                      "E*",
+                      "G*",
+                      "H*",
+                      "J*"
+                  ]
+              },
+              "fulfilled_by": {
+                  "Express": [
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "EXPRESS"
+                      }
+                  ],
+                  "Standard": [
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "STANDARD"
+                      }
+                  ]
+              }
           },
-          "fulfilled_by": {
-              "Express": [
-                  {
-                      "fulfillment_node_id": "STANST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "STWST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "MTLST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "VIAST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "DIXST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "FOYST",
-                      "provider_rate": "EXPRESS"
-                  }
-              ],
-              "Standard": [
-                  {
-                      "fulfillment_node_id": "STANST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "STWST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "MTLST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "VIAST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "DIXST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "FOYST",
-                      "provider_rate": "STANDARD"
-                  }
-              ]
-          }
-        },
-        {
-          "destination_region": {
-              "countries": [
-                  "CA"
-              ],
-              "zip_codes": [
-                  "L*",
-                  "M*",
-                  "N*",
-                  "P*",
-                  "R*",
-                  "K*"
-              ]
+          {
+              "destination_region": {
+                  "countries": [
+                      "CA"
+                  ],
+                  "zip_codes": [
+                      "L*",
+                      "M*",
+                      "N*",
+                      "P*",
+                      "R*",
+                      "K*"
+                  ]
+              },
+              "fulfilled_by": {
+                  "Express": [
+                      {
+                          "fulfillment_node_id": "TECST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "EXPRESS"
+                      }
+                  ],
+                  "Standard": [
+                      {
+                          "fulfillment_node_id": "TECST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "STANDARD"
+                      }
+                  ]
+              }
           },
-          "fulfilled_by": {
-              "Express": [
-                  {
-                      "fulfillment_node_id": "TECST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "TOST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "DONST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "RIDST",
-                      "provider_rate": "EXPRESS"
-                  }
-              ],
-              "Standard": [
-                  {
-                      "fulfillment_node_id": "TECST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "TOST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "DONST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "RIDST",
-                      "provider_rate": "STANDARD"
-                  }
-              ]
-          }
-        },
-        {
-          "destination_region": {
-              "countries": [
-                  "CA"
-              ],
-              "zip_codes": [
-                  "S*",
-                  "T*",
-                  "V*",
-                  "X*",
-                  "Y*"
-              ]
+          {
+              "destination_region": {
+                  "countries": [
+                      "CA"
+                  ],
+                  "zip_codes": [
+                      "S*",
+                      "T*",
+                      "V*",
+                      "X*",
+                      "Y*"
+                  ]
+              },
+              "fulfilled_by": {
+                  "Express": [
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "EXPRESS"
+                      }
+                  ],
+                  "Standard": [
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "STANDARD"
+                      }
+                  ]
+              }
           },
-          "fulfilled_by": {
-              "Express": [
-                  {
-                      "fulfillment_node_id": "VANST",
-                      "provider_rate": "EXPRESS"
-                  }
-              ],
-              "Standard": [
-                  {
-                      "fulfillment_node_id": "VANST",
-                      "provider_rate": "STANDARD"
-                  }
-              ]
+          {
+              "destination_region": {
+                  "countries": [
+                      "US"
+                  ],
+                  "zip_codes": [
+                      "*"
+                  ]
+              },
+              "fulfilled_by": {
+                  "Email": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "EMAIL"
+                      }
+                  ],
+                  "Express": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "TECST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "EXPRESS"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "EXPRESS"
+                      }
+                  ],
+                  "Standard": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "TECST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "STANDARD"
+                      }
+                  ]
+              }
           }
-        },
-        {
-          "destination_region": {
-              "countries": [
-                  "US"
-              ],
-              "zip_codes": [
-                  "*"
-              ]
-          },
-          "fulfilled_by": {
-              "Email": [
-                  {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "EMAIL"
-                  }
-              ],
-              "Express": [
-                  {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                    "fulfillment_node_id": "STANST",
-                    "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "STWST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "MTLST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "VIAST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "DIXST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "FOYST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                    "fulfillment_node_id": "TECST",
-                    "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "TOST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "DONST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                      "fulfillment_node_id": "RIDST",
-                      "provider_rate": "EXPRESS"
-                  },
-                  {
-                    "fulfillment_node_id": "VANST",
-                    "provider_rate": "EXPRESS"
-                  }
-              ],
-              "Standard": [
-                  {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                    "fulfillment_node_id": "STANST",
-                    "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "STWST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "MTLST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "VIAST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "DIXST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "FOYST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                    "fulfillment_node_id": "TECST",
-                    "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "TOST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "DONST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                      "fulfillment_node_id": "RIDST",
-                      "provider_rate": "STANDARD"
-                  },
-                  {
-                    "fulfillment_node_id": "VANST",
-                    "provider_rate": "STANDARD"
-                  }
-              ]
-          }
-        }
       ],
       "service_levels": {
           "Standard": {
@@ -331,23 +331,23 @@
               "delivery_time_after_cutoff_hour": "3 - 5 business days",
               "display_name": "Standard Delivery",
               "price": 0,
-              "remorse_period": 300,
+              "remorse_period": 60,
               "tax_code": "CA"
           },
           "Express": {
-            "currency_code": "",
-            "delivery_time": "3 - 5 business days",
-            "delivery_time_after_cutoff_hour": "3 - 5 business days",
-            "display_name": "Express Delivery",
-            "price": 0,
-            "remorse_period": 0,
-            "tax_code": "CA"
-        },
-          "Email": {
               "currency_code": "",
               "delivery_time": "3 - 5 business days",
-              "delivery_time_after_cutoff_hour": "3 - 6 business days",
-              "display_name": "Standard Delivery",
+              "delivery_time_after_cutoff_hour": "3 - 5 business days",
+              "display_name": "Express Delivery",
+              "price": 0,
+              "remorse_period": 0,
+              "tax_code": "CA"
+          },
+          "Email": {
+              "currency_code": "",
+              "delivery_time": "Immediately via Email",
+              "delivery_time_after_cutoff_hour": "Immediately via Email",
+              "display_name": "Email Delivery",
               "price": 0,
               "remorse_period": 0,
               "tax_code": "CA"
@@ -362,13 +362,13 @@
           "*": {
               "*": {
                   "Standard": [
-                    "STANDARD"
+                      "STANDARD"
                   ],
                   "Express": [
-                    "EXPRESS"
+                      "EXPRESS"
                   ],
                   "Email": [
-                    "EMAIL"
+                      "EMAIL"
                   ]
               }
           }

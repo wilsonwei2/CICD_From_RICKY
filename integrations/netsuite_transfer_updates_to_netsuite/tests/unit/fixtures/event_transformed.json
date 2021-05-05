@@ -1,0 +1,55 @@
+{
+    "customForm": {
+        "name": null,
+        "internalId": 40,
+        "externalId": null,
+        "type": null
+    },
+    "subsidiary": {
+        "name": null,
+        "internalId": 10,
+        "externalId": null,
+        "type": null
+    },
+    "createdFrom": {
+        "name": null,
+        "internalId": "41978509",
+        "externalId": null,
+        "type": null
+    },
+    "itemFulfillment": {
+        "name": null,
+        "internalId": "41978510",
+        "externalId": null,
+        "type": null
+    },
+    "currency": {
+        "name": null,
+        "internalId": 1,
+        "externalId": null,
+        "type": null
+    },
+    "tranDate": "2020-06-01",
+    "itemList": {
+        "item": [
+            {
+                "item": {
+                    "name": null,
+                    "internalId": "22292",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": {
+                    "name": null,
+                    "internalId": "10",
+                    "externalId": null,
+                    "type": null
+                },
+                "itemReceive": true,
+                "orderLine": 3,
+                "quantity": 1
+            }
+        ],
+        "replaceAll": false
+    }
+}

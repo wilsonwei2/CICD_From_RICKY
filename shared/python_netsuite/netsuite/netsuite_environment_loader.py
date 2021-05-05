@@ -16,8 +16,8 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
 
 LOGGER.debug('Setting up connection Parameter Store.')
-TENANT = os.environ.get('TENANT_NAME')
-STAGE = os.environ.get('NEWSTORE_STAGE')
+TENANT = os.environ.get('TENANT')
+STAGE = os.environ.get('STAGE')
 PARAM_STORE = ParamStore(tenant=TENANT, stage=STAGE)
 
 LOGGER.debug('Pulling startup environment data from Parameter Store.')

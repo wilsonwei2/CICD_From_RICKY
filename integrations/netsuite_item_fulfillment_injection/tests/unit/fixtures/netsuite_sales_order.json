@@ -1,0 +1,507 @@
+{
+    "nullFieldList": null,
+    "createdDate": "2019-03-04T16:28:34-08:00",
+    "lastModifiedDate": "2019-03-04T16:28:34-08:00",
+    "nexus": null,
+    "subsidiaryTaxRegNum": null,
+    "taxRegOverride": null,
+    "taxDetailsOverride": null,
+    "customForm": null,
+    "entity": {
+        "name": "CUST36896 Hirshol Pheir",
+        "internalId": "39659",
+        "externalId": null,
+        "type": null
+    },
+    "billingAccount": null,
+    "recurringBill": null,
+    "tranDate": "2019-02-19T00:00:00-08:00",
+    "tranId": "CS0000008",
+    "entityTaxRegNum": null,
+    "source": "Web Services",
+    "postingPeriod": {
+        "name": "Feb 2019",
+        "internalId": "21",
+        "externalId": null,
+        "type": null
+    },
+    "createdFrom": null,
+    "opportunity": null,
+    "department": null,
+    "class": null,
+    "location": {
+        "name": "US",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "subsidiary": {
+        "name": "AB Corp",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "salesRep": null,
+    "contribPct": null,
+    "partner": null,
+    "leadSource": null,
+    "startDate": null,
+    "endDate": null,
+    "otherRefNum": null,
+    "memo": null,
+    "salesEffectiveDate": "2019-02-19T00:00:00-08:00",
+    "excludeCommission": null,
+    "revRecSchedule": null,
+    "undepFunds": false,
+    "canHaveStackable": true,
+    "currency": {
+        "name": "US Dollar",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "account": {
+        "name": "1000 Checking",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "revRecStartDate": null,
+    "revRecEndDate": null,
+    "totalCostEstimate": 0.0,
+    "estGrossProfit": 699.0,
+    "estGrossProfitPercent": 100.0,
+    "exchangeRate": 1.0,
+    "currencyName": "US Dollar",
+    "promoCode": null,
+    "discountItem": null,
+    "discountRate": null,
+    "isTaxable": null,
+    "taxItem": null,
+    "taxRate": null,
+    "toBePrinted": false,
+    "toBeEmailed": false,
+    "toBeFaxed": false,
+    "fax": null,
+    "messageSel": null,
+    "message": null,
+    "billingAddress": {
+        "nullFieldList": null,
+        "internalId": null,
+        "country": "_unitedStates",
+        "attention": null,
+        "addressee": "CUST36896 Hirshol Pheir",
+        "addrPhone": "(555) 555-5555",
+        "addr1": "8128 W 3rd St.",
+        "addr2": null,
+        "addr3": null,
+        "city": "Los Angeles",
+        "state": null,
+        "zip": "90048",
+        "addrText": "CUST36896 Hirshol Pheir<br>8128 W 3rd St.<br>Los Angeles  90048<br>United States",
+        "override": null,
+        "customFieldList": null
+    },
+    "billAddressList": {
+        "name": "8128 W 3rd St.",
+        "internalId": "4120",
+        "externalId": null,
+        "type": null
+    },
+    "shippingAddress": {
+        "nullFieldList": null,
+        "internalId": "4244",
+        "country": "_unitedStates",
+        "attention": null,
+        "addressee": "CUST36896 Hirshol Pheir",
+        "addrPhone": "(555) 555-5555",
+        "addr1": "8128 W 3rd St.",
+        "addr2": null,
+        "addr3": null,
+        "city": "Los Angeles",
+        "state": "CA",
+        "zip": "90048",
+        "addrText": "CUST36896 Hirshol Pheir<br>8128 W 3rd St.<br>Los Angeles CA 90048<br>United States",
+        "override": false,
+        "customFieldList": null
+    },
+    "shipIsResidential": false,
+    "shipAddressList": {
+        "name": "8128 W 3rd St.",
+        "internalId": "4121",
+        "externalId": null,
+        "type": null
+    },
+    "fob": null,
+    "shipDate": null,
+    "shipMethod": null,
+    "shippingCost": null,
+    "shippingTax1Rate": null,
+    "shippingTax2Rate": null,
+    "shippingTaxCode": null,
+    "handlingTaxCode": null,
+    "handlingTax1Rate": null,
+    "handlingCost": null,
+    "handlingTax2Rate": null,
+    "linkedTrackingNumbers": null,
+    "trackingNumbers": null,
+    "salesGroup": null,
+    "revenueStatus": null,
+    "recognizedRevenue": null,
+    "deferredRevenue": null,
+    "revRecOnRevCommitment": null,
+    "syncSalesTeams": null,
+    "paymentMethod": {
+        "name": "Cash",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "payPalStatus": null,
+    "creditCard": null,
+    "ccNumber": null,
+    "ccExpireDate": null,
+    "ccName": null,
+    "ccStreet": null,
+    "ccZipCode": null,
+    "creditCardProcessor": null,
+    "ccApproved": false,
+    "authCode": null,
+    "ccAvsStreetMatch": null,
+    "ccAvsZipMatch": null,
+    "isRecurringPayment": false,
+    "payPalTranId": null,
+    "subTotal": 699.0,
+    "ccIsPurchaseCardBin": null,
+    "ignoreAvs": null,
+    "ccProcessAsPurchaseCard": null,
+    "itemCostDiscount": null,
+    "itemCostDiscRate": null,
+    "itemCostDiscAmount": null,
+    "itemCostTaxRate1": null,
+    "itemCostTaxRate2": null,
+    "itemCostDiscTaxable": null,
+    "itemCostTaxCode": null,
+    "itemCostDiscTax1Amt": null,
+    "itemCostDiscPrint": false,
+    "expCostDiscount": null,
+    "expCostDiscRate": null,
+    "expCostDiscAmount": null,
+    "expCostDiscTaxable": null,
+    "expCostDiscprint": false,
+    "expCostTaxRate1": null,
+    "timeDiscount": null,
+    "expCostTaxCode": null,
+    "timeDiscRate": null,
+    "expCostTaxRate2": null,
+    "expCostDiscTax1Amt": null,
+    "timeDiscAmount": null,
+    "timeDiscTaxable": null,
+    "timeDiscPrint": false,
+    "discountTotal": null,
+    "taxTotal": 0.0,
+    "timeTaxRate1": null,
+    "altShippingCost": null,
+    "timeTaxCode": null,
+    "altHandlingCost": null,
+    "total": 699.0,
+    "timeDiscTax1Amt": null,
+    "ccSecurityCode": null,
+    "timeTaxRate2": null,
+    "ccSecurityCodeMatch": null,
+    "chargeIt": null,
+    "debitCardIssueNo": null,
+    "threeDStatusCode": null,
+    "pnRefNum": null,
+    "paypalAuthId": null,
+    "status": "Deposited",
+    "paypalProcess": null,
+    "job": null,
+    "billingSchedule": null,
+    "email": "hirshol@gmail.com",
+    "tax2Total": null,
+    "validFrom": null,
+    "vatRegNum": null,
+    "giftCertApplied": null,
+    "tranIsVsoeBundle": null,
+    "vsoeAutoCalc": null,
+    "syncPartnerTeams": null,
+    "salesTeamList": null,
+    "partnersList": null,
+    "itemList": {
+        "item": [
+            {
+                "job": null,
+                "item": {
+                    "name": "A-03-3001-000 GRACE BLAZER - NAVY : A-01-0000-420-L",
+                    "internalId": "4845",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 1,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": null,
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "699.00",
+                "amount": 699.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": null,
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": {
+                                "name": "Large",
+                                "internalId": "4",
+                                "externalId": null,
+                                "typeId": "143"
+                            },
+                            "internalId": "1536",
+                            "scriptId": "custcol1"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "383",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "375",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": "A-01-0000-420",
+                            "internalId": "1537",
+                            "scriptId": "custcol_to_subitem_style"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "614",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "632",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "611",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "610",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "accountingBookDetailList": null,
+    "itemCostList": null,
+    "giftCertRedemptionList": null,
+    "promotionsList": null,
+    "expCostList": null,
+    "timeList": null,
+    "shipGroupList": {
+        "shipGroup": [
+            {
+                "id": 1,
+                "isFulfilled": false,
+                "weight": 0.0,
+                "sourceAddressRef": {
+                    "name": null,
+                    "internalId": "DEFAULT",
+                    "externalId": null,
+                    "type": null
+                },
+                "sourceAddress": null,
+                "destinationAddressRef": {
+                    "name": null,
+                    "internalId": "4121",
+                    "externalId": null,
+                    "type": null
+                },
+                "destinationAddress": "8128 W 3rd St. Los Angeles CA 90048",
+                "shippingMethodRef": null,
+                "shippingMethod": null,
+                "isHandlingTaxable": null,
+                "handlingTaxCode": null,
+                "handlingTaxRate": null,
+                "handlingTax2Rate": null,
+                "handlingRate": 0.0,
+                "handlingTaxAmt": null,
+                "handlingTax2Amt": null,
+                "isShippingTaxable": null,
+                "shippingTaxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-7",
+                    "externalId": null,
+                    "type": null
+                },
+                "shippingTaxRate": null,
+                "shippingTax2Rate": null,
+                "shippingRate": 0.0,
+                "shippingTaxAmt": 0.0,
+                "shippingTax2Amt": null
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "taxDetailsList": null,
+    "customFieldList": {
+        "customField": [
+            {
+                "value": {
+                    "name": "UK (Harvey Nichols)",
+                    "internalId": "5",
+                    "externalId": null,
+                    "typeId": "275"
+                },
+                "internalId": "1505",
+                "scriptId": "cseg_ab_sellingloc"
+            },
+            {
+                "value": false,
+                "internalId": "1528",
+                "scriptId": "custbody_ab_consignment_order"
+            },
+            {
+                "value": "2019-03-04T00:00:00-08:00",
+                "internalId": "528",
+                "scriptId": "custbody_document_date"
+            },
+            {
+                "value": "2019-03-04T00:00:00-08:00",
+                "internalId": "25",
+                "scriptId": "custbody_esc_created_date"
+            },
+            {
+                "value": "2019-03-04T00:00:00-08:00",
+                "internalId": "26",
+                "scriptId": "custbody_esc_last_modified_date"
+            },
+            {
+                "value": "{\"4845\":{\"rate\":\"699\",\"qty\":1}}",
+                "internalId": "824",
+                "scriptId": "custbody_gom_grdprnt_items"
+            },
+            {
+                "value": {
+                    "name": "Ecommerce",
+                    "internalId": "2",
+                    "externalId": null,
+                    "typeId": "490"
+                },
+                "internalId": "1527",
+                "scriptId": "custbody_ab_order_type"
+            },
+            {
+                "value": "AB000000252",
+                "internalId": "1973",
+                "scriptId": "custbody_nws_shopifyorderid"
+            },
+            {
+                "value": "04/03/2019 16:28:31",
+                "internalId": "390",
+                "scriptId": "custbody_report_timestamp"
+            },
+            {
+                "value": false,
+                "internalId": "555",
+                "scriptId": "custbody_sii_article_61d"
+            },
+            {
+                "value": false,
+                "internalId": "553",
+                "scriptId": "custbody_sii_article_72_73"
+            },
+            {
+                "value": false,
+                "internalId": "537",
+                "scriptId": "custbody_sii_is_third_party"
+            },
+            {
+                "value": false,
+                "internalId": "554",
+                "scriptId": "custbody_sii_not_reported_in_time"
+            },
+            {
+                "value": false,
+                "internalId": "618",
+                "scriptId": "custbody_wrm_reg_hid_updateexpire"
+            },
+            {
+                "value": false,
+                "internalId": "2027",
+                "scriptId": "custbodynm_exported_so_to_pixior"
+            }
+        ]
+    },
+    "internalId": "6642",
+    "externalId": "08f02070-324a-4bca-adc1-8e8db7195df3"
+}

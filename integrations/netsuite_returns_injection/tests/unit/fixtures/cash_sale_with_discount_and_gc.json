@@ -1,0 +1,821 @@
+{
+    "nullFieldList": null,
+    "createdDate": "2018-07-31T11:30:24-07:00",
+    "lastModifiedDate": "2018-07-31T11:30:24-07:00",
+    "nexus": null,
+    "subsidiaryTaxRegNum": null,
+    "taxRegOverride": null,
+    "taxDetailsOverride": null,
+    "customForm": null,
+    "entity": {
+        "name": "CUS48 Brittany Winkelmann",
+        "internalId": "3166",
+        "externalId": null,
+        "type": null
+    },
+    "billingAccount": null,
+    "recurringBill": null,
+    "tranDate": "2018-07-30T21:00:00-07:00",
+    "tranId": "CS0000262",
+    "entityTaxRegNum": null,
+    "source": "Web Services",
+    "postingPeriod": null,
+    "createdFrom": null,
+    "opportunity": null,
+    "department": null,
+    "class": null,
+    "location": {
+        "name": "004_San Francisco",
+        "internalId": "6",
+        "externalId": null,
+        "type": null
+    },
+    "subsidiary": {
+        "name": "Retail US",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "salesRep": null,
+    "contribPct": null,
+    "partner": {
+        "name": "NewStore",
+        "internalId": "2964",
+        "externalId": null,
+        "type": null
+    },
+    "leadSource": null,
+    "startDate": null,
+    "endDate": null,
+    "otherRefNum": null,
+    "memo": null,
+    "salesEffectiveDate": "2018-07-30T21:00:00-07:00",
+    "excludeCommission": null,
+    "revRecSchedule": null,
+    "undepFunds": true,
+    "canHaveStackable": true,
+    "currency": {
+        "name": "US Dollar",
+        "internalId": "1",
+        "externalId": null,
+        "type": null
+    },
+    "account": null,
+    "revRecStartDate": null,
+    "revRecEndDate": null,
+    "totalCostEstimate": 0.0,
+    "estGrossProfit": 147.15,
+    "estGrossProfitPercent": 100.0,
+    "exchangeRate": 1.0,
+    "currencyName": "US Dollar",
+    "promoCode": null,
+    "discountItem": {
+        "name": "NewStore Discount",
+        "internalId": "2",
+        "externalId": null,
+        "type": null
+    },
+    "discountRate": "-26.35",
+    "isTaxable": null,
+    "taxItem": null,
+    "taxRate": null,
+    "toBePrinted": false,
+    "toBeEmailed": false,
+    "toBeFaxed": false,
+    "fax": null,
+    "messageSel": null,
+    "message": null,
+    "billingAddress": {
+        "nullFieldList": null,
+        "internalId": null,
+        "country": "_unitedStates",
+        "attention": null,
+        "addressee": "Brittany Winkelmann",
+        "addrPhone": null,
+        "addr1": "1872 Union St",
+        "addr2": null,
+        "addr3": null,
+        "city": "San Francisco\u00e6",
+        "state": "CA",
+        "zip": "94123",
+        "addrText": "Brittany Winkelmann<br>1872 Union St<br>San Francisco\u00e6 CA 94123<br>United States",
+        "override": null,
+        "customFieldList": null
+    },
+    "billAddressList": {
+        "name": "1872 Union St",
+        "internalId": "12218",
+        "externalId": null,
+        "type": null
+    },
+    "shippingAddress": {
+        "nullFieldList": null,
+        "internalId": "13489",
+        "country": "_unitedStates",
+        "attention": null,
+        "addressee": "Brittany Winkelmann",
+        "addrPhone": null,
+        "addr1": "1872 Union St",
+        "addr2": null,
+        "addr3": null,
+        "city": "San Francisco\u00e6",
+        "state": "CA",
+        "zip": "94123",
+        "addrText": "Brittany Winkelmann<br>1872 Union St<br>San Francisco\u00e6 CA 94123<br>United States",
+        "override": false,
+        "customFieldList": null
+    },
+    "shipIsResidential": false,
+    "shipAddressList": {
+        "name": "1872 Union St",
+        "internalId": "12217",
+        "externalId": null,
+        "type": null
+    },
+    "fob": null,
+    "shipDate": null,
+    "shipMethod": null,
+    "shippingCost": null,
+    "shippingTax1Rate": null,
+    "shippingTax2Rate": null,
+    "shippingTaxCode": null,
+    "handlingTaxCode": null,
+    "handlingTax1Rate": null,
+    "handlingCost": null,
+    "handlingTax2Rate": null,
+    "linkedTrackingNumbers": null,
+    "trackingNumbers": null,
+    "salesGroup": null,
+    "revenueStatus": null,
+    "recognizedRevenue": null,
+    "deferredRevenue": null,
+    "revRecOnRevCommitment": null,
+    "syncSalesTeams": null,
+    "paymentMethod": null,
+    "payPalStatus": null,
+    "creditCard": null,
+    "ccNumber": null,
+    "ccExpireDate": null,
+    "ccName": null,
+    "ccStreet": null,
+    "ccZipCode": null,
+    "creditCardProcessor": null,
+    "ccApproved": false,
+    "authCode": null,
+    "ccAvsStreetMatch": null,
+    "ccAvsZipMatch": null,
+    "isRecurringPayment": false,
+    "payPalTranId": null,
+    "subTotal": 26.35,
+    "ccIsPurchaseCardBin": null,
+    "ignoreAvs": null,
+    "ccProcessAsPurchaseCard": null,
+    "itemCostDiscount": null,
+    "itemCostDiscRate": null,
+    "itemCostDiscAmount": null,
+    "itemCostTaxRate1": null,
+    "itemCostTaxRate2": null,
+    "itemCostDiscTaxable": null,
+    "itemCostTaxCode": null,
+    "itemCostDiscTax1Amt": null,
+    "itemCostDiscPrint": false,
+    "expCostDiscount": null,
+    "expCostDiscRate": null,
+    "expCostDiscAmount": null,
+    "expCostDiscTaxable": null,
+    "expCostDiscprint": false,
+    "expCostTaxRate1": null,
+    "timeDiscount": null,
+    "expCostTaxCode": null,
+    "timeDiscRate": null,
+    "expCostTaxRate2": null,
+    "expCostDiscTax1Amt": null,
+    "timeDiscAmount": null,
+    "timeDiscTaxable": null,
+    "timeDiscPrint": false,
+    "discountTotal": -26.35,
+    "taxTotal": 0.0,
+    "timeTaxRate1": null,
+    "altShippingCost": null,
+    "timeTaxCode": null,
+    "altHandlingCost": null,
+    "total": 0.0,
+    "timeDiscTax1Amt": null,
+    "ccSecurityCode": null,
+    "timeTaxRate2": null,
+    "ccSecurityCodeMatch": null,
+    "chargeIt": null,
+    "debitCardIssueNo": null,
+    "threeDStatusCode": null,
+    "pnRefNum": null,
+    "paypalAuthId": null,
+    "status": "Not Deposited",
+    "paypalProcess": null,
+    "job": null,
+    "billingSchedule": null,
+    "email": "b.winkelmann@untuckit.com",
+    "tax2Total": null,
+    "validFrom": null,
+    "vatRegNum": null,
+    "giftCertApplied": null,
+    "tranIsVsoeBundle": null,
+    "vsoeAutoCalc": null,
+    "syncPartnerTeams": null,
+    "salesTeamList": null,
+    "partnersList": null,
+    "itemList": {
+        "item": [
+            {
+                "job": null,
+                "item": {
+                    "name": "35336 : 35336BluSliXXL Spergola",
+                    "internalId": "393",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 1,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": "Men's long sleeve plaid shirt",
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "88.00",
+                "amount": 88.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": {
+                    "name": "MENS : SHIRTS : LONG SLEEVE",
+                    "internalId": "4",
+                    "externalId": null,
+                    "type": null
+                },
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": "COUPON1",
+                            "internalId": "1894",
+                            "scriptId": "custcol_nws_promocode"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "35559 : 35559BluTslLG Artezin",
+                    "internalId": "1219",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 4,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": 1.0,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": "Gingham Shirt",
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": "85.50",
+                "amount": 85.5,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": null,
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_averageCost",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": 0.0,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": 1,
+                "itemIsFulfilled": false,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": "COUPON1",
+                            "internalId": "1894",
+                            "scriptId": "custcol_nws_promocode"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "673",
+                            "scriptId": "custcol_wrm_reg_hid_trackwarranty"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "NewStore Gift Card (Redeem)",
+                    "internalId": "199",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 7,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": null,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": null,
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": null,
+                "amount": -50.0,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": null,
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_custom",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": null,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": null,
+                "itemIsFulfilled": true,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": "0181",
+                            "internalId": "2629",
+                            "scriptId": "custcol_nws_gcnumber"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            },
+            {
+                "job": null,
+                "item": {
+                    "name": "Cash",
+                    "internalId": "420",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 8,
+                "quantityAvailable": null,
+                "quantityOnHand": null,
+                "quantityFulfilled": null,
+                "quantity": null,
+                "units": null,
+                "inventoryDetail": null,
+                "serialNumbers": null,
+                "binNumbers": null,
+                "description": null,
+                "price": {
+                    "name": "Custom",
+                    "internalId": "-1",
+                    "externalId": null,
+                    "type": null
+                },
+                "rate": null,
+                "amount": -97.15,
+                "orderLine": null,
+                "licenseCode": null,
+                "isTaxable": null,
+                "options": null,
+                "deferRevRec": null,
+                "currentPercent": null,
+                "department": null,
+                "percentComplete": null,
+                "class": null,
+                "location": null,
+                "revRecSchedule": null,
+                "revRecStartDate": null,
+                "revRecEndDate": null,
+                "subscriptionLine": null,
+                "grossAmt": null,
+                "costEstimateType": "_custom",
+                "excludeFromRateRequest": false,
+                "catchUpPeriod": null,
+                "costEstimate": null,
+                "taxDetailsReference": null,
+                "amountOrdered": null,
+                "tax1Amt": null,
+                "quantityOrdered": null,
+                "quantityRemaining": null,
+                "taxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-8",
+                    "externalId": null,
+                    "type": null
+                },
+                "taxRate1": null,
+                "taxRate2": null,
+                "giftCertFrom": null,
+                "giftCertRecipientName": null,
+                "giftCertRecipientEmail": null,
+                "giftCertMessage": null,
+                "taxAmount": null,
+                "giftCertNumber": null,
+                "shipGroup": null,
+                "itemIsFulfilled": true,
+                "shipAddress": null,
+                "shipMethod": null,
+                "vsoeSopGroup": null,
+                "vsoeIsEstimate": null,
+                "vsoePrice": null,
+                "vsoeAmount": null,
+                "vsoeAllocation": null,
+                "vsoeDeferral": null,
+                "vsoePermitDiscount": null,
+                "vsoeDelivered": null,
+                "chargeType": null,
+                "chargesList": null,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": false,
+                            "internalId": "376",
+                            "scriptId": "custcol_5892_eutriangulation"
+                        },
+                        {
+                            "value": 0.0,
+                            "internalId": "368",
+                            "scriptId": "custcol_statistical_value_base_curr"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "676",
+                            "scriptId": "custcol_wrm_claimitem"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "694",
+                            "scriptId": "custcol_wrm_reg_hid_registerflag"
+                        },
+                        {
+                            "value": false,
+                            "internalId": "670",
+                            "scriptId": "custcol_wrm_reg_warrantyreg"
+                        }
+                    ]
+                }
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "accountingBookDetailList": null,
+    "itemCostList": null,
+    "giftCertRedemptionList": null,
+    "promotionsList": null,
+    "expCostList": null,
+    "timeList": null,
+    "shipGroupList": {
+        "shipGroup": [
+            {
+                "id": 1,
+                "isFulfilled": false,
+                "weight": 1.0,
+                "sourceAddressRef": {
+                    "name": null,
+                    "internalId": "DEFAULT",
+                    "externalId": null,
+                    "type": null
+                },
+                "sourceAddress": null,
+                "destinationAddressRef": {
+                    "name": null,
+                    "internalId": "12217",
+                    "externalId": null,
+                    "type": null
+                },
+                "destinationAddress": "1872 Union St San Francisco\u00e6 CA 94123",
+                "shippingMethodRef": null,
+                "shippingMethod": null,
+                "isHandlingTaxable": null,
+                "handlingTaxCode": null,
+                "handlingTaxRate": null,
+                "handlingTax2Rate": null,
+                "handlingRate": 0.0,
+                "handlingTaxAmt": null,
+                "handlingTax2Amt": null,
+                "isShippingTaxable": null,
+                "shippingTaxCode": {
+                    "name": "-Not Taxable-",
+                    "internalId": "-7",
+                    "externalId": null,
+                    "type": null
+                },
+                "shippingTaxRate": null,
+                "shippingTax2Rate": null,
+                "shippingRate": 0.0,
+                "shippingTaxAmt": 0.0,
+                "shippingTax2Amt": null
+            }
+        ],
+        "replaceAll": "true"
+    },
+    "taxDetailsList": null,
+    "customFieldList": {
+        "customField": [
+            {
+                "value": {
+                    "name": "004 San Francisco",
+                    "internalId": "4",
+                    "externalId": null,
+                    "typeId": "544"
+                },
+                "internalId": "1904",
+                "scriptId": "cseg_ab_sellingloc"
+            },
+            {
+                "value": "2018-07-30T21:00:00-07:00",
+                "internalId": "519",
+                "scriptId": "custbody_document_date"
+            },
+            {
+                "value": "2018-07-30T21:00:00-07:00",
+                "internalId": "25",
+                "scriptId": "custbody_esc_created_date"
+            },
+            {
+                "value": "2018-07-30T21:00:00-07:00",
+                "internalId": "26",
+                "scriptId": "custbody_esc_last_modified_date"
+            },
+            {
+                "value": "{\"393\":{\"rate\":\"88\",\"qty\":1},\"1219\":{\"rate\":\"85.5\",\"qty\":1}}",
+                "internalId": "847",
+                "scriptId": "custbody_gom_grdprnt_items"
+            },
+            {
+                "value": {
+                    "name": "Retail Store",
+                    "internalId": "2",
+                    "externalId": null,
+                    "typeId": "140"
+                },
+                "internalId": "906",
+                "scriptId": "custbody_nws_order_type"
+            },
+            {
+                "value": "31/07/2018 11:30:23",
+                "internalId": "383",
+                "scriptId": "custbody_report_timestamp"
+            },
+            {
+                "value": false,
+                "internalId": "528",
+                "scriptId": "custbody_sii_is_third_party"
+            },
+            {
+                "value": "UN000000625",
+                "internalId": "2636",
+                "scriptId": "custbody_nws_ecom_orderinternalid"
+            },
+            {
+                "value": "d4f472413afe45e597892ad4de1a69a4",
+                "internalId": "1893",
+                "scriptId": "custbody_nws_associateid"
+            },
+            {
+                "value": false,
+                "internalId": "2658",
+                "scriptId": "custbody_utk_sent_to_radial"
+            },
+            {
+                "value": false,
+                "internalId": "679",
+                "scriptId": "custbody_wrm_reg_hid_updateexpire"
+            }
+        ]
+    },
+    "internalId": "29767",
+    "externalId": "77a421de-a584-4005-8f46-7153ca2db960"
+}

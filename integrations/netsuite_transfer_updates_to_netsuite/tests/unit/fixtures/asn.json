@@ -1,0 +1,154 @@
+{
+    "from_location": "US Ecommerce",
+    "fulfillment_node_id": "012_Boston",
+    "id": "0ac7825c-2e4d-464f-a835-e39ece34daac",
+    "line_items": [
+        {
+            "carton_id": "",
+            "expected_quantity": 1,
+            "product": {
+                "caption": "",
+                "color_swatch": {
+                    "alt_text": "",
+                    "aspect_ratio": 0,
+                    "dominant_color": "",
+                    "height": 0,
+                    "title": "",
+                    "url": "",
+                    "width": 0
+                },
+                "currency_code": "USD",
+                "description": "\nA classic pink and navy check made with a wrinkle free fabric that makes this shirt smooth and ready on the go. No need to iron out the details.\n FEATURES:\n\n\nPoint collar\nContrasting navy blue stitching on the buttons and cuffs\nSignature navy blue sail logo at the bottom left hem\nSKU# 01065PIN\n\n\nFABRIC:\n\n100% Cotton\n\n\n\n\n\n\n\n",
+                "images": [
+                    {
+                        "alt_text": "Model wearing a Pink Wrinkle-Free Dolcetto Shirt",
+                        "aspect_ratio": 0.84246,
+                        "dominant_color": "#E7E6EF",
+                        "height": 1187,
+                        "identifier": "s/untuckit/a5a8474a0c2e70d170aa026005e2b53d",
+                        "is_main": true,
+                        "tags": [],
+                        "title": "",
+                        "url": "https://res.cloudinary.com/newstore/image/upload/v1583572863/s/untuckit/a5a8474a0c2e70d170aa026005e2b53d.jpg",
+                        "width": 1000
+                    },
+                    {
+                        "alt_text": "Close up grid",
+                        "aspect_ratio": 0.84246,
+                        "dominant_color": "#CAC5D7",
+                        "height": 1187,
+                        "identifier": "s/untuckit/c1b8c34c4d73cc22c6db34796769b4aa",
+                        "is_main": false,
+                        "tags": [],
+                        "title": "",
+                        "url": "https://res.cloudinary.com/newstore/image/upload/v1583572863/s/untuckit/c1b8c34c4d73cc22c6db34796769b4aa.jpg",
+                        "width": 1000
+                    },
+                    {
+                        "alt_text": "Model wearing a Pink Wrinkle-Free Dolcetto Shirt",
+                        "aspect_ratio": 0.84246,
+                        "dominant_color": "#F0EFF5",
+                        "height": 1187,
+                        "identifier": "s/untuckit/b08ec6dd6f3287a3631ff8c8fc3550d9",
+                        "is_main": false,
+                        "tags": [],
+                        "title": "",
+                        "url": "https://res.cloudinary.com/newstore/image/upload/v1590623352/s/untuckit/b08ec6dd6f3287a3631ff8c8fc3550d9.jpg",
+                        "width": 1000
+                    },
+                    {
+                        "alt_text": "Model wearing a Pink Wrinkle-Free Dolcetto Shirt",
+                        "aspect_ratio": 0.84246,
+                        "dominant_color": "#CECCDC",
+                        "height": 1187,
+                        "identifier": "s/untuckit/6c0c366c471877e8a516bc185afb1fcb",
+                        "is_main": false,
+                        "tags": [],
+                        "title": "",
+                        "url": "https://res.cloudinary.com/newstore/image/upload/v1583572863/s/untuckit/6c0c366c471877e8a516bc185afb1fcb.jpg",
+                        "width": 1000
+                    },
+                    {
+                        "alt_text": "Model wearing a Pink Wrinkle-Free Dolcetto Shirt",
+                        "aspect_ratio": 0.84246,
+                        "dominant_color": "#F0EFF5",
+                        "height": 1187,
+                        "identifier": "s/untuckit/550ed7b597a06e9ce0018f60ff3a5fa0",
+                        "is_main": false,
+                        "tags": [],
+                        "title": "",
+                        "url": "https://res.cloudinary.com/newstore/image/upload/v1590623352/s/untuckit/550ed7b597a06e9ce0018f60ff3a5fa0.jpg",
+                        "width": 1000
+                    },
+                    {
+                        "alt_text": "Model wearing a Pink Wrinkle-Free Dolcetto Shirt",
+                        "aspect_ratio": 0.84246,
+                        "dominant_color": "#F0F0F5",
+                        "height": 1187,
+                        "identifier": "s/untuckit/1d62a0f55aabf00a0cd24f3e8cb3f6c7",
+                        "is_main": false,
+                        "tags": [],
+                        "title": "",
+                        "url": "https://res.cloudinary.com/newstore/image/upload/v1590623352/s/untuckit/1d62a0f55aabf00a0cd24f3e8cb3f6c7.jpg",
+                        "width": 1000
+                    },
+                    {
+                        "alt_text": "Alternate On Collection",
+                        "aspect_ratio": 0.84234464,
+                        "dominant_color": "#FBF9F8",
+                        "height": 1979,
+                        "identifier": "s/untuckit/cadf2176c36bbb66939d800fc1950d14",
+                        "is_main": false,
+                        "tags": [],
+                        "title": "",
+                        "url": "https://res.cloudinary.com/newstore/image/upload/v1583572864/s/untuckit/cadf2176c36bbb66939d800fc1950d14.jpg",
+                        "width": 1667
+                    },
+                    {
+                        "alt_text": "Model wearing a Pink Wrinkle-Free Dolcetto Shirt",
+                        "aspect_ratio": 0.84234464,
+                        "dominant_color": "#EFEFF5",
+                        "height": 1979,
+                        "identifier": "s/untuckit/0016a15c5319b5da64622c4e92b7c371",
+                        "is_main": false,
+                        "tags": [],
+                        "title": "",
+                        "url": "https://res.cloudinary.com/newstore/image/upload/v1590623352/s/untuckit/0016a15c5319b5da64622c4e92b7c371.jpg",
+                        "width": 1667
+                    }
+                ],
+                "is_available": false,
+                "main_category_full_path": "All > Button-down",
+                "main_category_path": [
+                    "All",
+                    "Button-down"
+                ],
+                "main_category_position": 0,
+                "online_from": null,
+                "online_to": null,
+                "price": 99,
+                "product_id": "01065PinRelLG",
+                "title": "Wrinkle-Free Dolcetto Shirt Large / Relaxed Fit / Pink",
+                "variation_additional_1_name": "fit",
+                "variation_additional_1_value": "",
+                "variation_additional_2_name": "",
+                "variation_additional_2_value": "",
+                "variation_color_value": "Pink",
+                "variation_size_gender": "",
+                "variation_size_system": "",
+                "variation_size_type": "",
+                "variation_size_value": "Large"
+            },
+            "quantity": 1,
+            "received_quantity": 1
+        }
+    ],
+    "references": {
+        "po_number": "TO0013362",
+        "shipment_ref": "IF1203593"
+    },
+    "revision": 2,
+    "shipment_date": "2020-06-01T04:00:00Z",
+    "status": "closed",
+    "updated_at": "2020-06-01T21:16:55Z"
+}

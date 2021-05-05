@@ -1,0 +1,225 @@
+{
+  "associate": {
+    "email": "",
+    "first_name": "",
+    "full_name": "",
+    "id": "",
+    "last_name": ""
+  },
+  "associate_id": "",
+  "billing_address": {
+    "address_line_1": "1414 Dexter Ave N",
+    "address_line_2": "",
+    "city": "Seattle",
+    "country_code": "US",
+    "first_name": "Aditya",
+    "last_name": "Kasturi",
+    "phone": "16148068041",
+    "province": "",
+    "salutation": "",
+    "second_name": "",
+    "state": "WA",
+    "suffix": "",
+    "title": "",
+    "zip_code": "98109"
+  },
+  "channel_type": "web",
+  "consumer": {
+    "display_id": "MCMW6XEBD",
+    "email": "akasturi@newstore.com",
+    "id": "efbbcb5d-651a-4367-b26e-1ed26bd36fb0",
+    "language": "en",
+    "name": "Aditya Kasturi",
+    "phone_number": ""
+  },
+  "coupons": "",
+  "currency_code": "USD",
+  "discounted": false,
+  "documents": [],
+  "exceptions": "",
+  "extended_attributes": [
+    {
+      "name": "returnly_exchange",
+      "value": "False"
+    },
+    {
+      "name": "external_order_id",
+      "value": "TEST-1821"
+    },
+    {
+      "name": "order_id",
+      "value": "2995942785059"
+    },
+    {
+      "name": "ext_channel_name",
+      "value": "USC"
+    },
+    {
+      "name": "is_historical",
+      "value": "False"
+    },
+    {
+      "name": "order_memo",
+      "value": ""
+    }
+  ],
+  "has_gift_wrapping": false,
+  "is_net": true,
+  "is_shipping_address_overwritten": false,
+  "payment": {
+    "activities": "",
+    "credit_card_number": "",
+    "method": "",
+    "psp": ""
+  },
+  "payments": [],
+  "placed_at": "2021-01-28T22:30:07Z",
+  "placement_location": {
+    "id": "",
+    "label": ""
+  },
+  "products": [
+    {
+      "activities": [
+        {
+          "created_at": "2021-01-28T22:30:07Z",
+          "metadata": {
+            "consumer_name": "Aditya Kasturi"
+          },
+          "name": "pending"
+        },
+        {
+          "created_at": "2021-01-28T22:31:20.904371Z",
+          "metadata": {
+            "consumer_name": "Aditya Kasturi"
+          },
+          "name": "new"
+        },
+        {
+          "created_at": "2021-01-28T22:31:24.67663Z",
+          "metadata": {
+            "distribution_location": "NJ Mochila"
+          },
+          "name": "routing"
+        }
+      ],
+      "color": "Black Windowpane",
+      "discounts": [],
+      "epc": "",
+      "extended_attributes": [
+        {
+          "name": "is_gift_card",
+          "value": "False"
+        },
+        {
+          "name": "requires_shipping",
+          "value": "true"
+        },
+        {
+          "name": "external_item_id",
+          "value": "6522886094883"
+        }
+      ],
+      "external_identifiers": [
+        {
+          "type": "ean13",
+          "value": "840006876649"
+        },
+        {
+          "type": "isbn",
+          "value": "840006876649"
+        },
+        {
+          "type": "shopify_inventory_item_id",
+          "value": "34142847402019"
+        },
+        {
+          "type": "sku",
+          "value": "3200205111919-02"
+        },
+        {
+          "type": "upc",
+          "value": "840006876649"
+        }
+      ],
+      "fulfillment_location": "NJ Mochila",
+      "fulfillment_type": "traditional_carrier",
+      "id": "3200205111919-02",
+      "image_url": "https://res.cloudinary.com/newstore-staging/image/upload/v1602910777/s/marine-layer/11c374ad6db3db9271b18a6be97e1675.jpg",
+      "is_swapped": false,
+      "name": "Allison Pant in Black Windowpane",
+      "price_catalog": 98,
+      "price_gross": 107.9,
+      "price_net": 98,
+      "price_tax": 9.9,
+      "sales_order_item_uuid": "e8a37644-3a62-4210-ac2c-6d1e1deb2e08",
+      "shipment_id": "",
+      "shipping_cost": 0,
+      "size": "Small",
+      "status": "routing",
+      "tax_strategy": "",
+      "variation_attribute_1_value": "",
+      "variation_attribute_2_value": ""
+    }
+  ],
+  "revision": 6,
+  "sales_order_external_id": "TEST-1821",
+  "sales_order_id": "281ed6a6-9465-5747-bf71-5a4ba41041a4",
+  "shipment_details": [
+    {
+      "items": [
+        {
+          "product_id": "3200205111919-02"
+        }
+      ],
+      "shipping_option": {
+        "cost": 0,
+        "display_name": "Free Standard Shipping",
+        "service_level_identifier": "STANDARDFREE",
+        "shipping_carrier": "CUSTOM",
+        "shipping_type": "traditional_carrier",
+        "tax": 0,
+        "timeslot": {
+          "delivery_window": {
+            "ends_at": "2021-02-03T21:30:00.000000",
+            "expires_at": "",
+            "id": "",
+            "starts_at": "2021-02-01T08:30:00.000000"
+          },
+          "id": ""
+        }
+      }
+    }
+  ],
+  "shipments": [],
+  "shipping_address": {
+    "address_line_1": "1414 Dexter Ave N",
+    "address_line_2": "",
+    "city": "Seattle",
+    "country_code": "US",
+    "first_name": "Aditya",
+    "last_name": "Kasturi",
+    "phone": "16148068041",
+    "province": "",
+    "salutation": "",
+    "second_name": "",
+    "state": "WA",
+    "suffix": "",
+    "title": "",
+    "zip_code": "98109"
+  },
+  "shipping_option_display_names": [
+    "Free Standard Shipping"
+  ],
+  "status": "routing",
+  "totals": {
+    "discount": 0,
+    "grand_total": 107.9,
+    "shipping_and_handling": 0,
+    "subtotal": 98,
+    "subtotal_gross": 107.9,
+    "subtotal_net": 98,
+    "taxes": 9.9,
+    "total_canceled": 0
+  }
+}

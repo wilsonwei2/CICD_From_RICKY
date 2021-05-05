@@ -1,0 +1,8 @@
+{
+  "name": "auth_token_generator",
+  "version": "1.0.0",
+  "description": "Generation of the auth token for Newstore to avoid other lambda to generate a new auth for each invocation",
+  "devDependencies": {
+    "serverless-python-requirements": "^5.1.0"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "4234r56j3k",
+  "order_id": "1563362",
+  "billing_address": {
+    "country_code": "USA",
+    "first_name": "Jay",
+    "last_name": "DoubleYou",
+    "address_line_1": "3104 Doctors Drive",
+    "zip_code": "90017"
+  },
+  "shipping_address": {
+    "country_code": "USA",
+    "first_name": "Jay",
+    "last_name": "DoubleYou",
+    "address_line_1": "3104 Doctors Drive",
+    "zip_code": "90017"
+  },
+  "shipping_options": {
+    "carrier": "D29201",
+    "service_level": "express"
+  },
+  "created_at": "2017-10-27T12:24:17Z",
+  "items": [
+    {
+      "product_id": "35738DreTreXXL",
+      "tracking_code": "IAMATRACKINGCODE"
+    },
+    {
+      "product_id": "35686NavTreXXL",
+      "tracking_code": "IAMATRACKINGCODE"
+    }
+  ],
+  "extended_attributes": [
+    {
+      "name": "inventory_item_id",
+      "value": "24969370629"
+    }
+  ]
+}

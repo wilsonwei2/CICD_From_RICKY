@@ -1,0 +1,21 @@
+{
+    "body": {
+        "searchResult": {
+            "totalPages": 1,
+            "totalRecords": 1,
+            "searchRowList": {
+                "searchRow": [
+                    {
+                        "basic": {
+                            "tranId": [
+                                {
+                                    "searchValue": "IF0000001"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

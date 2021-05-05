@@ -1,0 +1,233 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: 'AWS::Serverless-2016-10-31'
+Description: AWS SAM template with API defined
+Parameters:
+  DeployBucketName:
+    Description: Environment type.
+    Type: String
+    Default: newstore
+  DeployBucketKey:
+    Description: Bucket Key
+    Type: String
+    Default: /deployments/adapter.zip
+  RoleExcecuteLambda:
+    Description: Role ARN where to deploy the lambda
+    Type: String
+    Default: arn:aws:iam::480027526907:role/LambdaExecutionRole
+  TenantName:
+    Description: Tenant's name, all one word, used to match against param store settings (e.g., 'aninebing').
+    Type: String
+    Default: goorin-brothers
+  StageName:
+    Description: Current tenant stage being used (e.g., 'x' for sandbox).
+    Type: String
+    Default: x
+Resources:
+  ShopifyReturnProcessAPI:
+    Type: 'AWS::Serverless::Api'
+    Properties:
+      StageName: api
+      DefinitionBody:
+        swagger: '2.0'
+        info:
+          title:
+            Ref: 'AWS::StackName'
+        paths:
+          /d/shopify/process/return:
+            post:
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              x-amazon-apigateway-integration:
+                httpMethod: post
+                type: aws_proxy
+                uri:
+                  'Fn::Sub': >-
+                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ReceiveReturnFromShopify.Arn}/invocations
+                responses: {}
+
+  ReceiveReturnFromShopify:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri:
+        Bucket:
+          Ref: DeployBucketName
+        Key:
+          Ref: DeployBucketKey
+      Handler: receive_refund.handler
+      Runtime: python3.6
+      MemorySize: 128
+      Timeout: 300
+      FunctionName: goorin-brothers-shopify-receive-return
+      Role:
+        Ref: RoleExcecuteLambda
+      Environment:
+        Variables:
+          sqs_returns_name:
+            !GetAtt ShopifyReturnQueue.QueueName
+          TENANT:
+            Ref: TenantName
+          STAGE:
+            Ref: StageName
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /d/shopify/process/return
+            Method: post
+            RestApiId:
+              Ref: ShopifyReturnProcessAPI
+
+  ProcessReturnFromShopify:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri:
+        Bucket:
+          Ref: DeployBucketName
+        Key:
+          Ref: DeployBucketKey
+      Handler: process_refund.handler
+      Runtime: python3.6
+      MemorySize: 128
+      Timeout: 120
+      FunctionName: goorin-brothers-shopify-process-return
+      Role:
+        Ref: RoleExcecuteLambda
+      Environment:
+        Variables:
+          sqs_returns_name:
+            !GetAtt ShopifyReturnQueue.QueueName
+          TENANT:
+            Ref: TenantName
+          STAGE:
+            Ref: StageName
+          warehouse_usc: 'Pixior Ecom'
+          warehouse_usb: 'Pixior WSL'
+          warehouse_euc: 'Bleckmann Ecom'
+          warehouse_eub: 'Bleckmann WSL'
+      Events:
+        SqsEvent:
+          Type: SQS
+          Properties:
+            Queue:
+              !GetAtt ShopifyReturnQueue.Arn
+            BatchSize: 1
+
+  RegisterHookReturnFromShopify:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri:
+        Bucket:
+          Ref: DeployBucketName
+        Key:
+          Ref: DeployBucketKey
+      Handler: register_hook.handler
+      Runtime: python3.6
+      MemorySize: 128
+      Timeout: 300
+      FunctionName: goorin-brothers-shopify-register-return-hook
+      Role:
+        Ref: RoleExcecuteLambda
+      Environment:
+        Variables:
+          process_return_url: { "Fn::Join" : ["", [ "https://", {"Ref" : "ShopifyReturnProcessAPI"}, ".execute-api.", {"Ref": "AWS::Region"},".amazonaws.com/api/d/shopify/process/return" ] ]  }
+          TENANT:
+            Ref: TenantName
+          STAGE:
+            Ref: StageName
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
+
+
+  SyncReturnFromShopify:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri:
+        Bucket:
+          Ref: DeployBucketName
+        Key:
+          Ref: DeployBucketKey
+      Handler: sync_refund.handler
+      Runtime: python3.6
+      MemorySize: 128
+      Timeout: 300
+      FunctionName: goorin-brothers-shopify-sync-returns-with-shopify
+      Role:
+        Ref: RoleExcecuteLambda
+      Environment:
+        Variables:
+          sqs_returns_name:
+            !GetAtt ShopifyReturnQueue.QueueName
+          TENANT:
+            Ref: TenantName
+          STAGE:
+            Ref: StageName
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
+
+  ShopifyReturnQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 120
+      QueueName: goorin-brothers-refunds-processor
+      RedrivePolicy:
+        deadLetterTargetArn: !Sub ${DeadLetterQueue.Arn}
+        maxReceiveCount: 5
+
+  DeadLetterQueue:
+    Type: AWS::SQS::Queue
+
+  #SQS Queue Policy
+  SendReturnsQueuePolicy:
+    DependsOn: ShopifyReturnQueue
+    Type: "AWS::SQS::QueuePolicy"
+    Properties:
+      Queues:
+        - !Ref ShopifyReturnQueue
+      PolicyDocument:
+        Id: SendReturnsQueuePolicyDocument
+        Statement:
+          - Resource:
+              !GetAtt ShopifyReturnQueue.Arn
+            Effect: Allow
+            Sid: "Allow Lambda drop messages to the queue"
+            Principal: "*"
+            Action:
+              - "sqs:SendMessage"
+              - "sqs:GetQueueAttributes"
+              - "sqs:GetQueueUrl"
+            Condition:
+              ArnEquals:
+                aws:SourceArn:
+                  - !GetAtt SyncReturnFromShopify.Arn
+                  - !GetAtt ReceiveReturnFromShopify.Arn
+
+  ReadReturnsQueuePolicy:
+    DependsOn: ShopifyReturnQueue
+    Type: "AWS::SQS::QueuePolicy"
+    Properties:
+      Queues:
+        - !Ref ShopifyReturnQueue
+      PolicyDocument:
+        Id: ReadReturnsQueuePolicyDocument
+        Statement:
+          - Resource:
+              !GetAtt ShopifyReturnQueue.Arn
+            Effect: Allow
+            Sid: "Allow Lambda to read messages from queue"
+            Principal: "*"
+            Action:
+              - "sqs:ReceiveMessage"
+              - "sqs:GetQueueAttributes"
+              - "sqs:GetQueueUrl"
+            Condition:
+              ArnEquals:
+                aws:SourceArn:
+                  - !GetAtt ProcessReturnFromShopify.Arn

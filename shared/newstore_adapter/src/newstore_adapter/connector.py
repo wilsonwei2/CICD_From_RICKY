@@ -715,6 +715,28 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
+    def start_availability_export(self, last_updated_at=None):
+        url = 'https://%s/v0/d/availabilities/bulk' % (self.host)
+        try:
+            response = self.newstore_adapter.post_request(url, (
+                {'last_updated_at': int(last_updated_at)} if last_updated_at else {}
+            ))
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
+
+    def get_availability_export(self, export_id):
+        url = 'https://%s/v0/d/availabilities/bulk/%s' % (self.host, export_id)
+        try:
+            response = self.newstore_adapter.get_request(url)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
+
     def get_availability_groups(self):
         url = 'https://%s/v0/d/availabilities/groups' % (self.host)
         try:
@@ -733,3 +755,19 @@ class NewStoreConnector(object):
                 raise
             return None
         return response
+
+    ###
+    # Calls GraphQL API
+    # param query: GraphQL query
+    # param raise_error: flag to whether raise error in case something happens
+    # or just return None and let lambda handle it
+    ###
+    def graphql_api_call(self, query, raise_error=True):
+        url = 'https://%s/api/v1/org/data/query' % (self.host)
+        try:
+            response = self.newstore_adapter.post_request(url, query)
+        except NewStoreAdapterException as ns_err:
+            if raise_error or self.raise_errors:
+                raise
+            return None
+        return response.json()

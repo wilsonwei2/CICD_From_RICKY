@@ -1,0 +1,969 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [
+    "external_id",
+    "shop",
+    "shop_locale",
+    "channel_type",
+    "channel_name",
+    "currency",
+    "shipments"
+  ],
+  "properties": {
+    "external_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "shop": {
+      "type": "string",
+      "description": "The shop containing the items of the order.",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "channel_type": {
+      "type": "string",
+      "enum": [
+        "web",
+        "mobile",
+        "store"
+      ]
+    },
+    "channel_name": {
+      "description": "A string used to distinguish between various sources of orders.",
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "store_id": {
+      "type": "string",
+      "description": "ID of the store where this order was placed.",
+      "maxLength": 256
+    },
+    "associate_id": {
+      "type": "string",
+      "description": "ID of the store associate who processed this order.",
+      "maxLength": 256
+    },
+    "currency": {
+      "description": "The currency for all the prices contained within this payload.",
+      "type": "string",
+      "enum": [
+        "USD",
+        "EUR",
+        "GBP"
+      ]
+    },
+    "customer_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "customer_email": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "shop_locale": {
+      "type": "string",
+      "description": "The locale of the customer used for the shop, in RFC 5646.",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "customer_language": {
+      "description": "Language code according to ISO 639-1 to be used in the communication with the consumer (e.g. 'de', 'en' or 'fr')",
+      "type": "string",
+      "maxLength": 2
+    },
+    "external_customer_id": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "placed_at": {
+      "type": "string",
+      "description": "Date representation of when the order was placed, containing date, time and timezone as defined by https://tools.ietf.org/html/rfc3339 (ISO 8601).",
+      "format": "date-time"
+    },
+    "ip_address": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "ipv4"
+        },
+        {
+          "type": "string",
+          "format": "ipv6"
+        }
+      ]
+    },
+    "shipping_address": {
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "required": [
+        "country",
+        "address_line_1"
+      ],
+      "properties": {
+        "title": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "suffix": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "salutation": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "first_name": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "last_name": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "country": {
+          "description": "The code of the country in the ISO ALPHA-2 format.",
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 2
+        },
+        "zip_code": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "city": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "state": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "address_line_1": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "address_line_2": {
+          "type": "string",
+          "maxLength": 256
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 128
+        }
+      }
+    },
+    "shipments": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Shipment.",
+            "required": [
+              "shipping_option",
+              "items"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 100,
+                "items": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "type": "object",
+                  "required": [
+                    "external_item_id",
+                    "product_id",
+                    "price"
+                  ],
+                  "properties": {
+                    "external_item_id": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "product_id": {
+                      "type": "string",
+                      "description": "ID of the product as it was fetched from the catalog.",
+                      "minLength": 1,
+                      "maxLength": 64
+                    },
+                    "price": {
+                      "$schema": "http://json-schema.org/draft-04/schema#",
+                      "type": "object",
+                      "required": [
+                        "item_price",
+                        "item_list_price",
+                        "item_tax_lines"
+                      ],
+                      "properties": {
+                        "item_price": {
+                          "description": "Catalog price of the item. Can be affected by pricebooks and bundle pricing.",
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "item_list_price": {
+                          "description": "Price from the default pricebook.",
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "item_tax_lines": {
+                          "type": "array",
+                          "minItems": 0,
+                          "maxItems": 100,
+                          "items": {
+                            "type": "object",
+                            "required": [
+                              "amount",
+                              "rate"
+                            ],
+                            "properties": {
+                              "amount": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "rate": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "name": {
+                                "type": "string",
+                                "maxLength": 64
+                              }
+                            }
+                          }
+                        },
+                        "item_discount_info": {
+                          "type": "array",
+                          "description": "Information about item-level discounts applied to the items.",
+                          "maxItems": 1,
+                          "items": {
+                            "$ref": "#/properties/shipments/items/oneOf/1/properties/historical_shipping_option/properties/discount_info/items"
+                          }
+                        },
+                        "item_order_discount_info": {
+                          "type": "array",
+                          "description": "Information about order-level discounts applied to the item.",
+                          "maxItems": 1,
+                          "items": {
+                            "$ref": "#/properties/shipments/items/oneOf/1/properties/historical_shipping_option/properties/discount_info/items"
+                          }
+                        },
+                        "pricebook": {
+                          "description": "A reference to the pricebook used to calculate the catalog price.",
+                          "type": "string",
+                          "default": "default",
+                          "maxLength": 64
+                        },
+                        "group_ref": {
+                          "type": "string",
+                          "description": "A reference to a group (bundle) if group pricing was used for the item.",
+                          "maxLength": 64
+                        }
+                      }
+                    },
+                    "extended_attributes": {
+                      "type": "array",
+                      "maxItems": 100,
+                      "items": {
+                        "$ref": "#/properties/extended_attributes/items"
+                      }
+                    }
+                  }
+                }
+              },
+              "shipping_option": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "service_level_identifier",
+                      "price",
+                      "tax"
+                    ],
+                    "properties": {
+                      "service_level_identifier": {
+                        "description": "Service level identifier of the shipping option. Set it to IN_STORE_HANDOVER in case of injecting an in-store purchase order.",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                      },
+                      "price": {
+                        "type": "number",
+                        "description": "The price of the shipping option before discounts. It might include taxes depending on the tax method.",
+                        "minimum": 0
+                      },
+                      "tax": {
+                        "type": "number",
+                        "description": "The tax applied to the shipping option.",
+                        "minimum": 0
+                      },
+                      "discount_info": {
+                        "type": "array",
+                        "description": "Information about shipping discounts applied to the shipment.",
+                        "maxItems": 1,
+                        "items": {
+                          "$ref": "#/properties/shipments/items/oneOf/1/properties/historical_shipping_option/properties/discount_info/items"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "shipping_offer_token",
+                      "price",
+                      "tax"
+                    ],
+                    "properties": {
+                      "shipping_offer_token": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 8192
+                      },
+                      "price": {
+                        "type": "number",
+                        "description": "The price of the shipping option before discounts. It might include taxes depending on the tax method.",
+                        "minimum": 0
+                      },
+                      "tax": {
+                        "type": "number",
+                        "description": "The tax applied to the shipping option.",
+                        "minimum": 0
+                      },
+                      "discount_info": {
+                        "type": "array",
+                        "description": "Information about shipping discounts applied to the shipment.",
+                        "maxItems": 1,
+                        "items": {
+                          "$ref": "#/properties/shipments/items/oneOf/1/properties/historical_shipping_option/properties/discount_info/items"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          {
+            "type": "object",
+            "description": "Shipment of the historical order. It was already shipped.",
+            "required": [
+              "historical_shipping_option",
+              "items"
+            ],
+            "properties": {
+              "items": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 100,
+                "items": {
+                  "$ref": "#/properties/shipments/items/oneOf/0/properties/items/items"
+                }
+              },
+              "historical_shipping_option": {
+                "$schema": "http://json-schema.org/draft-04/schema#",
+                "type": "object",
+                "required": [
+                  "service_level_identifier",
+                  "shipping_type",
+                  "fulfillment_node_id",
+                  "shipping_carrier",
+                  "price",
+                  "tax",
+                  "zip_code",
+                  "country_code"
+                ],
+                "properties": {
+                  "service_level_identifier": {
+                    "description": "Service level identifier of the shipping option. Set it to IN_STORE_HANDOVER in case of injecting an in-store purchase order.",
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 64
+                  },
+                  "shipping_type": {
+                    "type": "string",
+                    "enum": [
+                      "traditional_carrier",
+                      "same_day_delivery",
+                      "in_store_pick_up",
+                      "in_store_handover"
+                    ],
+                    "description": "Shipping type."
+                  },
+                  "store_id": {
+                    "type": "string",
+                    "description": "Identifier of the store preselected for that shipment."
+                  },
+                  "fulfillment_node_id": {
+                    "type": "string",
+                    "description": "Identifier of the fulfillment node preselected for that shipment."
+                  },
+                  "shipping_carrier": {
+                    "type": "string",
+                    "description": "Shipping carrier code, e.g. 'USPS' or 'Deliv'."
+                  },
+                  "display_name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Shipping option display name."
+                  },
+                  "delivery_details": {
+                    "type": "string",
+                    "description": "Shipping option display details, in case of traditional carrier contains estimated delivery time."
+                  },
+                  "price": {
+                    "type": "number",
+                    "description": "The price of the shipping option before discounts. It might include taxes depending on the tax method.",
+                    "minimum": 0
+                  },
+                  "tax": {
+                    "type": "number",
+                    "description": "The tax applied to the shipping option.",
+                    "minimum": 0
+                  },
+                  "discount_info": {
+                    "type": "array",
+                    "description": "Information about shipping discounts applied to the shipment.",
+                    "maxItems": 1,
+                    "items": {
+                      "$schema": "http://json-schema.org/draft-04/schema#",
+                      "type": "object",
+                      "required": [
+                        "discount_ref",
+                        "type",
+                        "original_value",
+                        "price_adjustment"
+                      ],
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "discount_ref": {
+                              "type": "string",
+                              "description": "A string token identifying the discount, e.g. BLACK_FRIDAY_SALE.",
+                              "minLength": 1,
+                              "maxLength": 256
+                            },
+                            "coupon_code": {
+                              "type": "string",
+                              "maxLength": 64
+                            },
+                            "description": {
+                              "type": "string",
+                              "maxLength": 1024
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "fixed"
+                              ]
+                            },
+                            "original_value": {
+                              "description": "Discount applied. In the case of an item_discount_info, the discount is applied to the item itself. In the case of an item_order_discount_info, the discount is applied to the whole order.",
+                              "type": "number",
+                              "minimum": 0
+                            },
+                            "price_adjustment": {
+                              "description": "Monetary discount amount applied to the current item.",
+                              "type": "number",
+                              "minimum": 0
+                            }
+                          }
+                        },
+                        {
+                          "properties": {
+                            "discount_ref": {
+                              "type": "string",
+                              "description": "A string token identifying the discount, e.g. BLACK_FRIDAY_SALE.",
+                              "minLength": 1,
+                              "maxLength": 256
+                            },
+                            "coupon_code": {
+                              "type": "string",
+                              "maxLength": 64
+                            },
+                            "description": {
+                              "type": "string",
+                              "maxLength": 1024
+                            },
+                            "type": {
+                              "type": "string",
+                              "enum": [
+                                "percentage"
+                              ]
+                            },
+                            "original_value": {
+                              "description": "Discount applied. In the case of an item_discount_info, the discount is applied to the item itself. In the case of an item_order_discount_info, the discount is applied to the whole order.",
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 100
+                            },
+                            "price_adjustment": {
+                              "description": "Monetary discount amount applied to the current item.",
+                              "type": "number",
+                              "minimum": 0
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "zip_code": {
+                    "description": "Shipping origin zip code.",
+                    "type": "string"
+                  },
+                  "country_code": {
+                    "type": "string",
+                    "description": "Shipping origin country code. Must be <a href='http://www.iso.org/iso/country_codes.htm'>ISO-3166 reference</a>.",
+                    "enum": [
+                      "AD",
+                      "AE",
+                      "AF",
+                      "AG",
+                      "AI",
+                      "AL",
+                      "AM",
+                      "AO",
+                      "AQ",
+                      "AR",
+                      "AS",
+                      "AT",
+                      "AU",
+                      "AW",
+                      "AX",
+                      "AZ",
+                      "BA",
+                      "BB",
+                      "BD",
+                      "BE",
+                      "BF",
+                      "BG",
+                      "BH",
+                      "BI",
+                      "BJ",
+                      "BL",
+                      "BM",
+                      "BN",
+                      "BO",
+                      "BQ",
+                      "BR",
+                      "BS",
+                      "BT",
+                      "BV",
+                      "BW",
+                      "BY",
+                      "BZ",
+                      "CA",
+                      "CC",
+                      "CD",
+                      "CF",
+                      "CG",
+                      "CH",
+                      "CI",
+                      "CK",
+                      "CL",
+                      "CM",
+                      "CN",
+                      "CO",
+                      "CR",
+                      "CU",
+                      "CV",
+                      "CW",
+                      "CX",
+                      "CY",
+                      "CZ",
+                      "DE",
+                      "DJ",
+                      "DK",
+                      "DM",
+                      "DO",
+                      "DZ",
+                      "EC",
+                      "EE",
+                      "EG",
+                      "EH",
+                      "ER",
+                      "ES",
+                      "ET",
+                      "FI",
+                      "FJ",
+                      "FK",
+                      "FM",
+                      "FO",
+                      "FR",
+                      "GA",
+                      "GB",
+                      "GD",
+                      "GE",
+                      "GF",
+                      "GG",
+                      "GH",
+                      "GI",
+                      "GL",
+                      "GM",
+                      "GN",
+                      "GP",
+                      "GQ",
+                      "GR",
+                      "GS",
+                      "GT",
+                      "GU",
+                      "GW",
+                      "GY",
+                      "HK",
+                      "HM",
+                      "HN",
+                      "HR",
+                      "HT",
+                      "HU",
+                      "ID",
+                      "IE",
+                      "IL",
+                      "IM",
+                      "IN",
+                      "IO",
+                      "IQ",
+                      "IR",
+                      "IS",
+                      "IT",
+                      "JE",
+                      "JM",
+                      "JO",
+                      "JP",
+                      "KE",
+                      "KG",
+                      "KH",
+                      "KI",
+                      "KM",
+                      "KN",
+                      "KP",
+                      "KR",
+                      "KW",
+                      "KY",
+                      "KZ",
+                      "LA",
+                      "LB",
+                      "LC",
+                      "LI",
+                      "LK",
+                      "LR",
+                      "LS",
+                      "LT",
+                      "LU",
+                      "LV",
+                      "LY",
+                      "MA",
+                      "MC",
+                      "MD",
+                      "ME",
+                      "MF",
+                      "MG",
+                      "MH",
+                      "MK",
+                      "ML",
+                      "MM",
+                      "MN",
+                      "MO",
+                      "MP",
+                      "MQ",
+                      "MR",
+                      "MS",
+                      "MT",
+                      "MU",
+                      "MV",
+                      "MW",
+                      "MX",
+                      "MY",
+                      "MZ",
+                      "NA",
+                      "NC",
+                      "NE",
+                      "NF",
+                      "NG",
+                      "NI",
+                      "NL",
+                      "NO",
+                      "NP",
+                      "NR",
+                      "NU",
+                      "NZ",
+                      "OM",
+                      "PA",
+                      "PE",
+                      "PF",
+                      "PG",
+                      "PH",
+                      "PK",
+                      "PL",
+                      "PM",
+                      "PN",
+                      "PR",
+                      "PS",
+                      "PT",
+                      "PW",
+                      "PY",
+                      "QA",
+                      "RE",
+                      "RO",
+                      "RS",
+                      "RU",
+                      "RW",
+                      "SA",
+                      "SB",
+                      "SC",
+                      "SD",
+                      "SE",
+                      "SG",
+                      "SH",
+                      "SI",
+                      "SJ",
+                      "SK",
+                      "SL",
+                      "SM",
+                      "SN",
+                      "SO",
+                      "SR",
+                      "SS",
+                      "ST",
+                      "SV",
+                      "SX",
+                      "SY",
+                      "SZ",
+                      "TC",
+                      "TD",
+                      "TF",
+                      "TG",
+                      "TH",
+                      "TJ",
+                      "TK",
+                      "TL",
+                      "TM",
+                      "TN",
+                      "TO",
+                      "TR",
+                      "TT",
+                      "TV",
+                      "TW",
+                      "TZ",
+                      "UA",
+                      "UG",
+                      "UM",
+                      "US",
+                      "UY",
+                      "UZ",
+                      "VA",
+                      "VC",
+                      "VE",
+                      "VG",
+                      "VI",
+                      "VN",
+                      "VU",
+                      "WF",
+                      "WS",
+                      "YE",
+                      "YT",
+                      "ZA",
+                      "ZM",
+                      "ZW"
+                    ]
+                  }
+                },
+                "timeslot": {
+                  "type": "object",
+                  "description": "The delivery time slot information, if a time slot is offered.",
+                  "required": [
+                    "delivery_window"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "The identifier of the delivery time slot. Deprecated. Use 'delivery_window.id' from the decoded shipping_option_token instead."
+                    },
+                    "delivery_window": {
+                      "type": "object",
+                      "description": "The estimated time interval when the delivery will take place.",
+                      "required": [
+                        "starts_at",
+                        "ends_at",
+                        "expires_at"
+                      ],
+                      "properties": {
+                        "starts_at": {
+                          "type": "string",
+                          "description": "The beginning of the delivery window time interval."
+                        },
+                        "ends_at": {
+                          "type": "string",
+                          "description": "The end of the delivery window time interval."
+                        },
+                        "expires_at": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The date until when the offered time slot can be booked."
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The unique identifier of the delivery window. Deprecated. Use 'delivery_window.id' from the decoded shipping_option_token instead."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "shipped_at": {
+                "type": "string",
+                "description": "Date representation of when the shipment was shipped, containing date, time and timezone as defined by https://tools.ietf.org/html/rfc3339 (ISO 8601). In case not provided, is set to placed_at.",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "extended_attributes": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": [
+          "name",
+          "value"
+        ],
+        "maxProperties": 2,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "value": {
+            "type": "string",
+            "maxLength": 8192
+          }
+        }
+      }
+    },
+    "billing_address": {
+      "$ref": "#/properties/shipping_address"
+    },
+    "payments": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "type": "object",
+        "required": [
+          "processor",
+          "correlation_ref",
+          "type",
+          "amount",
+          "method",
+          "processed_at"
+        ],
+        "properties": {
+          "processor": {
+            "type": "string",
+            "description": "Identifies the payment provider (processor) used to process the payment. Supported providers are stripe, paypal, cash, gift_card.",
+            "minLength": 1,
+            "maxLength": 32
+          },
+          "correlation_ref": {
+            "type": "string",
+            "description": "Identifies the payment for the given order among all payments of the given processor.",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "authorized",
+              "captured"
+            ],
+            "description": "The type of payment information that is passed: either the payment is already authorized, or already captured. The Order Injection API does not support not authorized payments (tokens)."
+          },
+          "amount": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMinimum": true
+          },
+          "method": {
+            "type": "string",
+            "description": "The selected payment method. Typical values are 'cash', 'credit_card', 'gift_card', or 'paypal'. Other values are possible depending on your payment providers.",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "wallet": {
+            "type": "string",
+            "description": "The payment wallet used in the transaction. For example, Apple Pay, Google Pay, etc. or Direct (when no wallet was used).",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "processed_at": {
+            "type": "string",
+            "description": "Date representation of when the payment was processed, containing date, time and timezone as defined by https://tools.ietf.org/html/rfc3339 (ISO 8601).",
+            "format": "date-time"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Payment method specific information.",
+            "maxProperties": 100,
+            "patternProperties": {
+              "^.{1,100}$": {
+                "type": "string",
+                "maxLength": 1024
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "price_method": {
+      "type": "string",
+      "description": "Specifies if all item prices include tax or not.",
+      "enum": [
+        "tax_included",
+        "tax_excluded"
+      ]
+    },
+    "is_preconfirmed": {
+      "type": "boolean",
+      "default": false,
+      "description": "Set to true, if the customer was already notified about order being placed. This is always true for in-store orders."
+    },
+    "is_fulfilled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Set to true, if the order was already fulfilled. It is either an in-store purchase, or the order was fulfilled by an external system."
+    },
+    "is_historical": {
+      "type": "boolean",
+      "default": false,
+      "description": "Set to true, if the order is historical, i.e. it was fulfilled by an external system. is_fulfilled is set to true for historical orders as well."
+    },
+    "notification_blacklist": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "description": "The notification name. Each notification name included here must be an exact match of the name used in the notification configuration. Example: 'same_day_delivery.estimate_changed'."
+      },
+      "description": "Excludes the specified notifications from being sent to the customer."
+    }
+  }
+}
