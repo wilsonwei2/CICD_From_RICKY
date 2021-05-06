@@ -15,6 +15,13 @@
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": false
           },
+          "INTERNATIONAL": {
+              "return_provider_rate": "",
+              "service_level": "International",
+              "shipping_carrier_name": "CUSTOM",
+              "shipping_type": "traditional_carrier",
+              "use_as_customer_facing_cost": false
+          },
           "EMAIL": {
               "return_provider_rate": "",
               "service_level": "Email",
@@ -227,6 +234,18 @@
                           "provider_rate": "EXPRESS"
                       },
                       {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "EXPRESS"
+                      },
+                      {
+                        "fulfillment_node_id": "TOST",
+                        "provider_rate": "EXPRESS"
+                      },
+                      {
+                        "fulfillment_node_id": "DONST",
+                        "provider_rate": "EXPRESS"
+                      },
+                      {
                           "fulfillment_node_id": "STANST",
                           "provider_rate": "EXPRESS"
                       },
@@ -248,18 +267,6 @@
                       },
                       {
                           "fulfillment_node_id": "FOYST",
-                          "provider_rate": "EXPRESS"
-                      },
-                      {
-                          "fulfillment_node_id": "TECST",
-                          "provider_rate": "EXPRESS"
-                      },
-                      {
-                          "fulfillment_node_id": "TOST",
-                          "provider_rate": "EXPRESS"
-                      },
-                      {
-                          "fulfillment_node_id": "DONST",
                           "provider_rate": "EXPRESS"
                       },
                       {
@@ -277,6 +284,18 @@
                           "provider_rate": "STANDARD"
                       },
                       {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "STANDARD"
+                      },
+                      {
                           "fulfillment_node_id": "STANST",
                           "provider_rate": "STANDARD"
                       },
@@ -301,18 +320,6 @@
                           "provider_rate": "STANDARD"
                       },
                       {
-                          "fulfillment_node_id": "TECST",
-                          "provider_rate": "STANDARD"
-                      },
-                      {
-                          "fulfillment_node_id": "TOST",
-                          "provider_rate": "STANDARD"
-                      },
-                      {
-                          "fulfillment_node_id": "DONST",
-                          "provider_rate": "STANDARD"
-                      },
-                      {
                           "fulfillment_node_id": "RIDST",
                           "provider_rate": "STANDARD"
                       },
@@ -322,7 +329,31 @@
                       }
                   ]
               }
-          }
+          },
+          {
+            "destination_region": {
+                "countries": [
+                  "AR", "AU", "BS", "BB", "BE", "BM", "BR", "VG",
+                  "BG","KY","CL","CO","CR",
+                  "DK","DO","EG","SV","FI","FR","DE","GH","GR","GT",
+                  "HN","HK","IS","IN","ID","IE","IL","IT","JM","JP",
+                  "JO","KE","KW","LU","MY","MT","MX","MA","NL","NZ",
+                  "NO","OM","PA","PE","PL","PT","QA","CY","RU","SG",
+                  "ZA","KR","ES","SE","CH","TT","AE","GB","UY","VE"
+                ],
+                "zip_codes": [
+                    "*"
+                ]
+            },
+            "fulfilled_by": {
+                "International": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "STANDARD"
+                    }
+                ]
+            }
+        }
       ],
       "service_levels": {
           "Standard": {
@@ -343,6 +374,15 @@
               "remorse_period": 0,
               "tax_code": "CA"
           },
+          "International": {
+              "currency_code": "",
+              "delivery_time": "10 - 15 business days",
+              "delivery_time_after_cutoff_hour": "10 - 15 business days",
+              "display_name": "International Delivery",
+              "price": 0,
+              "remorse_period": 60,
+              "tax_code": "CA"
+          },
           "Email": {
               "currency_code": "",
               "delivery_time": "Immediately via Email",
@@ -356,7 +396,8 @@
       "sl_levels_priority": [
           "Standard",
           "Express",
-          "Email"
+          "Email",
+          "International"
       ],
       "provider_rates_priority": {
           "*": {
@@ -369,7 +410,10 @@
                   ],
                   "Email": [
                       "EMAIL"
-                  ]
+                  ],
+                  "International": [
+                      "INTERNATIONAL"
+                ]
               }
           }
       }

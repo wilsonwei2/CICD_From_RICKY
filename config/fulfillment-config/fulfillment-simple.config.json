@@ -15,6 +15,13 @@
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": false
           },
+          "INTERNATIONAL": {
+              "return_provider_rate": "",
+              "service_level": "International",
+              "shipping_carrier_name": "CUSTOM",
+              "shipping_type": "traditional_carrier",
+              "use_as_customer_facing_cost": false
+          },
           "EMAIL": {
               "return_provider_rate": "",
               "service_level": "email_delivery",
@@ -58,7 +65,31 @@
                       }
                   ]
               }
-          }
+          },
+          {
+            "destination_region": {
+                "countries": [
+                  "AR", "AU", "BS", "BB", "BE", "BM", "BR", "VG",
+                  "BG","KY","CL","CO","CR",
+                  "DK","DO","EG","SV","FI","FR","DE","GH","GR","GT",
+                  "HN","HK","IS","IN","ID","IE","IL","IT","JM","JP",
+                  "JO","KE","KW","LU","MY","MT","MX","MA","NL","NZ",
+                  "NO","OM","PA","PE","PL","PT","QA","CY","RU","SG",
+                  "ZA","KR","ES","SE","CH","TT","AE","GB","UY","VE"
+                ],
+                "zip_codes": [
+                    "*"
+                ]
+            },
+            "fulfilled_by": {
+                "International": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "STANDARD"
+                    }
+                ]
+            }
+        }
       ],
       "service_levels": {
           "Standard": {
@@ -79,6 +110,15 @@
               "remorse_period": 0,
               "tax_code": "CA"
           },
+          "International": {
+              "currency_code": "",
+              "delivery_time": "10 - 15 business days",
+              "delivery_time_after_cutoff_hour": "10 - 15 business days",
+              "display_name": "International Delivery",
+              "price": 0,
+              "remorse_period": 60,
+              "tax_code": "CA"
+          },
           "Email": {
               "currency_code": "",
               "delivery_time": "3 - 5 business days",
@@ -92,6 +132,7 @@
       "sl_levels_priority": [
           "Standard",
           "Express",
+          "International",
           "Email"
       ],
       "provider_rates_priority": {
@@ -102,6 +143,9 @@
                   ],
                   "Express": [
                       "EXPRESS"
+                  ],
+                  "International": [
+                      "INTERNATIONAL"
                   ],
                   "Email": [
                       "EMAIL"
