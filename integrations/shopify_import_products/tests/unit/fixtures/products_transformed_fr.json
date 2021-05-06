@@ -2,8 +2,7 @@
   "head": {
     "locale": "fr-CA",
     "shop": "storefront-catalog-fr",
-    "is_master": false,
-    "internal_disable_image_processing": true
+    "is_master": true
   },
   "items": [
     {
@@ -40,28 +39,23 @@
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         }
       ],
       "variation_color_value": "",
@@ -70,7 +64,14 @@
       "google_category": "none",
       "categories": [
         {
-          "path": "All"
+            "path": "All"
+        },
+        {
+            "path": "All > Men"
+        },
+        {
+            "path": "All > Men > Tops",
+            "is_main": true
         }
       ],
       "extended_attributes": [
@@ -186,28 +187,23 @@
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         }
       ],
       "variation_color_value": "",
@@ -216,7 +212,14 @@
       "google_category": "none",
       "categories": [
         {
-          "path": "All"
+            "path": "All"
+        },
+        {
+            "path": "All > Men"
+        },
+        {
+            "path": "All > Men > Tops",
+            "is_main": true
         }
       ],
       "extended_attributes": [
@@ -332,28 +335,23 @@
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         }
       ],
       "variation_color_value": "",
@@ -362,7 +360,14 @@
       "google_category": "none",
       "categories": [
         {
-          "path": "All"
+            "path": "All"
+        },
+        {
+            "path": "All > Men"
+        },
+        {
+            "path": "All > Men > Tops",
+            "is_main": true
         }
       ],
       "extended_attributes": [
@@ -478,28 +483,23 @@
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         }
       ],
       "variation_color_value": "",
@@ -508,7 +508,14 @@
       "google_category": "none",
       "categories": [
         {
-          "path": "All"
+            "path": "All"
+        },
+        {
+            "path": "All > Men"
+        },
+        {
+            "path": "All > Men > Tops",
+            "is_main": true
         }
       ],
       "extended_attributes": [
@@ -624,28 +631,23 @@
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4bo.64515_2.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_1.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64521_3.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64534_4.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         },
         {
           "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/1120431-4BO.64527_5.jpg?v=1616786787",
-          "alt_text": "",
-          "is_color_swatch": false
+          "alt_text": ""
         }
       ],
       "variation_color_value": "",
@@ -654,7 +656,14 @@
       "google_category": "none",
       "categories": [
         {
-          "path": "All"
+            "path": "All"
+        },
+        {
+            "path": "All > Men"
+        },
+        {
+            "path": "All > Men > Tops",
+            "is_main": true
         }
       ],
       "extended_attributes": [

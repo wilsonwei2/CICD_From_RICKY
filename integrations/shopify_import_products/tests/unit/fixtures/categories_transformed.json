@@ -1,12 +1,17 @@
 {
     "head": {
         "locale": "en-US",
-        "catalog": "storefront-catalog-en",
-        "internal_disable_image_processing": true
+        "catalog": "storefront-catalog-en"
     },
     "items": [
         {
             "path": "All"
+        },
+        {
+            "path": "All > Men"
+        },
+        {
+            "path": "All > Men > Tops"
         }
     ]
 }

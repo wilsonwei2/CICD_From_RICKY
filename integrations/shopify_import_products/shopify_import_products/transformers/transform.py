@@ -1,10 +1,12 @@
 import os
+import re
 import json
 import logging
-from shopify_import_products.transformers.constants import TAG_RE, CATEGORIES
 
 LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
+
+TAG_RE = re.compile(r'<[^>]+>')
 
 MASTER_PRODUCTS = {}
 VARIANT_PRODUCTS = {}
@@ -26,8 +28,7 @@ def transform_products(jsonl_data, products_per_file, locale=None):
             'head': {
                 'locale': locale_code,
                 'shop': f'storefront-catalog-{catalog}',
-                'is_master': not locale,
-                'internal_disable_image_processing': True
+                'is_master': True
             },
             'items': [transform_variant(variant, locale) for variant in variants]
         })
@@ -35,8 +36,7 @@ def transform_products(jsonl_data, products_per_file, locale=None):
     transformed_categories = {
         'head': {
             'locale': locale_code,
-            'catalog': f'storefront-catalog-{catalog}',
-            'internal_disable_image_processing': True
+            'catalog': f'storefront-catalog-{catalog}'
         },
         'items': TRANSFORMED_CATEGORIES
     }
@@ -60,8 +60,8 @@ def build_object_cache(json_objects):
         if object_type == 'Product':
             MASTER_PRODUCTS[gid] = current_object
         elif object_type == 'ProductVariant':
-            sku = current_object.get('sku', '')
-            if sku != '' and sku not in ['Gift Card', 'gift_card_sku']:
+            sku = current_object.get('sku', None)
+            if not sku is None and len(sku) > 0 and sku not in ['Gift Card', 'gift_card_sku']:
                 VARIANT_PRODUCTS[gid] = current_object
         elif object_type == 'ProductImage':
             parent_id = current_object['__parentId']
@@ -148,8 +148,7 @@ def transform_images(master):
         else:
             images.append({
                 'url': image.get('originalSrc', url_image_placeholder) or url_image_placeholder,
-                'alt_text': image.get('altText', '') or '',
-                'is_color_swatch': False
+                'alt_text': image.get('altText', '') or ''
             })
 
     return images
@@ -280,44 +279,40 @@ def variant_categories(tags):
         'path': 'All'
     }]
 
-    for main_category in CATEGORIES:
-        if main_category in tags:
-            categories += build_categories(main_category, tags)
-
+    categories += build_categories(tags)
     return categories
 
 
-def build_categories(main_category, tags):
-    def defined_in(categories, path):
-        return next(filter(lambda c: c['path'] == path, categories), None)
-
-    product_categories = []
-    path = f'All > {main_category.capitalize()}'
-    product_categories.append({
-        'path': path,
-        'is_main': True
-    })
-
-    global TRANSFORMED_CATEGORIES # pylint: disable=W0603
-    if not defined_in(TRANSFORMED_CATEGORIES, path):
-        TRANSFORMED_CATEGORIES.append({
-            'path': path,
-            'is_main': True
-        })
-
-    for sub_category in CATEGORIES[main_category]:
-        if sub_category in tags:
-            sub_path = f'{path} > {CATEGORIES[main_category][sub_category]}'
-
-            product_categories.append({
-                'path': sub_path
+def build_categories(tags):
+    def add_global_category(path):
+        global TRANSFORMED_CATEGORIES # pylint: disable=W0603
+        if not next(filter(lambda c: c['path'] == path, TRANSFORMED_CATEGORIES), None):
+            TRANSFORMED_CATEGORIES.append({
+                'path': path
             })
 
-            if not defined_in(TRANSFORMED_CATEGORIES, sub_path):
-                TRANSFORMED_CATEGORIES.append({
-                    'path': sub_path,
-                    'is_main': False
-                })
+    product_categories = []
+
+    category_tags = [tag.split(':') for tag in tags]
+    division_tag = next(filter(lambda ctag: ctag[0] == 'division', category_tags), None)
+    merch_department_tag = next(filter(lambda ctag: ctag[0] == 'custitem_fao_merch_department', category_tags), None)
+
+    if division_tag is not None and len(division_tag) >= 2:
+        division_tag_value = division_tag[1]
+        path = f'All > {division_tag_value}'
+        add_global_category(path)
+        product_categories.append({
+            'path': path
+        })
+
+        if merch_department_tag is not None and len(merch_department_tag) >= 2:
+            merch_department_tag_value = merch_department_tag[1]
+            path = f'All > {division_tag[1]} > {merch_department_tag_value}'
+            add_global_category(path)
+            product_categories.append({
+                'path': path,
+                'is_main': True
+            })
 
     return product_categories
 
