@@ -1,0 +1,17 @@
+{% extends 'email_base' %}
+
+{% block title %}Your Receipt from Goorin{% endblock %}
+
+{% block header %}Thank you for your purchase.{% endblock %}
+
+{% block body %}
+	<table role="presentation" class="email-body" cellpadding="0" cellspacing="0" border="0" align="center">
+		<tr>
+			<td>
+				<p style="padding-left:30px;">Hello {{consumer.consumer_name | default("shopper")}}, we hope you love the purchase you made today. Please see attached for your receipt.</p>
+				<p class="signature" style="padding-left:60px;">Sincerely,</p>
+				<p class="signature" style="padding-left:60px;">Goorin Customer Service</p>
+			</td>
+		</tr>
+	</table>
+{% endblock %}

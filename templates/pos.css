@@ -1,0 +1,343 @@
+body {
+	margin: 0;
+	padding: 0;
+	background-color: white;
+	font-size: .12in;
+	width: 2.898in;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	font-family: "avenir", "proxima-nova", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.header {
+	font-size: .11in;
+	line-height: 1.2;
+	color: black;
+	font-family: avenir;
+	text-align: center;
+}
+
+.logo {
+	height: .6in;
+	margin-top: 0.2in;
+}
+
+.title {
+	width: 100%;
+	text-align: center;
+	font-size: .12in;
+	font-family: proxima-nova;
+	padding-top: .1in;
+	color: black;
+}
+
+.top_info {
+	font-size: .11in;
+	color: black;
+	width: 100%;
+	padding: .25in 0 .25in;
+}
+
+.top_info strong {
+	font-family: proxima-nova;
+}
+
+.item_list {
+	width: 100%;
+	position: relative;
+	padding-bottom: .06in;
+}
+
+#purchased {
+	padding-top: .2in;
+}
+
+.item_list > p {
+	font-size: .13in;
+	font-family: proxima-nova;
+	padding-bottom: .05in;
+}
+
+.item_list_header {
+	width: 100%;
+	display: inline-block;
+	line-height: 1.2;
+	border-bottom: 1px solid black;
+	color: black;
+}
+
+.item_list_header p {
+	float: left;
+	font-size: .11in;
+}
+
+.item_list_header p:last-child {
+	float: right;
+}
+
+.item_list_item {
+	width: 100%;
+	border-bottom: 1px solid black;
+}
+
+.item_list_item_product_name {
+	width: 100%;
+	position: relative;
+	padding-top: .03in;
+}
+
+.item_list_item_product_name p {
+	width: 100%;
+	font-family: proxima-nova;
+	font-size: .11in;
+	line-height: 1.2;
+	min-height: 2.4em;
+}
+
+.item_list_info {
+	width: 100%;
+	display: inline-block;
+	line-height: 1.2;
+}
+
+.item_list_id{
+	width: 63%;
+	font-size: .11in;
+	float: left;
+}
+
+.item_list_amount {
+	width: 27%;
+	font-size: .11in;
+	text-align: right;
+	float: right;
+}
+
+.item_list_discount {
+	width: 100%;
+	position: relative;
+}
+
+.item_list_discount p {
+	width: 100%;
+	display: inline-block;
+	font-size: .11in;
+	text-align: right;
+}
+
+.item_list_net_total {
+	width: 100%;
+	position: relative;
+	padding-bottom: .04in;
+}
+
+.item_list_net_total p {
+	width: 100%;
+	display: inline-block;
+	font-size: .11in;
+	text-align: right;
+	font-family: avenir;
+	font-weight: bolder;
+}
+
+.item_list_refund_info {
+	width: 100%;
+	display: inline-block;
+	font-size: .11in;
+	border-bottom: 1px solid black;
+}
+
+.item_list_refund_info p:first-child {
+	margin: .04in 0;
+	float: left;
+	width: 100%;
+	font-family: proxima-nova;
+	font-size: .11in;
+	line-height: 1.2;
+}
+
+.item_list_exchange_info {
+	width: 100%;
+	display: inline-block;
+	line-height: 1.2;
+	border-bottom: 1px solid black;
+}
+
+.item_list_exchange_info p:first-child {
+	font-size: .11in;
+	margin: .04in 0;
+	float: left;
+}
+
+.item_list_exchange_info p:last-child {
+	font-size: .11in;
+	margin: .04in 0;
+	float: right;
+	text-align: right;
+}
+
+.item_list_refund_info div p:last-child {
+	margin: .04in 0;
+	float: right;
+}
+
+.item_list_gift_info {
+	width: 100%;
+	font-size: .11in;
+	line-height: 1.2;
+	border-bottom: 1px solid black;
+}
+
+.item_list_gift_info p:first-child {
+	overflow: hidden;
+	width: 100%;
+	margin: .04in 0 0;
+	font-family: proxima-nova;
+}
+
+.item_list_gift_info p:last-child {
+	margin: 0 0 .04in;
+}
+
+.pricing_info {
+	width: 100%;
+	font-size: .11in;
+	line-height: 1.1;
+}
+
+.pricing_info div {
+	display: inline-block;
+	width: 100%;
+}
+
+.pricing_info div p:first-child {
+	width: 80%;
+	float: left;
+	text-align: right;
+}
+
+.pricing_info div p:last-child {
+	width: 20%;
+	float: right;
+	text-align: right;
+}
+
+.pricing_info_total p {
+	font-family: proxima-nova;
+}
+
+.payment_info {
+	width: 100%;
+	font-size: .11in;
+	line-height: 1.1;
+	padding-top: .1in;
+}
+
+.payment_info_header {
+	width: 100%;
+	line-height: 1.2;
+	border-bottom: 1px solid black;
+	color: black;
+	margin-bottom: .06in;
+}
+
+.payment_info .payment_info_header p:first-child {
+	text-align: left;
+	float: none;
+}
+
+.payment_info div {
+	display: inline-block;
+	width: 100%;
+}
+
+.payment_info div p:first-child {
+	width: 80%;
+	float: left;
+	text-align: right;
+	overflow: hidden;
+	white-space: nowrap;
+	direction: ltr;
+}
+
+.payment_info div p:last-child {
+	width: 20%;
+	float: right;
+	text-align: right;
+}
+
+.text_discounted {
+	color: black;
+	text-decoration: line-through;
+}
+
+.text_bold {
+	font-weight: bold;
+	font-family: proxima-nova;
+}
+
+.holiday_return_paragraph {
+	color: black;
+	text-align: center;
+	font-size: .11in;
+	padding: .25in .125in 0;
+	line-height: 1.2;
+}
+
+.holiday_return_paragraph p:first-child {
+	font-family: proxima-nova;
+}
+
+.return_paragraph {
+	color: black;
+	text-align: center;
+	font-size: .11in;
+	padding: .25in .125in 0;
+	line-height: 1.2;
+}
+
+.footer {
+	width: 100%;
+}
+
+.thank_you_message {
+	display: block;
+	margin: .25in auto 0 auto;
+	font-family: proxima-nova;
+	font-size: .12in;
+	text-align: center;
+}
+
+.media_text {
+	display: block;
+	margin: .125in auto 0 auto;
+	text-align: center;
+	color: black;
+	font-size: .11in;
+}
+
+.media_icons {
+	margin: .04in auto 0 auto;
+	text-align: center;
+}
+
+.media_icons img {
+	width: .18in;
+}
+
+.qrcode {
+	width: 1.5in;
+	display: block;
+	margin: .125in auto 0 auto;
+}
+
+.date {
+	text-align: center;
+	margin: .125in 0 .25in;
+	color: black;
+	font-size: .13in;
+}

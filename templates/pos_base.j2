@@ -1,0 +1,173 @@
+{%- from 'macros' import text_address, inline_address with context -%}
+{%- import 'tenant' as tenant -%}
+
+{% set total_items = flat_items|length %}
+{% set total_return_items = return_items|length %}
+{% set total_checkout_items = checkout_items|length %}
+{% set item_discounts = discounts|selectattr('level', 'equalto', 'item')|list|length|int %}
+{% set item_discounts_exchange = discounts|selectattr('level', 'equalto', 'item')|list|length|int %}
+{% set order_discounts = discounts|selectattr('level', 'equalto', 'order')|list|length|int %}
+{% set total_instruments = instruments|length %}
+{% set total_refund_instruments = refunds|length %}
+{% set total_credit_cards = instruments|selectattr('payment_method', 'equalto', 'credit_card')|list|length|int %}
+{% set total_checkout_credit_cards = checkout_instruments|selectattr('payment_method', 'equalto', 'credit_card')|list|length|int %}
+{% set total_refund_credit_cards = refunds|selectattr('payment_method', 'equalto', 'credit_card')|list|length|int %}
+{% set total_checkout_instruments = checkout_instruments|length %}
+
+{% set header_height = 1.25 %}
+
+{% set title_height = 0 %}
+{% if self.title() %}
+	{% set title_height = 0.28 %}
+{% endif %}
+
+{% set top_info_height = 0 %}
+{% if self.top_info() %}
+	{% if associate_name and (customer_name or (billing_address and billing_address.name) or (shipping_address and shipping_address.name)) %}
+		{% set top_info_height = 1.51 %}
+	{% elif associate_name or customer_name or (billing_address and billing_address.name) or (shipping_address and shipping_address.name) %}
+		{% set top_info_height = 0.81 %}
+	{% else %}
+		{% set top_info_height = 0.65 %}
+	{% endif %}
+{% endif %}
+
+{% set item_list_height = 0 %}
+{% if self.item_list_sales() %}
+	{% set item_list_height = (total_items * 0.87) + (item_discounts * 0.32) + 0.265 %}
+{% endif %}
+{% if self.item_list_refund() %}
+	{% set item_list_height = (total_items * 0.46) + 0.265 %}
+{% endif %}
+{% if self.item_list_exchange_returns() %}
+	{% set item_list_height = (total_return_items * 0.39) + 0.67 %}
+{% endif %}
+{% if self.item_list_exchange_purchases() %}
+	{% set item_list_height = item_list_height + (total_checkout_items * 0.94) + (item_discounts * 0.29) + 0.67 %}
+{% endif %}
+{% if self.item_list_gift() %}
+	{% set item_list_height = (total_items * 0.35) + 0.26 %}
+{% endif %}
+
+{% set pricing_info_height = 0 %}
+{% if self.pricing_info_sales() %}
+	{% set pricing_info_height = (order_discounts * 0.35) + 1.85 %}
+{% endif %}
+{% if self.pricing_info_refund() %}
+	{% set pricing_info_height = (order_discounts * 0.14) + 1.4 %}
+{% endif %}
+{% if self.pricing_info_exchange() %}
+	{% set pricing_info_height = (order_discounts * 0.35) + 1.85 %}
+{% endif %}
+
+{% set payment_info_height = 0 %}
+{% if self.payment_info() %}
+	{% set payment_info_height = 0.6 + ((total_instruments - total_credit_cards) * 0.152) + (total_credit_cards * 0.304) %}
+{% endif %}
+{% if self.payment_info_exchange() %}
+	{% set payment_info_height = 0.5 + ((total_checkout_instruments - total_checkout_credit_cards) * 0.152) + (total_checkout_credit_cards * 0.304) %}
+{% endif %}
+{% if self.payment_info_refund() %}
+	{% set payment_info_height = 0.35 + ((total_refund_instruments - total_refund_credit_cards) * 0.152) + (total_refund_credit_cards * 0.304) %}
+{% endif %}
+
+{% set holiday_return_paragraph_height = 0 %}
+{% if self.holiday_return_paragraph() %}
+	{% set holiday_return_paragraph_height= 1 %}
+{% endif %}
+
+{% set return_paragraph_height = 0 %}
+{% if not self.holiday_return_paragraph() %}
+	{% if self.return_paragraph() %}
+		{% set return_paragraph_height = 4.2 %}
+	{% endif %}
+{% endif %}
+
+{% set footer_height = 0 %}
+{% if self.thank_you_message() %}
+	{% if billing_address.name or shipping_address.name %}
+		{% set footer_height = 3.05 %}
+	{% else %}
+		{% set footer_height = 2.66 %}
+	{% endif %}
+{% else %}
+	{% set footer_height = 2.66 %}
+{% endif %}
+
+{% set receipt_height = 0.3 + header_height + title_height + top_info_height + item_list_height + pricing_info_height + payment_info_height + holiday_return_paragraph_height + return_paragraph_height + footer_height %}
+
+<html>
+	<head>
+		<meta charset="utf-8">
+		<link rel="stylesheet" type="text/css" href="pos.css">
+		<style>
+			@font-face {
+				font-family: "proxima-nova";
+				src: url('{{ tenant.fonts.proxima_nova }}') format("truetype");
+			}
+			@font-face {
+				font-family: "avenir";
+				src: url('{{ tenant.fonts.avenir }}') format("truetype");
+			}
+			@page {
+				size: 3.125in {{ receipt_height }}in;
+				margin-left: .1in;
+				margin-right: .1in;
+				margin-top: 0;
+				margin-bottom: 0;
+			}
+			@media print {
+				body, page {
+					margin: 0;
+				}
+			}
+			{% block extra_style %}{% endblock %}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<img class="logo" src="{{ tenant.print_logo }}" />
+            {% if store_address %}
+               {%- if store_name -%}<p>{{store_name}}</p>{%- endif -%}
+		       <p>{{ store_address.address_line_1 }}</p>
+			   {% if store_address.address_line_2 %}<p>{{store_address.address_line_2 }}</p>{% endif %}
+			   <p>{{ store_address.city }}, {{ store_address.state }} {{ store_address.zip_code }}</p>
+            {% else %}
+               {%- if tenant.address.name != '' -%}<p>{{tenant.address.name}}</p>{%- endif -%}
+			   <p>{{ tenant.address.address_line_1 }}</p>
+			   {% if tenant.address.address_line_2 %}<p>{{tenant.address.address_line_2 }}</p>{% endif %}
+			   <p>{{ tenant.address.city }}, {{ tenant.address.state }} {{ tenant.address.zip_code }}</p>
+            {% endif %}
+			{% if store_phone_number %}<p>{{store_phone_number}}</p>{% elif tenant.phone %}<p>{{tenant.phone}}</p>{% endif %}
+			<p>{{ format_date(created_at | default(order_details and order_details.started_at), timezone | default(store_timezone)) }} {{ format_time(created_at | default(order_details and order_details.started_at), timezone | default(store_timezone)) }}</p>
+		</div>
+		{% block title %}{% endblock %}
+		{% block top_info %}{% endblock %}
+		{% block item_list_exchange_returns %}{% endblock %}
+		{% block item_list_exchange_purchases %}{% endblock %}
+		{% block item_list_refund %}{% endblock %}
+		{% block item_list_sales %}{% endblock %}
+		{% block item_list_gift %}{% endblock %}
+		{% block pricing_info_sales %}{% endblock %}
+		{% block pricing_info_exchange %}{% endblock %}
+		{% block pricing_info_refund %}{% endblock %}
+		{% block payment_info %}{% endblock %}
+		{% block payment_info_exchange %}{% endblock %}
+		{% block payment_info_refund %}{% endblock %}
+		{% block holiday_return_paragraph %}{% endblock %}
+		{% if not self.holiday_return_paragraph() %}
+			{% block return_paragraph %}{% endblock %}
+		{% endif %}
+		<div class="footer">
+			{% block thank_you_message %}{% endblock %}
+			<p class="media_text">@GoorinBros</p>
+			<div class="media_icons">
+				<img src="{{ tenant.icons.facebook_dark }}"/>
+				<img src="{{ tenant.icons.twitter_dark }}"/>
+				<img src="{{ tenant.icons.pinterest_dark }}"/>
+				<img src="{{ tenant.icons.instagram_dark }}"/>
+			</div>
+			<img class="qrcode" src="data:image/png;base64,{{ qr_code }}"/>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,611 @@
+/***********
+Originally based on The MailChimp Reset from Fabio Carneiro, MailChimp User Experience Design
+More info and templates on Github: https://github.com/mailchimp/Email-Blueprints
+http://www.mailchimp.com &amp; http://www.fabio-carneiro.com
+
+INLINE: Yes.
+***********/
+/* Client-specific Styles */
+
+#outlook a {
+	padding:0;
+} /* Force Outlook to provide a "view in browser" menu link. */
+
+table, td {
+   mso-table-lspace: 0pt !important;
+   mso-table-rspace: 0pt !important;
+}
+
+/* Use a better rendering method when resizing images in Outlook IE. */
+
+img {
+   -ms-interpolation-mode:bicubic;
+}
+
+body {
+	width: 100% !important; 
+	height: 100%;
+	-webkit-text-size-adjust: 100%; 
+	-ms-text-size-adjust: 100%; 
+	font-size: 16px;
+	background-color: #f3f3f3;
+}/* Prevent Webkit and Windows Mobile platforms from changing default font sizes, while not breaking desktop design. */
+
+.ExternalClass {
+	width:100%;
+} /* Force Hotmail to display emails at full width */
+
+.ExternalClass, 
+.ExternalClass p, 
+.ExternalClass span, 
+.ExternalClass font, 
+.ExternalClass td, 
+.ExternalClass div {
+	line-height: 100%;
+} /* Force Hotmail to display normal line spacing.	More on that: http://www.emailonacid.com/forum/viewthread/43/ */
+
+#backgroundTable {
+	margin:0; 
+	padding:0; 
+	width:100% !important; 
+	line-height: 100% !important;
+}
+
+/* End reset */
+
+/* Some sensible defaults for images
+1. "-ms-interpolation-mode: bicubic" works to help ie properly resize images in IE. (if you are resizing them using the width and height attributes)
+2. "border:none" removes border when linking images.
+3. Updated the common Gmail/Hotmail image display fix: Gmail and Hotmail unwantedly adds in an extra space below images when using non IE browsers. You may not always want all of your images to be block elements. Apply the "image_fix" class to any image you need to fix.
+
+Bring inline: Yes.
+*/
+img {
+	outline:none; 
+	text-decoration:none; 
+	-ms-interpolation-mode: bicubic;
+}
+
+a img {
+	border:none;
+}
+
+.image-fix {
+	display:block;
+}
+
+/** Yahoo paragraph fix: removes the proper spacing or the paragraph (p) tag. To correct we set the top/bottom margin to 1em in the head of the document. Simple fix with little effect on other styling. NOTE: It is also common to use two breaks instead of the paragraph tag but I think this way is cleaner and more semantic. NOTE: This example recommends 1em. More info on setting web defaults: http://www.w3.org/TR/CSS21/sample.html or http://meiert.com/en/blog/20070922/user-agent-style-sheets/
+
+Bring inline: Yes.
+**/
+p {
+	margin: 1em 0;
+}
+
+/** Hotmail header color reset: Hotmail replaces your header color styles with a green color on H2, H3, H4, H5, and H6 tags. In this example, the color is reset to #002147 for a non-linked header, blue for a linked header, red for an active header (limited support), and purple for a visited header (limited support).	Replace with your choice of color. The !important is really what is overriding Hotmail's styling. Hotmail also sets the H1 and H2 tags to the same size.
+
+Bring inline: Yes.
+**/
+h1 a, 
+h2 a, 
+h3 a, 
+h4 a, 
+h5 a, 
+h6 a {
+	color: blue !important;
+}
+
+h1 a:active, 
+h2 a:active,	
+h3 a:active, 
+h4 a:active, 
+h5 a:active, 
+h6 a:active {
+	color: red !important; /* Preferably not the same color as the normal header link color.	There is limited support for psuedo classes in email clients, this was added just for good measure. */
+}
+
+h1 a:visited, 
+h2 a:visited,	
+h3 a:visited, h4 a:visited, h5 a:visited, h6 a:visited {
+	color: purple !important; /* Preferably not the same color as the normal header link color. There is limited support for psuedo classes in email clients, this was added just for good measure. */
+}
+
+/** Outlook 07, 10 Padding issue: These "newer" versions of Outlook add some padding around table cells potentially throwing off your perfectly pixeled table.	The issue can cause added space and also throw off borders completely.	Use this fix in your header or inline to safely fix your table woes.
+
+More info: http://www.ianhoar.com/2008/04/29/outlook-2007-borders-and-1px-padding-on-table-cells/
+http://www.campaignmonitor.com/blog/post/3392/1px-borders-padding-on-table-cells-in-outlook-07/
+
+H/T @edmelly
+
+Bring inline: No.
+**/
+table td {
+	border-collapse: collapse;
+}
+
+/** Remove spacing around Outlook 07, 10 tables
+
+More info : http://www.campaignmonitor.com/blog/post/3694/removing-spacing-from-around-tables-in-outlook-2007-and-2010/
+
+Bring inline: Yes
+**/
+table { 
+	border-collapse:collapse; 
+	mso-table-lspace:0pt; 
+	mso-table-rspace:0pt; 
+}
+
+/* Styling your links has become much simpler with the new Yahoo.	In fact, it falls in line with the main credo of styling in email, bring your styles inline.	Your link colors will be uniform across clients when brought inline.
+
+Bring inline: Yes. */
+a {
+	color: orange;
+}
+
+/* Or to go the gold star route...
+a:link { color: orange; }
+a:visited { color: blue; }
+a:hover { color: green; }
+*/
+
+/***************************************************
+****************************************************
+Custom Style
+****************************************************
+***************************************************/
+
+* {
+	box-sizing: border-box;
+}
+
+body,
+table.body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+td,
+th,
+a {
+	color: #5B6670;
+	font-family: avenir, proxima-nova, arial, Helvetica, Arial, sans-serif;
+	font-weight: 100;
+	margin: 0;
+	line-height: 1.4;
+}
+
+.container-table {
+	/*width is set as attribute on table element*/
+	background-color: white;
+	margin: 0 auto;
+}
+
+.header {
+	width: 90%;
+	margin-top: 30px;
+}
+
+.header img {
+	max-height: 30px;
+	max-width: 100%;
+	margin-bottom: 15px;
+}
+
+.header h1 {
+	margin: 20px 0 15px 25px;
+	padding-left: 5px;
+	font-family: proxima-nova, arial;
+	font-weight: bold;
+	line-height: 1.1;
+	letter-spacing: 1px;
+	color: #000000;
+	text-align: left;
+}
+
+.header h2 {
+	margin-bottom: 10px;
+}
+
+.header p {
+	color: #5B6670;
+	font-size: 14px;
+	font-family: avenir;
+}
+
+.order-id {
+	font-size: 16px;
+	font-family: avenir;
+}
+
+.footer {
+	width: 90%;
+	font-size: small;
+	margin-bottom: 30px;
+}
+
+.footer hr {
+	border: none;
+	height: 1px;
+	color: #5B6670;
+	background-color: #5B6670;
+}
+
+.footer h2 {
+	font-family: proxima-nova, arial;
+	font-weight: bold;
+	font-size: 24px;
+	letter-spacing: 1px;
+	color: #5B6670;
+	margin-top: 15px;
+	margin-bottom: 5px;
+}
+
+.footer a {
+	text-decoration: none;
+}
+
+.footer p a {
+	font-family: proxima-nova, arial;
+	font-weight: normal;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: normal;
+	letter-spacing: normal;
+	color: #5B6670;
+}
+
+.footer-blurb {
+	font-family: avenir;
+	font-size: 14px;
+	margin: 10px 0 15px 0;
+}
+
+.footer-address {
+	margin-top: 30px;
+	font-family: avenir;
+	font-size: 13px;
+}
+
+.contact-links-desktop {
+	font-size: 10px;
+	width: 100%;
+}
+
+.contact-links-desktop p {
+	font-family: proxima-nova, arial;
+	color: #133362;
+}
+
+.contact-links-desktop td {
+	max-width: 25%;
+}
+
+.contact-links-desktop img {
+	max-width: 100%;
+	max-height: 35px;
+}
+
+.contact-links-mobile {
+	font-size: 10px;
+	width: 100%;
+}
+
+.contact-links-mobile tr:last-child td {
+	padding-top: 15px;
+}
+
+.contact-links-mobile p {
+	font-family: proxima-nova, arial;
+	color: #133362;
+}
+
+.contact-links-mobile img {
+	max-width: 100%;
+	max-height: 35px;
+}
+
+.gift-links {
+	margin-top: 40px;
+	width: 100%;
+	font-size: 12px;
+}
+
+.gift-links p {
+	color: #5B6670;
+	font-family: avenir;
+}
+
+.gift-links tr td a p {
+	font-family: proxima-nova, arial;
+	color: #133362;
+}
+
+.gift-links td {
+	min-width: 50%;
+}
+
+.gift-links td:last-child {
+	text-align: right;
+}
+
+.gift-links img {
+	max-width: 100%;
+	max-height: 50px;
+}
+
+.social-links {
+	margin-top: 20px;
+	font-size: 14px;
+}
+
+.social-links td {
+	max-width: 25%;
+}
+
+.social-links img {
+	max-width: 100%;
+	max-height: 25px;
+}
+
+.item-list {
+	width: 100%;
+	margin: 30px auto;
+}
+
+.item-list tr th {
+	font-weight: normal;
+}
+
+.item-list tr td hr {
+	height: 2px;
+	border: none;
+	color: #ccd3da;
+	background-color: #ccd3da;
+}
+
+.item-list tr th:first-child,.item-list tr td:first-child {
+	text-align: left;
+}
+
+.item-list tr th:last-child,.item-list tr td:last-child {
+	text-align: right;
+}
+
+.item-list tr td:first-child {
+	word-wrap: break-word;
+}
+
+.email-body {
+	width: 90%;
+	margin-bottom: 20px;
+	text-align: left;
+}
+
+.email-body p:first-child {
+	max-width: 480px;
+	margin: 0 auto;
+}
+
+.email-body p, .email-body p a {
+	font-family: avenir;
+	font-size: 16px;
+	font-style: normal;
+	font-stretch: normal;
+	line-height: 1.38;
+	letter-spacing: normal;
+	color: #5B6670;
+}
+
+table.email-body tr td p+p {
+	margin-top: 10px;
+}
+
+table.email-body tr td p.signature {
+	margin-top:20px;
+}
+
+table.email-body tr td p.signature+p.signature {
+	margin-top: 0;
+}
+
+.cancelled_item_list {
+	width: 90%;
+	table-layout: fixed;
+	text-align: center;
+	font-size: 14px;
+}
+
+.emoji {
+	text-align: center;
+}
+
+.appbadge {
+	max-height: 44px;
+}
+.appbadge.google {
+	max-height: 66px;
+	margin-top: -11px;
+	margin-bottom: -11px;
+}
+
+/* ITEM LIST */
+.item_list {
+	width: 82%;
+	margin-left: .52in;
+	margin-right: .5in;
+	margin-bottom: .4in;
+	margin-top: 1.4in;
+	padding-top: 25px;
+	border-top: 1px solid grey;
+}
+
+#purchased {
+	padding-top: .2in;
+}
+
+.item_list > p {
+	font-size: .2in;
+	font-family: proxima-nova;
+	padding-bottom: .05in;
+}
+
+.item_list_header {
+	width: 100%;
+	display: inline-block;
+	line-height: 1.2;
+	text-indent: 10px;
+	color: black;
+}
+
+.item_list_header p {
+	float: left;
+	font-size: .20in;
+	color: black;
+}
+
+.item_list_item {
+	width: 82%;
+	margin-left: .11in;
+	padding-bottom: 3px;
+	padding-top: 9.5px;
+	border-bottom: 1px solid #D3D3D3;
+	padding-left: 10px;
+}
+
+.item_list_item_product_name {
+	width: 100%;
+	position: relative;
+	padding-top: .03in;
+}
+
+.item_list_item_product_name p {
+	width: 100%;
+	font-family: proxima-nova;
+	font-size: .11in;
+	line-height: 1.2;
+	min-height: 2.4em;
+}
+
+.item_list_info {
+	width: 100%;
+	display: inline-block;
+	line-height: 1.2;
+}
+
+.item_list_id {
+	width: 80%;
+	font-size: .13in;
+	float: left;
+}
+
+.item_list_id > span {
+    display: inline-block;
+}
+
+.item_list_amount {
+	width: 27%;
+	font-size: .11in;
+	text-align: right;
+	float: right;
+}
+
+/***************************************************
+****************************************************
+MOBILE TARGETING
+
+Use @media queries with care.	You should not bring these styles inline -- so it's recommended to apply them AFTER you bring the other stlying inline.
+
+Note: test carefully with Yahoo.
+Note 2: Don't bring anything below this line inline.
+****************************************************
+***************************************************/
+
+/* NOTE: To properly use @media queries and play nice with yahoo mail, use attribute selectors in place of class, id declarations.
+table[class=classname]
+Read more: http://www.campaignmonitor.com/blog/post/3457/media-query-issues-in-yahoo-mail-mobile-email/
+*/
+@media only screen and (max-device-width: 600px) {
+	table.container-table {
+		width: 100% !important;
+		margin: 0 !important;
+	}
+
+	.contact-links-desktop {
+		display: none;
+	}
+}
+
+@media only screen and (min-device-width: 601px) {
+	body {
+		padding: 40px 0 !important;
+	}
+
+	.contact-links-mobile {
+		display: none;
+	}
+}
+
+@media only screen and (max-device-width: 480px) {
+
+	/* A nice and clean way to target phone numbers you want clickable and avoid a mobile phone from linking other numbers that look like, but are not phone numbers.	Use these two blocks of code to "unstyle" any numbers that may be linked.	The second block gives you a class to apply with a span tag to the numbers you would like linked and styled.
+
+	Inspired by Campaign Monitor's article on using phone numbers in email: http://www.campaignmonitor.com/blog/post/3571/using-phone-numbers-in-html-email/.
+
+	Step 1 (Step 2: line 224)
+	*/
+	a[href^="tel"], a[href^="sms"] {
+		text-decoration: none;
+		color: #002147; /* or whatever your want */
+		pointer-events: none;
+		cursor: default;
+	}
+
+	.mobile-link a[href^="tel"], .mobile_link a[href^="sms"] {
+		text-decoration: default;
+		color: orange !important; /* or whatever your want */
+		pointer-events: auto;
+		cursor: default;
+	}
+}
+
+/* More Specific Targeting */
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+	/* You guessed it, ipad (tablets, smaller screens, etc) */
+
+	/* Step 1a: Repeating for the iPad */
+	a[href^="tel"], a[href^="sms"] {
+		text-decoration: none;
+		color: blue; /* or whatever your want */
+		pointer-events: none;
+		cursor: default;
+	}
+
+	.mobile-link a[href^="tel"], .mobile_link a[href^="sms"] {
+		text-decoration: default;
+		color: orange !important;
+		pointer-events: auto;
+		cursor: default;
+	}
+}
+
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
+	/* Put your iPhone 4g styles in here */
+}
+
+/* Following Android targeting from:
+http://developer.android.com/guide/webapps/targeting.html
+http://pugetworks.com/2011/04/css-media-queries-for-targeting-different-mobile-devices/	*/
+@media only screen and (-webkit-device-pixel-ratio:.75){
+	/* Put CSS for low density (ldpi) Android layouts in here */
+}
+@media only screen and (-webkit-device-pixel-ratio:1){
+	/* Put CSS for medium density (mdpi) Android layouts in here */
+}
+@media only screen and (-webkit-device-pixel-ratio:1.5){
+	/* Put CSS for high density (hdpi) Android layouts in here */
+}
+/* end Android targeting */

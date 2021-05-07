@@ -1,0 +1,242 @@
+{% extends 'pos_base' %}
+{%- from 'macros' import currency, address, desnake, calculate_exchange_taxes with context -%}
+
+{% set total_price = exchange_amounts.grand_total|string %}
+
+{% if '-' in exchange_amounts.grand_total|string %}
+	{% set isRefund = true %}
+{% else %}
+	{% set isRefund = false %}
+{% endif %}
+
+{% block title %}
+	<div class="title">EXCHANGE RECEIPT</div>
+{% endblock %}
+
+{% block top_info %}
+	<div class="top_info">
+		<p class="order_id"><strong>Ticket: </strong>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
+		{% if customer_name %}<p><strong>Customer: </strong>{{ customer_name }}</p>{% elif billing_address and billing_address.name %}<p><strong>Customer: </strong>{{ billing_address.name }}</p>{% elif shipping_address and shipping_address.name %}<p><strong>Customer: </strong>{{ shipping_address.name }}</p>{% endif %}
+		{% if shipping_method and shipping_method|lower != 'in_store_handover' %}
+            {% if shipping_address %}<p><strong>Shipping Address: </strong></p>
+                {% if shipping_address.name %}<p>{{ shipping_address.name }}</p>{% endif %}
+                {% if shipping_address.address_line_1 %}<p>{{ shipping_address.address_line_1 }}</p>{% endif %}
+                {% if shipping_address.address_line_2 %}<p>{{shipping_address.address_line_2 }}</p>{% endif %}
+                        <p>{% if shipping_address.city %} {{ shipping_address.city }} {% endif %}
+                           {% if shipping_address.state %} {{ shipping_address.state }} {% endif %}
+                           {% if shipping_address.zip_code %} {{ shipping_address.zip_code }} {% endif %} </p>
+            {% endif %}
+        {% endif %}
+	</div>
+{% endblock %}
+
+{% block item_list_exchange_returns %}
+	<div class="item_list">
+		<p>Items Returned</p>
+		<div class="item_list_header">
+			<p>Description</p>
+			<p>Price</p>
+		</div>
+		{% for item in return_items %}
+        <div class="item_list_item_product_name">
+          <p>{{ item.product_name }}</p>
+          {% if item.product_attributes.variation_color_value %} {{ item.product_attributes.variation_color_value }} {% endif %}
+          {% if item.product_attributes.variation_size_value %} {{ item.product_attributes.variation_size_value }} {% endif %}
+        </div>
+        <div class="item_list_exchange_info">
+          <p>{% if item.external_identifier and item.external_identifier.sku and item.external_identifier.sku == 'GC-NEWSTORE' %}&nbsp;{% elif item.external_identifier and item.external_identifier.sku %}Item ID: {{item.external_identifier.sku}}{% else %}Item ID: ---{% endif %}</p>
+          <p>{{ currency(item.refund_net, true) }}</p>
+        </div>
+		{% endfor %}
+	</div>
+{% endblock %}
+
+{% block item_list_exchange_purchases %}
+	<div class="item_list" id="purchased">
+		<p>Items Purchased</p>
+		<div class="item_list_header">
+			<p>Description</p>
+			<p>Price</p>
+		</div>
+		{% for item in checkout_items %}
+		{% set item_discounts = item.discounts | selectattr('level', 'equalto', 'item') | list %}
+		{% set item_discounts_present = item_discounts|length > 0 %}
+		<div {% if item_discounts_present == false %}class="item_list_item"{% endif %}>
+			<div class="item_list_item_product_name">
+				<p>{{ item.product_name }}</p>
+			</div>
+			<div class="item_list_info">
+				<div class="item_list_id">
+					<p>{% if item.external_identifier and item.external_identifier.sku and item.external_identifier.sku == 'GC-NEWSTORE' %}&nbsp;{% elif item.external_identifier and item.external_identifier.sku %}Item ID: {{item.external_identifier.sku}}{% else %}Item ID: ---{% endif %}</p>
+				</div>
+				<div class="item_list_amount {% if item_discounts_present == false %}text_bold{% else %}text_discounted{% endif %}">
+					{{ currency(item.price_catalog) }}
+				</div>
+			</div>
+			{% if item_discounts_present == true %}
+				{% for discount in item_discounts %}
+					{% if loop.last %}
+						<div class="item_list_discount">
+							<p>
+								{{discount.reason}} {% if discount.discount_type == 'percentage' %}({{ discount.discount_value }}%){% endif %}
+								{{currency(discount.price_adjustment, true)}}
+							</p>
+						</div>
+						<div class="item_list_net_total item_list_item">
+							<p>{{ currency(item.price_net) }}</p>
+						</div>
+					{% else %}
+						<div class="item_list_discount">
+							<p>
+								{{discount.reason}} {% if discount.discount_type == 'percentage' %}({{ discount.discount_value }}%){% endif %}
+								{{currency(discount.price_adjustment, true)}}
+							</p>
+						</div>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+		</div>
+		{% endfor %}
+	</div>
+{% endblock %}
+
+{% block pricing_info_exchange %}
+	<div class="pricing_info">
+		<div class="pricing_info_subtotal">
+			<p>Subtotal</p>
+			{% if isRefund %}
+				<p>{{ currency((checkout_amounts.sub_total - return_amounts.sub_total), true) }}</p>
+			{% else %}
+				<p>{{ currency(checkout_amounts.sub_total - return_amounts.sub_total) }}</p>
+			{% endif %}
+		</div>
+		{% set order_discounts = discounts | selectattr('level', 'equalto', 'order') | list %}
+		{% if order_discounts|length > 0 %}
+			{% for discount in order_discounts %}
+			<div class="pricing_info_discounts">
+				<p>{{ discount.reason }} {% if discount.discount_type == 'percentage' %}(-{{ discount.discount_value }}%){% endif %}</p>
+				<p>{{currency(discount.price_adjustment, true)}}</p>
+			</div>
+			{% endfor %}
+		{% endif %}
+		{% if checkout_amounts and checkout_amounts.shipping_and_handling != 0 %}
+			<div class="pricing_info_shipping">
+				<p>Shipping & Handling</p>
+				<p>{{ currency(checkout_amounts.shipping_and_handling) }}</p>
+			</div>
+		{% endif %}
+		<div class="pricing_info_taxes">
+			<p>Taxes{%- if checkout_items|selectattr("tax_method", "equalto", "vat_included")|list -%}(Incl){% elif flat_items|selectattr("vat_excluded")|list %}(Excl){%- endif -%}</p>
+			{% if isRefund and ((checkout_amounts.taxes - return_amounts.taxes) != 0)%}
+				<p>{{ currency((checkout_amounts.taxes - return_amounts.taxes), true) }}</p>
+			{% else %}
+				<p>{{ currency(checkout_amounts.taxes - return_amounts.taxes) }}</p>
+			{% endif %}
+		</div>
+		{% if checkout_amounts.tax_lines and return_amounts.tax_lines %}
+                {% for tax_line in checkout_amounts.tax_lines %}
+                    <div class="pricing_info_taxes">
+                        <p>{{((tax_line.rate * 100) | round(3) | string ).rstrip("0").rstrip(".")}}% {{ tax_line.name }}</p>
+                        <p>{{ calculate_exchange_taxes(tax_line, return_amounts.tax_lines) }}</p>
+                    </div>
+                {% endfor %}
+        {% endif %}
+		<div class="pricing_info_total">
+			<p>Total</p>
+			{% if isRefund %}
+				<p>{{ currency((checkout_amounts.grand_total - return_amounts.grand_total), true) }}</p>
+			{% else %}
+				<p>{{ currency(checkout_amounts.grand_total - return_amounts.grand_total) }}</p>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}
+
+{% block payment_info_exchange %}
+	<div class="payment_info">
+		<div class="payment_info_header">
+			<p>Payments</p>
+		</div>
+		{% for refund_instrument in refund_instruments %}
+			<div>
+				<p>{{ desnake(refund_instrument.payment_method) }}</p>
+				<p>{% if refund_instrument.final_amount %}{{ currency(refund_instrument.final_amount, true) }}{% else %}{{ currency(refund_instrument.initial_amount, true) }}{% endif %}</p>
+			</div>
+		{% endfor %}
+		{% for instrument in checkout_instruments %}
+			{%- if instrument.payment_method == "adyen" or instrument.payment_method == "credit_card" -%}
+				{%- if instrument.metadata and instrument.metadata.instrument_details -%}
+					{%- if instrument.metadata.instrument_details.brand -%}
+					<div class="payment_info_credit_card">
+						<p>{{instrument.metadata.instrument_details.brand}}</p>
+						<p>{{ currency(instrument.amount) }}</p>
+					</div>
+					{%- else -%}
+					<div class="payment_info_credit_card">
+						<p>Credit&nbsp;Card</p>
+						<p>{{ currency(instrument.amount) }}</p>
+					</div>
+					{%- endif -%}
+				{%- else -%}
+				<div class="payment_info_credit_card">
+					<p>Credit&nbsp;Card</p>
+					<p>{{ currency(instrument.amount) }}</p>
+				</div>
+				{%- endif -%}
+				{%- if instrument.metadata.instrument_details.last4 -%}
+				<div>
+					<p>Card#: {{instrument.metadata.instrument_details.last4}}</p>
+					<p></p>
+				</div>
+				{% endif %}
+			{%- elif instrument.payment_method == "store_credit" -%}
+			<div class="payment_info_credit_card">
+			<p>Original Payment Method</p>
+			<p>{{ currency(instrument.amount) }}</p>
+			</div>
+			{%- else -%}
+			<div>
+				<p>{{desnake(instrument.payment_method)}}</p>
+				<p>{{ currency(instrument.amount) }}</p>
+			</div>
+				{% if instrument.payment_method == "cash" %}
+				<div>
+					<p>Change</p>
+					<p>{{ currency(instrument.cash.change_amount) }}</p>
+				</div>
+				{% endif %}
+			{%- endif -%}
+		{% endfor %}
+	</div>
+{% endblock %}
+
+{% block return_paragraph %}
+	{% if store_phone_number and ('619-450-6303' in store_phone_number or '504-522-1890' in store_phone_number) %}
+		<div class="return_paragraph">
+			<p><strong>ALL SALES FINAL.<br>NO EXCHANGES OR REFUNDS ON ANY PURCHASES​</strong></p>
+		</div>
+	{% else %}
+		<div class="return_paragraph">
+			<p>Goorin Bros. offers returns and exchanges within 14 days of purchase. Items
+			must be accompanied by the original paper or digital receipt; products must be
+			in perfect sellable condition with tags attached. Items not accompanied with the
+			receipt, the original tags attached and is not in perfect sellable condition will
+			not be accepted. Returns or exchanges outside of the 14-day date of purchase
+			window will not be honored. Items that are part of a final sale promotion, are
+			not eligible for returns, exchanges, or price adjustments. Goorin Bros. retail store
+			purchases cannot be returned to our online store. Gift cards cannot be exchanged,
+			refunded, or redeemed for cash or credit except when required by law.</p>&nbsp;
+			<p> <strong> SPECIAL NOTICE: </strong> </p> &nbsp;
+			<p> <strong> Due to COVID-19, all sales of face masks are final sale. </strong> </p>
+		</div>
+	{% endif %}
+{% endblock %}
+
+{% block thank_you_message %}
+	{% if billing_address.name %}
+		<p class="thank_you_message">Thank You {{ billing_address.name }}!</p>
+	{% elif shipping_address.name %}
+		<p class="thank_you_message">Thank You {{ shipping_address.name }}!</p>
+	{% endif %}
+{% endblock %}
+

@@ -1,0 +1,47 @@
+{% extends 'email_base' %}
+
+{% block title %}Order shipped{% endblock %}
+
+{% block header %}Your order has been shipped.{% endblock %}
+
+{% block body %}
+	<table class="email-body" cellpadding="0" cellspacing="0" border="0" align="center">
+		<tr>
+			<td>
+				<p style="padding-left:30px;">Hello {{consumer_name | default("shopper")}}, your order is on the way. Please see below for more information.</p>
+				<p class="signature" style="padding-left:60px;">Sincerely,</p>
+				<p class="signature" style="padding-left:60px;">Goorin Customer Service</p>
+			</td>
+		</tr>
+	</table>
+	<div class="item_list">
+		<div class="item_list_header">
+			<p>Order Summary</p>
+	    </div>
+	    {% for item in items %}
+	        <div class="item_list_item">
+	            <div class="item_list_info">
+                    <div class="item_list_id">
+                        <p>{{ item.name }}&ensp;
+                            <span style="font-size:.1in;display:inline-block">(Quantity: {{ item.quantity }})</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <table class="email-body" cellpadding="0" cellspacing="0" border="0" align="center">
+		<tr>
+			<td>
+			    <p style="padding-left:30px;">To track your order, please use the following link(s):
+			    {% for track in tracking %}
+                    <a href="{{track.url}}">
+                        <p style="padding-left:30px;">{{ track.code }}</p>
+                    </a>
+                {% endfor %}
+                </p>
+            </td>
+        </tr>
+    </table>
+{% endblock %}
+

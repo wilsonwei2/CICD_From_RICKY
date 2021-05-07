@@ -1,0 +1,84 @@
+{%- import 'macros' as macros -%}
+{%- import 'tenant' as tenant -%}
+{%- set footer_address = footer_address | default(tenant.address) -%}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" style="height: 100%; width: 100%;">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" type="text/css" href="email.css">
+		{# style tags below are for style that should not be inlined #}
+		<style data-premailer="ignore">
+			{% block extra_style %}{% endblock %}
+			@font-face {
+				font-family: "proxima-nova";
+				src: url('{{ tenant.fonts.proxima_nova }}') format("truetype");
+			}
+			@font-face {
+				font-family: "avenir";
+				src: url('{{ tenant.fonts.avenir }}') format("truetype");
+			}
+		</style>
+	</head>
+
+	<body>
+		<table role="presentation" class="container-table" cellpadding="0" cellspacing="0" border="0" width="600">
+			<tr>
+				<td>
+					<table class="header" cellpadding="0" cellspacing="0" border="0" align="center">
+						<tr>
+							<td valign="top" align="center">
+								<a href="{{tenant.urls.home}}">
+									<img class="image-fix" src="{{ tenant.email_logo | e }}" alt="{{ tenant.name }}" align="center">
+								</a>
+								{% if external_order_id %}
+								    {% set split_order_id = external_order_id.split("-", 1) %}
+                                    {% set external_order_id = split_order_id[1] %}
+								{% endif %}
+								<p>Order #: {{ external_order_id | default(order_id | default((sales_receipt | default({})).order_number)) }}</p>
+								<p>{{ date | default((options | default({})).date) }}</p>
+								<h1>{% block header %}{% endblock %}</h1>
+							    <h2>{% block subheader %}{% endblock %}</h2>
+							</td>
+						</tr>
+					</table>
+
+					{% block body %}{% endblock %}
+
+                    {# Visit our store & Contact us blurbs #}
+					<a href="{{tenant.urls.home}}">
+					    <p style="text-align:center;clear:both;padding-top:30px">{{tenant.blurbs.visit_store}}</p>
+					</a>
+					<p style="text-align:center">or</p>
+					<a href="{{tenant.urls.support}}">
+					    <p style="text-align:center">{{tenant.blurbs.contact}}</p>
+					</a>
+
+					<table class="footer" cellpadding="0" cellspacing="0" border="0" align="center">
+						<tr>
+							<td valign="top" align="center">
+								<table class="social-links">
+
+	                                {# FOR LOOP TO ITERATE THROUGH ALL SOCIAL LINKS #}
+									<tr>
+                                        {% for index, link in tenant.social_links.items() %}
+                                            <td align="center">
+                                                <a href="{{link.url}}">
+                                                    <img src="{{link.icon}}">
+                                                </a>
+                                            </td>
+                                        {% endfor %}
+									</tr>
+								</table>
+								<p class="footer-blurb">{{tenant.blurbs.do_not_reply}}</p>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table> 
+	</body>
+</html>

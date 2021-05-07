@@ -71,7 +71,7 @@ a:link, a:visited {
 
 .item_list_description strong {
 	font-family: proxima-nova;
-	color: #5B6670;
+	color: #133362;
 }
 
 .item_list_item_id {
@@ -109,7 +109,7 @@ a:link, a:visited {
 
 .item_name {
 	font-family: proxima-nova;
-	color: #5B6670;
+	color: #133362;
 }
 
 .item_stroke {
@@ -270,18 +270,18 @@ a:link, a:visited {
 	text-align: center;
 }
 
-.greeting_message p:first-of-type {
+.greeting_message p:first-child {
 	font-size: .12in;
 	line-height: 1.2;
 	letter-spacing: 0px;
 }
 
-.greeting_message p:nth-of-type(2) {
+.greeting_message p:nth-child(2) {
 	margin-top: .3in;
 	font-size: .13in;
 }
 
-.greeting_message p:last-of-type {
+.greeting_message p:last-child {
 	margin-top: .05in;
 	font-size: .13in;
 }
@@ -304,7 +304,7 @@ a:link, a:visited {
 
 .bottom_info h2 {
 	font-family: proxima-nova;
-	color: #5B6670;
+	color: #133362;
 	margin-top: .08in;
 	font-size: .18in;
 }
@@ -319,7 +319,6 @@ a:link, a:visited {
 
 .bottom_info strong {
 	font-family: proxima-nova;
-	font-size: .12in;
 }
 
 .bottom_info p span {

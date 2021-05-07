@@ -1,0 +1,116 @@
+<html>
+   <head>
+      <meta charset="UTF-8">
+      <title>Packing slip form</title>
+      <link rel="stylesheet" type="text/css" href="">
+   </head>
+   <div class="book">
+   {% with paginated_items = paginate(flat_items, 6) %}
+   {% for items in paginated_items %}
+      <div class="page">
+         <div class="subpage">
+               <div class="header">
+                  <div class="description">
+                     <p>{{from_address.address_line_1}}{{from_address.address_line_2|format_if_valid(' {}')}}, {{from_address.city}}{{from_address.state|format_if_valid(', {}')}}{{from_address.zip_code|format_if_valid(' {}')}}</p>
+                  </div>
+               </div>
+               <div class="information">
+                  <div class="note">
+                     <p>Deliver to:</p>
+                     <p class='name'> {{ to_address.name }} </p>
+                     <p>{{ to_address.address_line_1 }}{{to_address.address_line_2|format_if_valid(' {}')}}</p>
+                     <p>{{ to_address.city }}{{to_address.state|format_if_valid(', {}')}}{{ to_address.zip_code|format_if_valid(' {}')}}</p>
+                     <p>{{ to_address.country_name }}</p>
+                  </div>
+                  {% if billing_address %}
+                     <div class="note">
+                        <p>Billing address:</p>
+                        <p class='name'> {{ billing_address.name }} </p>
+                        <p>{{ billing_address.address_line_1 }}{{billing_address.address_line_2|format_if_valid(' {}')}}</p>
+                        <p>{{ billing_address.city }}{{billing_address.state|format_if_valid(', {}')}}{{ billing_address.zip_code|format_if_valid(' {}')}}</p>
+                        <p>{{ billing_address.country_name }}</p>
+                     </div>
+                  {% endif %}
+                  <div class="user_order_details">
+                     <p>{{ order_details.consumer_name }}</p>
+                     <p>{{ format_date(order_details.placed_at, store_timezone) }}</p>
+                     {% if order_details.shipping_carrier and order_details.shipping_type_name %}
+                        <p>{{ order_details.shipping_carrier }}, {{ order_details.shipping_type_name }}</p>
+                     {% endif %}
+                  </div>
+                  <div class="order_details">
+                     <p>Customer: </p>
+                     <p>Date: </p>
+                     {% if order_details.shipping_carrier and order_details.shipping_type_name %}
+                        <p>Shipping:</p>
+                     {% endif %}
+                  </div>
+               </div>
+               <div class="contents">
+                  <div class="table-wrapper">
+                  <div class="subject">
+                  <div class="subject_left">
+                    Packing Slip
+                  </div>
+                  <div class="subject_right">
+                    {{ order_details.order_id }} - Package {{ current_package }} of {{ number_of_packages }}
+                  </div>
+               </div>
+                  <table>
+                        <tr>
+                           <th class="desc">Description</th>
+                           <th class="epc">Item ID</th>
+                           <th class="quantity">Quantity</th>
+                           <th class="returned_qty"></th>
+                           <th class="reason_code"></th>
+                        </tr>
+                        {% for item in items %}
+
+                                <tr>
+                                   <td class="desc">
+                                      <strong>{{ item.name }}</strong><br>
+                                      Size {{ item.product_attributes.variation_size_value }}
+                                   </td>
+                                   <td class="epc">
+                                      <span> {{ item.external_identifier.epc if item.external_identifier and item.external_identifier.epc else '---' }} </span>
+                                   </td>
+                                   <td class="quantity">
+                                      <span> 1 </span>
+                                </tr>
+
+                        {% endfor %}
+                  </table>
+                  </div>
+               </div>
+               <div class="footer">
+                  <div class="qr_code_wrapper">
+                     <img alt="QR-Code" class="qr_code" src="data:image/png;base64,{{ qr_code }}">
+                  </div>
+                  <div class="footer_order_details">
+
+                     <p><strong> {{ order_details.order_id }} </strong></p>
+                     <p><p>{{ format_date(order_details.started_at, store_timezone) }} at {{ format_time(order_details.started_at, store_timezone) }}</p></p>
+                     <p>Page {{ loop.index }} of {{ paginated_items|length }}</p>
+                  </div>
+                  <div class="clear"></div>
+               </div>
+         </div>
+         {% if loop.last %}
+          <div class="return_paragraph" style="display: inline-block; margin-top: 40px; height: 10in;">
+            <p>Goorin Bros. offers returns and exchanges within 14 days from the date of an in-store
+            purchase or from the date an order is fulfilled. Items must be accompanied by the original
+            paper or digital receipt; products must be in perfect sellable condition with tags attached.
+            Items not accompanied with the receipt, the original tags attached and is not in perfect
+            sellable condition will not be accepted. Returns or exchanges outside of the 14-day window
+            will not be honored. Items that are part of a final sale promotion, are not eligible for
+            returns, exchanges, or price adjustments. Goorin Bros. retail store purchases cannot be
+            returned to our online store. Gift cards cannot be exchanged, refunded, or redeemed for
+            cash or credit except when required by law.</p>
+            <p>SPECIAL NOTICE:<br>Due to COVID-19, all sales of face masks are final sale.</p>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+      {% endwith %}
+   </div>
+</html>

@@ -1,0 +1,20 @@
+{% extends 'email_base' %}
+
+{% block title %}Refund Note{% endblock %}
+
+{% block header %}Your item(s) have been refunded.{% endblock %}
+
+{% block body %}
+	<table class="email-body" cellpadding="0" cellspacing="0" border="0" align="center">
+		<tr>
+			<td>
+				<p style="padding-left:30px">Item(s) in your order #{{ external_order_id | default(order_id) }} have been refunded.</p>
+                <p style="padding-left:60px">Please allow for 14 days as we process your refund to your original payment method.</p>
+                <p style="padding-left:60px">Please see the attachment for your refund summary.</p>
+                <p style="padding-left:60px">Refunds will be issued to the original payment used to place the order.</p>
+				<p class="signature" style="padding-left:60px">Sincerely,</p>
+				<p class="signature" style="padding-left:60px;margin-top:0px">Goorin Customer Service</p>
+			</td>
+		</tr>
+	</table>
+{% endblock %}

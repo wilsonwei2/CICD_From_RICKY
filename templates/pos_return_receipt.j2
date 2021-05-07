@@ -1,0 +1,112 @@
+{% extends 'pos_base' %}
+{%- from 'macros' import currency, address, desnake with context -%}
+
+{% block title %}
+	<div class="title">
+		YOU'VE BEEN REFUNDED
+	</div>
+{% endblock %}
+
+{% block top_info %}
+	<div class="top_info">
+		<p class="order_id"><strong>Ticket: </strong>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
+		{% if customer_name %}<p><strong>Customer: </strong>{{ customer_name }}</p>{% elif billing_address and billing_address.name %}<p><strong>Customer: </strong>{{ billing_address.name }}</p>{% elif shipping_address and shipping_address.name %}<p><strong>Customer: </strong>{{ shipping_address.name }}</p>{% endif %}
+		{% if associate_name %}<p><strong>Salesperson: </strong>{{ associate_name }}</p>{% endif %}
+		{% if shipping_method and shipping_method|lower != 'in_store_handover' %}
+            {% if shipping_address %}<p><strong>Shipping Address: </strong></p>
+                {% if shipping_address.name %}<p>{{ shipping_address.name }}</p>{% endif %}
+                {% if shipping_address.address_line_1 %}<p>{{ shipping_address.address_line_1 }}</p>{% endif %}
+                {% if shipping_address.address_line_2 %}<p>{{shipping_address.address_line_2 }}</p>{% endif %}
+                        <p>{% if shipping_address.city %} {{ shipping_address.city }} {% endif %}
+                           {% if shipping_address.state %} {{ shipping_address.state }} {% endif %}
+                           {% if shipping_address.zip_code %} {{ shipping_address.zip_code }} {% endif %} </p>
+            {% endif %}
+        {% endif %}
+	</div>
+{% endblock %}
+
+{% block item_list_refund %}
+	<div class="item_list">
+		<div class="item_list_header">
+			<p>Description</p>
+			<p>Price</p>
+		</div>
+		<table>
+      {% for item in flat_items %}
+        <tr>
+          <div class="item_list_refund_info">
+            <td>{{ item.product_name }}</td>
+            {% if item.product_attributes.variation_color_value %} <td> {{ item.product_attributes.variation_color_value }} </td> {% endif %}
+            {% if item.product_attributes.variation_size_value %} <td> {{ item.product_attributes.variation_size_value }} </td> {% endif %}
+            <div>
+              <p></p>
+              <p>{{ currency(item.price_net, true) }}</p>
+            </div>
+          </div>
+        </tr>
+      {% endfor %}
+		</table>
+	</div>
+{% endblock %}
+
+{% block pricing_info_refund %}
+	<div class="pricing_info">
+		<div class="pricing_info_taxes">
+			<p>Taxes{%- if flat_items|selectattr("tax_method", "equalto", "vat_included")|list -%}(Incl){% elif flat_items|selectattr("vat_excluded")|list %}(Excl){%- endif -%}</p>
+			<p>{{ currency(amounts.taxes, true) }}</p>
+		</div>
+		{% if amounts.tax_lines %}
+            {% for tax_line in amounts.tax_lines %}
+                <div class="pricing_info_taxes">
+                    <p>{{((tax_line.rate * 100) | round(3) | string ).rstrip("0").rstrip(".")}}% {{ tax_line.name }}</p>
+                    <p>{{ currency(tax_line.amount) }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+		{% if amounts.return_fee_refund %}
+			<div class="pricing_info_return_fee">
+				<p>Return Fee</p>
+				<p>{{ currency(amounts.return_fee_refund) }}</p>
+			</div>
+		{% endif %}
+		{% if amounts and amounts.shipping_and_handling != 0 %}
+			<div class="pricing_info_shipping">
+				<p>Shipping & Handling</p>
+				<p>{{ currency(amounts.shipping_and_handling) }}</p>
+			</div>
+		{% endif %}
+		<div class="pricing_info_total">
+			<p>Total</p>
+			<p>{{ currency(amounts.grand_total, true) }}</p>
+		</div>
+	</div>
+{% endblock %}
+
+{% block payment_info_refund %}
+	<div class="payment_info">
+		<div class="payment_info_header">
+			<p>Payments</p>
+		</div>
+		{% for refund in refund_instruments %}
+			<div>
+			{%- if refund.payment_method == "store_credit" -%}
+			<div class="payment_info_credit_card">
+			<p>Original Payment Method</p>
+			<p>{{ currency(refund.refund_amount) }}</p>
+			</div>
+			{%- else -%}
+				<p>{{ desnake(refund.payment_method) }}</p>
+				<p>{{ currency(refund.refund_amount, true) }}</p>
+			{%- endif -%}
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}
+
+{% block thank_you_message %}
+	{% if billing_address.name %}
+		<p class="thank_you_message">Thank You {{ billing_address.name }}!</p>
+	{% elif shipping_address.name %}
+		<p class="thank_you_message">Thank You {{ shipping_address.name }}!</p>
+	{% endif %}
+{% endblock %}

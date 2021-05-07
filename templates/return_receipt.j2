@@ -1,87 +1,180 @@
-{% extends 'print_base' %}
-{%- from 'macros' import currency, address, desnake with context -%}
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Return Receipt</title>
+    <style>
+.credit_card_note{
+  font-size: 85%;
+  text-align: left;
+}
 
-{% block title %}Return Receipt{% endblock %}
+    </style>
+  </head>
+  <div class="book">
+    {% set credit_card_payments=[] %}
 
-{% block header %}RETURN RECEIPT{% endblock %}
+    {% with paginated_items = paginate(flat_items, 6) %}
+    {% for items in paginated_items %}
+    <div class="page">
+      <div class="subpage">
+        <div class="header">
+          {% if tenant_address is defined and tenant_address %}
+          <div class="description">
+            <p>
+            {%if store_phone_number%}
+                {{store_phone_number}}<br/>
+            {% endif %}
+            {%if store_name%}
+                {{store_name}}<br/>
+            {% endif %}
+            {{'' if tenant_address.name is not defined else tenant_address.name + ', '}}
+            {{tenant_address.address_line_1}},
+            {{'' if tenant_address.address_line_2 == None or tenant_address.address_line_2 == '' else tenant_address.address_line_2 + ', '}}
+            {{tenant_address.city}},
+            {{'' if tenant_address.state == None or tenant_address.state == '' else tenant_address.state + ' '}}
+            {{'' if tenant_address.zip_code == None or tenant_address.zip_code == '' else tenant_address.zip_code + ', '}}
+            {{tenant_address.country_code}}
+            </p>
+          </div>
+          {% endif %}
+        </div>
+        <div class="information">
+          <div class="subject">
+            <strong> Return Receipt </strong>
+          </div>
+          <div class="user_order_details">
+            {%if associate_name%}
+                <p>{{associate_name}}</p>
+            {% endif %}
+            {%if customer_name%}
+                <p>{{customer_name}}</p>
+            {% endif %}
+            <p> {{ format_date(created_at, timezone) }}</p>
+            <p> {{ order_id }}</p>
+          </div>
+          <div class="order_details">
+            {%if associate_name%}<p>Associate: </p>{% endif %}
+            {%if customer_name%}<p>Customer: </p>{% endif %}
+            <p>Date: </p>
+            <p>Order:</p>
+          </div>
+        </div>
+        <div class="contents">
+          {% if items | length > 0 %}
+          <div class="table-wrapper">
+            <table>
+              <tr>
+                <th class="desc">Description</th>
+                <th class="epc">Item ID</th>
+                <th class="quantity">Quantity</th>
+                <th class="returned_qty"></th>
+                <th class="amount">Amount</th>
+              </tr>
+              {% for item in items %}
 
-{% block body %}
+              <tr>
+                <td class="desc">
+                  <strong>{{ item.product_name }}</strong><br>
+                  Size {{ item.product_attributes.variation_size_value }}
+                </td>
+                <td class="epc">
+                  {% if item.external_identifier and item.external_identifier.sku %}{% set external_identifier = item.external_identifier.sku %}
+                  {% elif item.external_identifier and item.external_identifier.epc %}{% set external_identifier = item.external_identifier.epc %}
+                  {% endif %}
+                  <span>{{ external_identifier | default('---') }}</span>
+                </td>
+                <td class="quantity">
+                  <span> 1 </span>
+                </td>
+                <td class="returned_qty">
+                </td>
+                <td class="amount">
+                  <span> {{ currency_code }} {{ format_currency(item.price_net) }} </span>
+                </td>
+              </tr>
 
-  <div class="greeting_message">
-    <h3>Your {% if flat_items|length > 1 %}items have{% else %}item has{% endif %} been refunded! </h3>
-    <p><strong>Order #: </strong>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
-    <p><strong>Order date: </strong>{{format_date(created_at | default(order_details and order_details.started_at), timezone | default(store_timezone))}}</p>
-  </div>
+              {% endfor %}
+            </table>
+            {% if loop.index == (paginated_items|length) %}
+            <div class="values">
+              <div class="contents">
+                {% if amounts.shipping_and_handling != 0 %}<p> {{ currency_code }} {{ format_currency(amounts.shipping_and_handling) }}</p>{% endif %}
+                <p> {{ currency_code }} {{  format_currency(amounts.taxes) }}</p>
+                {% if amounts.return_fee_refund != 0 %}<p> {{ currency_code }} {{ format_currency(-amounts.return_fee_refund) }}</p>{% endif %}
+                <p class="total"> {{ currency_code }} {{  format_currency(amounts.grand_total) }}</p>
+              </div>
+              <div class="subjects">
+                {% if amounts.shipping_and_handling != 0 %}<p>Shipping &amp; Handling </p>{% endif %}
+                <p>Taxes </p>
+                {% if amounts.return_fee_refund != 0 %}<p>Return Fee </p>{% endif %}
+                <p class="total">Total to be refunded </p>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+          {% endif %}
+          {% if refund_instruments | length > 0 %}
+          <div style="clear: both;"><strong> Refunds</strong></div>
 
+          <div class="table-wrapper">
+            <table>
+              <tr>
+                <th class="desc">Method</th>
+                <th class="amount">Amount</th>
+              </tr>
+              <tbody>
+                {% for refund in refund_instruments %}
+                {% if refund.payment_method == "credit_card" %}
+                {% if credit_card_payments.append(refund) %}{% endif %}
+                {% endif %}
+                <tr>
+                  <td class="desc"><strong>{{ get_instrument_info(refund).brand }}</strong>{% if get_instrument_info(refund).info %}<strong>:</strong> {{ get_instrument_info(refund).info }} {% endif %}</td>
+                  <td class="amount">{{ format_currency(-refund.refund_amount) }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <div class="values">
+              <div class="contents aligned-currency">
+                <p class="total"> {{ currency_code }} {{  format_currency(-amounts.grand_total) }}</p>
+              </div>
+            </div>
+            <div class="subjects">
+              <p class="total">Total </p>
+            </div>
+          </div>
+          {% endif %}
 
-  <div class="item_list">
-    <table>
-      <tr>
-        <th class="item_list_description">Description</th>
-        <th class="item_list_item_id">Item ID</th>
-        <th class="item_list_amount">Amount</th>
-      </tr>
-    </table>
-    {% for item in flat_items %}
-    <table class="item_list_item">
-      <tr>
-        <td class="item_list_description">
-          <p class="text_bold">{{ item.product_name }}</p>
-          <p>{% if item.product_attributes and item.product_attributes.variation_size_value %}Size {{ item.product_attributes.variation_size_value }}{% endif %}</p>
-          <p>{% if item.external_identifier and item.external_identifier.serial_number %}S/N: {{ item.external_identifier.serial_number }}{% endif %}</p>
-        </td>
-        <td class="item_list_item_id">
-          <p>{% if item.external_identifier and item.external_identifier.sku %}{{item.external_identifier.sku}}{% else %}---{% endif %}</p>
-        </td>
-        <td class="item_list_amount text_bold">{{ currency(item.price_net) }}</td>
-      </tr>
-    </table>
-    <div class="stroke"></div>
+          {% if reason or note %}
+          <div class="refund_reason" style="clear:both">
+            {% if reason %}<p><strong>Reason: </strong>{{reason | truncate(100) }}</p>{% endif %}
+            {% if note %}<p><strong>Note: </strong>{{note | truncate(100) }}</p>{% endif %}
+          </div>
+          {% endif %}
+
+          {% if credit_card_payments | length %}
+          <div class="credit_card_note">
+            <p>Please note, credit card refunds may take a few days to be reflected on your account due to bank processing time.</p>
+          </div>
+          {% endif %}
+
+        </div>
+        <br />
+        <div class="footer">
+          <div class="qr_code_wrapper">
+            <img alt="QR-Code" class="qr_code" src="data:image/png;base64,{{ qr_code }}">
+          </div>
+          <div class="footer_order_details">
+            <p><strong> {{ order_id }} </strong></p>
+            <p>{{ format_date(created_at, timezone) }} at {{ format_time(created_at, timezone) }}</p>
+            <p>Page {{ loop.index }} of {{ paginated_items|length }}</p>
+          </div>
+
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
     {% endfor %}
+    {% endwith %}
   </div>
-
-
-  <table class="pricing_info">
-    <tr>
-      <th>Shipping &amp; Handling</th>
-      <td>{{ currency(amounts.shipping_and_handling) }}</td>
-    </tr>
-    <tr>
-      <th>Taxes</th>
-      <td>{{ currency(amounts.taxes) }}</td>
-    </tr>
-    <tr>
-      <th>Return Fee</th>
-      <td>{{ currency(amounts.return_fee_refund) }}</td>
-    </tr>
-    <tr class="pricing_info_total">
-      <th>Total</th>
-      <td>{{ currency(amounts.grand_total) }}</td>
-    </tr>
-    {% for refund in refund_instruments %}
-    <tr class="payment_method">
-      {%- if refund.payment_method == "payworks" or refund.payment_method == "credit_card" -%}
-        {%- if refund.metadata and refund.metadata.instrument_details -%}
-          {%- if refund.metadata.instrument_details.brand -%}
-          <th>{{refund.metadata.instrument_details.brand}}
-          {%- else -%}
-          <th>Credit&nbsp;Card
-          {%- endif -%}
-
-          {%- if refund.metadata.instrument_details.last4 -%}
-          &nbsp;(****&nbsp;{{refund.metadata.instrument_details.last4}})</th>
-          {%- else -%}
-          </th>
-          {%- endif -%}
-        {%- else -%}
-        <th>Credit Card</th>
-        {%- endif -%}
-      {%- else -%}
-        <th>{{desnake(refund.payment_method)}}</th>
-      {%- endif -%}
-      <td>{{ currency(refund.refund_amount) }}</td>
-    </tr>
-    {% endfor %}
-  </table>
-
-{% endblock %}
+</html>

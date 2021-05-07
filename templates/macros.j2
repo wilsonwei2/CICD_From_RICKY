@@ -88,7 +88,3 @@
     {% endif %}
   {% endfor %}
 {%- endmacro -%}
-
-{%- macro remove_last_name(name) -%}
-    {{ name[:name.rindex(' ')] }}
-{%- endmacro -%}

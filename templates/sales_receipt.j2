@@ -1,4 +1,3 @@
-{%- from 'fiscal_signature' import showFiscalSignature with context -%}
 <html>
   <head>
     <meta charset="UTF-8">
@@ -14,19 +13,6 @@
     </style>
   </head>
   <div class="book">
-  {% set is_mixed_order = False %}
-  {% if is_mixed(flat_items) %}
-    {#
-    !IMPORTANT: sorting the items is needed for pagination to work correctly.
-      Items should be printed using the same order as the ordering priority -Default: in-store then shipping-.
-      The filter `indexed` is needed to be able to use the jinja filters `next` and `last` in case there are multiple items
-      with similar values.
-    #}
-    {% set flat_items = flat_items | sorted_by_fulfillment_group | indexed %}
-    {% set is_mixed_order = True %}
-    {% set shipping_items = flat_items | with_fulfillment_group('SHIPPING') %}
-    {% set in_store_handover_items = flat_items | with_fulfillment_group('IN_STORE_HANDOVER') %}
-  {% endif %}
   {% with paginated_items = paginate(flat_items, 6) %}
     {% for items in paginated_items %}
     <div class="page">
@@ -105,7 +91,6 @@
 
         <div class="contents">
           <div class="table-wrapper">
-
             <table>
               <tr>
                 <th class="desc">Description</th>
@@ -114,60 +99,30 @@
                 <th class="returned_qty"></th>
                 <th class="amount">Amount</th>
               </tr>
-
               {% for item in items %}
-                {% if is_mixed_order %}
-                  {% if item == shipping_items | first %}
-                    <tr><td colspan="5"> <strong> Shipped </strong> </td><tr>
-                  {% elif item == in_store_handover_items | first %}
-                    <td colspan="5"> <strong> In-store </strong> </td>
-                  {% endif %}
-                {% endif %}
-                <tr>
-                  <td class="desc">
-                    <strong>{{ item.product_name }}</strong><br>
-                    Size {{ item.product_attributes.variation_size_value }}
-                  </td>
-                  <td class="epc">
-                    <span> {{ item.external_identifier.epc if item.external_identifier and item.external_identifier.epc else '---' }} </span>
-                  </td>
-                  <td class="quantity">
-                    <span> 1 </span>
-                  </td>
-                  <td class="returned_qty">
-                  </td>
-                  <td class="amount">
-                    <span> {{ currency_code }} {{ format_currency(item.price_net) }} </span>
-                  </td>
-                </tr>
-                {% if is_mixed_order %}
-                  {% if item == shipping_items | last %}
-                      <tr>
-                        <td class="desc">Total</td>
-                        <td class="epc"></td>
-                        <td class="quantity"></td>
-                        <td class="returned_qty"></td>
-                        <td class="amount"> {{ currency_code }} {{ format_currency(fulfillment_group_amounts.SHIPPING.sub_total) }} </td>
-                      </tr>
-                  {% elif item == in_store_handover_items | last %}
-                      <tr>
-                        <td class="desc">Total</td>
-                        <td class="epc"></td>
-                        <td class="quantity"></td>
-                        <td class="returned_qty"></td>
-                        <td class="amount"> {{ currency_code }} {{ format_currency(fulfillment_group_amounts.IN_STORE_HANDOVER.sub_total) }} </td>
-                      </tr>
-                  {% endif %}
-                {% endif %}
 
+              <tr>
+                <td class="desc">
+                  <strong>{{ item.product_name }}</strong><br>
+                  Size {{ item.product_attributes.variation_size_value }}
+                </td>
+                <td class="epc">
+                  <span> {{ item.external_identifier.epc if item.external_identifier and item.external_identifier.epc else '---' }} </span>
+                </td>
+                <td class="quantity">
+                  <span> 1 </span>
+                </td>
+                <td class="returned_qty">
+                </td>
+                <td class="amount">
+                  <span> {{ currency_code }} {{ format_currency(item.price_net) }} </span>
+                </td>
+              </tr>
               {% endfor %}
             </table>
             {% if loop.index == (paginated_items|length) %}
             <div class="values">
               <div class="contents">
-                {% if amounts.gift_wrapping > 0 %}
-                    <p>{{ currency_code }} {{ format_currency(amounts.gift_wrapping) }}</p>
-                {% endif %}
                 {% set discounts_value = total_discount_per_level(discounts, 'shipping') %}
                 {% set total_shipping_value = discounts_value + amounts.shipping_and_handling %}
                 {% if total_shipping_value > 0 %}
@@ -181,25 +136,13 @@
                     <p> {{disc.reason}} </p>
                   {% endif %}
                 {% endfor %}
-                {% if amounts.tax_lines %}
-                  {% for tax_line in amounts.tax_lines %}
-                    <p> {{ currency_code }} {{  format_currency(tax_line.amount) }}</p>
-                  {% endfor %}
-                {% endif %}
                 <p> {{ currency_code }} {{  format_currency(amounts.taxes) }}</p>
                 <p class="total"> {{ currency_code }} {{  format_currency(amounts.grand_total) }}</p>
-                {% for instrument in instruments if not instrument.cash %}
-                  <p> {{ instrument.currency_code }} {{  format_currency(instrument.amount) }}</p>
-                {% endfor %}
-                {% for instrument in instruments if instrument.cash %}
-                  <p> {{ instrument.currency_code }} {{  format_currency(instrument.cash.given_amount) }}</p>
-                  <p> {{ instrument.currency_code }} {{  format_currency(instrument.cash.change_amount) }}</p>
+                {% for instrument in instruments %}
+                    <p> {{ instrument.currency_code }} {{  format_currency(instrument.amount) }}</p>
                 {% endfor %}
               </div>
               <div class="subjects">
-                {% if amounts.gift_wrapping != 0 %}
-                    <p> Gift Wrapping</p>
-                {% endif %}
                 {% if amounts.shipping_and_handling != 0 or discounts_value > 0 %}
                     <p>{% if discounts_value > 0 %}Original {% endif %}Shipping &amp; Handling</p>
                 {% endif %}
@@ -211,20 +154,11 @@
                     <p>Shipping Discount Reason</p>
                   {% endif %}
                 {% endfor %}
-                {% if amounts.tax_lines %}
-                  {% for tax_line in amounts.tax_lines %}
-                    <p>{{tax_line.name}} {{((tax_line.rate * 100) | round(3) | string ).rstrip("0").rstrip(".")}}%</p>
-                  {% endfor %}
-                {% endif %}
                 <p>Taxes </p>
                 <p class="total">Total </p>
-                {% for instrument in instruments if not instrument.cash %}
+                {% for instrument in instruments %}
                   {% set instrument_info = get_instrument_info(instrument) %}
                   <p class="total">{{instrument_info['brand']}} {%if instrument_info['info'] != ""%} ({{instrument_info['info']}}) {% endif %} </p>
-                {% endfor %}
-                {% for instrument in instruments if instrument.cash %}
-                  <p class="total">Cash received </p>
-                  <p class="total">Cash change </p>
                 {% endfor %}
               </div>
               <div class="return_sentence">
@@ -245,7 +179,6 @@
             <p>{{ format_date(created_at, timezone) }} at {{ format_time(created_at, timezone) }}</p>
             <p>Page {{ loop.index }} of {{ paginated_items|length }}</p>
           </div>
-           {{ showFiscalSignature(f11n) }}
           <div class="clear"></div>
         </div>
       </div>

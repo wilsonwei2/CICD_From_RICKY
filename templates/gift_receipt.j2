@@ -1,57 +1,23 @@
-{% extends 'print_base' %}
+{% extends 'pos_base' %}
 {%- from 'macros' import currency, address, desnake with context -%}
 
-{% block title %}Gift Receipt{% endblock %}
+{% block top_info %}
+	<div class="top_info">
+		<p class="order_id"><strong>Ticket: </strong>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
+	</div>
+{% endblock %}
 
-{% block header %}GIFT RECEIPT{% endblock %}
-
-{% block body %}
-  <table class="order_information">
-    <tr>
-      <td>
-        <strong>Order #:</strong>
-        <p>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
-      </td>
-      <td rowspan="2">
-        {% if shipping_address %}
-        {{ address(shipping_address, 'Shipping Address', class='shipping_address') }}
-        {% endif %}
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <strong>Order date:</strong>
-        <p>{{format_date(created_at | default(order_details and order_details.started_at), timezone | default(store_timezone))}}</p>
-      </td>
-    <tr>
-  </table>
-  <div class="item_list">
-    <table>
-      <tr>
-        <th class="item_list_description">Description</th>
-        <th class="item_list_item_id">Item ID</th>
-      </tr>
-    </table>
-    {% for item in flat_items %}
-    {% set item_discounts = item.discounts | selectattr('level', 'equalto', 'item') | list %}
-    {% set item_discounts_present = item_discounts|length > 0 %}
-    <table class="item_list_item">
-      <tr>
-        <td class="item_list_description" rowspan="{{ item_discounts|length + 2 }}">
-          <p class="item_name">{{ item.product_name }}</p>
-          <p>{% if item.product_attributes and item.product_attributes.variation_size_value %}Size {{ item.product_attributes.variation_size_value }}{% endif %}</p>
-          <p>{% if item.external_identifier and item.external_identifier.serial_number %}S/N: {{ item.external_identifier.serial_number }}{% endif %}</p>
-        </td>
-        <td class="item_list_item_id">
-          <p>{% if item.external_identifier and item.external_identifier.sku %}{{item.external_identifier.sku}}{% else %}---{% endif %}</p>
-        </td>
-      </tr>
-    </table>
-    <div class="item_stroke"></div>
-    {% endfor %}
-  </div>
-  <div class="bottom_info">
-    <p>We have a pretty sweet return policy (up to 365 days, no questions asked). But just in case you do have a question,
-    you can always email us at <strong>ohhey@marinelayer.com</strong>.</p>
-  </div>
+{% block item_list_gift %}
+	<div class="item_list">
+		<div class="item_list_header">
+			<p>Description</p>
+			<p></p>
+		</div>
+		{% for item in flat_items %}
+			<div class="item_list_gift_info">
+				<p>{{ item.product_name }}</p>
+				<p>{% if item.external_identifier and item.external_identifier.sku and item.external_identifier.sku == 'GC-NEWSTORE' %}&nbsp;{% elif item.external_identifier and item.external_identifier.sku %}Item ID: {{item.external_identifier.sku}}{% else %}Item ID: ---{% endif %}</p>
+			</div>
+		{% endfor %}
+	</div>
 {% endblock %}
