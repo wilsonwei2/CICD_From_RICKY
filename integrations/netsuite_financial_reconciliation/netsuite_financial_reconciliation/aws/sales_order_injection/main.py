@@ -58,7 +58,8 @@ async def process_events(message):
         return sales_order.inject_sales_order(event_payload, order_data)
 
     # Inject the retail store order as sales order into Netsuite
-    return retail_sales_order.inject_sales_order(event_payload, order_data)
+    consumer = await get_consumer(order_data)
+    return retail_sales_order.inject_sales_order(event_payload, order_data, consumer)
 
 def get_order_data(order_id):
     graphql_query = """query MyQuery($id: String!, $tenant: String!) {
@@ -120,6 +121,10 @@ def get_order_data(order_id):
     graphql_response = NEWSTORE_HANDLER.graphql_api_call(data)
     return graphql_response['data']['order']
 
+
+async def get_consumer(order):
+    email = order.get('customerEmail')
+    return NEWSTORE_HANDLER.get_consumer(email) if email else None
 
 def order_data_is_complete(order):
     if not order['id']:

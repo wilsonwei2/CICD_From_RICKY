@@ -29,7 +29,7 @@ LOGGER.setLevel(logging.INFO)
 
 # Gets the customer internal id. If the customer is not created yet, a new customer is created
 # in Netsuite. Otherwise, it is updated.
-def get_customer_internal_id(order_event, order_data):
+def get_customer_internal_id(order_event, order_data, consumer):
     store_id = order_data['channel']  # when channel_type==store then channel represents the store_id
     subsidiary_id = get_subsidiary_id(store_id)
 
@@ -39,6 +39,8 @@ def get_customer_internal_id(order_event, order_data):
 
     email = order_event['customer_email']
     shipping_address = get_order_shipping_address(order_data)
+
+    LOGGER.info(f'Got NST consumer: {consumer}')
 
     if shipping_address and email:
         if store_id in locations:
@@ -337,10 +339,10 @@ def get_subsidiary_id(store_id):
     return subsidiary_id
 
 
-def inject_sales_order(order_event, order_data):
+def inject_sales_order(order_event, order_data, consumer):
     netsuite_sales_order = get_sales_order(order_event, order_data)
 
-    customer_internal_id = get_customer_internal_id(order_event, order_data)
+    customer_internal_id = get_customer_internal_id(order_event, order_data, consumer)
     netsuite_sales_order['entity'] = params.RecordRef(internalId=customer_internal_id)
 
     netsuite_sales_order_items = []
