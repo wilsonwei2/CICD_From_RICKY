@@ -4,30 +4,23 @@
           "EXPRESS": {
               "return_provider_rate": "",
               "service_level": "Express",
-              "shipping_carrier_name": "CUSTOM",
+              "shipping_carrier_name": "UPS",
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": true
           },
           "STANDARD": {
               "return_provider_rate": "",
               "service_level": "Standard",
-              "shipping_carrier_name": "CUSTOM",
+              "shipping_carrier_name": "UPS",
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": false
           },
           "INTERNATIONAL": {
               "return_provider_rate": "",
               "service_level": "International",
-              "shipping_carrier_name": "CUSTOM",
+              "shipping_carrier_name": "UPS",
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": false
-          },
-          "EMAIL": {
-              "return_provider_rate": "",
-              "service_level": "Email",
-              "shipping_carrier_name": "CUSTOM",
-              "shipping_type": "traditional_carrier",
-              "use_as_customer_facing_cost": true
           }
       },
       "routes": [
@@ -41,12 +34,6 @@
                   ]
               },
               "fulfilled_by": {
-                  "Email": [
-                      {
-                          "fulfillment_node_id": "MTLDC1",
-                          "provider_rate": "EMAIL"
-                      }
-                  ],
                   "Express": [
                       {
                           "fulfillment_node_id": "MTLDC1",
@@ -79,6 +66,10 @@
               "fulfilled_by": {
                   "Express": [
                       {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "EXPRESS"
+                      },
+                      {
                           "fulfillment_node_id": "STANST",
                           "provider_rate": "EXPRESS"
                       },
@@ -104,6 +95,10 @@
                       }
                   ],
                   "Standard": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "STANDARD"
+                      },
                       {
                           "fulfillment_node_id": "STANST",
                           "provider_rate": "STANDARD"
@@ -148,6 +143,10 @@
               "fulfilled_by": {
                   "Express": [
                       {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "EXPRESS"
+                      },
+                      {
                           "fulfillment_node_id": "TECST",
                           "provider_rate": "EXPRESS"
                       },
@@ -165,6 +164,10 @@
                       }
                   ],
                   "Standard": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "STANDARD"
+                      },
                       {
                           "fulfillment_node_id": "TECST",
                           "provider_rate": "STANDARD"
@@ -200,11 +203,19 @@
               "fulfilled_by": {
                   "Express": [
                       {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "EXPRESS"
+                      },
+                      {
                           "fulfillment_node_id": "VANST",
                           "provider_rate": "EXPRESS"
                       }
                   ],
                   "Standard": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "STANDARD"
+                      },
                       {
                           "fulfillment_node_id": "VANST",
                           "provider_rate": "STANDARD"
@@ -222,12 +233,6 @@
                   ]
               },
               "fulfilled_by": {
-                  "Email": [
-                      {
-                          "fulfillment_node_id": "MTLDC1",
-                          "provider_rate": "EMAIL"
-                      }
-                  ],
                   "Express": [
                       {
                           "fulfillment_node_id": "MTLDC1",
@@ -367,8 +372,8 @@
           },
           "Express": {
               "currency_code": "",
-              "delivery_time": "3 - 5 business days",
-              "delivery_time_after_cutoff_hour": "3 - 5 business days",
+              "delivery_time": "2 - 3 business days",
+              "delivery_time_after_cutoff_hour": "2 - 3 business days",
               "display_name": "Express Delivery",
               "price": 0,
               "remorse_period": 0,
@@ -382,21 +387,11 @@
               "price": 0,
               "remorse_period": 60,
               "tax_code": "CA"
-          },
-          "Email": {
-              "currency_code": "",
-              "delivery_time": "Immediately via Email",
-              "delivery_time_after_cutoff_hour": "Immediately via Email",
-              "display_name": "Email Delivery",
-              "price": 0,
-              "remorse_period": 0,
-              "tax_code": "CA"
           }
       },
       "sl_levels_priority": [
           "Standard",
           "Express",
-          "Email",
           "International"
       ],
       "provider_rates_priority": {
@@ -407,9 +402,6 @@
                   ],
                   "Express": [
                       "EXPRESS"
-                  ],
-                  "Email": [
-                      "EMAIL"
                   ],
                   "International": [
                       "INTERNATIONAL"
