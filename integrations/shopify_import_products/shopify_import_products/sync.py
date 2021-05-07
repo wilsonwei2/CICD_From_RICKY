@@ -41,9 +41,11 @@ def run(env_variables):
             if products_text:
                 update_dynamodb(dynamodb, 'COMPLETED')
                 update_event_trigger(events_handler, os.environ['cron_expression_for_next_day'])
+
                 LOGGER.info('Starting product import')
-                import_products(products_text, env_variables)
-                import_products(products_text, env_variables, 'fr-CA')
+                is_full = os.environ.get('is_full', 'false').lower() == 'true'
+                import_products(products_text, env_variables, is_full)
+                import_products(products_text, env_variables, locale='fr-CA')
             else:
                 LOGGER.error(f'Shopify did not return any products.')
                 update_event_trigger(events_handler, 'rate(10 minutes)')
@@ -56,11 +58,11 @@ def run(env_variables):
         update_event_trigger(events_handler, 'rate(10 minutes)')
 
 
-def import_products(text, env_variables, locale=None):
+def import_products(text, env_variables, is_full=False, locale=None):
     products_per_file = int(os.environ.get('products_per_file', '1000'))
-    is_full = os.environ.get('is_full', 'false').lower() == 'true'
-
     products_slices, categories = transform_products(text, products_per_file, locale)
+    run_full_import = is_full
+
     s3_bucket = os.environ['s3_bucket']
     s3_bucket_key = os.environ['s3_bucket_key']
 
@@ -69,15 +71,16 @@ def import_products(text, env_variables, locale=None):
             s3_handler = S3Handler(bucket_name=s3_bucket, key_name=s3_bucket_key)
             source_uri = f'https://{s3_bucket}/{s3_bucket_key}'
             jobs_manager_products = JobsManager(env_variables, 'products', s3_handler, source_uri, False)
-            LOGGER.info('Sending products to the import_api')
-            do_job(jobs_manager_products, products, is_full)
+            LOGGER.info(f'Sending products to the import_api (full: {run_full_import})')
+            do_job(jobs_manager_products, products, run_full_import)
+            run_full_import = False # IMPORTANT: only the first job that is started should be a full import
 
     if categories['items']:
         s3_handler = S3Handler(bucket_name=s3_bucket, key_name=s3_bucket_key)
         source_uri = f'https://{s3_bucket}/{s3_bucket_key}'
         jobs_manager_categories = JobsManager(env_variables, 'categories', s3_handler, source_uri, False)
-        LOGGER.info('Sending categories to the import_api')
-        do_job(jobs_manager_categories, categories, is_full)
+        LOGGER.info(f'Sending categories to the import_api (full: {run_full_import})')
+        do_job(jobs_manager_categories, categories, run_full_import)
 
 
 def do_job(jobs_manager, data_dict, is_full):
