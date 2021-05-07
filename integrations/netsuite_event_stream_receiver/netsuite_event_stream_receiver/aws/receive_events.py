@@ -55,22 +55,26 @@ async def process_event(event): #pylint: disable=too-many-branches
         'payload': payload
     }
 
-    LOGGER.info(f' Event name -- {event_type}')
+    LOGGER.info(f'Event name -- {event_type}')
 
     if event_type == 'order.opened':
         external_id = payload.get('external_id')
         if external_id.startswith('HIST'):
             LOGGER.info(f'Ignore Historical order {external_id}')
             return True
+
+        # For F&O all orders should be send as Sales Order to Netsuite
+        queue_name = SQS_SALES_ORDER
+
         # A channel_type of 'web' or a shipping service level denotes that this is
         # not a cash sale, so should be handled as a sales order
-        is_a_web_order = payload['channel_type'] == 'web'
-        shipping_service_level = payload['items'][0].get('shipping_service_level', None)
-        is_endless_aisle = bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER')
-        if is_a_web_order or is_endless_aisle:
-            queue_name = SQS_SALES_ORDER
-        else:
-            queue_name = SQS_CASH_SALE
+        # is_a_web_order = payload['channel_type'] == 'web'
+        # shipping_service_level = payload['items'][0].get('shipping_service_level', None)
+        # is_endless_aisle = bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER')
+        # if is_a_web_order or is_endless_aisle:
+        #     queue_name = SQS_SALES_ORDER
+        # else:
+        #     queue_name = SQS_CASH_SALE
     elif event_type == 'inventory_transaction.asn_created':
         queue_name = SQS_TRANSFER_ORDER_QUEUE
     elif event_type == 'inventory_transaction.items_received':
