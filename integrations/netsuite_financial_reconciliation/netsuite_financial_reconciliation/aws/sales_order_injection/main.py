@@ -56,8 +56,9 @@ async def process_events(message):
     is_endless_aisle = bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER')
     if is_a_web_order or is_endless_aisle:
         return sales_order.inject_sales_order(event_payload, order_data)
-    else:
-        return retail_sales_order.inject_sales_order(event_payload, order_data)
+
+    # Inject the retail store order as sales order into Netsuite
+    return retail_sales_order.inject_sales_order(event_payload, order_data)
 
 def get_order_data(order_id):
     graphql_query = """query MyQuery($id: String!, $tenant: String!) {

@@ -4,7 +4,7 @@ import re
 import pytz
 
 from netsuite.api.customer import lookup_customer_id_by_name_and_email, update_customer, create_customer
-from netsuite.api.sale import create_salesorder, initialize_record, upsert_list
+from netsuite.api.sale import create_salesorder
 from netsuite.service import (
     SalesOrderItem,
     SalesOrderItemList,
