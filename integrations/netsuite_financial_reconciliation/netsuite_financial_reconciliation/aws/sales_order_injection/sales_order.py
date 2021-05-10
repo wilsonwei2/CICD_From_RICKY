@@ -4,7 +4,7 @@ import re
 import pytz
 
 from netsuite.api.customer import lookup_customer_id_by_name_and_email, update_customer, create_customer
-from netsuite.api.sale import create_salesorder, initialize_record, upsert_list
+from netsuite.api.sale import create_salesorder
 from netsuite.service import (
     SalesOrderItem,
     SalesOrderItemList,
@@ -27,12 +27,21 @@ from netsuite_financial_reconciliation.helpers.utils import Utils
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
+# Gets the customer internal id. If the customer is not created yet, a new customer is created
+# in Netsuite. Otherwise, it is updated.
+def get_customer_internal_id(order_event, order_data, consumer):
+    store_id = order_data['channel']
+    subsidiary_id = get_subsidiary_id_for_web()
 
-def get_customer_internal_id(order_event, order_data):
-    store_id = order_data['demandLocationId']
-    subsidiary_id = 1
+    locations = params.get_newstore_to_netsuite_locations_config()
+
+    email = order_event['customer_email']
+    address = get_order_billing_address(order_data)
+
+    LOGGER.info(f'Got NST consumer: {consumer}')
 
     customer_custom_field_list = []
+
     if order_event['channel_type'] == 'web':
         customer_custom_field_list += [
             SelectCustomFieldRef(
@@ -44,9 +53,34 @@ def get_customer_internal_id(order_event, order_data):
                 value=ListOrRecordRef(internalId=params.get_netsuite_config()['shopify_location_id'])
             )
         ]
+
+        # Get the customer data from the consumer or the address
+        if address:
+            first_name = address['first_name']
+            last_name = address['last_name']
+            phone_number = address['phone']
+        elif consumer:
+            first_name = consumer.get('first_name', '-')
+            last_name = consumer.get('last_name', '-')
+            phone_number = consumer.get('phone_number')
+
+        netsuite_customer = {
+            'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['customer_custom_form_internal_id'])),
+            'firstName': first_name[:32] if first_name.strip() else '-',
+            'lastName': last_name[:32] if last_name.strip() else '-',
+            'email': email,
+            'phone': get_formatted_phone(phone_number),
+            'subsidiary': params.RecordRef(internalId=subsidiary_id),
+            'isPerson': True,
+            'currencyList': params.get_currency_list(),
+            'customFieldList': customer_custom_field_list
+        }
+
+        netsuite_customer['companyName'] = re.sub(' +', ' ', ' '.join((netsuite_customer['firstName'],
+                                                                       netsuite_customer['lastName'])))
+
     else:
-        locations = params.get_newstore_to_netsuite_locations_config()
-        store_id = order_event['channel']
+        subsidiary_id = get_subsidiary_id_for_store(store_id)
         if store_id in locations:
             customer_custom_field_list.append(
                 SelectCustomFieldRef(
@@ -64,25 +98,46 @@ def get_customer_internal_id(order_event, order_data):
         else:
             LOGGER.error(f'Store id where the consumer was created {store_id} isn\'t mapped to NetSuite')
 
-    first_name = order_event['shipping_address']['first_name']
-    last_name = order_event['shipping_address']['last_name']
-    email = order_event['customer_email']
-    phone_number = order_event['shipping_address']['phone']
+        if email and (consumer or address):
+            # Get the customer data from the consumer or the address
+            if consumer:
+                first_name = consumer.get('first_name', '-')
+                last_name = consumer.get('last_name', '-')
+                phone_number = consumer.get('phone_number')
+            elif address:
+                first_name = address['first_name']
+                last_name = address['last_name']
+                phone_number = address['phone']
 
-    netsuite_customer = {
-        'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['customer_custom_form_internal_id'])),
-        'firstName': first_name[:32] if first_name.strip() else '-',
-        'lastName': last_name[:32] if last_name.strip() else '-',
-        'email': email,
-        'phone': get_formatted_phone(phone_number),
-        'subsidiary': params.RecordRef(internalId=subsidiary_id),
-        'isPerson': True,
-        'currencyList': params.get_currency_list(),
-        'customFieldList': customer_custom_field_list
-    }
+            # Generate the netsuite customer using the above data
+            netsuite_customer = {
+                'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['customer_custom_form_internal_id'])),
+                'firstName': first_name[:32] if first_name.strip() else '-',
+                'lastName': last_name[:32] if last_name.strip() else '-',
+                'email': email,
+                'phone': get_formatted_phone(phone_number),
+                'subsidiary': params.RecordRef(internalId=subsidiary_id),
+                'isPerson': True,
+                'currencyList': params.get_currency_list(),
+                'customFieldList': customer_custom_field_list
+            }
 
-    netsuite_customer['companyName'] = re.sub(' +', ' ', ' '.join((netsuite_customer['firstName'],
-                                                                   netsuite_customer['lastName'])))
+            netsuite_customer['companyName'] = re.sub(' +', ' ', ' '.join((netsuite_customer['firstName'],
+                                                                           netsuite_customer['lastName'])))
+
+        else:
+            # If store exists in mapping, default customer for store - a customer is required in Netsuite
+            # for each sales order
+            if store_id in locations:
+                netsuite_customer = {
+                    'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['customer_custom_form_internal_id'])),
+                    'firstName': 'FrankAndOak',
+                    'lastName': locations[store_id]['name'],
+                    'email': locations[store_id]['email'],
+                    'companyName': 'FrankAndOak %s' % locations[store_id]['name'],
+                    'subsidiary': RecordRef(internalId=subsidiary_id),
+                    'currencyList': params.get_currency_list()
+                }
 
     # If customer is found we update it, but only if it is the same subsidiary
     netsuite_customer_internal_id = lookup_customer_id_by_name_and_email(netsuite_customer)
@@ -100,62 +155,7 @@ def get_customer_internal_id(order_event, order_data):
 
     return result['internalId']
 
-
-def get_payment_transactions(order_data):
-    return order_data['paymentAccount']['transactions']['nodes']
-
-
-def get_payment_items(order_event, order_data, location):
-    LOGGER.info('Mapping payment items')
-    subsidiary_id = 1
-    payment_items = []
-    if order_data['paymentAccount'] is None:
-        return payment_items
-
-    is_exchange_order = order_data['isExchange']
-    transactions = get_payment_transactions(order_data)
-
-    for transaction in transactions:
-        method = transaction['instrument']['paymentMethod'].lower()
-        provider = transaction['instrument']['paymentProvider'].lower()
-
-        # When exchange, use Exchange credit as payment
-        if is_exchange_order:
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get('store_credit')
-        elif method == 'credit_card':
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config()[method].get(provider, '')
-        elif method == 'gift_card':
-            currency = transaction['currency'].lower()
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, {}).get(currency, '')
-        else:
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, '')
-
-        # In case the payment item isn't mapped and the order is WEB utilize Shopify payment item as default
-        if not payment_item_id and order_event['channel_type'] == 'web':
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get('shopify', '')
-
-        if not payment_item_id:
-            if method == 'credit_card':
-                msg = f'Payment Item for payment method {method} and provider {provider} not mapped.'
-            else:
-                msg = f'Payment Item for payment method {method} not mapped.'
-            raise ValueError(msg)
-
-        capture_amount = float(transaction['amount'])
-        if capture_amount != 0:
-            payment_item = {
-                'item': params.RecordRef(internalId=payment_item_id),
-                'amount': abs(capture_amount),
-                'taxCode': params.RecordRef(internalId=params.get_not_taxable_id(subsidiary_id=subsidiary_id)),
-                'location': location
-            }
-
-            payment_items.append(payment_item)
-            LOGGER.info(f'Payment Item for payment method {method} added to items.')
-
-    return payment_items
-
-
+# Creates the Netsuite Sales order out of a NewStore order
 def get_sales_order(order_event, order_data):  # pylint: disable=W0613
     service_level = order_event['items'][0].get('shipping_service_level', None)
     logging.info(f'service level is {service_level}')
@@ -166,39 +166,31 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
         raise Exception(
             f'Shipping service_level {service_level} is not mapped to NetSuite. Update the mapping to include it.')
 
+    # Map dates and other header fields
     placed_at_string = order_event['placed_at']
     tran_date = datetime.strptime(placed_at_string[:22], '%Y-%m-%dT%H:%M:%S.%f').replace(tzinfo=timezone.utc)
     tran_date = tran_date.astimezone(pytz.timezone(params.get_netsuite_config().get('NETSUITE_DATE_TIMEZONE', 'US/Eastern')))
 
-    subsidiary_id = 1
-
     currency_id = params.get_currency_id(currency_code=order_event['currency'])
+
+    # Get Subsidiary id based on the store or DC
+    store_id = order_event['channel']
+    subsidiary_id = get_subsidiary_id_for_web()
 
     if order_event['channel_type'] == 'web':
         location_id = params.get_netsuite_config()['shopify_location_id']
         selling_location_id = params.get_netsuite_config()['shopify_selling_location_id']
         department_id = params.get_netsuite_config()['web_department_id']
+
     elif order_event['channel'] in params.get_newstore_to_netsuite_locations_config():
         locations = params.get_newstore_to_netsuite_locations_config()
         location_id = locations.get(order_event['channel'])['id']
         selling_location_id = locations.get(order_event['channel'])['selling_id']
         department_id = params.get_netsuite_config()['store_department_id']
+        subsidiary_id = get_subsidiary_id_for_store(store_id)
     else:
-        raise Exception(f'Location {order_event["channel"]} cannot be identified.')
+        raise Exception(f'Location {store_id} cannot be identified.')
 
-    customer_name = ' '.join(filter(None, [order_event['shipping_address']['first_name'],
-                                           order_event['shipping_address']['last_name']])) or '-'
-
-    address = {
-        'country': Utils.get_countries_map().get(order_event['shipping_address']['country'], '_unitedStates'),
-        'state': order_event['shipping_address']['state'],
-        'zip': order_event['shipping_address']['zip_code'],
-        'city': order_event['shipping_address']['city'],
-        'addr1': order_event['shipping_address']['address_line_1'],
-        'addr2': order_event['shipping_address']['address_line_2'],
-        'addressee': customer_name
-    }
-    LOGGER.info(f"Added Address for sales order as -- {address}")
 
     sales_order = {
         'externalId': order_event['external_id'],
@@ -228,9 +220,41 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
             )
         )
 
-    sales_order['shippingAddress'] = Address(**address)
+    # If there is a shipping address, add it to the order
+    shipping_address = get_order_shipping_address(order_data)
+    if shipping_address:
+        customer_name = ' '.join(filter(None, [order_event['shipping_address']['first_name'],
+                                               order_event['shipping_address']['last_name']])) or '-'
+
+        address = {
+            'country': Utils.get_countries_map().get(order_event['shipping_address']['country'], '_unitedStates'),
+            'state': order_event['shipping_address']['state'],
+            'zip': order_event['shipping_address']['zip_code'],
+            'city': order_event['shipping_address']['city'],
+            'addr1': order_event['shipping_address']['address_line_1'],
+            'addr2': order_event['shipping_address']['address_line_2'],
+            'addressee': customer_name
+        }
+
+        sales_order['shippingAddress'] = Address(**address)
+
+        LOGGER.info(f'Added Address for retail sales order as -- {address}')
 
     return sales_order
+
+
+def get_order_shipping_address(order):
+    for addr in order['addresses']['nodes']:
+        if addr['addressType'] == 'shipping':
+            return addr
+    return None
+
+
+def get_order_billing_address(order):
+    for addr in order['addresses']['nodes']:
+        if addr['addressType'] == 'billing':
+            return addr
+    return None
 
 
 def get_extended_attribute_value(item, name):
@@ -277,12 +301,15 @@ def get_product_by_name(name):
 
 
 def get_sales_order_items(order_event):
-    subsidiary_id = 1
+    store_id = order_event['channel']
+    subsidiary_id = get_subsidiary_id_for_web()
+
     if order_event['channel_type'] == 'web':
         location_id = params.get_netsuite_config()['shopify_location_id']
     elif order_event['channel'] in params.get_newstore_to_netsuite_locations_config():
         locations = params.get_newstore_to_netsuite_locations_config()
         location_id = locations.get(order_event['channel'])['id']
+        subsidiary_id = get_subsidiary_id_for_store(store_id)
 
     sales_order_items = []
 
@@ -358,56 +385,35 @@ def get_sales_order_items(order_event):
             )
     return sales_order_items
 
+def get_subsidiary_id_for_web():
+    # TODO There might be a different subsidiary for US; check later pylint: disable=fixme
+    return params.get_netsuite_config()['subsidiary_ca_internal_id']
 
 
-def inject_invoice(sale, external_id):
-    #invoice_items_list = []
-    #for item in sales_order_items:
-    #    invoice_items_list.append(InvoiceItem(**item))
-    sale_internal_id = sale if isinstance(sale, int) else sale.internalId
+def get_subsidiary_id_for_store(store_id):
+    newstore_to_netsuite_locations = params.get_newstore_to_netsuite_locations_config()
+    subsidiary_id = newstore_to_netsuite_locations.get(store_id, {}).get('subsidiary_id')
 
-    invoice = initialize_record('invoice', 'salesOrder', sale_internal_id)
-    LOGGER.info(f'Invoice initialized: {invoice}')
-    # invoice['externalId'] = str(external_id)
-    #invoice['itemList'] = InvoiceItemList(invoice_items_list)
-    invoice['externalId'] = f'{external_id}-invoice'
-    del invoice['itemList']
-    #subsidiary_id = 1 ## ML-106
-    # invoice['subsidiary'] = params.RecordRef(internalId=subsidiary_id)
-    #del invoice["totalCostEstimate"]
-    #del invoice["estGrossProfitPercent"]
-    #del invoice["customFieldList"]
-    #del invoice["discountTotal"]
-    #del invoice["giftCertApplied"]
-
-    return upsert_list([invoice])
+    if not subsidiary_id:
+        raise ValueError(f"Unable to find subsidiary for NewStore location '{store_id}'.")
+    return subsidiary_id
 
 
-def inject_sales_order(order_event, order_data):
-    sales_order = get_sales_order(order_event, order_data)
-    netsuite_sales_order = sales_order
+def inject_sales_order(order_event, order_data, consumer):
+    netsuite_sales_order = get_sales_order(order_event, order_data)
 
-    customer_internal_id = get_customer_internal_id(order_event, order_data)
+    customer_internal_id = get_customer_internal_id(order_event, order_data, consumer)
     netsuite_sales_order['entity'] = params.RecordRef(internalId=customer_internal_id)
 
     netsuite_sales_order_items = []
     sales_order_items = get_sales_order_items(order_event)
-    # TODO Payment Items are not setup in Netsuite - so uncomment for now pylint: disable=fixme
-    # sales_order_items += get_payment_items(order_event, order_data, sales_order['location'])
     for item in sales_order_items:
         netsuite_sales_order_items.append(SalesOrderItem(**item))
     netsuite_sales_order['itemList'] = SalesOrderItemList(netsuite_sales_order_items)
 
-    result, sale, flag_dup = create_salesorder(netsuite_sales_order)
+    result, sale = create_salesorder(netsuite_sales_order)
     if not result:
         raise Exception(f'Error on creating SalesOrder. SalesOrder not created. {result}')
-
-    # TODO Invoices are created automatically from a Customer Deposit for F&O - don't inject pylint: disable=fixme
-    # the invoice
-    # Only attempt to create invoice if record is not duplicated
-    # if not flag_dup:
-    #    if not inject_invoice(sale, netsuite_sales_order['externalId']):
-    #        raise Exception(f'Error on creating Invoice.')
 
     LOGGER.info('SalesOrder created successfully.')
     return result, sale, sales_order_items

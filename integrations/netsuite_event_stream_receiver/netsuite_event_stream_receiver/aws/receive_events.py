@@ -22,6 +22,8 @@ TENANT = os.environ.get('TENANT')
 STAGE = os.environ.get('STAGE')
 NEWSTORE_HANDLER = None
 
+# Setting to define if a POS order should be injected as Sales Order in Netsuite
+HANDLE_POS_ORDER_AS_SALES_ORDER = os.environ.get('HANDLE_POS_ORDER_AS_SALES_ORDER')
 
 def handler(event, _):
     ###
@@ -63,18 +65,15 @@ async def process_event(event): #pylint: disable=too-many-branches
             LOGGER.info(f'Ignore Historical order {external_id}')
             return True
 
-        # For F&O all orders should be send as Sales Order to Netsuite
-        queue_name = SQS_SALES_ORDER
-
         # A channel_type of 'web' or a shipping service level denotes that this is
         # not a cash sale, so should be handled as a sales order
-        # is_a_web_order = payload['channel_type'] == 'web'
-        # shipping_service_level = payload['items'][0].get('shipping_service_level', None)
-        # is_endless_aisle = bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER')
-        # if is_a_web_order or is_endless_aisle:
-        #     queue_name = SQS_SALES_ORDER
-        # else:
-        #     queue_name = SQS_CASH_SALE
+        is_a_web_order = payload['channel_type'] == 'web'
+        shipping_service_level = payload['items'][0].get('shipping_service_level', None)
+        is_endless_aisle = bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER')
+        if is_a_web_order or is_endless_aisle or HANDLE_POS_ORDER_AS_SALES_ORDER in ('1', 't', 'true', 'yes'):
+            queue_name = SQS_SALES_ORDER
+        else:
+            queue_name = SQS_CASH_SALE
     elif event_type == 'inventory_transaction.asn_created':
         queue_name = SQS_TRANSFER_ORDER_QUEUE
     elif event_type == 'inventory_transaction.items_received':

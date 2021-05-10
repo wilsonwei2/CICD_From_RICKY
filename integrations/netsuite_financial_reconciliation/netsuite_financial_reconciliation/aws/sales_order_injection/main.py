@@ -6,7 +6,6 @@ from newstore_adapter.connector import NewStoreConnector
 
 from . import params
 from . import sales_order
-from . import retail_sales_order
 from . import sqs_consumer
 
 NEWSTORE_HANDLER = None
@@ -49,17 +48,10 @@ async def process_events(message):
     if not order_data_is_complete(order_data):
         raise Exception(f'Error on creating SalesOrder. Required data are not available via GraphQL API. {order_data}')
 
-    # A channel_type of 'web' or a shipping service level denotes that this is
-    # not a POS order
-    is_a_web_order = order_data['channelType'] == 'web'
-    shipping_service_level = order_data['items']['nodes'][0].get('shipping_service_level', None)
-    is_endless_aisle = bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER')
-    if is_a_web_order or is_endless_aisle:
-        return sales_order.inject_sales_order(event_payload, order_data)
-
-    # Inject the retail store order as sales order into Netsuite
     consumer = await get_consumer(order_data)
-    return retail_sales_order.inject_sales_order(event_payload, order_data, consumer)
+
+    return sales_order.inject_sales_order(event_payload, order_data, consumer)
+
 
 def get_order_data(order_id):
     graphql_query = """query MyQuery($id: String!, $tenant: String!) {
@@ -125,6 +117,7 @@ def get_order_data(order_id):
 async def get_consumer(order):
     email = order.get('customerEmail')
     return NEWSTORE_HANDLER.get_consumer(email) if email else None
+
 
 def order_data_is_complete(order):
     if not order['id']:
