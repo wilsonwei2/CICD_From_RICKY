@@ -1,7 +1,6 @@
 {
-  "sales_receipt": {
-    "title": "Receipt",
-    "order_details": {
+  "common": {
+    "table_header": {
       "associate": "Associate",
       "customer": "Customer",
       "date": "Date",
@@ -20,7 +19,9 @@
         "amount": "Amount"
       },
       "item": {
-        "size": "Size"
+        "size": "Size",
+        "items_purchased": "Items Purchased",
+        "items_returned": "Items Returned"
       }
     },
     "subjects": {
@@ -31,11 +32,22 @@
       "taxes": "Taxes",
       "total": "Total"
     },
+    "payment": {
+      "gift_card": "Gift Card",
+      "paypal": "PayPal",
+      "cash": "Cash"
+    },
     "return_sentence": "We will gladly accept returns post marked within 10 days of purchase. Merchandise eligible must be in its original condition, with all hang tags and care labels attached. Merchandise which has been worn, altered or damaged is not returnable.",
     "footer": {
       "at": "at",
       "page": "Page",
       "of": "of"
     }
+  },
+  "sales_receipt": {
+    "title": "Receipt"
+  },
+  "exchange_receipt": {
+    "title": "Exchange Receipt"
   }
 }

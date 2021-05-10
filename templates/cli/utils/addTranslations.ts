@@ -24,7 +24,10 @@ const addTranslations = async (text: string, filename: string, locale: string): 
     process.stdout.write(chalk.yellow('failed to load translations - skipping'));
     return text;
   }
-  return text.replaceAll(/\[{3}(\S*)]{3}/gm, (ignore, key) => t(`${basename}.${key}`));
+  return text.replaceAll(/\[{3}(\S*)]{3}/gm, (ignore, key: string) => {
+    const isCommon = key.startsWith('#');
+    return t(`${isCommon ? 'common' : basename}.${isCommon ? key.substr(1) : key}`);
+  });
 };
 
 export default addTranslations;

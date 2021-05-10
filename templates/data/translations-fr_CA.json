@@ -1,7 +1,6 @@
 {
-  "sales_receipt": {
-    "title": "Reçu",
-    "order_details": {
+  "common": {
+    "table_header": {
       "associate": "Associé",
       "customer": "Client",
       "date": "Date",
@@ -20,7 +19,9 @@
         "amount": "Prix"
       },
       "item": {
-        "size": "Size"
+        "size": "Size",
+        "items_purchased": "Items Achetés",
+        "items_returned": "Items Returned"
       }
     },
     "subjects": {
@@ -31,11 +32,22 @@
       "taxes": "Taxes",
       "total": "Total"
     },
+    "payment": {
+      "gift_card": "Gift Card",
+      "paypal": "PayPal",
+      "cash": "Cash"
+    },
     "return_sentence": "Nous accepterons volontiers les retours dans les 30 jours suivant l'achat. La marchandise éligible doit être dans son état d'origine, avec toutes les étiquettes attachées. La marchandise qui a été portée, modifiée ou endommagée ne peut être retournée.",
     "footer": {
       "at": "à",
       "page": "Page",
       "of": "de"
     }
+  },
+  "sales_receipt": {
+    "title": "Reçu"
+  },
+  "exchange_receipt": {
+    "title": "Reçu d'échange"
   }
 }
