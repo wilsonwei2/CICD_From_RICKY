@@ -5,7 +5,8 @@
       "customer": "Customer",
       "date": "Date",
       "purchase": "Purchase",
-      "receipt": "Receipt"
+      "receipt": "Receipt",
+      "order": "Order"
     },
     "information_address": {
       "billing_address": "Billing Address",
@@ -30,8 +31,12 @@
       "shipping_discount": "Shipping Discount",
       "shipping_discount_reason": "Shipping Discount Reason",
       "taxes": "Taxes",
-      "total": "Total"
-    },
+      "total": "Total",
+      "return_fee": "Return fee",
+      "total_refund": "Total to be refunded",
+      "method": "Method",
+      "amount": "Amount"
+  },
     "payment": {
       "gift_card": "Gift Card",
       "paypal": "PayPal",
@@ -49,5 +54,12 @@
   },
   "exchange_receipt": {
     "title": "Exchange Receipt"
+  },
+  "return_receipt": {
+    "title": "Return Receipt",
+    "refunds": "Refunds",
+    "reason": "Reason",
+    "note": "Note",
+    "credit_card_note": "Please note, credit card refunds may take a few days to be reflected on your account due to bank processing time."
   }
 }

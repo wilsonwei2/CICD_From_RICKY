@@ -5,7 +5,8 @@
       "customer": "Client",
       "date": "Date",
       "purchase": "Sommaire de la commande",
-      "receipt": "Reçu"
+      "receipt": "Reçu",
+      "order": "Commande"
     },
     "information_address": {
       "billing_address": "Adresse de facturation",
@@ -30,7 +31,11 @@
       "shipping_discount": "Rabais de livraison",
       "shipping_discount_reason": "Raison de rabais de livraison",
       "taxes": "Taxes",
-      "total": "Total"
+      "total": "Total",
+      "return_fee": "Return fee",
+      "total_refund": "Total to be refunded",
+      "method": "Method",
+      "amount": "Prix"
     },
     "payment": {
       "gift_card": "Gift Card",
@@ -49,5 +54,12 @@
   },
   "exchange_receipt": {
     "title": "Reçu d'échange"
+  },
+  "return_receipt": {
+    "title": "Reçu de retour",
+    "refunds": "Remboursements",
+    "reason": "Reason",
+    "note": "Note",
+    "credit_card_note": "Please note, credit card refunds may take a few days to be reflected on your account due to bank processing time."
   }
 }

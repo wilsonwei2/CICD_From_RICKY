@@ -1,7 +1,7 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Return Receipt</title>
+    <title>[[[title]]]</title>
     <style>
 .credit_card_note{
   font-size: 85%;
@@ -40,7 +40,7 @@
         </div>
         <div class="information">
           <div class="subject">
-            <strong> Return Receipt </strong>
+            <strong> [[[title]]] </strong>
           </div>
           <div class="user_order_details">
             {%if associate_name%}
@@ -53,10 +53,10 @@
             <p> {{ order_id }}</p>
           </div>
           <div class="order_details">
-            {%if associate_name%}<p>Associate: </p>{% endif %}
-            {%if customer_name%}<p>Customer: </p>{% endif %}
-            <p>Date: </p>
-            <p>Order:</p>
+            {%if associate_name%}<p>[[[#table_header.associate]]]: </p>{% endif %}
+            {%if customer_name%}<p>[[[#table_header.customer]]]: </p>{% endif %}
+            <p>[[[#table_header.date]]]: </p>
+            <p>[[[#table_header.order]]]:</p>
           </div>
         </div>
         <div class="contents">
@@ -64,11 +64,11 @@
           <div class="table-wrapper">
             <table>
               <tr>
-                <th class="desc">Description</th>
-                <th class="epc">Item ID</th>
-                <th class="quantity">Quantity</th>
+                <th class="desc">[[[#contents.header.description]]]</th>
+                <th class="epc">[[[#contents.header.item_id]]]</th>
+                <th class="quantity">[[[#contents.header.quantity]]]</th>
                 <th class="returned_qty"></th>
-                <th class="amount">Amount</th>
+                <th class="amount">[[[#contents.header.amount]]]</th>
               </tr>
               {% for item in items %}
 
@@ -104,23 +104,23 @@
                 <p class="total"> {{ currency_code }} {{  format_currency(amounts.grand_total) }}</p>
               </div>
               <div class="subjects">
-                {% if amounts.shipping_and_handling != 0 %}<p>Shipping &amp; Handling </p>{% endif %}
-                <p>Taxes </p>
-                {% if amounts.return_fee_refund != 0 %}<p>Return Fee </p>{% endif %}
-                <p class="total">Total to be refunded </p>
+                {% if amounts.shipping_and_handling != 0 %}<p>[[[#subjects.shipping_handling]]] </p>{% endif %}
+                <p>[[[#subject.taxes]]] </p>
+                {% if amounts.return_fee_refund != 0 %}<p>[[[#subject.return_fee]]] </p>{% endif %}
+                <p class="total">[[[#subject.total_refund]]] </p>
               </div>
             </div>
             {% endif %}
           </div>
           {% endif %}
           {% if refund_instruments | length > 0 %}
-          <div style="clear: both;"><strong> Refunds</strong></div>
+          <div style="clear: both;"><strong> [[[refunds]]]</strong></div>
 
           <div class="table-wrapper">
             <table>
               <tr>
-                <th class="desc">Method</th>
-                <th class="amount">Amount</th>
+                <th class="desc">[[[#subject.method]]]</th>
+                <th class="amount">[[[#subject.amount]]]</th>
               </tr>
               <tbody>
                 {% for refund in refund_instruments %}
@@ -140,21 +140,21 @@
               </div>
             </div>
             <div class="subjects">
-              <p class="total">Total </p>
+              <p class="total">[[[#subject.total]]] </p>
             </div>
           </div>
           {% endif %}
 
           {% if reason or note %}
           <div class="refund_reason" style="clear:both">
-            {% if reason %}<p><strong>Reason: </strong>{{reason | truncate(100) }}</p>{% endif %}
-            {% if note %}<p><strong>Note: </strong>{{note | truncate(100) }}</p>{% endif %}
+            {% if reason %}<p><strong>[[[reason]]]: </strong>{{reason | truncate(100) }}</p>{% endif %}
+            {% if note %}<p><strong>[[[note]]]: </strong>{{note | truncate(100) }}</p>{% endif %}
           </div>
           {% endif %}
 
           {% if credit_card_payments | length %}
           <div class="credit_card_note">
-            <p>Please note, credit card refunds may take a few days to be reflected on your account due to bank processing time.</p>
+            <p>[[[credit_card_note]]]</p>
           </div>
           {% endif %}
 
@@ -166,8 +166,8 @@
           </div>
           <div class="footer_order_details">
             <p><strong> {{ order_id }} </strong></p>
-            <p>{{ format_date(created_at, timezone) }} at {{ format_time(created_at, timezone) }}</p>
-            <p>Page {{ loop.index }} of {{ paginated_items|length }}</p>
+            <p>{{ format_date(created_at, timezone) }} [[[#footer.at]]] {{ format_time(created_at, timezone) }}</p>
+            <p>[[[#footer.page]]] {{ loop.index }} [[[#footer.of]]] {{ paginated_items|length }}</p>
           </div>
 
           <div class="clear"></div>
