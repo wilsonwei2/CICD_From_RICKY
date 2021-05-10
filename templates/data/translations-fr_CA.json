@@ -1,0 +1,41 @@
+{
+  "sales_receipt": {
+    "title": "Reçu",
+    "order_details": {
+      "associate": "Associé",
+      "customer": "Client",
+      "date": "Date",
+      "purchase": "Sommaire de la commande",
+      "receipt": "Reçu"
+    },
+    "information_address": {
+      "billing_address": "Adresse de facturation",
+      "shipping_address": "Adresse d'envoi"
+    },
+    "contents": {
+      "header": {
+        "description": "Article",
+        "item_id": "SKU",
+        "quantity": "Quantié",
+        "amount": "Prix"
+      },
+      "item": {
+        "size": "Size"
+      }
+    },
+    "subjects": {
+      "original": "Original",
+      "shipping_handling": "Frais de livraison",
+      "shipping_discount": "Rabais de livraison",
+      "shipping_discount_reason": "Raison de rabais de livraison",
+      "taxes": "Taxes",
+      "total": "Total"
+    },
+    "return_sentence": "Nous accepterons volontiers les retours dans les 30 jours suivant l'achat. La marchandise éligible doit être dans son état d'origine, avec toutes les étiquettes attachées. La marchandise qui a été portée, modifiée ou endommagée ne peut être retournée.",
+    "footer": {
+      "at": "à",
+      "page": "Page",
+      "of": "de"
+    }
+  }
+}

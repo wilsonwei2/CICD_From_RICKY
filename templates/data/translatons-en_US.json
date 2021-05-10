@@ -1,0 +1,41 @@
+{
+  "sales_receipt": {
+    "title": "Receipt",
+    "order_details": {
+      "associate": "Associate",
+      "customer": "Customer",
+      "date": "Date",
+      "purchase": "Purchase",
+      "receipt": "Receipt"
+    },
+    "information_address": {
+      "billing_address": "Billing Address",
+      "shipping_address": "Shipping Address"
+    },
+    "contents": {
+      "header": {
+        "description": "Description",
+        "item_id": "Item ID",
+        "quantity": "Quantity",
+        "amount": "Amount"
+      },
+      "item": {
+        "size": "Size"
+      }
+    },
+    "subjects": {
+      "original": "Original",
+      "shipping_handling": "Shipping &amp; Handling",
+      "shipping_discount": "Shipping Discount",
+      "shipping_discount_reason": "Shipping Discount Reason",
+      "taxes": "Taxes",
+      "total": "Total"
+    },
+    "return_sentence": "We will gladly accept returns post marked within 10 days of purchase. Merchandise eligible must be in its original condition, with all hang tags and care labels attached. Merchandise which has been worn, altered or damaged is not returnable.",
+    "footer": {
+      "at": "at",
+      "page": "Page",
+      "of": "of"
+    }
+  }
+}

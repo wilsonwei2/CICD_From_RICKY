@@ -17,14 +17,14 @@ const addTranslations = async (text: string, filename: string, locale: string): 
         defaultNS: basename,
         lng: locale,
         backend: {
-          loadPath: `${path.dirname(theFile)}/${basename}-{{lng}}.json`,
+          loadPath: `${path.dirname(theFile)}/translations-{{lng}}.json`,
         },
       });
   } catch {
     process.stdout.write(chalk.yellow('failed to load translations - skipping'));
     return text;
   }
-  return text.replaceAll(/\[{3}(\S*)]{3}/gm, (ignore, key) => t(key));
+  return text.replaceAll(/\[{3}(\S*)]{3}/gm, (ignore, key) => t(`${basename}.${key}`));
 };
 
 export default addTranslations;
