@@ -38,11 +38,22 @@ def get_customer_internal_id(order_event, order_data, consumer):
     locations = params.get_newstore_to_netsuite_locations_config()
 
     email = order_event['customer_email']
-    shipping_address = get_order_shipping_address(order_data)
+    address = get_order_billing_address(order_data)
 
     LOGGER.info(f'Got NST consumer: {consumer}')
 
-    if shipping_address and email:
+    if email and (consumer or address):
+        # Get the customer data from the consumer or the address
+        if consumer:
+            first_name = consumer.get('first_name', '-')
+            last_name = consumer.get('last_name', '-')
+            phone_number = consumer.get('phone_number')
+        elif address:
+            first_name = address['first_name']
+            last_name = address['last_name']
+            phone_number = address['phone']
+
+        # Get the store id from the mapping
         if store_id in locations:
             customer_custom_field_list.append(
                 SelectCustomFieldRef(
@@ -60,10 +71,7 @@ def get_customer_internal_id(order_event, order_data, consumer):
         else:
             LOGGER.error(f'Store id where the consumer was created {store_id} isn\'t mapped to NetSuite')
 
-        first_name = order_event['shipping_address']['first_name']
-        last_name = order_event['shipping_address']['last_name']
-        phone_number = order_event['shipping_address']['phone']
-
+        # Generate the netsuite customer using the above data
         netsuite_customer = {
             'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['customer_custom_form_internal_id'])),
             'firstName': first_name[:32] if first_name.strip() else '-',
@@ -80,7 +88,8 @@ def get_customer_internal_id(order_event, order_data, consumer):
                                                                        netsuite_customer['lastName'])))
 
     else:
-        # If store exists in mapping, default customer for store
+        # If store exists in mapping, default customer for store - a customer is required in Netsuite
+        # for each sales order
         if store_id in locations:
             netsuite_customer = {
                 'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['customer_custom_form_internal_id'])),
@@ -195,19 +204,18 @@ def get_order_shipping_address(order):
             return addr
     return None
 
+def get_order_billing_address(order):
+    for addr in order['addresses']['nodes']:
+        if addr['addressType'] == 'billing':
+            return addr
+    return None
+
 
 def get_extended_attribute_value(item, name):
     for extended_attribute in item['extended_attributes']:
         if extended_attribute['name'] == name:
             return extended_attribute['value']
     return None
-
-
-def is_vip_order(order):
-    for discount in order['discounts']['nodes']:
-        if discount['couponCode'] == 'VIP':
-            return True
-    return False
 
 
 def get_product_by_external_id(name):

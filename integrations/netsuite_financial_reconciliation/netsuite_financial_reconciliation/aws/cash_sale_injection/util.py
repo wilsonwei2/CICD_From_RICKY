@@ -134,11 +134,6 @@ async def get_customer_order(ns_handler, order_id):
     return None
 
 
-def is_vip_order(event_stream_payload):
-    return next((discount.get('coupon_code', '') == 'VIP' for discount in event_stream_payload.get('discounts', [])),
-                False)
-
-
 def is_historic_order(message):
     LOGGER.debug(f"Running is_historic_order with message: {json.dumps(message)}")
     order = message.get('order', {})

@@ -240,13 +240,6 @@ def get_extended_attribute_value(item, name):
     return None
 
 
-def is_vip_order(order):
-    for discount in order['discounts']['nodes']:
-        if discount['couponCode'] == 'VIP':
-            return True
-    return False
-
-
 def get_product_by_external_id(name):
     item_search = ItemSearchBasic(
         externalIdString=SearchStringField(

@@ -96,15 +96,16 @@ def create_item_fulfillment(fulfillment_request, sales_order):
         if not item['customFieldList'] or not item['customFieldList']['customField']:
             continue
 
-        for custom_field in item['customFieldList']['customField']:
-            if custom_field['scriptId'] == 'custcol_ab_rateonif':
-                item['customFieldList']['customField'].remove(custom_field)
+        # for custom_field in item['customFieldList']['customField']:
+        #     if custom_field['scriptId'] == 'custcol_ab_rateonif':
+        #        item['customFieldList']['customField'].remove(custom_field)
 
     LOGGER.info(f"ItemFulfillment: \n{json.dumps(serialize_object(item_fulfillment), indent=4, default=Utils.json_serial)}")
     return bool(nsas.create_item_fulfillment(item_fulfillment))
 
 
 def update_sales_order(sales_order, fulfillment_request):
+    # TODO - configure the correct value pylint: disable=fixme
     fulfillment_rejected_script_id = os.environ.get('netsuite_fulfillment_rejected_flag_script_id',
                                                     'custcol_ab_fulfillmentrejected')
     sales_order_update = nsas.SalesOrder(
