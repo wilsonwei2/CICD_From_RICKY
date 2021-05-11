@@ -56,8 +56,8 @@ def get_customer_internal_id(order_event, order_data, consumer):
 
         # Get the customer data from the consumer or the address
         if address:
-            first_name = address['first_name']
-            last_name = address['last_name']
+            first_name = address['firstName']
+            last_name = address['lastName']
             phone_number = address['phone']
         elif consumer:
             first_name = consumer.get('first_name', '-')
@@ -105,8 +105,8 @@ def get_customer_internal_id(order_event, order_data, consumer):
                 last_name = consumer.get('last_name', '-')
                 phone_number = consumer.get('phone_number')
             elif address:
-                first_name = address['first_name']
-                last_name = address['last_name']
+                first_name = address['firstName']
+                last_name = address['lastName']
                 phone_number = address['phone']
 
             # Generate the netsuite customer using the above data
