@@ -27,7 +27,7 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
     return_location_id = ns_return['return_location_id']
     location_id = Utils.get_netsuite_store_internal_id(return_location_id)
     customer = None
-    subsidiary_id = int(Utils.get_netsuite_config()['subsidiary_us_internal_id']) if not sales_order else sales_order.subsidiary.internalId
+    subsidiary_id = int(Utils.get_netsuite_config()['subsidiary_ca_internal_id']) if not sales_order else sales_order.subsidiary.internalId
     store_tz = await get_store_tz_by_customer_order(customer_order)
     if return_authorization:
         LOGGER.info('Create CashRefund from ReturnAuthorization')
