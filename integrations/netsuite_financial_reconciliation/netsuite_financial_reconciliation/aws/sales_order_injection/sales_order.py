@@ -182,10 +182,10 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
         selling_location_id = params.get_netsuite_config()['shopify_selling_location_id']
         department_id = params.get_netsuite_config()['web_department_id']
 
-    elif order_event['channel'] in params.get_newstore_to_netsuite_locations_config():
+    elif store_id in params.get_newstore_to_netsuite_locations_config():
         locations = params.get_newstore_to_netsuite_locations_config()
-        location_id = locations.get(order_event['channel'])['id']
-        selling_location_id = locations.get(order_event['channel'])['selling_id']
+        location_id = locations.get(store_id)['id']
+        selling_location_id = locations.get(store_id)['selling_id']
         department_id = params.get_netsuite_config()['store_department_id']
         subsidiary_id = get_subsidiary_id_for_store(store_id)
     else:
@@ -306,9 +306,9 @@ def get_sales_order_items(order_event):
 
     if order_event['channel_type'] == 'web':
         location_id = params.get_netsuite_config()['shopify_location_id']
-    elif order_event['channel'] in params.get_newstore_to_netsuite_locations_config():
+    elif store_id in params.get_newstore_to_netsuite_locations_config():
         locations = params.get_newstore_to_netsuite_locations_config()
-        location_id = locations.get(order_event['channel'])['id']
+        location_id = locations.get(store_id)['id']
         subsidiary_id = get_subsidiary_id_for_store(store_id)
 
     sales_order_items = []

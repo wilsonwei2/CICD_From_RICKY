@@ -64,7 +64,8 @@ def create_cash_sale(order):
     # Location can be mapped using the channel_id that is the store_id on NewStore
     if store_id in NEWSTORE_TO_NETSUITE_LOCATIONS:
         location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
-        # selling_location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store['store_id']]['selling_id']
+        selling_location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['selling_id']
+        department_id = NETSUITE_CONFIG['store_department_id']
     else:
         raise Exception('Channel_id %s isn\'t mapped to NetSuite' % store_id)
 
@@ -74,7 +75,7 @@ def create_cash_sale(order):
 
     placed_at_string = order['placedAt']
     tran_date = datetime.strptime(placed_at_string[:19], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
-    tran_date = tran_date.astimezone(pytz.timezone(NETSUITE_CONFIG.get('NETSUITE_DATE_TIMEZONE', 'US/Pacific')))
+    tran_date = tran_date.astimezone(pytz.timezone(NETSUITE_CONFIG.get('NETSUITE_DATE_TIMEZONE', 'US/Eastern')))
 
     cash_sale = {
         'externalId': order['externalId'],  # Order id will be used to lookup order on NetSuite on other newstore events
@@ -83,9 +84,10 @@ def create_cash_sale(order):
         'customForm': RecordRef(internalId=int(NETSUITE_CONFIG['cash_sale_custom_form_internal_id'])),
         'location': RecordRef(internalId=location_id),
         'tranDate': tran_date.date(),
-        'partner': RecordRef(internalId=int(NETSUITE_CONFIG['newstore_partner_internal_id'])),
+        # 'partner': RecordRef(internalId=int(NETSUITE_CONFIG['newstore_partner_internal_id'])),
+        'class': RecordRef(internalId=selling_location_id),
         'customFieldList': CustomFieldList(custom_fields_list),
-        'department': RecordRef(internalId=1),  # for NewStore originated, and 2 for Shopify originated
+        'department': RecordRef(internalId=department_id),
     }
 
     shipping_address = get_order_shipping_address(order)
@@ -156,10 +158,10 @@ def get_customer_info(order):
         if store_id in NEWSTORE_TO_NETSUITE_LOCATIONS:
             customer = {
                 'customForm': RecordRef(internalId=int(NETSUITE_CONFIG['customer_custom_form_internal_id'])),
-                'firstName': 'MarineLayer',
+                'firstName': 'FrankAndOak',
                 'lastName': NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['name'],
                 'email': NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['email'],
-                'companyName': 'MarineLayer %s' % NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['name'],
+                'companyName': 'FrankAndOak %s' % NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['name'],
                 'subsidiary': RecordRef(internalId=subsidiary_id),
                 'currencyList': util.get_currency_list(),
             }
@@ -191,7 +193,7 @@ def get_capture_transactions(order):  # extracts transactions from order data (G
 
 
 def create_payment_items(order):
-    LOGGER.info("Creating Payment for order")
+    LOGGER.info('Creating Payment for order')
     LOGGER.info(order)
     payment_items = []
     if order['paymentAccount'] is None:
@@ -202,7 +204,7 @@ def create_payment_items(order):
     location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
 
     transactions = get_capture_transactions(order)
-    LOGGER.info("Transactions from capture order")
+    LOGGER.info('Transactions from capture order')
     LOGGER.info(json.dumps(transactions))
     for transaction in transactions:
         payment_method = transaction['instrument']['paymentMethod'].lower()
@@ -229,7 +231,7 @@ def create_payment_items(order):
         LOGGER.info(payment_item_id)
     return payment_items
 
-# ML-123
+
 def get_payment_method(order):
     transactions = get_capture_transactions(order)
     payment_account_id = None
@@ -322,7 +324,8 @@ def create_cash_sale_items(order):
                 }
             )
 
-    cash_sale_items += create_payment_items(order)
+    # TODO Enable again once we know if payment items can be used pylint: disable=fixme
+    # cash_sale_items += create_payment_items(order)
 
     return cash_sale_items
 
@@ -413,7 +416,6 @@ def order_data_is_complete(order):
     return True
 
 
-
 async def process_events(message):
     order_payload = message.get('payload')
 
@@ -428,9 +430,10 @@ async def process_events(message):
     cash_sale = create_cash_sale(order)
     cash_sale['entity'] = get_customer_netsuite_internal_id(order)
     cash_sale['itemList'] = CashSaleItemList(create_cash_sale_item_list(order))
-    if order['paymentAccount'] is not None:
-        payment_method_id = get_payment_method(order)
-        cash_sale['paymentMethod'] = RecordRef(internalId=payment_method_id)
+    # TODO Enable again once we know if payment items can be used pylint: disable=fixme
+    # if order['paymentAccount'] is not None:
+    #    payment_method_id = get_payment_method(order)
+    #    cash_sale['paymentMethod'] = RecordRef(internalId=payment_method_id)
 
     # LOGGER.info(f'Sending cash sale to NetSuite: {cash_sale}')
     result, _, _ = create_cashsale(cash_sale)
