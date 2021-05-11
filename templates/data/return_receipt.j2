@@ -105,9 +105,9 @@
               </div>
               <div class="subjects">
                 {% if amounts.shipping_and_handling != 0 %}<p>[[[#subjects.shipping_handling]]] </p>{% endif %}
-                <p>[[[#subject.taxes]]] </p>
-                {% if amounts.return_fee_refund != 0 %}<p>[[[#subject.return_fee]]] </p>{% endif %}
-                <p class="total">[[[#subject.total_refund]]] </p>
+                <p>[[[#subjects.taxes]]] </p>
+                {% if amounts.return_fee_refund != 0 %}<p>[[[#subjects.return_fee]]] </p>{% endif %}
+                <p class="total">[[[#subjects.total_refund]]] </p>
               </div>
             </div>
             {% endif %}
@@ -119,8 +119,8 @@
           <div class="table-wrapper">
             <table>
               <tr>
-                <th class="desc">[[[#subject.method]]]</th>
-                <th class="amount">[[[#subject.amount]]]</th>
+                <th class="desc">[[[#subjects.method]]]</th>
+                <th class="amount">[[[#subjects.amount]]]</th>
               </tr>
               <tbody>
                 {% for refund in refund_instruments %}
@@ -140,7 +140,7 @@
               </div>
             </div>
             <div class="subjects">
-              <p class="total">[[[#subject.total]]] </p>
+              <p class="total">[[[#subjects.total]]] </p>
             </div>
           </div>
           {% endif %}

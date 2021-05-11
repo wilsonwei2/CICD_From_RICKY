@@ -196,8 +196,8 @@
                     <p>[[[#subjects.shipping_discount_reason]]]</p>
                   {% endif %}
                 {% endfor %}
-                <p>[[[#subject.taxes]]] </p>
-                <p class="total">[[[#subject.total]]] </p>
+                <p>[[[#subjects.taxes]]] </p>
+                <p class="total">[[[#subjects.total]]] </p>
                 {% for refund_instrument in refund_instruments %}
                   {% for transaction in refund_instrument.transactions %}
                     {% if transaction.name == "refund" %}

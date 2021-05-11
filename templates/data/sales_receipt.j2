@@ -154,8 +154,8 @@
                     <p>[[[#subjects.shipping_discount_reason]]]</p>
                   {% endif %}
                 {% endfor %}
-                <p>[[[#subject.taxes]]] </p>
-                <p class="total">[[[#subject.total]]] </p>
+                <p>[[[#subjects.taxes]]] </p>
+                <p class="total">[[[#subjects.total]]] </p>
                 {% for instrument in instruments %}
                   {% set instrument_info = get_instrument_info(instrument) %}
                   <p class="total">{{instrument_info['brand']}} {%if instrument_info['info'] != ""%} ({{instrument_info['info']}}) {% endif %} </p>

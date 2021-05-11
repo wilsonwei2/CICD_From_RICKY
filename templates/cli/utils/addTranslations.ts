@@ -13,11 +13,12 @@ const addTranslations = async (text: string, filename: string, locale: string): 
       .use(backend)
       .init({
         fallbackLng: 'en_US',
-        ns: [basename],
-        defaultNS: basename,
+        // ns: [basename],
+        // defaultNS: '',
         lng: locale,
+        // debug: true,
         backend: {
-          loadPath: `${path.dirname(theFile)}/translations-{{lng}}.json`,
+          loadPath: `${path.resolve(path.dirname(theFile))}/translations-{{lng}}.json`,
         },
       });
   } catch {

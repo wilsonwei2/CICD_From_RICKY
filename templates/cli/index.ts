@@ -1,10 +1,12 @@
 #!/usr/bin/env node
+/* eslint-disable sonarjs/no-duplicate-string */
 import { Command } from 'commander';
 import packageJson from './package.json';
 import {
   interactive, accesstoken,
   list, template, updateTemplate, sampleData, sampleDocumentation, preview,
   listStyles, updateStyle,
+  updateAll,
 } from './commands';
 
 const program = new Command(packageJson.name)
@@ -48,6 +50,12 @@ const main = async () => {
     .action(updateTemplate) as Command);
 
   commonOptions(program
+    .command('update-all <locales...>')
+    .option('--skip-translation', 'Skip the translation process')
+    .description('Updates all templates and asssets')
+    .action(updateAll) as Command);
+
+  commonOptions(program
     .command('sample-data <name> ')
     .description('Get sample data for a template')
     .action(sampleData) as Command);
@@ -77,3 +85,4 @@ const main = async () => {
 };
 
 main();
+/* eslint-enable sonarjs/no-duplicate-string */

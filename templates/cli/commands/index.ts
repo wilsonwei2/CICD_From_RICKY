@@ -8,6 +8,7 @@ import interactive from './interactive';
 import preview from './preview';
 import listStyles from './listStyles';
 import updateStyle from './updateStyle';
+import updateAll from './updateAll';
 
 export {
   interactive,
@@ -20,4 +21,5 @@ export {
   preview,
   listStyles,
   updateStyle,
+  updateAll,
 };
