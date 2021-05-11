@@ -91,15 +91,6 @@ def create_item_fulfillment(fulfillment_request, sales_order):
     check_product_internal_ids(item_fulfillment_items)
     mark_shipped_items(item_fulfillment_items, item_fulfillment)
 
-    # Remove read-only fields
-    for item in item_fulfillment['itemList']['item']:
-        if not item['customFieldList'] or not item['customFieldList']['customField']:
-            continue
-
-        # for custom_field in item['customFieldList']['customField']:
-        #     if custom_field['scriptId'] == 'custcol_ab_rateonif':
-        #        item['customFieldList']['customField'].remove(custom_field)
-
     LOGGER.info(f"ItemFulfillment: \n{json.dumps(serialize_object(item_fulfillment), indent=4, default=Utils.json_serial)}")
     return bool(nsas.create_item_fulfillment(item_fulfillment))
 

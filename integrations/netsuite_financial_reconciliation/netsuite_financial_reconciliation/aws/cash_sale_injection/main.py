@@ -33,6 +33,7 @@ NETSUITE_CONFIG = util.get_netsuite_config()
 NEWSTORE_TO_NETSUITE_LOCATIONS = util.get_newstore_to_netsuite_locations_config()
 NEWSTORE_TO_NETSUITE_CHANNEL = util.get_newstore_to_netsuite_channel_config()
 NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS = util.get_newstore_to_netsuite_payment_items_config()
+# TODO check if we need the below feature for the integration pylint: disable=fixme
 NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT = {} # util.get_newstore_to_netsuite_payment_account_config()
 
 def handler(event, context):  # pylint: disable=W0613
@@ -58,6 +59,7 @@ def handler(event, context):  # pylint: disable=W0613
 def create_cash_sale(order):
     store_id = order['channel']  # when channel_type==store then channel represents the store_id
     subsidiary_id = util.get_subsidiary_id(store_id)
+    partner_id = int(NETSUITE_CONFIG['newstore_partner_internal_id'])
 
     currency_id = util.get_currency_id(currency_code=order['currency'])
 
@@ -84,11 +86,13 @@ def create_cash_sale(order):
         'customForm': RecordRef(internalId=int(NETSUITE_CONFIG['cash_sale_custom_form_internal_id'])),
         'location': RecordRef(internalId=location_id),
         'tranDate': tran_date.date(),
-        # 'partner': RecordRef(internalId=int(NETSUITE_CONFIG['newstore_partner_internal_id'])),
         'class': RecordRef(internalId=selling_location_id),
         'customFieldList': CustomFieldList(custom_fields_list),
         'department': RecordRef(internalId=department_id),
     }
+
+    if partner_id > -1:
+        cash_sale['partner'] = RecordRef(internalId=partner_id)
 
     shipping_address = get_order_shipping_address(order)
     if shipping_address:
@@ -231,7 +235,7 @@ def create_payment_items(order):
         LOGGER.info(payment_item_id)
     return payment_items
 
-
+# TODO Check if payment methods are used - this seems to be introduced just for ML pylint: disable=fixme
 def get_payment_method(order):
     transactions = get_capture_transactions(order)
     payment_account_id = None
