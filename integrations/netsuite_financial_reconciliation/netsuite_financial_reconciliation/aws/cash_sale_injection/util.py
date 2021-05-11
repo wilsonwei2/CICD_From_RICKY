@@ -323,10 +323,3 @@ def check_golive_date(event_date):
     if golive_date:
         return datetime.strptime(golive_date, "%Y-%m-%dT%H:%M:%S") < datetime.strptime(event_date, "%Y-%m-%dT%H:%M:%S")
     return False
-
-
-def is_xstore(payment_info):
-    for instrument in payment_info['instruments']:
-        if instrument['payment_provider'] == 'xstore':
-            return True
-    return False

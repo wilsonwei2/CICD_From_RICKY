@@ -33,7 +33,7 @@ NETSUITE_CONFIG = util.get_netsuite_config()
 NEWSTORE_TO_NETSUITE_LOCATIONS = util.get_newstore_to_netsuite_locations_config()
 NEWSTORE_TO_NETSUITE_CHANNEL = util.get_newstore_to_netsuite_channel_config()
 NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS = util.get_newstore_to_netsuite_payment_items_config()
-NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT = util.get_newstore_to_netsuite_payment_account_config()
+NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT = {} # util.get_newstore_to_netsuite_payment_account_config()
 
 def handler(event, context):  # pylint: disable=W0613
     global NEWSTORE_HANDLER  # pylint: disable=W0603
