@@ -172,6 +172,7 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
     tran_date = tran_date.astimezone(pytz.timezone(params.get_netsuite_config().get('NETSUITE_DATE_TIMEZONE', 'US/Eastern')))
 
     currency_id = params.get_currency_id(currency_code=order_event['currency'])
+    partner_id = int(params.get_netsuite_config()['newstore_partner_internal_id'])
 
     # Get Subsidiary id based on the store or DC
     store_id = order_event['channel']
@@ -199,7 +200,6 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
         'subsidiary': params.RecordRef(internalId=subsidiary_id),
         'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['sales_order_custom_form_internal_id'])),
         'location': params.RecordRef(internalId=location_id),
-        # 'partner': params.RecordRef(internalId=int(params.get_netsuite_config()['newstore_partner_internal_id'])),
         'shipMethod': params.RecordRef(internalId=shipping_method_id),
         'shippingCost': order_event['shipping_total'],
         'class': params.RecordRef(internalId=selling_location_id),
@@ -211,6 +211,9 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
             )
         ])
     }
+
+    if partner_id > -1:
+        sales_order['partner'] = params.RecordRef(internalId=partner_id)
 
     if not order_event['shipping_tax'] > 0:
         sales_order['customFieldList']['customField'].append(
