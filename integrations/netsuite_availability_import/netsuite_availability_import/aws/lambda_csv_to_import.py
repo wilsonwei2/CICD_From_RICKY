@@ -8,6 +8,7 @@ import boto3
 import zipfile
 from datetime import datetime
 from netsuite_availability_import.utils import Utils
+from newstore_adapter.connector import NewStoreConnector
 
 REGION = os.environ['REGION']
 TENANT = os.environ['TENANT']
@@ -17,6 +18,7 @@ S3_CHUNK_INTERVAL = os.environ['S3_CHUNK_INTERVAL']
 S3_PREFIX = os.environ['S3_PREFIX']
 CFR_TABLE_NAME = os.environ['CFR_TABLE']
 STATE_MACHINE_ARN = os.environ['STATE_MACHINE_ARN']
+IMPORT_STORE_DATA = os.environ['IMPORT_STORE_DATA']
 
 S3 = boto3.resource('s3')
 S3_BUCKET = S3.Bucket(S3_BUCKET_NAME)
@@ -79,6 +81,19 @@ def handler(event, context): # pylint: disable=W0613,too-many-locals
             'store_id': ""
         } for dc_loc_id in distribution_centres.values()
     ]
+
+    # This is only required one time for initial migration and testing purposes
+    # Add the store inventory mapping just if a preference is set to true
+    if IMPORT_STORE_DATA.lower() in ('yes', 'true', '1'):
+        newstore_config = Utils.get_instance().get_newstore_config()
+        ns_handler = NewStoreConnector(
+            tenant='frankandoak',
+            context=context,
+            username=newstore_config['username'],
+            password=newstore_config['password'],
+            host=newstore_config['host']
+        )
+        add_stores_to_mapping(store_mapping, ns_handler)
 
     LOGGER.debug(f'store_mapping: {store_mapping}')
 
@@ -146,7 +161,7 @@ def get_items(csv_data):
                 'quantity': int(float(item['Available'].replace(',', ''))) or 0
             })
         except KeyError as e:
-            LOGGER.error(f"Unknown location {e}. Skipping {item['ProductSKU']}")
+            LOGGER.error(f"Error when reading inventory file {e}. Skipping {item}")
 
     return items
 
@@ -167,7 +182,19 @@ def execute_step_function(object_prefix):
             "dest_prefix": "import_files/",
         })
         return boto3.client('stepfunctions').start_execution(stateMachineArn=STATE_MACHINE_ARN, input=step_function_input)
-    except Exception as ex:
-        # pylint: disable=broad-except
+    except Exception as ex: # pylint: disable=broad-except
         LOGGER.exception(f"Failed to execute import step function. CSV files have already been archived. Error: {ex}")
         return None
+
+def add_stores_to_mapping(store_mapping, ns_handler):
+    # Add Stores to store mapping - only required if store inventory is imported
+    locations = ns_handler.get_stores()['stores']
+    for store in locations:
+        store_id = None
+        if 'store_id' in store:
+            store_id = store['store_id']
+
+        store_mapping.append({
+            'fulfillment_node_id': store_id,
+            'store_id': store_id
+        })

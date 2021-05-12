@@ -44,6 +44,7 @@ def test_handler(monkeypatch):
     monkeypatch.setenv("STATE_MACHINE_ARN", "")
     monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
     monkeypatch.setenv("LOG_LEVEL", "INFO")
+    monkeypatch.setenv("IMPORT_STORE_DATA", "false")
 
     monkeypatch.setattr("netsuite_availability_import.aws.lambda_csv_to_import.execute_step_function", mock_execute_step_function)
     monkeypatch.setattr("netsuite_availability_import.aws.lambda_csv_to_import.get_object_prefix", mock_get_object_prefix)

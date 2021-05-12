@@ -40,6 +40,7 @@ functions:
       TENANT: ${self:provider.tenant}
       STAGE: ${self:provider.stage}
       LOG_LEVEL: INFO
+      IMPORT_STORE_DATA: false
     events:
       - s3:
           bucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
