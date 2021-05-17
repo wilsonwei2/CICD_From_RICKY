@@ -15,6 +15,20 @@
               "shipping_type": "traditional_carrier",
               "use_as_customer_facing_cost": false
           },
+          "STANDARD_USPS": {
+            "return_provider_rate": "",
+            "service_level": "Standard",
+            "shipping_carrier_name": "USPS",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": false
+          },
+          "STANDARD_CAPOST": {
+            "return_provider_rate": "",
+            "service_level": "Standard",
+            "shipping_carrier_name": "CAPOST",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": false
+          },
           "INTERNATIONAL": {
               "return_provider_rate": "",
               "service_level": "International",
@@ -286,7 +300,7 @@
                   "Standard": [
                       {
                           "fulfillment_node_id": "MTLDC1",
-                          "provider_rate": "STANDARD"
+                          "provider_rate": "STANDARD_USPS"
                       },
                       {
                         "fulfillment_node_id": "TECST",
