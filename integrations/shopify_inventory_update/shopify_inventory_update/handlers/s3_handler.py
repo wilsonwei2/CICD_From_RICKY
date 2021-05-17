@@ -1,16 +1,11 @@
 import logging
 import zipfile
-import glob
-import os
 import io
-import os.path
-import time
 import boto3 # pylint: disable=import-error
 import botocore
-import shutil
 import json
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class S3Handler:
@@ -92,7 +87,7 @@ class S3Handler:
             return None
 
     def getFiles(self):
-        logger.info('Get File for Key --> %s' % self.getS3BucketKey())
+        LOGGER.info('Get File for Key --> %s' % self.getS3BucketKey())
 
         obj = self.getS3Resource().Object(self.getS3BucketName(), self.getS3BucketKey())
 
@@ -113,7 +108,7 @@ class S3Handler:
         :return: a double element, one containing the filename and the other the file data as a string
         """
         try:
-            logger.info("Reading Bucket and key name")
+            LOGGER.info("Reading Bucket and key name")
             # logger.info("Bucket: %s | File: %s" % (self.getS3BucketName(), self.getS3BucketKey()))
             filename = self.getS3BucketKey().split("/")[-1]
             obj = self.getS3Resource().Object(self.getS3BucketName(), self.getS3BucketKey())
@@ -131,11 +126,11 @@ class S3Handler:
                             return {'file': filename, 'data': zipf.read(subfile)}
 
             else:
-                logger.info("Reading csv file")
+                LOGGER.info("Reading csv file")
                 byte_data = obj.get()['Body'].read()
                 return {'file': self.getS3BucketKey(), 'data': byte_data}
         except Exception as ex:
-            logger.exception(ex)
+            LOGGER.exception(ex)
             raise ex
 
     def get_json_files_dict(self):

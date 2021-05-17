@@ -2,7 +2,7 @@ import aiobotocore
 import asyncio
 import logging
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class EventsHandler:
@@ -33,6 +33,5 @@ class EventsHandler:
                     State=enabled
                 )
         except Exception as ex:
-            logger.exception(ex)
+            LOGGER.exception(ex)
         return response
-

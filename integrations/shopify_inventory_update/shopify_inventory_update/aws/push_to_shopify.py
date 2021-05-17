@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2015, 2016, 2017 NewStore, Inc. All rights reserved.
 import os
-import time
 import json
 import logging
 import asyncio
 
 from shopify_inventory_update.handlers.shopify_handler import ShopifyConnector
 from shopify_inventory_update.handlers.sqs_handler import SqsHandler
-from shopify_inventory_update.handlers.s3_handler import S3Handler
 
 from param_store.client import ParamStore
 
@@ -52,8 +50,8 @@ async def _sync_inventory(loop, context):
     param_store = ParamStore(TENANT, STAGE)
     shopify_config = json.loads(param_store.get_param('shopify'))
 
-    global shopify_conector
-    shopify_conector = ShopifyConnector(
+    global shopify_connector
+    shopify_connector = ShopifyConnector(
         shopify_config['username'],
         shopify_config['password'],
         shopify_config['shop']
@@ -73,21 +71,22 @@ async def _sync_inventory(loop, context):
     while message_count > 0:
         messages = await sqs_handler.get_message()
         if messages.get('Messages'):
-            failure_list = []
 
             for message in messages['Messages']:
                 receipt_handle = message['ReceiptHandle']
                 products = json.loads(message['Body'])
+                LOGGER.debug(f'Raw products from SQS:\n{products}')
                 '''
                 {'34142712266787': {
                     'atp': 19,
                     'location_id': 61470441628
                 }}
                 '''
-                updated_products = defining_product(products)
-                # create list of task to process for each variant
-                tasks += [asyncio.ensure_future(_update_variant_at_shopify(
-                    updated_products, shopify_conector, receipt_handle))]
+                if len(products) > 0:
+                    updated_products = defining_product(products)
+                    # create list of task to process for each variant
+                    tasks += [asyncio.ensure_future(_update_variant_at_shopify(
+                        updated_products, shopify_connector, receipt_handle))]
 
         message_count = await sqs_handler.get_messages_count()
         LOGGER.info('%s available in the queue...',
@@ -107,11 +106,15 @@ def defining_product(products):
     } for key, value in products.items()]
 
 
-async def _update_variant_at_shopify(products, shopify_conector, receipt_handle):
+async def _update_variant_at_shopify(products, shopify_connector, receipt_handle):
     global sqs_handler
     try:
         products = await _create_deltas_for_inventory(products)
-        response = await shopify_conector.update_inventory_quantity_graphql(products, products[0]['location_id'])
+        response = {}
+        if len(products) > 0:
+            response = await shopify_connector.update_inventory_quantity_graphql(products, products[0]['location_id'])
+        else:
+            LOGGER.info('No deltas created - no update send.')
         await sqs_handler.delete_message(receipt_handle)
         return response
     except Exception:
@@ -120,9 +123,9 @@ async def _update_variant_at_shopify(products, shopify_conector, receipt_handle)
 
 
 async def _create_deltas_for_inventory(products):
-    global shopify_conector
+    global shopify_connector
     LOGGER.info('Fetching inventory levels from Shopify')
-    inventory_shopify = _transform_to_dictionary_inventory_map(await shopify_conector.get_inventory_quantity(products, products[0]['location_id']))
+    inventory_shopify = _transform_to_dictionary_inventory_map(await shopify_connector.get_inventory_quantity(products, products[0]['location_id']))
     LOGGER.info('Response from transform ')
     LOGGER.info(inventory_shopify)
     for product in products:
@@ -134,9 +137,9 @@ async def _create_deltas_for_inventory(products):
 
 def _transform_to_dictionary_inventory_map(inventory_shopify_response):
     result = {}
-    for inventory in inventory_shopify_response:
-        id_inventory = inventory.get('item', {}).get('id')
-        if id_inventory:
-            result[id_inventory] = inventory['available']
+    if inventory_shopify_response is not None:
+        for inventory in inventory_shopify_response:
+            id_inventory = inventory.get('item', {}).get('id')
+            if id_inventory:
+                result[id_inventory] = inventory['available']
     return result
-
