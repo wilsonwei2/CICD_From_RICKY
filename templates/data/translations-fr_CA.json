@@ -38,7 +38,7 @@
       "amount": "Prix"
     },
     "payment": {
-      "gift_card": "Gift Card",
+      "gift_card": "Carte cadeau",
       "paypal": "PayPal",
       "cash": "Cash"
     },
