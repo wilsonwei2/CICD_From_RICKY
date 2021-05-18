@@ -29,7 +29,7 @@ NETSUITE_SYNCED_TO_NEWSTORE_FLAG_SCRIPT_ID = Utils.get_netsuite_config()['item_f
 
 
 def handler(_, context):
-    # Initialize newtore conector with context
+    # Initialize newstore conector with context
     Utils.get_newstore_conn(context)
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -45,7 +45,7 @@ async def update_newstore_asns():
     search_result = await run_item_fulfillment_ss()
 
     if not search_result or not search_result['body']['searchResult']['totalRecords']:
-        LOGGER.info("No results to process, returning")
+        LOGGER.info('No results to process, returning')
         return
 
     LOGGER.info(f"Found a total of {search_result['body']['searchResult']['totalRecords']} item fulfillments")
@@ -66,7 +66,7 @@ async def update_newstore_asns():
 
 
 async def run_item_fulfillment_ss():
-    LOGGER.info(f"Executing NetSuite search: {TRANSFER_ORDER_SAVED_SEARCH_ID}")
+    LOGGER.info(f'Executing NetSuite search: {TRANSFER_ORDER_SAVED_SEARCH_ID}')
 
     search_preferences = SearchPreferences(
         bodyFieldsOnly=False,
@@ -96,7 +96,7 @@ async def transform_search_result(search_result):
         LOGGER.info(f"Processing item fulfillment: {item_fulfillment_abstract['basic']['tranId'][0]['searchValue']}")
         is_success, item_fulfillment = await get_item_fulfillment(item_fulfillment_abstract['basic']['tranId'][0]['searchValue'])
         if not is_success:
-            LOGGER.error(f"Failed to retrieve Item Fulfillment: {item_fulfillment}")
+            LOGGER.error(f'Failed to retrieve Item Fulfillment: {item_fulfillment}')
             continue
         asn_payload = await transform_item_fulfillment(item_fulfillment)
         LOGGER.debug(f'ASN Payload: {json.dumps(asn_payload, indent=4)}')
@@ -113,7 +113,7 @@ async def transform_item_fulfillment(netsuite_item_fulfillment):
                      f"{netsuite_item_fulfillment['transferLocation']['internalId']}")
         return None
     item_list = netsuite_item_fulfillment['itemList']['item']
-    from_location = get_from_location(item_list[0]['location']['name'])
+    from_location = get_newstore_location_id(item_list[0]['location']['internalId'])
     netsuite_item_fulfillment_id = netsuite_item_fulfillment['tranId']
     date_shipped = netsuite_item_fulfillment['shippedDate'].isoformat()
     LOGGER.debug(f'item_list: {item_list}')
@@ -152,17 +152,6 @@ async def transform_item_fulfillment(netsuite_item_fulfillment):
         "newstore_asn": newstore_asn,
         "internal_id": netsuite_item_fulfillment['internalId']  # We need this to mark the order synced in NetSuite
     }
-
-
-def get_from_location(location_name):
-    """
-    The `from_location` is free-form in NewStore, this function simply cleans
-    up the default NetSuite value and returns one similar to how the name appears
-    in NetSuite:
-    e.g. "US : Pixior : Pixior Retail" ==> "Pixior Retail"
-    """
-    location_name = location_name.split(':')[-1].strip()
-    return location_name
 
 
 def get_newstore_location_id(netsuite_location_id):

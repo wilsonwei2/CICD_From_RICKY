@@ -79,7 +79,8 @@ class TestFrankandoakASNImport(unittest.TestCase):
         netsuite_location_mock = patch('netsuite_asn_import.utils.Utils.get_netsuite_location_map')
         self.patched_netsuite_location_mock = netsuite_location_mock.start()
         self.patched_netsuite_location_mock.return_value = {
-            "location_1_id_nom": {"id": 1, "ff_node_id": "node_id_1"}
+            "location_1_id_nom": {"id": 1, "ff_node_id": "node_id_1"},
+            "DC": {"id": 7, "ff_node_id": "DC"}
         }
 
         from netsuite_asn_import.aws.import_netsuite_item_fulfillments import update_newstore_asns

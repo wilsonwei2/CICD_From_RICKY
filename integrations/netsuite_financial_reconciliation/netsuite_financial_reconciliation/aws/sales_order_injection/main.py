@@ -74,6 +74,8 @@ def get_order_data(order_id):
         pricebookPrice
         productId
         tax
+        itemDiscounts
+        orderDiscounts
       }
     }
     addresses {
@@ -83,6 +85,12 @@ def get_order_data(order_id):
           lastName
           phone
           salutation
+          country
+          city
+          addressLine1
+          addressLine2
+          state
+          zipCode
         }
       }
     paymentAccount {
