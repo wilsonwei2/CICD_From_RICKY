@@ -12,7 +12,8 @@
         "item": [
             {
                 "location": {
-                    "name": "DC"
+                    "name": "DC",
+                    "internalId": "7"
                 },
                 "itemName": "productName",
                 "quantity": 10

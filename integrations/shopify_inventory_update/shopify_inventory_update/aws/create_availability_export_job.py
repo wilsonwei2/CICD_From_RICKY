@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2020-21 NewStore, Inc. All rights reserved.
-import os, json
+import os
+import json
 import logging
 import asyncio
 
 from newstore_adapter.connector import NewStoreConnector
 from shopify_inventory_update.handlers.lambda_handler import start_lambda_function
-from shopify_inventory_update.handlers.sqs_handler import SqsHandler
-from shopify_inventory_update.handlers.s3_handler import S3Handler
 from shopify_inventory_update.handlers.dynamodb_handler import (
     get_item,
     update_item
@@ -40,12 +39,14 @@ def handler(event, context):
         TRIGGER_NAME = event['resources'][0].split('/')[1]
     ## ADDING TRIGGER NAME AND USING IT AS A RESOURCE FOR FULL RUN.
 
+    if TRIGGER_NAME is not None:
+        LOGGER.info(f'Trigger name -- {TRIGGER_NAME}')
+
     if TRIGGER_NAME is not None and 'full_export' in TRIGGER_NAME:
         is_full = True
         LOGGER.info(f'Running a full export with Trigger Name -- {TRIGGER_NAME}')
         LOGGER.info('Updating the dynamoDB Updated value to 0 for full export')
         save_last_updated_to_dynamo_db(str(0))
-        return True
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -70,8 +71,10 @@ async def _create_export_availabilities_job(context, is_full: False):
     LOGGER.info(export)
 
     if force_wait_process_job:
+        lambda_name = os.environ.get('PUSH_TO_QUEUE_LAMBDA_NAME', 'inventory-push-to-queue')
+        LOGGER.debug(f'Starting {lambda_name} lambda')
         await start_lambda_function(
-            os.environ.get('PUSH_TO_QUEUE_LAMBDA_NAME', 'inventory-push-to-queue'),
+            lambda_name,
             payload=export
         )
 

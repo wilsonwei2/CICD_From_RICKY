@@ -32,9 +32,7 @@ DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
 JOB_STATE_KEY = 'current_job_state'
 LAST_UPDATED_KEY = 'last_updated_at'
 
-LOCATIONS_MAP_INFO = None
 LOCATIONS_MAP = None
-SHOPIFY_CONECTOR = None
 PARAM_STORE = None
 
 TENANT = os.environ['TENANT'] or 'frankandoak'
@@ -50,11 +48,9 @@ def handler(event, context):
     Returns:
         string -- Result string of process
     """
-    global PARAM_STORE, LOCATIONS_MAP_INFO
+    global PARAM_STORE
     if not PARAM_STORE:
         PARAM_STORE = ParamStore(TENANT, STAGE)
-    if not LOCATIONS_MAP_INFO:
-        LOCATIONS_MAP_INFO = json.loads(PARAM_STORE.get_param('shopify/locations_map_info'))
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -64,15 +60,31 @@ def handler(event, context):
     return result
 
 
-async def _map_locations_if_not(session):
+async def initialize_locations_maps(session):
     global LOCATIONS_MAP
+
     if not LOCATIONS_MAP:
         LOCATIONS_MAP = {}
-        global SHOPIFY_CONECTOR
-        locations = await SHOPIFY_CONECTOR.get_locations(session)
+
+        locations_map_info = json.loads(PARAM_STORE.get_param('shopify/locations_map_info'))
+        shopify_config = json.loads(PARAM_STORE.get_param('shopify'))
+
+        shopify_connector = ShopifyConnector(
+            shopify_config['username'],
+            shopify_config['password'],
+            shopify_config['shop']
+        )
+        locations = await shopify_connector.get_locations(session)
+
         for location in locations:
-            if LOCATIONS_MAP_INFO.get(location.get('zip')):
-                LOCATIONS_MAP[LOCATIONS_MAP_INFO.get(location.get('zip'))] = location.get('id')
+            location_id = str(location.get('id'))
+
+            if location_id in locations_map_info:
+                LOCATIONS_MAP[locations_map_info[location_id]] = location_id
+            else:
+                LOGGER.error(f'Location ID "{location_id}" not mapped')
+
+        LOGGER.debug(f'LOCATIONS_MAP ~> {LOCATIONS_MAP}')
 
 
 def get_availability_job_id():
@@ -147,7 +159,7 @@ async def _save_to_queue_availabilities(context, event):
     else:
         response = get_availability_job_id()
         if response['availability_export_id'] and response['availability_job_state']:
-            LOGGER.info(f"Found current job from dynamo db table - as -- {str(response['availability_export_id'])} and previoud state -- {response['availability_job_state']}")
+            LOGGER.info(f"Found current job from dynamo db table - as -- {str(response['availability_export_id'])} and previous state -- {response['availability_job_state']}")
             ## Possible inputs -- availability id respoinse
             return await wait_job_and_process_variants(context, response)
         else:
@@ -166,7 +178,7 @@ async def wait_job_and_process_variants(context, event):
         return {'result': 'All variants exported to the queue'}
 
     events_handler = EventsHandler()
-    ns_handler = NewStoreConnector(TENANT,  context)
+    ns_handler = NewStoreConnector(TENANT, context)
 
     '''
     Example
@@ -221,7 +233,7 @@ async def read_variants_from_export_file(file_url, last_updated_at):
     s3_handler = S3Handler(
         bucket_name=os.environ["S3_BUCKET_NAME"],
         key_name='helpers/exports/{last_updated_at}/inventory_levels.json'.
-            format(last_updated_at=last_updated_at)
+        format(last_updated_at=last_updated_at)
     )
     variants = None
 
@@ -254,20 +266,12 @@ async def _process_variants_to_queue(variants):
 
     sqs_handler = SqsHandler(queue_name=os.environ["SQS_NAME"])
 
-    shopify_config = json.loads(PARAM_STORE.get_param('shopify'))
-    global SHOPIFY_CONECTOR
-    SHOPIFY_CONECTOR = ShopifyConnector(
-        shopify_config['username'],
-        shopify_config['password'],
-        shopify_config['shop']
-    )
-
     async with aiohttp.ClientSession() as client:
         session = RateLimiter(client)
-        await _map_locations_if_not(session)
+        await initialize_locations_maps(session)
 
     LOGGER.info('Processing variants from the json')
-
+    LOGGER.debug(variants)
     shopify_inventory_item_list = {}
     counter = 0
 
@@ -276,7 +280,7 @@ async def _process_variants_to_queue(variants):
         shopify_inventory_id = None
         current_atp = None
         current_location_id = None
-        current_list_item = {}
+        fulfillment_node_id = variant.get('fulfillment_node_id', None)
 
         if 'external_identifiers' in variant:
             if len(variant['external_identifiers']) > 0:
@@ -286,20 +290,27 @@ async def _process_variants_to_queue(variants):
                 if 'shopify_inventory_item_id' in identifiers:
                     shopify_inventory_id = identifiers['shopify_inventory_item_id']
 
-        if variant.get('fulfillment_node_id') in LOCATIONS_MAP:
-            current_location_id = LOCATIONS_MAP[variant['fulfillment_node_id']]
+        if fulfillment_node_id in LOCATIONS_MAP:
+            current_location_id = LOCATIONS_MAP[fulfillment_node_id]
 
-        if shopify_inventory_id is None or current_location_id is None:
+        if shopify_inventory_id is None:
+            product_id = variant.get('product_id')
+            LOGGER.debug(f'Shopify inventory ID not present for "{product_id}", skipping variant')
+            continue
+
+        if current_location_id is None:
+            product_id = variant.get('product_id')
+            LOGGER.debug(f'Fulfillment node ID "{fulfillment_node_id}" not mapped to location for "{product_id}", skipping variant')
             continue
 
         if len(shopify_inventory_item_list) == 100:
             await _drop_to_queue(sqs_handler, shopify_inventory_item_list)
             counter = counter + 1
             LOGGER.info(f'Pushed message number {counter} to queue {sqs_handler.queue_name}')
-            shopify_inventory_item_list.clear()
+            shopify_inventory_item_list = {}
 
         if shopify_inventory_id in shopify_inventory_item_list:
-            current_atp = atp + shopify_inventory_item_list[shopify_inventory_id]
+            current_atp = atp + shopify_inventory_item_list[shopify_inventory_id]['atp']
         else:
             current_atp = atp
 
@@ -311,7 +322,7 @@ async def _process_variants_to_queue(variants):
     if len(shopify_inventory_item_list) > 0:
         await _drop_to_queue(sqs_handler, shopify_inventory_item_list)
         LOGGER.info(f'Pushed last message to queue {sqs_handler.queue_name}')
-        shopify_inventory_item_list.clear()
+        shopify_inventory_item_list = {}
 
 
 async def _drop_to_queue(sqs_handler, message_availability):

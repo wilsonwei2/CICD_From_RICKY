@@ -39,11 +39,11 @@ functions:
       - schedule:
           rate: rate(15 minutes)
           enable: true
-          name: create-export-job
+          name: inventory-create-export-job
       - schedule:
           rate: rate(12 hours)
           enable: true
-          name: full_export_trigger
+          name: inventory-full_export-trigger
     environment:
       STAGE: ${self:provider.stage}
       TENANT: ${self:provider.tenant}

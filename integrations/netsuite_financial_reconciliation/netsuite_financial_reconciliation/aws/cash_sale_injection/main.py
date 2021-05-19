@@ -218,9 +218,10 @@ def create_payment_items(order):
         elif payment_method == 'gift_card':
             currency = transaction['currency'].lower()
             payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get('gift_card', {}).get(currency, '')
-        elif payment_method == 'cash':
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get('cash', '')
         else:
+            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(payment_method, '')
+
+        if not payment_item_id:
             raise ValueError(f'Payment method {payment_method} is not mapped.')
 
         capture_amount = float(transaction['amount'])
@@ -229,9 +230,9 @@ def create_payment_items(order):
                 'item': RecordRef(internalId=payment_item_id),
                 'location': RecordRef(internalId=location_id),
                 'amount': abs(capture_amount),
-                'taxCode': RecordRef(internalId=util.get_not_taxable_id(subsidiary_id=subsidiary_id)) # un -- commented - ML-125
+                'taxCode': RecordRef(internalId=util.get_not_taxable_id(subsidiary_id=subsidiary_id))
             })
-        LOGGER.info("payment item id from paramstore for the transaction ")
+        LOGGER.info('payment item id from paramstore for the transaction')
         LOGGER.info(payment_item_id)
     return payment_items
 
@@ -328,8 +329,7 @@ def create_cash_sale_items(order):
                 }
             )
 
-    # TODO Enable again once we know if payment items can be used pylint: disable=fixme
-    # cash_sale_items += create_payment_items(order)
+    cash_sale_items += create_payment_items(order)
 
     return cash_sale_items
 

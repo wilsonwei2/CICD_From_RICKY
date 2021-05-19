@@ -155,6 +155,64 @@ def get_customer_internal_id(order_event, order_data, consumer):
 
     return result['internalId']
 
+
+def get_payment_transactions(order_data):
+    return order_data['paymentAccount']['transactions']['nodes']
+
+
+def get_payment_items(order_event, order_data, location):
+    LOGGER.info('Mapping payment items')
+    subsidiary_id = get_subsidiary_id_for_web()
+
+    payment_items = []
+    if order_data['paymentAccount'] is None:
+        return payment_items
+
+    is_exchange_order = order_data['isExchange']
+    transactions = get_payment_transactions(order_data)
+
+    for transaction in transactions:
+        method = transaction['instrument']['paymentMethod'].lower()
+        provider = transaction['instrument']['paymentProvider'].lower()
+
+        # Exchange is not supported
+        if is_exchange_order:
+            raise ValueError('Order is flagged as exchange but web exchanges are not supported.')
+
+        if method == 'credit_card':
+            payment_item_id = params.get_newstore_to_netsuite_payment_items_config()[method].get(provider, '')
+        elif method == 'gift_card':
+            currency = transaction['currency'].lower()
+            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, {}).get(currency, '')
+        else:
+            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, '')
+
+        # In case the payment item isn't mapped and the order is WEB utilize Shopify payment item as default
+        if not payment_item_id and order_event['channel_type'] == 'web':
+            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get('shopify', '')
+
+        if not payment_item_id:
+            if method == 'credit_card':
+                msg = f'Payment Item for payment method {method} and provider {provider} not mapped.'
+            else:
+                msg = f'Payment Item for payment method {method} not mapped.'
+            raise ValueError(msg)
+
+        capture_amount = float(transaction['amount'])
+        if capture_amount != 0:
+            payment_item = {
+                'item': params.RecordRef(internalId=payment_item_id),
+                'amount': abs(capture_amount),
+                'taxCode': params.RecordRef(internalId=params.get_not_taxable_id(subsidiary_id=subsidiary_id)),
+                'location': location
+            }
+
+            payment_items.append(payment_item)
+            LOGGER.info(f'Payment Item for payment method {method} added to items.')
+
+    return payment_items
+
+
 # Creates the Netsuite Sales order out of a NewStore order
 def get_sales_order(order_event, order_data):  # pylint: disable=W0613
     service_level = order_event['items'][0].get('shipping_service_level', None)
@@ -226,22 +284,44 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
     # If there is a shipping address, add it to the order
     shipping_address = get_order_shipping_address(order_data)
     if shipping_address:
-        customer_name = ' '.join(filter(None, [order_event['shipping_address']['first_name'],
-                                               order_event['shipping_address']['last_name']])) or '-'
+        customer_name = ' '.join(filter(None, [shipping_address['firstName'],
+                                               shipping_address['lastName']])) or '-'
+
+        LOGGER.info(f'Get Shipping Address: {shipping_address}')
 
         address = {
-            'country': Utils.get_countries_map().get(order_event['shipping_address']['country'], '_unitedStates'),
-            'state': order_event['shipping_address']['state'],
-            'zip': order_event['shipping_address']['zip_code'],
-            'city': order_event['shipping_address']['city'],
-            'addr1': order_event['shipping_address']['address_line_1'],
-            'addr2': order_event['shipping_address']['address_line_2'],
+            'country': Utils.get_countries_map().get(shipping_address['country'], '_unitedStates'),
+            'state': shipping_address['state'],
+            'zip': shipping_address['zipCode'],
+            'city': shipping_address['city'],
+            'addr1': shipping_address['addressLine1'],
+            'addr2': shipping_address['addressLine2'],
             'addressee': customer_name
         }
 
         sales_order['shippingAddress'] = Address(**address)
 
-        LOGGER.info(f'Added Address for retail sales order as -- {address}')
+        LOGGER.info(f'Added Shipping Address for sales order as -- {address}')
+
+    # If there is a billing address, add it to the order
+    billing_address = get_order_billing_address(order_data)
+    if billing_address:
+        customer_name = ' '.join(filter(None, [billing_address['firstName'],
+                                               billing_address['lastName']])) or '-'
+
+        address = {
+            'country': Utils.get_countries_map().get(billing_address['country'], '_unitedStates'),
+            'state': billing_address['state'],
+            'zip': billing_address['zipCode'],
+            'city': billing_address['city'],
+            'addr1': billing_address['addressLine1'],
+            'addr2': billing_address['addressLine2'],
+            'addressee': customer_name
+        }
+
+        sales_order['billingAddress'] = Address(**address)
+
+        LOGGER.info(f'Added Billing Address for sales order as -- {address}')
 
     return sales_order
 
@@ -410,11 +490,12 @@ def inject_sales_order(order_event, order_data, consumer):
 
     netsuite_sales_order_items = []
     sales_order_items = get_sales_order_items(order_event)
+    sales_order_items += get_payment_items(order_event, order_data, netsuite_sales_order['location'])
     for item in sales_order_items:
         netsuite_sales_order_items.append(SalesOrderItem(**item))
     netsuite_sales_order['itemList'] = SalesOrderItemList(netsuite_sales_order_items)
 
-    result, sale = create_salesorder(netsuite_sales_order)
+    result, sale, _ = create_salesorder(netsuite_sales_order)
     if not result:
         raise Exception(f'Error on creating SalesOrder. SalesOrder not created. {result}')
 
