@@ -44,30 +44,6 @@
                       "CA"
                   ],
                   "zip_codes": [
-                      "*"
-                  ]
-              },
-              "fulfilled_by": {
-                  "Express": [
-                      {
-                          "fulfillment_node_id": "MTLDC1",
-                          "provider_rate": "EXPRESS"
-                      }
-                  ],
-                  "Standard": [
-                      {
-                          "fulfillment_node_id": "MTLDC1",
-                          "provider_rate": "STANDARD"
-                      }
-                  ]
-              }
-          },
-          {
-              "destination_region": {
-                  "countries": [
-                      "CA"
-                  ],
-                  "zip_codes": [
                       "A*",
                       "B*",
                       "C*",
@@ -236,6 +212,30 @@
                       }
                   ]
               }
+          },
+          {
+            "destination_region": {
+                "countries": [
+                    "CA"
+                ],
+                "zip_codes": [
+                    "*"
+                ]
+            },
+            "fulfilled_by": {
+                "Express": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "EXPRESS"
+                    }
+                ],
+                "Standard": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "STANDARD"
+                    }
+                ]
+            }
           },
           {
               "destination_region": {
