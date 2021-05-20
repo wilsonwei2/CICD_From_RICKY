@@ -1,0 +1,108 @@
+{
+  "global": {
+      "display_name": "In-store pickup",
+      "grace_period": 0,
+      "default_search_radius": 10
+  },
+  "stores": {
+      "DIXST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "DONST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "FOYST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "MTLST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "RIDST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "STANST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "STWST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "TECST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "TOST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "VANST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      },
+      "VIAST": {
+          "delivery_time": "Available now",
+          "delivery_time_if_not_available": "Pick up in 5-6 days",
+          "cost": {
+              "price": 0,
+              "tax_code": "FR",
+              "currency_code": "CAD"
+          }
+      }
+  }
+}
