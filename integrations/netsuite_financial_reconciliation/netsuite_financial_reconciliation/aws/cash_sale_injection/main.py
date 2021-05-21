@@ -196,35 +196,65 @@ def get_capture_transactions(order):  # extracts transactions from order data (G
     return transactions
 
 
+def get_capture_transactions_rest(payments_info):  # extracts transactions from order data (REST API response)
+    transactions = []
+    for instrument in payments_info['instruments']:
+        for original_transaction in instrument['original_transactions']:
+            if original_transaction['reason'] == 'capture':
+                transactions.append(original_transaction)
+    return transactions
+
+
 def create_payment_items(order):
     LOGGER.info('Creating Payment for order')
     LOGGER.info(order)
     payment_items = []
-    if order['paymentAccount'] is None:
+    payments_info = None
+
+    if order['paymentAccount'] is None and not order['isExchange']:
         return payment_items
+
+    if order['isExchange']:
+        # Get Payments info from the API payments endpoint if order is exchange
+        payments_info = NEWSTORE_HANDLER.get_payments(order['id'])
+        LOGGER.info(f'Payments Info: {payments_info}')
+        assert payments_info, 'Payment info not available yet, fallback and retry this order later.'
 
     store_id = order['channel']  # when channel_type==store then channel represents the store_id
     subsidiary_id = util.get_subsidiary_id(store_id)
     location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
 
+    if payments_info:
+        transactions = get_capture_transactions_rest(payments_info)
+    else:
+        transactions = get_capture_transactions(order)
+
     transactions = get_capture_transactions(order)
     LOGGER.info('Transactions from capture order')
     LOGGER.info(json.dumps(transactions))
     for transaction in transactions:
-        payment_method = transaction['instrument']['paymentMethod'].lower()
-        if payment_method == 'credit_card':
-            provider = transaction['instrument']['paymentProvider'].lower()
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS['credit_card'].get(provider, '')
-        elif payment_method == 'gift_card':
-            currency = transaction['currency'].lower()
+        method = transaction.get('instrument', {}).get('paymentMethod', transaction.get('payment_method', '')).lower()
+        provider = transaction.get('instrument', {}).get('paymentProvider', transaction.get('payment_provider', '')).lower()
+        currency = transaction['currency'].lower()
+        if method == 'credit_card':
+            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[method].get(provider, {}).get(currency, '')
+            if not payment_item_id:
+                payment_item_id = payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[method].get(provider, '')
+        elif method == 'gift_card':
             payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get('gift_card', {}).get(currency, '')
         else:
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(payment_method, '')
+            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(method, {}).get(currency, '')
+            if not payment_item_id:
+                payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(method, '')
 
         if not payment_item_id:
-            raise ValueError(f'Payment method {payment_method} is not mapped.')
+            if method == 'credit_card':
+                msg = f'Payment Item for payment method {method} and provider {provider} not mapped.'
+            else:
+                msg = f'Payment Item for payment method {method} not mapped.'
+            raise ValueError(msg)
 
-        capture_amount = float(transaction['amount'])
+        capture_amount = float(transaction.get('amount', transaction.get('capture_amount', '0.0')))
         if capture_amount != 0:
             payment_items.append({
                 'item': RecordRef(internalId=payment_item_id),

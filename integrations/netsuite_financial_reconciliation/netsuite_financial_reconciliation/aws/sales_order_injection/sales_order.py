@@ -174,22 +174,26 @@ def get_payment_items(order_event, order_data, location):
     for transaction in transactions:
         method = transaction['instrument']['paymentMethod'].lower()
         provider = transaction['instrument']['paymentProvider'].lower()
+        currency = transaction['currency'].lower()
 
         # Exchange is not supported
         if is_exchange_order:
             raise ValueError('Order is flagged as exchange but web exchanges are not supported.')
 
         if method == 'credit_card':
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config()[method].get(provider, '')
+            payment_item_id = params.get_newstore_to_netsuite_payment_items_config()[method].get(provider, {}).get(currency, '')
+            if not payment_item_id:
+                payment_item_id = payment_item_id = params.get_newstore_to_netsuite_payment_items_config()[method].get(provider, '')
         elif method == 'gift_card':
-            currency = transaction['currency'].lower()
             payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, {}).get(currency, '')
         else:
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, '')
+            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, {}).get(currency, '')
+            if not payment_item_id:
+                payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, '')
 
         # In case the payment item isn't mapped and the order is WEB utilize Shopify payment item as default
         if not payment_item_id and order_event['channel_type'] == 'web':
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get('shopify', '')
+            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get('shopify', {}).get(currency, '')
 
         if not payment_item_id:
             if method == 'credit_card':
@@ -250,6 +254,11 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
     else:
         raise Exception(f'Location {store_id} cannot be identified.')
 
+    if order_event['shipping_total'] > 0:
+        ship_tax = round(order_event['shipping_tax'] * 100 / order_event['shipping_total'], 4)
+    else:
+        ship_tax = 0.0
+
 
     sales_order = {
         'externalId': order_event['external_id'],
@@ -266,20 +275,16 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
             StringCustomFieldRef(
                 scriptId='custbodyaccumula_ecomid',
                 value=order_event['external_id']
+            ),
+            StringCustomFieldRef(
+                scriptId='custbody_afaps_ship_taxrate_override',
+                value=ship_tax
             )
         ])
     }
 
     if partner_id > -1:
         sales_order['partner'] = params.RecordRef(internalId=partner_id)
-
-    if not order_event['shipping_tax'] > 0:
-        sales_order['customFieldList']['customField'].append(
-            StringCustomFieldRef(
-                scriptId='custbody_afaps_ship_taxrate_override',
-                value=0.0
-            )
-        )
 
     # If there is a shipping address, add it to the order
     shipping_address = get_order_shipping_address(order_data)
