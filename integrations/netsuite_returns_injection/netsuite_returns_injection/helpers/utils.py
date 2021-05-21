@@ -234,3 +234,9 @@ class Utils():
         if isinstance(obj, (datetime, date)):
             return obj.isoformat()
         raise TypeError("Type %s not serializable" % type(obj))
+
+    @staticmethod
+    def require_shipping(item):
+        requires_shipping = Utils.get_extended_attribute(item.get('extended_attributes'), 'requires_shipping')
+        # If it's requires_shipping is None assume that it needs shipping
+        return requires_shipping is None or requires_shipping.lower() == 'true'

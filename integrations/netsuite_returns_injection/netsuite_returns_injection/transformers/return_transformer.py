@@ -224,7 +224,10 @@ def get_discount_location(ns_return, location_id):
 
 def get_netsuite_item_id(item, item_custom_field_list, customer_order):
     if Utils.is_product_gift_card(item['id']):
-        netsuite_item_id = NETSUITE_CONFIG['netsuite_gift_card_item_id']
+        if Utils.require_shipping(item):
+            netsuite_item_id = NETSUITE_CONFIG['netsuite_p_gift_card_item_id']
+        else:
+            netsuite_item_id = NETSUITE_CONFIG['netsuite_e_gift_card_item_id']
         gc_number = get_gift_card_number(item, customer_order)[-4:]
         if gc_number:
             item_custom_field_list.append(StringCustomFieldRef(scriptId='custcol_nws_gcnumber', value=gc_number))

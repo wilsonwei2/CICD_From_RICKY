@@ -318,7 +318,10 @@ def create_cash_sale_items(order):
 
         netsuite_item_id = item['productId']
         if util.is_product_gift_card(netsuite_item_id):
-            netsuite_item_id = NETSUITE_CONFIG['netsuite_gift_card_item_id']
+            if util.require_shipping(item):
+                netsuite_item_id = NETSUITE_CONFIG['netsuite_p_gift_card_item_id']
+            else:
+                netsuite_item_id = NETSUITE_CONFIG['netsuite_e_gift_card_item_id']
         else:
             product = get_product_by_name(netsuite_item_id)
             netsuite_item_id = product['internalId']

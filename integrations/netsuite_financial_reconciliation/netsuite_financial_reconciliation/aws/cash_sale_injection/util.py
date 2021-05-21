@@ -46,24 +46,27 @@ def get_param_store():
 
 def get_netsuite_config():
     global NETSUITE_CONFIG  # pylint: disable=W0603
-    if not NETSUITE_CONFIG:
-        NETSUITE_CONFIG = json.loads(get_param_store().get_param('netsuite'))
+    # TODO - enable the next line again once the configuration is stable pylint: disable=fixme
+    # if not NETSUITE_CONFIG:
+    NETSUITE_CONFIG = json.loads(get_param_store().get_param('netsuite'))
     return NETSUITE_CONFIG
 
 
 def get_newstore_to_netsuite_locations_config():
     global NEWSTORE_TO_NETSUITE_LOCATIONS_CONFIG  # pylint: disable=W0603
-    if not NEWSTORE_TO_NETSUITE_LOCATIONS_CONFIG:
-        NEWSTORE_TO_NETSUITE_LOCATIONS_CONFIG = json.loads(
-            get_param_store().get_param('netsuite/newstore_to_netsuite_locations'))
+    # TODO - enable the next line again once the configuration is stable pylint: disable=fixme
+    # if not NEWSTORE_TO_NETSUITE_LOCATIONS_CONFIG:
+    NEWSTORE_TO_NETSUITE_LOCATIONS_CONFIG = json.loads(
+        get_param_store().get_param('netsuite/newstore_to_netsuite_locations'))
     return NEWSTORE_TO_NETSUITE_LOCATIONS_CONFIG
 
 
 def get_newstore_to_netsuite_payment_items_config():
     global NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS_CONFIG  # pylint: disable=W0603
-    if not NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS_CONFIG:
-        NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS_CONFIG = json.loads(
-            get_param_store().get_param('netsuite/newstore_to_netsuite_payment_items'))
+    # TODO - enable the next line again once the configuration is stable pylint: disable=fixme
+    # if not NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS_CONFIG:
+    NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS_CONFIG = json.loads(
+        get_param_store().get_param('netsuite/newstore_to_netsuite_payment_items'))
     return NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS_CONFIG
 
 def get_newstore_to_netsuite_payment_account_config():
@@ -98,9 +101,10 @@ def get_newstore_to_netsuite_channel_config():
 
 def get_newstore_to_netsuite_shipping_methods_config():
     global NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG  # pylint: disable=W0603
-    if not NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG:
-        NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG = json.loads(
-            get_param_store().get_param('netsuite/newstore_to_netsuite_shipping_methods'))
+    # TODO - enable the next line again once the configuration is stable pylint: disable=fixme
+    # if not NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG:
+    NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG = json.loads(
+        get_param_store().get_param('netsuite/newstore_to_netsuite_shipping_methods'))
     return NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG
 
 
@@ -157,13 +161,7 @@ def get_currency_list():
             currency=RecordRef(internalId=int(get_netsuite_config()['currency_usd_internal_id']))
         ),
         CustomerCurrency(
-            currency=RecordRef(internalId=int(get_netsuite_config()['currency_gbp_internal_id']))
-        ),
-        CustomerCurrency(
             currency=RecordRef(internalId=int(get_netsuite_config()['currency_cad_internal_id']))
-        ),
-        CustomerCurrency(
-            currency=RecordRef(internalId=int(get_netsuite_config()['currency_eur_internal_id']))
         )
     ])
 

@@ -21,7 +21,7 @@ from netsuite.service import (
 from netsuite.utils import search_records_using
 
 from . import params
-from .util import get_formatted_phone
+from .util import get_formatted_phone, require_shipping
 from netsuite_financial_reconciliation.helpers.utils import Utils
 
 LOGGER = logging.getLogger()
@@ -408,7 +408,10 @@ def get_sales_order_items(order_event):
 
         netsuite_item_id = item['product_id']
         if netsuite_item_id in params.get_giftcard_product_ids_config():
-            netsuite_item_id = params.get_netsuite_config()['netsuite_gift_card_item_id']
+            if require_shipping(item):
+                netsuite_item_id = params.get_netsuite_config()['netsuite_p_gift_card_item_id']
+            else:
+                netsuite_item_id = params.get_netsuite_config()['netsuite_e_gift_card_item_id']
         else:
             product = get_product_by_name(netsuite_item_id)
             netsuite_item_id = product['internalId']

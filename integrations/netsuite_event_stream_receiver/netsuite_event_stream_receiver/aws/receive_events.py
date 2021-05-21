@@ -65,6 +65,8 @@ async def process_event(event): #pylint: disable=too-many-branches
             LOGGER.info(f'Ignore Historical order {external_id}')
             return True
 
+        LOGGER.info(f'Publish message to queue: {message}')
+
         # A channel_type of 'web' or a shipping service level denotes that this is
         # not a cash sale, so should be handled as a sales order
         is_a_web_order = payload['channel_type'] == 'web'

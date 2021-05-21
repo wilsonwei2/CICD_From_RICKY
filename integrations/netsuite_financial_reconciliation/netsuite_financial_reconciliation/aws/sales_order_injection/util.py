@@ -22,3 +22,9 @@ def get_extended_attribute(extended_attributes, key):
         return None
     result = next((item['value'] for item in extended_attributes if item['name'] == key), None)
     return result
+
+
+def require_shipping(item):
+    requires_shipping = get_extended_attribute(item.get('extended_attributes'), 'requires_shipping')
+    # If it's requires_shipping is None assume that it needs shipping
+    return requires_shipping is None or requires_shipping.lower() == 'true'
