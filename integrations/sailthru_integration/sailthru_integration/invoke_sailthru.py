@@ -16,9 +16,11 @@ def handler(event, context): # pylint: disable=unused-argument
     # Get the env variables data
     credentials = get_param(os.environ.get('SAILTHRU_CREDS_PARAM', 'sailthru_credentials'))
     # many countries will use EU credentials, so use EU as default when specific country isn't mapped in param
-    creds_by_country = credentials[json_data['template'].split(' ')[0]]
-    api_key = creds_by_country['id']
-    api_secret = creds_by_country['secret']
+    # creds_by_country = credentials[json_data['template'].split(' ')[0]]
+    # api_key = creds_by_country['id']
+    # api_secret = creds_by_country['secret']
+    api_key = credentials['id']
+    api_secret = credentials['secret']
 
     # Sailthru client & send api calls
     sailthru_client = SailthruClient(api_key, api_secret)
