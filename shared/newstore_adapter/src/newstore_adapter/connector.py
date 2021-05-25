@@ -463,8 +463,27 @@ class NewStoreConnector(object):
         response = self.newstore_adapter.post_request(url, payload)
         return response.json()
 
+    def update_integration(self, name, callback):
+        url = 'https://%s/api/v1/org/integrations/eventstream/%s' % (self.host, name)
+        logger.info(
+            'Updating integration %s with newstore %s', name, url)
+        payload = {
+            'callback_parameters': {'callback_url': callback},
+        }
+
+        logger.info('Webhook info:\n%s', json.dumps(payload))
+        response = self.newstore_adapter.patch_request(url, payload)
+        return response.json()
+
     def start_integration(self, name):
         url = 'https://%s/api/v1/org/integrations/eventstream/%s/_start' % (self.host, name)
+        logger.info(
+            'Starting integration %s with newstore', name)
+        response = self.newstore_adapter.post_request(url, {})
+        return response.json()
+
+    def stop_integration(self, name):
+        url = 'https://%s/api/v1/org/integrations/eventstream/%s/_stop' % (self.host, name)
         logger.info(
             'Starting integration %s with newstore', name)
         response = self.newstore_adapter.post_request(url, {})

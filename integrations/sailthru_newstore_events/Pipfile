@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+lambda-utils = {path = "./../../shared/lambda_utils"}
+param-store = {path = "./../../shared/3.6/param_store"}
+newstore-common = {path = "./../../shared/common"}
+newstore-adapter = {path = "./../../shared/newstore_adapter"}
+boto3 = "*"
+
+[requires]
+python_version = "3.7"
