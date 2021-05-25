@@ -20,9 +20,9 @@
         "amount": "Prix"
       },
       "item": {
-        "size": "Size",
+        "size": "Grandeur",
         "items_purchased": "Items Achetés",
-        "items_returned": "Items Returned"
+        "items_returned": "Items retournés"
       }
     },
     "subjects": {
@@ -32,15 +32,15 @@
       "shipping_discount_reason": "Raison de rabais de livraison",
       "taxes": "Taxes",
       "total": "Total",
-      "return_fee": "Return fee",
-      "total_refund": "Total to be refunded",
-      "method": "Method",
+      "return_fee": "Frais de retour",
+      "total_refund": "Total à rembourser",
+      "method": "Méthode",
       "amount": "Prix"
     },
     "payment": {
       "gift_card": "Carte cadeau",
       "paypal": "PayPal",
-      "cash": "Cash"
+      "cash": "Comptant"
     },
     "return_sentence": "Nous accepterons volontiers les retours dans les 30 jours suivant l'achat. La marchandise éligible doit être dans son état d'origine, avec toutes les étiquettes attachées. La marchandise qui a été portée, modifiée ou endommagée ne peut être retournée.",
     "footer": {
