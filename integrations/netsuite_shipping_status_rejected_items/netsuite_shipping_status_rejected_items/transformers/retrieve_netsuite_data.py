@@ -35,7 +35,7 @@ def process_reject(mapped_data, ns_handler):
         LOGGER.info(f'Reject order {order_uuid}, product {product_id}, fulfillment_uuid {fulfillment_uuid}')
 
         response = False
-        already_shipped = False
+        already_shipped_or_rejected = False
 
         try:
             response = ns_handler.send_item_rejection(
@@ -43,11 +43,11 @@ def process_reject(mapped_data, ns_handler):
                 ff_id=fulfillment_uuid,
                 items_json=[product_id])
         except Exception as ex:  # pylint: disable=broad-except
-            if 'already_shipped' in str(ex):
-                LOGGER.info('Fulfillment request has already been shipped, mark as rejected on RDS and move on.')
-                already_shipped = True
+            if 'already_shipped' in str(ex) or 'already_rejected' in str(ex):
+                LOGGER.info('Fulfillment request has already been shipped or rejected, mark as rejected on RDS and move on.')
+                already_shipped_or_rejected = True
 
-        if not response and not already_shipped:
+        if not response and not already_shipped_or_rejected:
             # We remove this item of the mapped_data to not update NetSuite since it didn't work
             mapped_data.remove(item)
 
@@ -103,18 +103,20 @@ def map_netsuite_data(data):
     for item in data:
         try:
             external_id = item.basic.externalId[0].searchValue.externalId
-            product_id = item.basic.item[0].searchValue.internalId
+            product_internal_id = item.basic.item[0].searchValue.internalId
+            product_id = item.itemJoin.externalId[0].searchValue.externalId
             sales_order_internal_id = item.basic.internalId[0].searchValue.internalId
             sales_order_line = item.basic.line[0].searchValue
             transformed_item = {
                 "order_id": external_id,
                 "product_id": product_id,
+                "product_internal_id": product_internal_id,
                 "sales_order_internal_id": sales_order_internal_id,
                 "sales_order_line": sales_order_line
             }
             transformed_item_array.append(transformed_item)
         except IndexError:
-            LOGGER.debug(f'Item in search does not appear to be NewStore related: {item}')
+            LOGGER.info(f'Item in search does not appear to be NewStore related: {item}')
     return transformed_item_array
 
 # Marks the items as synchronized in NewStore at Netsuite, to remove them from the Saved Search
@@ -125,7 +127,7 @@ def mark_rejected_orders_imported(mapped_data):
     """
     for result in mapped_data:
         internal_id = result['sales_order_internal_id']
-        product_id = result['product_id']
+        product_id = result['product_internal_id']
         line = result['sales_order_line']
         mark_rejected_order_imported(internal_id, product_id, line)
 
@@ -177,7 +179,9 @@ def get_fulfillment_id(order_id, product_id, ns_handler):
     distribution_centres = Utils.get_instance().get_distribution_centres()
 
     order_data = get_newstore_order_data(order_id, ns_handler)
-    if order_data['fulfillmentRequests'] is None:
+
+    LOGGER.info(f'NewStore Order Data: {order_data}')
+    if order_data is None or order_data['fulfillmentRequests'] is None:
         return None
 
     for fulfillment_request in order_data['fulfillmentRequests']['nodes']:
@@ -190,18 +194,25 @@ def get_fulfillment_id(order_id, product_id, ns_handler):
 
         for item in fulfillment_request['items']['nodes']:
             if item['productId'] == product_id:
-                return fulfillment_request.id
+                return fulfillment_request['id']
 
     return None
 
 
 # Queries the necessary NewStore order data we need for the logic using GraphQL
 def get_newstore_order_data(order_id, ns_handler):
+    order_data_rest = ns_handler.get_external_order(order_id, id_type='external_id')
+    if order_data_rest is None:
+        LOGGER.error(f'Order with ID {order_id} not found in NewStore.')
+        return None
+
+    order_uuid = order_data_rest['order_uuid']
+
     graphql_query = """query MyQuery($id: String!, $tenant: String!) {
   order(id: $id, tenant: $tenant) {
     id
     externalId
-    fulfillmentRequests(first: 50) {
+    fulfillmentRequests(first: 25) {
       nodes {
         items(first: 100) {
           nodes {
@@ -221,7 +232,7 @@ def get_newstore_order_data(order_id, ns_handler):
     data = {
         "query": graphql_query,
         "variables": {
-            "id": order_id,
+            "id": order_uuid,
             "tenant": os.environ.get('TENANT')
         }
     }
