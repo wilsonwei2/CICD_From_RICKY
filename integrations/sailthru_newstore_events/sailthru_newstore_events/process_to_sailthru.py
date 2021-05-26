@@ -107,13 +107,18 @@ def _sailthru_mapping_sc(data, order):
                 'TRACKINGURL': next((
                     package['tracking_url'] for package in shipment.get('details', {}).get('shipping_packages', [])
                     if package.get('tracking_url')), ''),
+                'SHIPPINGFIRSTNAME': order["shipping_address"].get("first_name", ""),
+                'SHIPPINGLASTNAME': order["shipping_address"].get("last_name", ""),
                 'SHIPPINGNAME':
                     f'{order["shipping_address"].get("first_name", "")} {order["shipping_address"].get("last_name", "")}',
-                'SHIPPINGADDRESS2': order['shipping_address'].get('address_line_1', ''),
+                'SHIPPINGADDRESS1': order['shipping_address'].get('address_line_1', ''),
+                'SHIPPINGADDRESS2': order['shipping_address'].get('address_line_2', ''),
                 'SHIPPINGCITY': order['shipping_address'].get('city', ''),
                 'SHIPPINGSTATE': order['shipping_address'].get('state', ''),
                 'SHIPPINGPOSTAL': order['shipping_address'].get('zip_code', ''),
                 'SHIPPINGCOUNTRY': order['shipping_address'].get('country_code', ''),
+                'BILLINGFIRSTNAME': order["billing_address"].get("first_name", ""),
+                'BILLINGLASTNAME': order["billing_address"].get("last_name", ""),
                 'BILLINGNAME':
                     f'{order["billing_address"].get("first_name", "")} {order["billing_address"].get("last_name", "")}',
                 'BILLINGADDRESS1': order['billing_address'].get('address_line_1', ''),
