@@ -4,6 +4,7 @@ import zipfile
 import json
 import boto3
 from datetime import datetime
+import newstore_adapter
 
 # Install moto if it doesn't exist
 try:
@@ -80,6 +81,10 @@ def test_handler(monkeypatch):
         Value=json.dumps({'MTLDC1': 'MTLDC1'}),
         Type="String"
     )
+
+    monkeypatch.setattr(newstore_adapter.connector.NewStoreConnector, "get_stores", lambda *_: {
+        "stores": {}
+    })
 
     from netsuite_availability_import.aws.lambda_csv_to_import import handler
     result = handler(event, {})
