@@ -93,7 +93,7 @@ def transform_variant(variant, locale=None):
         'shipping_dimension_unit': 'cm',
         'images': transform_images(master),
         'external_identifiers': transform_external_identifiers(variant),
-        'extended_attributes': transform_extended_attributes(variant, master),
+        'extended_attributes': transform_extended_attributes(variant, master, tags),
         'shipping_dimension_length': 0.0,
         'shipping_dimension_width': 0.0,
         'shipping_dimension_height': 0.0,
@@ -190,7 +190,7 @@ def transform_external_identifiers(variant):
     return external_identifiers
 
 
-def transform_extended_attributes(variant, master):
+def transform_extended_attributes(variant, master, tags):
     extended_attributes = []
 
     master_created_at = master.get('createdAt')
@@ -204,6 +204,7 @@ def transform_extended_attributes(variant, master):
     variant_inventory_policy = variant.get('inventoryPolicy')
     variant_fulfillment_service = maybe(lambda d: d.get('handle'))(variant.get('fulfillmentService'))
     variant_inventory_item = maybe(lambda d: d.get('id'))(variant.get('inventoryItem'))
+    final_sale = is_final_sale(tags)
 
     if master_created_at:
         extended_attributes.append({
@@ -271,7 +272,21 @@ def transform_extended_attributes(variant, master):
             'value': str(variant_inventory_item.split('/')[-1])
         })
 
+    extended_attributes.append({
+        'name': 'finalsale',
+        'value': 'true' if final_sale else 'false'
+    })
+
     return extended_attributes
+
+
+def is_final_sale(tags):
+    final_sale = next(filter(lambda tag: 'custitem_fao_FinalSale' in tag, tags), None)
+
+    if final_sale is not None:
+        return final_sale.split(':')[1].strip().lower() == 'yes'
+
+    return False
 
 
 def variant_categories(tags):

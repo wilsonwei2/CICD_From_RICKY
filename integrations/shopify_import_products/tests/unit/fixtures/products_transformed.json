@@ -118,11 +118,16 @@
         {
           "name": "inventory_item_id",
           "value": "41604116971676"
+        },
+        {
+          "name": "finalsale",
+          "value": "true"
         }
       ],
       "keywords": [
         "attributes_hierarchy:Men-Lightweight Knits",
         "custitem_fao_body:T-Shirt",
+        "custitem_fao_FinalSale:Yes",
         "custitem_fao_body_length:Regular",
         "custitem_fao_brand:Frank and Oak",
         "custitem_fao_closure:No Closure",
@@ -266,11 +271,16 @@
         {
           "name": "inventory_item_id",
           "value": "41604117004444"
+        },
+        {
+          "name": "finalsale",
+          "value": "true"
         }
       ],
       "keywords": [
         "attributes_hierarchy:Men-Lightweight Knits",
         "custitem_fao_body:T-Shirt",
+        "custitem_fao_FinalSale:Yes",
         "custitem_fao_body_length:Regular",
         "custitem_fao_brand:Frank and Oak",
         "custitem_fao_closure:No Closure",
@@ -414,11 +424,16 @@
         {
           "name": "inventory_item_id",
           "value": "41604117037212"
+        },
+        {
+          "name": "finalsale",
+          "value": "true"
         }
       ],
       "keywords": [
         "attributes_hierarchy:Men-Lightweight Knits",
         "custitem_fao_body:T-Shirt",
+        "custitem_fao_FinalSale:Yes",
         "custitem_fao_body_length:Regular",
         "custitem_fao_brand:Frank and Oak",
         "custitem_fao_closure:No Closure",
@@ -562,11 +577,16 @@
         {
           "name": "inventory_item_id",
           "value": "41604117069980"
+        },
+        {
+          "name": "finalsale",
+          "value": "true"
         }
       ],
       "keywords": [
         "attributes_hierarchy:Men-Lightweight Knits",
         "custitem_fao_body:T-Shirt",
+        "custitem_fao_FinalSale:Yes",
         "custitem_fao_body_length:Regular",
         "custitem_fao_brand:Frank and Oak",
         "custitem_fao_closure:No Closure",
@@ -710,11 +730,16 @@
         {
           "name": "inventory_item_id",
           "value": "41604117102748"
+        },
+        {
+          "name": "finalsale",
+          "value": "true"
         }
       ],
       "keywords": [
         "attributes_hierarchy:Men-Lightweight Knits",
         "custitem_fao_body:T-Shirt",
+        "custitem_fao_FinalSale:Yes",
         "custitem_fao_body_length:Regular",
         "custitem_fao_brand:Frank and Oak",
         "custitem_fao_closure:No Closure",
