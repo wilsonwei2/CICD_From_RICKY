@@ -9,6 +9,7 @@ verify_ssl = true
 boto3 = "*"
 lambda-utils = {path = "./../../shared/lambda_utils"}
 param-store = {path = "./../../shared/3.6/param_store"}
+newstore-adapter = {path = "./../../shared/newstore_adapter"}
 requests = "*"
 
 [requires]

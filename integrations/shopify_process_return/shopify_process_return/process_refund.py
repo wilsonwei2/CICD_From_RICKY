@@ -23,9 +23,11 @@ def handler(event, context): # pylint: disable=unused-argument
     :param context: function context
     """
     LOGGER.info(f'Processing return Event: {event}')
+    newstore_handler = get_newstore_handler(context)
+
     for record in event.get('Records', []):
         try:
-            response_bool = _process_refund(record['body'])
+            response_bool = _process_refund(record['body'], newstore_handler)
             if response_bool:
                 LOGGER.info('Event processed, deleting message from queue...')
                 SQS_HANDLER.delete_message(record['receiptHandle'])
@@ -42,27 +44,26 @@ def handler(event, context): # pylint: disable=unused-argument
             continue
 
 
-def _process_refund(raw):
+def _process_refund(raw, newstore_handler):
     LOGGER.info(f'Processing Shopify refund event: {raw}')
     refund = json.loads(raw)
     # Transform Shopify format to NS format
     data_to_send = _transform_data_to_send(refund)
     if len(refund.get('refund_line_items', [])) == 0:
         LOGGER.info('Processing an order appeasment')
-        return _create_refund(data_to_send, refund)
+        return _create_refund(data_to_send, refund, newstore_handler)
     LOGGER.info('Processing an order return')
-    return _create_return(data_to_send, refund)
+    return _create_return(data_to_send, refund, newstore_handler)
 
 
-def _create_refund(refund_data, refund):
+def _create_refund(refund_data, refund, newstore_handler):
     LOGGER.info(f'Data for refund {json.dumps(refund_data, indent=4)}')
-    newstore_handler = get_newstore_handler()
     ns_external_order_id = get_order_name(refund['order_id'])
-    ns_order = newstore_handler.get_order_by_external_id(
-        f'USC-{ns_external_order_id.replace("#", "")}')
+    ns_order = newstore_handler.get_external_order(ns_external_order_id.replace("#", ""))
+
     if ns_order:
         ns_order_id = ns_order['order_uuid']
-        if not _refund_exists(newstore_handler.get_refunds(ns_order_id).get('refunds'), refund['id']) and \
+        if not _refund_exists(newstore_handler.get_refunds(ns_order_id), refund['id']) and \
             not _refund_started_in_newstore(refund.get('note') or ''):
             # Send return to NewStore
             request_refund = {
@@ -72,23 +73,20 @@ def _create_refund(refund_data, refund):
                 'note': refund_data.get('reason') or '',
                 'is_historical': True,
             }
-            response = newstore_handler.create_refund_for_order(
-                ns_order_id, request_refund)
+            response = newstore_handler.create_refund(ns_order_id, request_refund)
             LOGGER.info(f'Refund created: {json.dumps(response)}')
             return True
-        LOGGER.info(
-            f'Refund already exists on NewStore for order {ns_order_id}')
+        LOGGER.info(f'Refund already exists on NewStore for order {ns_order_id}')
         return True
     LOGGER.error('Couldn\'t get order from NewStore.')
     return False
 
 
-def _create_return(return_data, refund):
+def _create_return(return_data, refund, newstore_handler):
     LOGGER.info(f'Data for return {json.dumps(return_data, indent=4)}')
-    newstore_handler = get_newstore_handler()
     ns_external_order_id = get_order_name(refund['order_id'])
-    ns_order = newstore_handler.get_order_by_external_id(
-        f'USC-{ns_external_order_id.replace("#", "")}')
+    ns_order = newstore_handler.get_external_order(ns_external_order_id.replace("#", ""))
+
     if ns_order:
         ns_order_id = ns_order['order_uuid']
         if not _refund_exists(newstore_handler.get_refunds(ns_order_id).get('refunds'), refund['id']) and \
@@ -102,12 +100,10 @@ def _create_return(return_data, refund):
             }
             if return_data.get('amount'):
                 request_return['refund_amount'] = return_data['amount']
-            response = newstore_handler.create_return_for_order(
-                ns_order_id, request_return)
+            response = newstore_handler.create_return(ns_order_id, request_return)
             LOGGER.info(f'Return created: {json.dumps(response)}')
             return True
-        LOGGER.info(
-            f'Return already exists on NewStore for order {ns_order_id}')
+        LOGGER.info(f'Return already exists on NewStore for order {ns_order_id}')
         return True
 
     LOGGER.error('Couldn\'t get order from NewStore.')
@@ -163,15 +159,6 @@ def _map_refund_id_ext_attr(refund):
     ]
 
 
-def _get_product_id_map_from_sku(sku):
-    # product_mapped = PRODUCT_ID_MAPPER.get_map('sku', sku)
-    # if product_mapped:
-    #     return product_mapped['product_id']
-    # LOGGER.error(f'Could not map sku: {sku} to a product_id.')
-    # return None
-    return sku
-
-
 def _get_successful_refunds_value(transactions):
     return sum(
         (float(transaction['amount'])
@@ -210,7 +197,7 @@ def _transform_data_to_send(refund_webhook):
             for _ in range(item['quantity']):
                 product_ids.append(
                     {
-                        'product_id': _get_product_id_map_from_sku(item['line_item']['sku']),
+                        'product_id': item['line_item']['sku'],
                         'return_reason': reason
                     }
                 )

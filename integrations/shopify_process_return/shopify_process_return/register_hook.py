@@ -15,12 +15,14 @@ def handler(event, context): # pylint: disable=unused-argument
     :param context: function context
     """
     shopify_handlers = get_all_shopify_handlers()
-    url = os.environ.get('process_return_url')
+    url = os.environ.get('PROCESS_RETURN_URL')
+    return_url = f'{url}/d/shopify/process/return'
+
     # Loop through each Shopify instance, fetch orders from it, and create them in NwS.
     for shopify_handler in shopify_handlers:
         channel = shopify_handler['config']['channel']
         the_handler = shopify_handler['handler']
-        channel_url = f'{url}?channel={channel}'
+        channel_url = f'{return_url}?channel={channel}'
         LOGGER.info(f'Validate if hook for return exists: {channel_url}...')
         if not _validate_hook_already_exists(channel_url, the_handler):
             LOGGER.info('Webhook for returns does not exist, registering it...')

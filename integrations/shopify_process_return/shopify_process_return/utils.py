@@ -1,7 +1,7 @@
 import os
 import json
 from .shopify.shopify import ShopifyConnector
-from .newstore.newstore import NewStoreConnector
+from newstore_adapter.connector import NewStoreConnector
 from param_store.client import ParamStore
 
 NS_HANDLER = None
@@ -9,7 +9,7 @@ SF_HANDLER = None
 PARAM_STORE = None
 SHOPIFY_CONFIG = {}
 NEWSTORE_CONFIG = None
-TENANT = os.environ.get('TENANT', 'goorin-brothers')
+TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
 
 def _get_param_store():
@@ -84,22 +84,8 @@ def _create_shopify_handlers(configs):
     return handlers
 
 
-def _get_newstore_config():
-    global NEWSTORE_CONFIG # pylint: disable=global-statement
-    if not NEWSTORE_CONFIG:
-        param_store = _get_param_store()
-        NEWSTORE_CONFIG = json.loads(param_store.get_param('newstore'))
-
-    return NEWSTORE_CONFIG
-
-
-def get_newstore_handler():
+def get_newstore_handler(context):
     global NS_HANDLER # pylint: disable=global-statement
     if not NS_HANDLER:
-        newstore_config = _get_newstore_config()
-        NS_HANDLER = NewStoreConnector(
-            host=newstore_config['host'],
-            username=newstore_config['username'],
-            password=newstore_config['password'],
-        )
+        NS_HANDLER = NewStoreConnector(TENANT, context)
     return NS_HANDLER

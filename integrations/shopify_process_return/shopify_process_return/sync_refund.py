@@ -55,8 +55,6 @@ def handler(event, context): # pylint: disable=unused-argument
                 LOGGER.info(f'Processing refund: {json.dumps(refund)}')
                 try:
                     _drop_to_queue(refund, channel)
-                    # response = _drop_to_queue(refund, channel)
-                    # LOGGER.info(json.dumps(response))
                 except Exception: # pylint: disable=broad-except
                     LOGGER.exception('Failed to send refund to process')
 

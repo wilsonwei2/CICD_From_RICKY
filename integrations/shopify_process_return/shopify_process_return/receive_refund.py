@@ -32,7 +32,7 @@ def handler(event, context): # pylint: disable=unused-argument
 def _save_refund(event):
     the_handler = get_shopify_config()
 
-    if not _verify_webhook(event=event, secret=the_handler['shopify_app_secret']):
+    if not _verify_webhook(event=event, secret=the_handler['shared_secret']):
         return False
     _drop_to_queue(event['body'])
     return True
