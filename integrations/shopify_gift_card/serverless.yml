@@ -1,0 +1,50 @@
+service: frankandoak-shopify-gift-card
+
+plugins:
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - shopify_gift_card/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  environment:
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
+
+functions:
+  shopify_gift_card_activate:
+    name: ${self:provider.tenant}-shopify-gift-card-activate
+    handler: shopify_gift_card.aws.shopify_gift_card_activate.handler
+    timeout: 300
+    memorySize: 128
+    environment:
+      TENANT: ${self:provider.tenant}
+      STAGE: ${self:provider.stage}
+    events:
+      - http: POST /gift_card/issue
+      - http: POST /gift_card/activate
+  shopify_gift_card_balance:
+    name: ${self:provider.tenant}-shopify-gift-card-balance
+    handler: shopify_gift_card.aws.shopify_gift_card_balance.handler
+    timeout: 300
+    memorySize: 128
+    environment:
+      TENANT: ${self:provider.tenant}
+      STAGE: ${self:provider.stage}
+    events:
+      - http: POST /gift_card/balance
