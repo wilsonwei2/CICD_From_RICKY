@@ -102,7 +102,7 @@ def update_sales_order(sales_order, fulfillment_request):
 
                 item.location = nsas.RecordRef(internalId=str(netsuite_location_id))
                 item.shipMethod = nsas.RecordRef(internalId=str(ship_method_id))
-                LOGGER.info(f"Current shipping level is {shipping_service_level} and its netsuite value is {ship_method_id}")
+                LOGGER.info(f'Current shipping level is {shipping_service_level} and its netsuite value is {ship_method_id}')
 
                 update_items.append(item)
                 product_ids_in_fulfillment.remove(item_name)
@@ -157,15 +157,14 @@ def _get_activity_created_at(activities, key):
 def get_external_order_id(uuid):
     body = NEWSTORE_HANDLER.get_external_order(uuid, id_type='id')
     external_order_id = body['external_order_id']
-    LOGGER.info(f"External order id is {external_order_id}")
+    LOGGER.info(f'External order id is {external_order_id}')
 
     return external_order_id
 
 
 def get_item_name(item, product_ids_in_fulfillment):
     item_name = item.item.name
-    for index in range(3, len(item.item.name.split(' '))):
-        possible_item_id = ' '.join(item.item.name.split(' ')[2:index])
+    for possible_item_id in item.item.name.split(' '):
         if possible_item_id in product_ids_in_fulfillment:
             item_name = possible_item_id
             break
