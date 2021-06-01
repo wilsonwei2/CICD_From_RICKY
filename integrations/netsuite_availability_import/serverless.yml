@@ -41,6 +41,8 @@ functions:
       TENANT: ${self:custom.tenant}
       STAGE: ${self:provider.stage}
       LOG_LEVEL: INFO
+      PHYSICAL_GC_ID: PGC
+      PHYSICAL_GC_SKU: 5500000-000
       newstore_url_api: ${self:custom.tenant}.${self:provider.stage}.newstore.net
       newstore_use_auth_lambda: 1
       newstore_auth_lambda: ${self:custom.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token

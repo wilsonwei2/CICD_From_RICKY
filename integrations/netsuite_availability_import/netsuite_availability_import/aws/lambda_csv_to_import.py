@@ -18,6 +18,8 @@ S3_CHUNK_INTERVAL = os.environ['S3_CHUNK_INTERVAL']
 S3_PREFIX = os.environ['S3_PREFIX']
 CFR_TABLE_NAME = os.environ['CFR_TABLE']
 STATE_MACHINE_ARN = os.environ['STATE_MACHINE_ARN']
+PHYSICAL_GC_ID = os.environ.get('PHYSICAL_GC_ID', '')
+PHYSICAL_GC_SKU = os.environ.get('PHYSICAL_GC_SKU', '')
 
 S3 = boto3.resource('s3')
 S3_BUCKET = S3.Bucket(S3_BUCKET_NAME)
@@ -148,9 +150,15 @@ def get_items(csv_data):
 
     for item in csv_data:
         try:
+            product_id = item['ProductSKU']
+
+            # map physical giftcard SKU to ID (configured via env)
+            if PHYSICAL_GC_SKU and PHYSICAL_GC_ID and product_id == PHYSICAL_GC_SKU:
+                product_id = PHYSICAL_GC_ID
+
             items.append({
                 'fulfillment_node_id': item['Location'],
-                'product_id': item['ProductSKU'],
+                'product_id': product_id,
                 'quantity': int(float(item['Available'].replace(',', ''))) or 0
             })
         except KeyError as e:
