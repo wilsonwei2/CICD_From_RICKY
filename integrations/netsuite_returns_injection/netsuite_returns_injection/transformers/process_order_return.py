@@ -68,15 +68,21 @@ def _get_cash_refund(ns_return, cash_sale, store_tz):
 
     tran_date = Utils.format_datestring_for_netsuite(date_string=ns_return['returned_at'],
                                                      time_zone=store_tz)
+
+    partner_id = int(Utils.get_netsuite_config()['newstore_partner_internal_id'])
+
     cash_refund = {
         'externalId': ns_return['id'],
         'tranDate': tran_date.isoformat(),
         'customForm': RecordRef(internalId=int(Utils.get_netsuite_config()['cash_return_custom_form_internal_id'])),
         'location': RecordRef(internalId=location_id),
-        'partner': RecordRef(internalId=int(Utils.get_netsuite_config()['newstore_partner_internal_id'])),
         'discountItem': None,
         'discountRate': 0.0
     }
+
+    if partner_id > -1:
+        cash_refund['partner'] = RecordRef(internalId=partner_id)
+
 
     if cash_sale:
         cash_refund['createdFrom'] = RecordRef(internalId=cash_sale['internalId'])

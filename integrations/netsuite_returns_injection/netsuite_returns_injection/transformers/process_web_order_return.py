@@ -101,19 +101,25 @@ def map_customer_information(customer_order, subsidiary_id):
 def map_cash_refund(ns_return, location_id, sales_order, return_authorization=None, store_tz='America/New_York'):
     tran_date = Utils.format_datestring_for_netsuite(date_string=ns_return['returned_at'], time_zone=store_tz,
                                                      cutoff_index=19, format_string='%Y-%m-%dT%H:%M:%S')
+
+    partner_id = int(Utils.get_netsuite_config()['newstore_partner_internal_id'])
+
     cash_refund = {
         'externalId': ns_return['id'],
         'tranDate': tran_date.date(),
         'location': RecordRef(internalId=location_id),
-        'customForm': RecordRef(internalId=int(Utils.get_netsuite_config()['cash_return_custom_form_internal_id'])),
-        'partner': RecordRef(internalId=int(Utils.get_netsuite_config()['newstore_partner_internal_id']))
+        'customForm': RecordRef(internalId=int(Utils.get_netsuite_config()['cash_return_custom_form_internal_id']))
     }
+
+    if partner_id > -1:
+        cash_refund['partner'] = RecordRef(internalId=partner_id)
 
     if sales_order:
         cash_refund['entity'] = sales_order.entity
 
     if return_authorization:
         cash_refund['createdFrom'] = RecordRef(internalId=return_authorization.internalId)
+
     return cash_refund
 
 

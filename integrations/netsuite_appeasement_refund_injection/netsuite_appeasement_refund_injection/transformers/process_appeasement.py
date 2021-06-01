@@ -126,7 +126,10 @@ def map_cash_refund(subsidiary_id, event_refund, location_id, cash_refund_custom
     tran_date = Utils.format_datestring_for_netsuite(event_refund['requested_at'],
                                                      store_tz)
     cash_refund_custom_form_id = int(NETSUITE_CONFIG['cash_return_custom_form_internal_id'])
-    return {
+
+    partner_id = int(NETSUITE_CONFIG['newstore_partner_internal_id'])
+
+    cash_refund = {
         'externalId': event_refund['id'],
         'tranDate': tran_date.isoformat(),
         'customForm': RecordRef(internalId=cash_refund_custom_form_id),
@@ -134,9 +137,13 @@ def map_cash_refund(subsidiary_id, event_refund, location_id, cash_refund_custom
         'discountItem': None,
         'discountRate': 0.0,
         'subsidiary': RecordRef(internalId=subsidiary_id),
-        'partner': RecordRef(internalId=int(NETSUITE_CONFIG['newstore_partner_internal_id'])),
         'customFieldList': CustomFieldList(cash_refund_custom_fields)
     }
+
+    if partner_id > -1:
+        cash_refund['partner'] = RecordRef(internalId=partner_id)
+
+    return cash_refund
 
 
 def map_cash_refund_item(event_refund, subsidiary_id, location_id):
