@@ -244,17 +244,12 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
 
 ## Used this link as a reference for generating the URL.
 def get_shipping_carrier_url(carrier, tracking_code):
-    # TODO Add the correct mapping  pylint: disable=fixme
-    if carrier == 'CAP':
+    if carrier == 'Canada Post':
         return 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor='+str(tracking_code)
     if carrier == 'UPS':
         return 'https://www.ups.com/track?loc=en_US&tracknum='+str(tracking_code)
-    if carrier == 'FedEx':
-        return 'https://www.fedex.com/fedextrack/?tracknumbers='+str(tracking_code)
     if carrier == 'USPS':
         return 'https://tools.usps.com/go/TrackConfirmAction.action?tLabels='+str(tracking_code)
-    if carrier == 'USPS (Stamps)':
-        return 'https://tools.usps.com/go/TrackConfirmAction?qtc_tLabels1='+str(tracking_code)
 
     LOGGER.error(f'Carrier {carrier} not mapped to get shipping carrier URL.')
 

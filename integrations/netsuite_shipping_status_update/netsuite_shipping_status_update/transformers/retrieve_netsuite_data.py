@@ -155,10 +155,9 @@ class RetrieveNetsuiteItem():
                 for package in packages:
                     package_tracking_number = package['packageTrackingNumber']
 
-            # TODO - the carrier mapping is not clear - this can maybe be removed  pylint: disable=fixme
-            #if 'customFieldList' in item_fulfillment and 'customField' in item_fulfillment['customFieldList']:
-            #    custom_field_list = item_fulfillment['customFieldList']['customField']
-            #    carrier = get_carrier_from_custom_field_list(custom_field_list)
+            if 'customFieldList' in item_fulfillment and 'customField' in item_fulfillment['customFieldList']:
+                custom_field_list = item_fulfillment['customFieldList']['customField']
+                carrier = get_carrier_from_custom_field_list(custom_field_list)
 
             if shipping_method is not None:
                 shipping_method_name = shipping_method['name']
@@ -179,13 +178,6 @@ class RetrieveNetsuiteItem():
             }
 
             item['shippingData'] = shipping_data
-
-            # HEAVY WORKAROUND FOR NOW TO MAP THE CARRIER  TODO pylint: disable=fixme
-            if package_tracking_number and package_tracking_number.find('1Z1') == 0:
-                carrier = 'UPS'
-            else:
-                carrier = 'CAP'
-            # HEAVY WORKAROUND FOR NOW - END
 
             LOGGER.info(f'add_items_to_fulfill - Product Ids: {product_ids}')
             LOGGER.info(f'External ID of order -- {order_id}, Carrier = {carrier} and Tracking - {package_tracking_number}')
@@ -403,20 +395,17 @@ def get_product_ids_from_item_fulfillment(item_fulfillment):
 
     return ids
 
-
-# def get_carrier_from_custom_field_list(custom_field_list):
-#    for custom_field in custom_field_list:
-#        value = str(custom_field['value'])
-#        if value in ['UPS', 'USPS', 'FedEx', 'DHL Ecommerce', 'DHL Express', 'USPS (Stamps)']:
-#            return value
-#        if value == 'stamps':
-#            return 'USPS (Stamps)'
-#        if value == 'dhl_ecommerce':
-#            return 'DHL eCommerce'
-#        if value == 'express':
-#            return 'DHL Express'
 #
-#    return False
+# Gets the carrier name from a custom field. F&O uses a module called
+# ShipHawk in the warehouse, and they set the below custom field as carrier.
+#
+def get_carrier_from_custom_field_list(custom_field_list):
+    for custom_field in custom_field_list:
+        script_id = custom_field['scriptId']
+        if script_id == 'custbody_shiphawk_carrier_name':
+            return str(custom_field['value'])
+
+    return False
 
 
 def get_location_from_item_fulfillment(item_fulfillment):
