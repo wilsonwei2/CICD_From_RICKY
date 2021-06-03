@@ -1,7 +1,91 @@
 {
   "fulfillment_config": {
       "provider_rates": {
-          "EXPRESS": {
+        "UPSStandard": {
+            "return_provider_rate": "",
+            "service_level": "Standard",
+            "shipping_carrier_name": "UPS",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+        "NextDayAirEarlyAM": {
+          "return_provider_rate": "",
+          "service_level": "Standard",
+          "shipping_carrier_name": "UPS",
+          "shipping_type": "same_day_delivery",
+          "use_as_customer_facing_cost": true
+      },
+      "NextDayAirSaver": {
+          "return_provider_rate": "",
+          "service_level": "Standard",
+          "shipping_carrier_name": "UPS",
+          "shipping_type": "same_day_delivery",
+          "use_as_customer_facing_cost": true
+      },
+      "NextDayAir": {
+          "return_provider_rate": "",
+          "service_level": "Standard",
+          "shipping_carrier_name": "UPS",
+          "shipping_type": "same_day_delivery",
+          "use_as_customer_facing_cost": true
+      },
+      "Expedited": {
+          "return_provider_rate": "",
+          "service_level": "Standard",
+          "shipping_carrier_name": "UPS",
+          "shipping_type": "traditional_carrier",
+          "use_as_customer_facing_cost": true
+      },
+      "ExpeditedParcel": {
+          "return_provider_rate": "",
+          "service_level": "Standard",
+          "shipping_carrier_name": "CAPOST",
+          "shipping_type": "traditional_carrier",
+          "use_as_customer_facing_cost": false
+        },
+      "RegularParcel": {
+          "return_provider_rate": "",
+          "service_level": "Standard",
+          "shipping_carrier_name": "CAPOST",
+          "shipping_type": "traditional_carrier",
+          "use_as_customer_facing_cost": false
+        },
+      "Priority": {
+          "return_provider_rate": "",
+          "service_level": "Standard",
+          "shipping_carrier_name": "CAPOST",
+          "shipping_type": "same_day_delivery",
+          "use_as_customer_facing_cost": false
+        },
+      "Xpresspost": {
+          "return_provider_rate": "",
+          "service_level": "Standard",
+          "shipping_carrier_name": "CAPOST",
+          "shipping_type": "same_day_delivery",
+          "use_as_customer_facing_cost": false
+        },
+        "PriorityMailInternational": {
+            "return_provider_rate": "",
+            "service_level": "Standard",
+            "shipping_carrier_name": "USPS",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+        "ExpressMailInternational": {
+            "return_provider_rate": "",
+            "service_level": "Standard",
+            "shipping_carrier_name": "USPS",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+        "UPSSaver": {
+            "return_provider_rate": "",
+            "service_level": "Standard",
+            "shipping_carrier_name": "UPS",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+        "Express": {
               "return_provider_rate": "",
               "service_level": "Express",
               "shipping_carrier_name": "UPS",
@@ -57,41 +141,41 @@
                   "Express": [
                       {
                         "fulfillment_node_id": "MTLDC1",
-                        "provider_rate": "EXPRESS"
+                        "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "STANST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "STWST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "MTLST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "VIAST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "DIXST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "FOYST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       }
                   ],
-                  "Standard": [
+                  "StandardUPS": [
                       {
                         "fulfillment_node_id": "MTLDC1",
-                        "provider_rate": "STANDARD"
+                        "provider_rate": "UPSStandard"
                       },
                       {
                           "fulfillment_node_id": "STANST",
-                          "provider_rate": "STANDARD"
+                          "provider_rate": "UPSStandard"
                       },
                       {
                           "fulfillment_node_id": "STWST",
@@ -99,21 +183,51 @@
                       },
                       {
                           "fulfillment_node_id": "MTLST",
-                          "provider_rate": "STANDARD"
+                          "provider_rate": "UPSStandard"
                       },
                       {
                           "fulfillment_node_id": "VIAST",
-                          "provider_rate": "STANDARD"
+                          "provider_rate": "UPSStandard"
                       },
                       {
                           "fulfillment_node_id": "DIXST",
-                          "provider_rate": "STANDARD"
+                          "provider_rate": "UPSStandard"
                       },
                       {
                           "fulfillment_node_id": "FOYST",
-                          "provider_rate": "STANDARD"
+                          "provider_rate": "UPSStandard"
                       }
-                  ]
+                  ],
+                  "StandardCAPost": [
+                    {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "RegularParcel"
+                    },
+                    {
+                        "fulfillment_node_id": "STANST",
+                        "provider_rate": "RegularParcel"
+                    },
+                    {
+                        "fulfillment_node_id": "STWST",
+                        "provider_rate": "RegularParcel"
+                    },
+                    {
+                        "fulfillment_node_id": "MTLST",
+                        "provider_rate": "RegularParcel"
+                    },
+                    {
+                        "fulfillment_node_id": "VIAST",
+                        "provider_rate": "RegularParcel"
+                    },
+                    {
+                        "fulfillment_node_id": "DIXST",
+                        "provider_rate": "RegularParcel"
+                    },
+                    {
+                        "fulfillment_node_id": "FOYST",
+                        "provider_rate": "RegularParcel"
+                    }
+                ]
               }
           },
           {
@@ -134,23 +248,23 @@
                   "Express": [
                       {
                         "fulfillment_node_id": "MTLDC1",
-                        "provider_rate": "EXPRESS"
+                        "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "TECST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "TOST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "DONST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "RIDST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       }
                   ],
                   "Standard": [
@@ -194,11 +308,11 @@
                   "Express": [
                       {
                         "fulfillment_node_id": "MTLDC1",
-                        "provider_rate": "EXPRESS"
+                        "provider_rate": "Xpresspost"
                       },
                       {
                           "fulfillment_node_id": "VANST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Xpresspost"
                       }
                   ],
                   "Standard": [
@@ -226,7 +340,7 @@
                 "Express": [
                     {
                         "fulfillment_node_id": "MTLDC1",
-                        "provider_rate": "EXPRESS"
+                        "provider_rate": "Xpresspost"
                     }
                 ],
                 "Standard": [
@@ -250,51 +364,51 @@
                   "Express": [
                       {
                           "fulfillment_node_id": "MTLDC1",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       },
                       {
                         "fulfillment_node_id": "TECST",
-                        "provider_rate": "EXPRESS"
+                        "provider_rate": "Express"
                       },
                       {
                         "fulfillment_node_id": "TOST",
-                        "provider_rate": "EXPRESS"
+                        "provider_rate": "Express"
                       },
                       {
                         "fulfillment_node_id": "DONST",
-                        "provider_rate": "EXPRESS"
+                        "provider_rate": "Express"
                       },
                       {
                           "fulfillment_node_id": "STANST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       },
                       {
                           "fulfillment_node_id": "STWST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       },
                       {
                           "fulfillment_node_id": "MTLST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       },
                       {
                           "fulfillment_node_id": "VIAST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       },
                       {
                           "fulfillment_node_id": "DIXST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       },
                       {
                           "fulfillment_node_id": "FOYST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       },
                       {
                           "fulfillment_node_id": "RIDST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       },
                       {
                           "fulfillment_node_id": "VANST",
-                          "provider_rate": "EXPRESS"
+                          "provider_rate": "Express"
                       }
                   ],
                   "Standard": [
@@ -324,7 +438,7 @@
                       },
                       {
                           "fulfillment_node_id": "MTLST",
-                          "provider_rate": "STANDARD"
+                          "provider_rate": "UPSStandard"
                       },
                       {
                           "fulfillment_node_id": "VIAST",
@@ -375,6 +489,24 @@
         }
       ],
       "service_levels": {
+          "StandardCAPost": {
+            "currency_code": "",
+            "delivery_time": "3 - 5 business days",
+            "delivery_time_after_cutoff_hour": "3 - 5 business days",
+            "display_name": "Standard Delivery CanadaPost",
+            "price": 0,
+            "remorse_period": 60,
+            "tax_code": "CA"
+          },
+          "StandardUPS": {
+            "currency_code": "",
+            "delivery_time": "3 - 5 business days",
+            "delivery_time_after_cutoff_hour": "3 - 5 business days",
+            "display_name": "Standard Delivery UPS",
+            "price": 0,
+            "remorse_period": 60,
+            "tax_code": "CA"
+          },
           "Standard": {
               "currency_code": "",
               "delivery_time": "3 - 5 business days",
@@ -388,6 +520,15 @@
               "currency_code": "",
               "delivery_time": "2 - 3 business days",
               "delivery_time_after_cutoff_hour": "2 - 3 business days",
+              "display_name": "Express Delivery",
+              "price": 0,
+              "remorse_period": 0,
+              "tax_code": "CA"
+          },
+          "NextDayDelivery": {
+              "currency_code": "",
+              "delivery_time": "1 business day",
+              "delivery_time_after_cutoff_hour": "1 business day",
               "display_name": "Express Delivery",
               "price": 0,
               "remorse_period": 0,
@@ -412,10 +553,21 @@
           "*": {
               "*": {
                   "Standard": [
-                      "STANDARD"
+                      "STANDARD",
+                      "UPSStandard",
+                      "RegularParcel",
+                      "Expedited",
+                      "ExpeditedParcel"
                   ],
                   "Express": [
-                      "EXPRESS"
+                      "Express",
+                      "Xpresspost",
+                      "Priority"
+                  ],
+                  "NextDayDelivery": [
+                      "NextDayAirEarlyAM",
+                      "NextDayAirSaver",
+                      "NextDayAir"
                   ],
                   "International": [
                       "INTERNATIONAL"
