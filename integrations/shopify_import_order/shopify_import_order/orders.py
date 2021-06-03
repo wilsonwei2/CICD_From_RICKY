@@ -170,7 +170,6 @@ def map_items(order, order_name, ns_order):
         p_id = variant_id
         sku = item['sku'].lower().startswith('gift-card')
 
-        # ML-196 If it is a gift card (of any kind) map to PGC [Temporary solution(?)]
         is_gift_card = item['gift_card'] or sku
         if is_gift_card and item['requires_shipping']:
             # If it's gift card decide the product ID with wheter it requires shipping or not
@@ -178,7 +177,7 @@ def map_items(order, order_name, ns_order):
             p_id = GIFTCARD_PHYSICAL
         elif is_gift_card:
             has_electronic_giftcard = True
-            p_id = GIFTCARD_PHYSICAL
+            p_id = GIFTCARD_ELECTRONIC
         else:
             has_shipping_items = True
             ## Fetching NS ID.
