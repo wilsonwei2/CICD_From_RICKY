@@ -2,11 +2,10 @@
 # Copyright (C) 2015, 2016, 2017 NewStore, Inc. All rights reserved.
 
 # Runs startup processes
-import netsuite.netsuite_environment_loader # pylint: disable=W0611
+import netsuite.netsuite_environment_loader  # pylint: disable=W0611
 import netsuite.api.sale as netsuite_sale
 import netsuite.api.transfers as netsuite_transfers
 import logging
-import os
 import json
 import asyncio
 import netsuite_transfer_updates_to_netsuite.transformers.process_inventory_transfer as pit
@@ -16,8 +15,14 @@ from zeep.helpers import serialize_object
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
-SQS_QUEUE = os.environ['SQS_QUEUE']
-EVENT_ID_CACHE = os.environ.get('EVENT_ID_CACHE')
+SQS_QUEUE = Utils.get_environment_variable(
+    "SQS_QUEUE", "frankandoak-tu-item-receipt-queue.fifo")
+LOGGER.info(F"SQS Queue {SQS_QUEUE}")
+
+EVENT_ID_CACHE = Utils.get_environment_variable(
+    "EVENT_ID_CACHE", "tu-item-received-event-id-cache")
+LOGGER.info(f"EVENT_ID_CACHE {EVENT_ID_CACHE}")
+
 DYNAMO_TABLE = Utils.get_dynamo_table(EVENT_ID_CACHE)
 # We will limit this to clearing once per instantiation to limit overhead
 Utils.clear_old_events(dynamo_table=DYNAMO_TABLE, days=7)
@@ -53,11 +58,13 @@ async def process_inventory(message):
         return True
 
     nws_store_fulfillment_node = items_received_event['fulfillment_location_id']
-    nws_store_location_id = Utils.get_nws_location_id(nws_store_fulfillment_node)
+    nws_store_location_id = Utils.get_nws_location_id(
+        nws_store_fulfillment_node)
     items_received_event['fulfillment_location_id'] = nws_store_location_id
     store = Utils.get_store(nws_store_location_id)
     if not store:
-        raise ValueError(f"Unable to find store with id {nws_store_location_id}")
+        raise ValueError(
+            f"Unable to find store with id {nws_store_location_id}")
     LOGGER.info(f"Store retrieved: \n{json.dumps(store, indent=4)}")
 
     item_fulfillments = await get_item_fulfillments(items_received_event)
@@ -65,14 +72,17 @@ async def process_inventory(message):
     current_item_receipt = {}
     current_inventory_adjustment = None
     for item_fulfillment in item_fulfillments:
-        LOGGER.info(f"ItemFulfillment retrieved: \n{json.dumps(serialize_object(item_fulfillment), indent=4, default=Utils.json_serial)}")
+        LOGGER.info(
+            f"ItemFulfillment retrieved: \n{json.dumps(serialize_object(item_fulfillment), indent=4, default=Utils.json_serial)}")
 
         item_receipt, inventory_adjustment = await pit.create_item_receipt(item_fulfillment=item_fulfillment,
                                                                            items_received_event=items_received_event,
                                                                            store=store)
-        LOGGER.info(f"Transformed item receipt: {json.dumps(serialize_object(item_receipt), indent=4, default=Utils.json_serial)}")
+        LOGGER.info(
+            f"Transformed item receipt: {json.dumps(serialize_object(item_receipt), indent=4, default=Utils.json_serial)}")
         if not item_receipt['itemList']['item']:
-            LOGGER.info('ItemReceipt without items, continue to the next item fulfillment...')
+            LOGGER.info(
+                'ItemReceipt without items, continue to the next item fulfillment...')
             continue
 
         if not current_item_receipt or len(current_item_receipt['itemList']['item']) < len(item_receipt['itemList']['item']):
@@ -81,12 +91,15 @@ async def process_inventory(message):
 
     is_success = False
     if current_item_receipt:
-        LOGGER.info(f"Current item receipt: {json.dumps(serialize_object(current_item_receipt), indent=4, default=Utils.json_serial)}")
-        is_success, result = netsuite_transfers.create_item_receipt(current_item_receipt)
+        LOGGER.info(
+            f"Current item receipt: {json.dumps(serialize_object(current_item_receipt), indent=4, default=Utils.json_serial)}")
+        is_success, result = netsuite_transfers.create_item_receipt(
+            current_item_receipt)
         if is_success:
-            LOGGER.info("Item Receipt successfully created in NetSuite: \n" \
+            LOGGER.info("Item Receipt successfully created in NetSuite: \n"
                         f"{json.dumps(serialize_object(result), indent=4, default=Utils.json_serial)}")
-            Utils.mark_event_as_received(f"{items_received_event['id']}-{items_received_event['chunk_number']}", DYNAMO_TABLE)
+            Utils.mark_event_as_received(
+                f"{items_received_event['id']}-{items_received_event['chunk_number']}", DYNAMO_TABLE)
         else:
             LOGGER.error(f'Error creating Item Receipt in NetSuite: {result}')
 
@@ -99,11 +112,12 @@ async def process_inventory(message):
 
 
 async def create_inventory_adjustment(current_inventory_adjustment):
-    LOGGER.info("Transformed inventory adjustment: \n" \
+    LOGGER.info("Transformed inventory adjustment: \n"
                 f"{json.dumps(serialize_object(current_inventory_adjustment), indent=4, default=Utils.json_serial)}")
-    is_success_inv, result_inv = netsuite_transfers.create_inventory_adjustment(current_inventory_adjustment)
+    is_success_inv, result_inv = netsuite_transfers.create_inventory_adjustment(
+        current_inventory_adjustment)
     if is_success_inv:
-        LOGGER.info("Item Receipt successfully created in NetSuite: \n" \
+        LOGGER.info("Item Receipt successfully created in NetSuite: \n"
                     f"{json.dumps(serialize_object(result_inv), indent=4, default=Utils.json_serial)}")
     else:
         LOGGER.error(f'Error creating Item Receipt in NetSuite: {result_inv}')
@@ -114,7 +128,8 @@ async def get_item_fulfillments(items_received_event):
     if tran_id.startswith('TO'):
         # In this case the ASN was created in NewStore by NewStore after a Transfer Order was fulfilled in NewStore
         # So we need to fetch the Transfer Order from NetSuite and then the ItemFulfillment for that Transfer Order
-        LOGGER.info('Handle ASN that was created in NOM by the fulfilling of a Transfer Order in NOM.')
+        LOGGER.info(
+            'Handle ASN that was created in NOM by the fulfilling of a Transfer Order in NOM.')
         tran_id = tran_id[:9]
         transfer_order = await get_transfer_order(tran_id=tran_id)
         if not transfer_order:
@@ -134,10 +149,12 @@ async def get_item_fulfillments(items_received_event):
 
 async def get_item_fulfillment(tran_id=None, created_from_id=None):
     if tran_id:
-        is_success, response = netsuite_sale.get_transaction_with_tran_id(tran_id)
+        is_success, response = netsuite_sale.get_transaction_with_tran_id(
+            tran_id)
         response = [response]
     else:
-        is_success, response = netsuite_sale.get_item_fulfillment_list(created_from_id)
+        is_success, response = netsuite_sale.get_item_fulfillment_list(
+            created_from_id)
 
     if not is_success:
         LOGGER.error(f'Error retrieving item fulfillment: {response}')

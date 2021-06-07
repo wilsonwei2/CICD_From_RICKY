@@ -53,21 +53,23 @@ class Utils():
     @staticmethod
     def _get_newstore_config():
         if not Utils._newstore_config:
-            Utils._newstore_config = json.loads(Utils._get_param_store().get_param('newstore'))
+            Utils._newstore_config = json.loads(
+                Utils._get_param_store().get_param('newstore'))
         return Utils._newstore_config
 
     @staticmethod
     def get_netsuite_config():
         if not Utils._netsuite_config:
-            Utils._netsuite_config = json.loads(Utils._get_param_store().get_param('netsuite'))
+            Utils._netsuite_config = json.loads(
+                Utils._get_param_store().get_param('netsuite'))
         return Utils._netsuite_config
 
     @staticmethod
     def get_netsuite_location_map():
         if not Utils._newstore_to_netsuite_locations:
-            location_params = Utils._get_param_store().get_params_by_path('netsuite/newstore_to_netsuite_locations/')
-            for param in location_params:
-                Utils._newstore_to_netsuite_locations.update(json.loads(param['value']))
+            location_params = json.loads(Utils._get_param_store().get_param(
+                'netsuite/newstore_to_netsuite_locations'))
+            Utils._newstore_to_netsuite_locations = location_params
         return Utils._newstore_to_netsuite_locations
 
     @staticmethod
@@ -106,7 +108,8 @@ class Utils():
             mapping = locations_config.get(nws_value[:3])
 
         if mapping is None:
-            LOGGER.error(f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
+            LOGGER.error(
+                f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
             return {}
 
         return mapping
@@ -145,14 +148,16 @@ class Utils():
 
     @staticmethod
     def format_datestring_for_netsuite(date_string, time_zone, cutoff_index=19, format_string='%Y-%m-%dT%H:%M:%S'):
-        # As of ML-181 all transaction dates should be in PST or timezone configured in the parameter store
-        time_zone = Utils.get_netsuite_config().get('NETSUITE_DATE_TIMEZONE', 'US/Pacific')
-        tran_date = datetime.strptime(date_string[:cutoff_index], format_string)
+        time_zone = Utils.get_netsuite_config().get(
+            'NETSUITE_DATE_TIMEZONE', 'America/New_York')
+        tran_date = datetime.strptime(
+            date_string[:cutoff_index], format_string)
         tran_date = tran_date.replace(tzinfo=timezone('UTC'))
         try:
             tran_date = tran_date.astimezone(timezone(time_zone))
         except UnknownTimeZoneError:
-            LOGGER.warning(f'Invalid timezone {time_zone}, defaulting to America/New_York')
+            LOGGER.warning(
+                f'Invalid timezone {time_zone}, defaulting to America/New_York')
             tran_date = tran_date.astimezone(timezone('America/New_York'))
         return tran_date
 
@@ -168,16 +173,19 @@ class Utils():
     @staticmethod
     def get_countries():
         if not Utils._countries:
-            filename = os.path.join(os.path.dirname(__file__), 'iso_country_codes.csv')
+            filename = os.path.join(os.path.dirname(
+                __file__), 'iso_country_codes.csv')
             with open(filename) as countries_file:
                 file = csv.DictReader(countries_file, delimiter=',')
                 for line in file:
-                    Utils._countries[line['Alpha-2 code']] = Utils._format_country_name(line['English short name lower case'])
+                    Utils._countries[line['Alpha-2 code']] = Utils._format_country_name(
+                        line['English short name lower case'])
         return Utils._countries
 
     @staticmethod
     def _format_country_name(country_name):
-        func = lambda s: s[:1].lower() + s[1:] if s else ''
+        def func(country_name):
+            return country_name[:1].lower() + country_name[1:] if country_name else ''
         return '_'+func(country_name).replace(' ', '')
 
     @staticmethod

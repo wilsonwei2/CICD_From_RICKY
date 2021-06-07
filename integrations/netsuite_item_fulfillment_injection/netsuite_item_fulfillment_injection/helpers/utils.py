@@ -45,13 +45,15 @@ class Utils():
     @staticmethod
     def _get_newstore_config():
         if not Utils._newstore_config:
-            Utils._newstore_config = json.loads(Utils._get_param_store().get_param('newstore'))
+            Utils._newstore_config = json.loads(
+                Utils._get_param_store().get_param('newstore'))
         return Utils._newstore_config
 
     @staticmethod
     def get_netsuite_config():
         if not Utils._netsuite_config:
-            Utils._netsuite_config = json.loads(Utils._get_param_store().get_param('netsuite'))
+            Utils._netsuite_config = json.loads(
+                Utils._get_param_store().get_param('netsuite'))
         return Utils._netsuite_config
 
     @staticmethod
@@ -64,7 +66,11 @@ class Utils():
 
     @staticmethod
     def get_netsuite_location_map():
-        return json.loads(Utils._get_param_store().get_param('netsuite/newstore_to_netsuite_locations'))
+        if not Utils._newstore_to_netsuite_locations:
+            location_params = json.loads(Utils._get_param_store().get_param(
+                'netsuite/newstore_to_netsuite_locations'))
+            Utils._newstore_to_netsuite_locations = location_params
+        return Utils._newstore_to_netsuite_locations
 
     @staticmethod
     def is_store(store_id):
@@ -82,7 +88,8 @@ class Utils():
         mapping = locations_config.get(nws_value)
 
         if mapping is None:
-            LOGGER.error(f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
+            LOGGER.error(
+                f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
             return {}
 
         return mapping

@@ -9,6 +9,9 @@ from pytz.exceptions import UnknownTimeZoneError
 from param_store.client import ParamStore
 from newstore_adapter.connector import NewStoreConnector
 from boto3.dynamodb.conditions import Key
+# import ptvsd
+# ptvsd.enable_attach(address=('localhost', 65531), redirect_output=True)
+# ptvsd.wait_for_attach()
 
 LOGGER = logging.getLogger(__file__)
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'info').upper() or 'INFO'
@@ -51,6 +54,7 @@ class Utils():
 
     @staticmethod
     def get_dynamo_table(table_name):
+        LOGGER.info(f'Table name {table_name}')
         if not Utils._dynamo_table:
             Utils._dynamo_table = boto3.resource('dynamodb').Table(table_name)
         return Utils._dynamo_table
@@ -66,9 +70,9 @@ class Utils():
     @staticmethod
     def get_netsuite_location_map():
         if not Utils._newstore_to_netsuite_locations:
-            location_params = Utils.get_param_store().get_params_by_path('netsuite/newstore_to_netsuite_locations/')
-            for param in location_params:
-                Utils._newstore_to_netsuite_locations.update(json.loads(param['value']))
+            location_params = json.loads(Utils.get_param_store().get_param(
+                'netsuite/newstore_to_netsuite_locations'))
+            Utils._newstore_to_netsuite_locations = location_params
         return Utils._newstore_to_netsuite_locations
 
     @staticmethod
@@ -76,14 +80,16 @@ class Utils():
         store = Utils.get_newstore_conn().get_store(store_id)
         if store:
             return store
-        raise ValueError(f'Unable to retrieve information from NewStore for store {store_id}')
+        raise ValueError(
+            f'Unable to retrieve information from NewStore for store {store_id}')
 
     @staticmethod
     def get_product(product_id, catalog, locale):
         product = Utils.get_newstore_conn().get_product(product_id, catalog, locale)
         if product:
             return product
-        raise ValueError(f'Unable to retrieve information from NewStore for product {product_id}')
+        raise ValueError(
+            f'Unable to retrieve information from NewStore for product {product_id}')
 
     @staticmethod
     def json_serial(obj):
@@ -104,7 +110,8 @@ class Utils():
             mapping = locations_config.get(nws_value[:3])
 
         if mapping is None:
-            LOGGER.error(f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
+            LOGGER.error(
+                f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
             return {}
 
         return mapping
@@ -145,14 +152,16 @@ class Utils():
 
     @staticmethod
     def format_datestring_for_netsuite(date_string, time_zone, cutoff_index=22, format_string='%Y-%m-%dT%H:%M:%S.%f'):
-        # As of ML-181 all transaction dates should be in PST or timezone configured in the parameter store
-        time_zone = Utils.get_netsuite_config().get('NETSUITE_DATE_TIMEZONE', 'US/Pacific')
-        tran_date = datetime.strptime(date_string[:cutoff_index], format_string)
+        time_zone = Utils.get_netsuite_config().get(
+            'NETSUITE_DATE_TIMEZONE', 'America/New_York')
+        tran_date = datetime.strptime(
+            date_string[:cutoff_index], format_string)
         tran_date = tran_date.replace(tzinfo=timezone('UTC'))
         try:
             tran_date = tran_date.astimezone(timezone(time_zone))
         except UnknownTimeZoneError:
-            LOGGER.warning(f'Invalid timezone {time_zone}, defaulting to America/New_York')
+            LOGGER.warning(
+                f'Invalid timezone {time_zone}, defaulting to America/New_York')
             tran_date = tran_date.astimezone(timezone('America/New_York'))
         return tran_date
 
@@ -173,6 +182,7 @@ class Utils():
         response = dynamo_table.scan(
             FilterExpression=Key('timestamp').lt(timestamp_threshold))
         data = response['Items']
+        LOGGER.info(f'Data {data}')
 
         while 'LastEvaluatedKey' in response:
             response = dynamo_table.scan(
@@ -212,3 +222,11 @@ class Utils():
             },
             ConditionExpression='attribute_not_exists(id)'
         )
+
+    @staticmethod
+    def get_environment_variable(env_parameter_id, default_local_value):
+        # Check how this environment variable works in prod. Maybe we can create a environment variable directly in the serverless.yml
+        is_offline = os.environ.get("IS_OFFLINE")
+        if is_offline:
+            return default_local_value
+        return os.environ.get(env_parameter_id)

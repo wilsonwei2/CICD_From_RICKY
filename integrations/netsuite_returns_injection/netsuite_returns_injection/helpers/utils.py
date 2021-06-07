@@ -67,27 +67,30 @@ class Utils():
     @staticmethod
     def _get_newstore_config():
         if not Utils._newstore_config:
-            Utils._newstore_config = json.loads(Utils._get_param_store().get_param('newstore'))
+            Utils._newstore_config = json.loads(
+                Utils._get_param_store().get_param('newstore'))
         return Utils._newstore_config
 
     @staticmethod
     def _get_shopify_config():
         if not Utils._shopify_config:
-            Utils._shopify_config = json.loads(Utils._get_param_store().get_param('shopify'))
+            Utils._shopify_config = json.loads(
+                Utils._get_param_store().get_param('shopify'))
         return Utils._shopify_config
 
     @staticmethod
     def get_netsuite_config():
         if not Utils._netsuite_config:
-            Utils._netsuite_config = json.loads(Utils._get_param_store().get_param('netsuite'))
+            Utils._netsuite_config = json.loads(
+                Utils._get_param_store().get_param('netsuite'))
         return Utils._netsuite_config
 
     @staticmethod
     def get_netsuite_location_map():
         if not Utils._newstore_to_netsuite_locations:
-            location_params = Utils._get_param_store().get_params_by_path('netsuite/newstore_to_netsuite_locations/')
-            for param in location_params:
-                Utils._newstore_to_netsuite_locations.update(json.loads(param['value']))
+            location_params = json.loads(Utils._get_param_store().get_param(
+                'netsuite/newstore_to_netsuite_locations'))
+            Utils._newstore_to_netsuite_locations = location_params
         return Utils._newstore_to_netsuite_locations
 
     @staticmethod
@@ -101,7 +104,8 @@ class Utils():
     @staticmethod
     def _get_giftcard_product_ids():
         if not Utils._newstore_giftcard_ids:
-            Utils._newstore_giftcard_ids = Utils._get_param_store().get_param('netsuite/newstore_giftcard_product_ids').split(',')
+            Utils._newstore_giftcard_ids = Utils._get_param_store().get_param(
+                'netsuite/newstore_giftcard_product_ids').split(',')
         return Utils._newstore_giftcard_ids
 
     @staticmethod
@@ -132,7 +136,8 @@ class Utils():
             mapping = locations_config.get(nws_value[:3])
 
         if mapping is None:
-            LOGGER.error(f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
+            LOGGER.error(
+                f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
             return {}
 
         return mapping
@@ -172,7 +177,8 @@ class Utils():
     def get_extended_attribute(extended_attributes, key):
         if not extended_attributes or not key:
             return None
-        result = next((item['value'] for item in extended_attributes if item['name'] == key), None)
+        result = next(
+            (item['value'] for item in extended_attributes if item['name'] == key), None)
         return result
 
     @staticmethod
@@ -192,13 +198,14 @@ class Utils():
     def verify_all_transac_refunded(refund_transactions, refund_total):
         total = 0
         for trans in refund_transactions:
-            total += abs(trans['refund_amount']) if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(trans['capture_amount'])
+            total += abs(trans['refund_amount']
+                         ) if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(trans['capture_amount'])
 
         refund_total = round(refund_total, 2)
         total = round(total, 2)
         if math.isclose(total, refund_total, rel_tol=0.01):
             return True
-        LOGGER.error("Total of refund doesn't match with total of refunded payments. " \
+        LOGGER.error("Total of refund doesn't match with total of refunded payments. "
                      f"Refund total: {refund_total}; Refunded total: {total}")
         return False
 
@@ -211,20 +218,22 @@ class Utils():
         total_refund_amount = round(total_refund_amount, 2)
         if math.isclose(total, total_refund_amount, rel_tol=0.01):
             return True
-        LOGGER.error("Total of refunds doesn't match with total of refunded payments. " \
+        LOGGER.error("Total of refunds doesn't match with total of refunded payments. "
                      f"Refund total: {total_refund_amount}; Refunded total: {total}")
         return False
 
     @staticmethod
     def format_datestring_for_netsuite(date_string, time_zone, cutoff_index=19, format_string='%Y-%m-%dT%H:%M:%S'):
-        # As of ML-181 all transaction dates should be in PST or timezone configured in the parameter store
-        time_zone = Utils.get_netsuite_config().get('NETSUITE_DATE_TIMEZONE', 'US/Pacific')
-        tran_date = datetime.strptime(date_string[:cutoff_index], format_string)
+        time_zone = Utils.get_netsuite_config().get(
+            'NETSUITE_DATE_TIMEZONE', 'America/New_York')
+        tran_date = datetime.strptime(
+            date_string[:cutoff_index], format_string)
         tran_date = tran_date.replace(tzinfo=timezone('UTC'))
         try:
             tran_date = tran_date.astimezone(timezone(time_zone))
         except UnknownTimeZoneError:
-            LOGGER.warning(f'Invalid timezone {time_zone}, defaulting to America/New_York')
+            LOGGER.warning(
+                f'Invalid timezone {time_zone}, defaulting to America/New_York')
             tran_date = tran_date.astimezone(timezone('America/New_York'))
         return tran_date
 

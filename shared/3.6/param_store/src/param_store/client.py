@@ -1,4 +1,5 @@
-import boto3, logging
+import boto3
+import logging
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.INFO)
@@ -71,7 +72,8 @@ class ParamStore():
         response = None
 
         try:
-            response = self.client.get_parameter(Name=path, WithDecryption=False)
+            response = self.client.get_parameter(
+                Name=path, WithDecryption=False)
             return response['Parameter']['Value']
         except Exception:
             LOGGER.exception(f'Error when trying to get parameter {path}')
@@ -101,7 +103,6 @@ class ParamStore():
                 }
 
             return param_to_dict
-
         path = self.path_root + input_path
         prefix_len = len(self.path_root)
         has_next_token = True
@@ -132,7 +133,8 @@ class ParamStore():
 
             # Append all retrieved parameters to the `parameters` list, formatted
             # as dicts with `key`/`value` pairs.
-            parameters += list(map(param_to_dict_minus_prefix(prefix_len), response['Parameters']))
+            parameters += list(map(param_to_dict_minus_prefix(prefix_len),
+                                   response['Parameters']))
 
             # If there's a `NextToken` in the response, then continue requesting
             # more params, otherwise stop the loop.

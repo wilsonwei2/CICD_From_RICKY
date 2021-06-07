@@ -1,7 +1,7 @@
 {
     "customer": null,
     "cash_refund": {
-        "tranDate": "2018-02-21T04:17:43-08:00",
+        "tranDate": "2018-02-21T07:17:43-05:00",
         "customForm": {
             "name": null,
             "internalId": 120,

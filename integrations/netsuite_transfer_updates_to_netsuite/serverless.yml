@@ -2,6 +2,8 @@ service: frankandoak-netsuite-transfer-updates-to-netsuite
 
 plugins:
   - serverless-python-requirements
+  - serverless-offline
+  - serverless-offline-cfstrip
 custom:
   pythonRequirements:
     dockerizePip: false
@@ -53,7 +55,7 @@ functions:
     events:
       - schedule:
           name: ${self:provider.tenant}-tu-fulfill-tos-trigger
-          rate: rate(5 minutes)
+          rate: rate(10 minutes)
 
 resources:
   Resources:

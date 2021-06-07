@@ -2,6 +2,7 @@ service: frankandoak-netsuite-event-stream-receiver
 
 plugins:
   - serverless-python-requirements
+  - serverless-offline
 custom:
   pythonRequirements:
     dockerizePip: false

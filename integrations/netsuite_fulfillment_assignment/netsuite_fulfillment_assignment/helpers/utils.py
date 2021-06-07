@@ -31,7 +31,8 @@ class Utils():
     @staticmethod
     def get_ns_handler(context=None):
         if not Utils._ns_handler:
-            newstore_config = json.loads(Utils.get_param_store().get_param(os.environ.get('NEWSTORE_CREDS_PARAM', 'newstore')))
+            newstore_config = json.loads(Utils.get_param_store().get_param(
+                os.environ.get('NEWSTORE_CREDS_PARAM', 'newstore')))
             Utils._ns_handler = NewStoreConnector(
                 tenant=os.environ.get('TENANT'),
                 context=context,
@@ -55,7 +56,8 @@ class Utils():
     @staticmethod
     def get_netsuite_config():
         if not Utils._netsuite_config:
-            Utils._netsuite_config = json.loads(Utils.get_param_store().get_param('netsuite'))
+            Utils._netsuite_config = json.loads(
+                Utils.get_param_store().get_param('netsuite'))
         return Utils._netsuite_config
 
     @staticmethod
@@ -64,7 +66,11 @@ class Utils():
 
     @staticmethod
     def get_netsuite_location_map():
-        return json.loads(Utils.get_param_store().get_param('netsuite/newstore_to_netsuite_locations'))
+        if not Utils._newstore_to_netsuite_locations:
+            location_params = json.loads(Utils.get_param_store().get_param(
+                'netsuite/newstore_to_netsuite_locations'))
+            Utils._newstore_to_netsuite_locations = location_params
+        return Utils._newstore_to_netsuite_locations
 
     @staticmethod
     def _get_netsuite_store_mapping(nws_value):
@@ -75,7 +81,8 @@ class Utils():
         mapping = locations_config.get(nws_value)
 
         if mapping is None:
-            LOGGER.error(f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
+            LOGGER.error(
+                f'Failed to obtain newstore to netsuite location mapping for \'{nws_value}\'')
             return {}
 
         return mapping
@@ -104,5 +111,6 @@ class Utils():
     def get_extended_attribute(extended_attributes, key):
         if not extended_attributes or not key:
             return None
-        result = next((item['value'] for item in extended_attributes if item['name'] == key), None)
+        result = next(
+            (item['value'] for item in extended_attributes if item['name'] == key), None)
         return result
