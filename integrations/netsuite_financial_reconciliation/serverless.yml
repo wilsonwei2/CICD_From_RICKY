@@ -33,7 +33,7 @@ functions:
     events:
       - schedule:
           name: ${self:provider.tenant}-netsuite-cash-sales-injection-trigger
-          rate: rate(2 minutes)
+          rate: rate(5 minutes)
 
   netsuite_sales_order_injection:
     name: ${self:provider.tenant}-netsuite-sales-order-injection
@@ -48,7 +48,7 @@ functions:
     events:
       - schedule:
           name: ${self:provider.tenant}-netsuite-sales-order-injection-trigger
-          rate: rate(2 minutes)
+          rate: rate(5 minutes)
 
 resources:
   Resources:

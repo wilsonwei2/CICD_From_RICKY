@@ -189,7 +189,7 @@ class TestInStoreReturnProcessing(unittest.TestCase):
         event = TestInStoreReturnProcessing._load_json_file('payload.json')
         order = TestInStoreReturnProcessing._load_json_file('order.json')
         order_parsed = TestInStoreReturnProcessing._load_json_file('order_exchange_parsed.json')
-        payments = TestInStoreReturnProcessing._load_json_file('payments_exchaged_order.json')
+        payments = TestInStoreReturnProcessing._load_json_file('payments_exchanged_order.json')
 
         event['order']['total_refund_amount'] = 189.44
 

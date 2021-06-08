@@ -2,6 +2,7 @@ import asyncio
 import logging
 import os
 import re
+import numbers
 from datetime import timezone, datetime
 import pytz
 
@@ -236,16 +237,21 @@ def create_payment_items(order):
         method = transaction.get('instrument', {}).get('paymentMethod', transaction.get('payment_method', '')).lower()
         provider = transaction.get('instrument', {}).get('paymentProvider', transaction.get('payment_provider', '')).lower()
         currency = transaction['currency'].lower()
+
         if method == 'credit_card':
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[method].get(provider, {}).get(currency, '')
-            if not payment_item_id:
-                payment_item_id = payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[method].get(provider, '')
+            payment_config = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[method].get(provider, {})
+            if isinstance(payment_config, numbers.Number):
+                payment_item_id = payment_config
+            else:
+                payment_item_id = payment_config.get(currency, '')
         elif method == 'gift_card':
             payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get('gift_card', {}).get(currency, '')
         else:
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(method, {}).get(currency, '')
-            if not payment_item_id:
-                payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(method, '')
+            payment_config = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(method, {})
+            if isinstance(payment_config, numbers.Number):
+                payment_item_id = payment_config
+            else:
+                payment_item_id = payment_config.get(currency, '')
 
         if not payment_item_id:
             if method == 'credit_card':
@@ -305,18 +311,74 @@ def get_order_items(order):  # extract items from GraphQL API response
     return order['items']['nodes']
 
 
-def create_cash_sale_items(order):
+# Extract the tax rates (percentages) from the tax provider details
+# The NewStore payload looks like that for the item:
+#
+# Shopify:
+#
+# "tax_provider_details": [{
+#     "name": "CAN - QC (GST)",
+#     "amount": 1.73,
+#     "rate": 0.05
+# }, {
+#     "name": "CAN - QC (QST)",
+#     "amount": 3.44,
+#     "rate": 0.09975
+# }],
+#
+# Associate App:
+#
+# "tax_provider_details": [{
+#     "name": "CANADA GST/TPS",
+#     "amount": 1.45,
+#     "rate": 0.05
+# }, {
+#     "name": "QUEBEC QST/TVQ",
+#     "amount": 2.89,
+#     "rate": 0.09975
+# }],
+def get_tax_rates(item):
+    tax_rate_1 = 0.0000
+    tax_rate_2 = 0.0000
+
+    ca_tax_rate_1 = False
+    ca_tax_rate_2 = False
+
+    # Map Canadian taxes to the tax rates
+    tax_provider_details = item['tax_provider_details']
+    if tax_provider_details is not None:
+        for tax_detail in tax_provider_details:
+            if tax_detail['name'].find('GST') > -1 or tax_detail['name'].find('HST') > -1:
+                tax_rate_1 = tax_detail['rate'] * 100
+                ca_tax_rate_1 = True
+
+            if tax_detail['name'].find('PST') > -1 or tax_detail['name'].find('QST') > -1:
+                tax_rate_2 = tax_detail['rate'] * 100
+                ca_tax_rate_2 = True
+
+        # If no Canadian tax rates are found, get the rates from the array of details (if existing)
+        if not ca_tax_rate_1 and not ca_tax_rate_2 and len(tax_provider_details) > 0:
+            tax_rate_1 = tax_provider_details[0]['rate'] * 100
+
+            if len(tax_provider_details) > 1:
+                tax_rate_2 = tax_provider_details[1]['rate'] * 100
+
+    return tax_rate_1, tax_rate_2
+
+
+def create_cash_sale_items(order_event, order):
     cash_sale_items = []
 
     store_id = order['channel']  # when channel_type==store then channel represents the store_id
     subsidiary_id = util.get_subsidiary_id(store_id)
     location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
 
-    items = get_order_items(order)  # extract items from GraphQL API response
+    # items = get_order_items(order)  # extract items from GraphQL API response
+    items = order_event['items']
     for item in items:
         item_custom_field_list = []
 
-        netsuite_item_id = item['productId']
+        netsuite_item_id = item['product_id']
         if util.is_product_gift_card(netsuite_item_id):
             if util.require_shipping(item):
                 netsuite_item_id = NETSUITE_CONFIG['netsuite_p_gift_card_item_id']
@@ -326,16 +388,22 @@ def create_cash_sale_items(order):
             product = get_product_by_name(netsuite_item_id)
             netsuite_item_id = product['internalId']
 
+        # Tax is not mapped to the tax code, we get the tax rate from the details
+        tax_rate_1, tax_rate_2 = get_tax_rates(item)
+
         cash_sale_item = {
             'item': RecordRef(internalId=netsuite_item_id),
-            'location': RecordRef(internalId=location_id),
             'price': RecordRef(internalId=util.CUSTOM_PRICE),
-            'rate': item['pricebookPrice'],
-            'taxCode': RecordRef(internalId=util.get_tax_code_id(subsidiary_id=subsidiary_id))
+            'rate': item['pricebook_price'],
+            'location': RecordRef(internalId=location_id),
+            'taxCode': RecordRef(internalId=util.get_tax_code_id(subsidiary_id=subsidiary_id)),
+            # 'taxRate1': tax_rate_1,
+            # 'taxRate2': tax_rate_2,
+            'quantity': 1
         }
 
         if float(item['tax']) > 0:
-            tax_rate = round(float(item['tax']) * 100 / float(item['pricebookPrice']), 4)
+            tax_rate = round(float(item['tax']) * 100 / float(item['pricebook_price']), 4)
         else:
             tax_rate = 0.0
 
@@ -356,7 +424,7 @@ def create_cash_sale_items(order):
                 {
                     'item': RecordRef(internalId=int(NETSUITE_CONFIG['newstore_discount_item_id'])),
                     'price': RecordRef(internalId=util.CUSTOM_PRICE),
-                    'rate': str('-'+str(abs(float(item['itemDiscounts'])+float(item['orderDiscounts'])))),
+                    'rate': str('-'+str(abs(float(item['item_discounts'])+float(item['order_discounts'])))),
                     'taxCode': RecordRef(internalId=util.get_not_taxable_id(subsidiary_id=subsidiary_id)),
                     'location': RecordRef(internalId=location_id)
                 }
@@ -367,9 +435,9 @@ def create_cash_sale_items(order):
     return cash_sale_items
 
 
-def create_cash_sale_item_list(order):
+def create_cash_sale_item_list(order_event, order):
     cash_sale_items_list = []
-    cash_sale_items = create_cash_sale_items(order)
+    cash_sale_items = create_cash_sale_items(order_event, order)
     for item in cash_sale_items:
         cash_sale_items_list.append(CashSaleItem(**item))
     return cash_sale_items_list
@@ -466,7 +534,7 @@ async def process_events(message):
 
     cash_sale = create_cash_sale(order)
     cash_sale['entity'] = get_customer_netsuite_internal_id(order)
-    cash_sale['itemList'] = CashSaleItemList(create_cash_sale_item_list(order))
+    cash_sale['itemList'] = CashSaleItemList(create_cash_sale_item_list(order_payload, order))
     # TODO Enable again once we know if payment items can be used pylint: disable=fixme
     # if order['paymentAccount'] is not None:
     #    payment_method_id = get_payment_method(order)

@@ -133,7 +133,8 @@ NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS = {
     "cash": 8282,
     "credit_card": {
         "adyen": 572,
-        "shopify": 9204
+        "shopify": 9204,
+        "stripe": 572,
     },
     "gift_card": {
         "usd": 8229,

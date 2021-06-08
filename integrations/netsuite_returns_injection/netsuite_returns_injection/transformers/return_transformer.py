@@ -1,9 +1,12 @@
 import logging
+import numbers
+
 from netsuite_returns_injection.helpers.utils import Utils
 from netsuite.api.item import get_product_by_name
 from netsuite.service import (
     RecordRef,
     CashRefundItem,
+    CreditMemoItem,
     CustomFieldList,
     StringCustomFieldRef,
     BooleanCustomFieldRef
@@ -15,7 +18,7 @@ LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
 
 
-async def map_payment_items(payment_instrument_list, ns_return, store_tz, subsidiary_id, location_id=None):
+async def map_payment_items(payment_instrument_list, ns_return, store_tz, subsidiary_id, location_id=None, is_credit_memo=False):  # pylint: disable=too-many-arguments
     refund_transactions = await _get_refund_transactions(payment_instrument_list=payment_instrument_list,
                                                          ns_return=ns_return,
                                                          store_tz=store_tz)
@@ -24,27 +27,25 @@ async def map_payment_items(payment_instrument_list, ns_return, store_tz, subsid
                                              payment_instrument_list=payment_instrument_list,
                                              subsidiary_id=subsidiary_id,
                                              ns_return=ns_return,
-                                             location_id=location_id)
+                                             location_id=location_id,
+                                             is_credit_memo=is_credit_memo)
     return payment_items, refund_transactions
 
 
-async def _get_payment_items(refund_transactions, payment_instrument_list, subsidiary_id, ns_return, location_id=None):
+async def _get_payment_items(refund_transactions, payment_instrument_list, subsidiary_id, ns_return, location_id=None, is_credit_memo=False):  # pylint: disable=too-many-arguments
     payment_items = []
     for refund_transaction in refund_transactions:
         payment_method = refund_transaction['payment_method']
         payment_provider = refund_transaction['payment_provider']
-        LOGGER.info(f"transform_order - payment_method {payment_method} - payment_provider {payment_provider}")
+        currency = payment_instrument_list[0]['currency'].lower()
+        LOGGER.info(f'transform_order - payment_method {payment_method} - payment_provider {payment_provider}')
 
         if payment_method == 'credit_card':
-            if 'shopify' in payment_provider:
-                payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[payment_method]['shopify']
-            else:
-                payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[payment_method]['adyen']
+            payment_item_id = _get_payment_item_id(payment_method, payment_provider, currency)
         elif payment_method == 'gift_card':
-            currency = payment_instrument_list[0]['currency'].lower()
             payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(payment_method, {}).get(currency, '')
         else:
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(payment_method, '')
+            payment_item_id = _get_payment_item_id(payment_method, None, currency)
 
         if payment_item_id:
             if location_id is not None:
@@ -68,15 +69,34 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
                 payment_item['customFieldList'] = CustomFieldList([
                     StringCustomFieldRef(scriptId='custcol_nws_gcnumber', value=gc_code)
                 ])
-            payment_items.append(CashRefundItem(**payment_item))
+
+            if is_credit_memo:
+                payment_items.append(CreditMemoItem(**payment_item))
+            else:
+                payment_items.append(CashRefundItem(**payment_item))
+
             LOGGER.info(f'Payment Item for payment method {payment_method} added to items.')
         else:
             err_msg = f'Payment Item for payment method {payment_method} not mapped.'
-            # If payment was not mapped it should trow error so that we know about it
+            # If payment was not mapped it should throw error so that we know about it
             # It can't be injected on NetSuite with the payment item not mapped accordingly
             raise ValueError(err_msg)
     return payment_items
 
+
+def _get_payment_item_id(payment_method, payment_provider, currency):
+    payment_item_id = None
+    payment_config = {}
+    if payment_provider:
+        payment_config = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[payment_method].get(payment_provider, {})
+    else:
+        payment_config = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(payment_method, {})
+    if isinstance(payment_config, numbers.Number):
+        payment_item_id = payment_config
+    else:
+        payment_item_id = payment_config.get(currency, '')
+
+    return payment_item_id
 
 def _get_amount(refund_transaction):
     if refund_transaction['reason'] == 'refund' or refund_transaction['capture_amount'] == 0:
@@ -111,7 +131,7 @@ async def _get_refund_transactions(payment_instrument_list, ns_return, store_tz)
                 transaction_created_at = Utils.format_datestring_for_netsuite(date_string=original_transaction['created_at'],
                                                                               time_zone=store_tz)
                 diff_seconds = (transaction_created_at - returned_at).total_seconds()
-                LOGGER.info(f"Issue refund diff_seconds: {diff_seconds}")
+                LOGGER.info(f'Issue refund diff_seconds: {diff_seconds}')
             else:
                 LOGGER.warning(f'original_transaction {original_transaction["transaction_id"]} does not have created_at datetime')
                 diff_seconds = 1000
@@ -189,12 +209,12 @@ async def map_cash_refund_items(customer_order, ns_return, subsidiary_id, locati
         cash_refund_items.append(cash_refund_item)
 
         if len(item['discounts']) > 0:
-            cupom_code = item['discounts'][0]['coupon_code']
-            if cupom_code:
+            coupon_code = item['discounts'][0]['coupon_code']
+            if coupon_code:
                 item_custom_field_list.append(
                     StringCustomFieldRef(
                         scriptId='custcol_nws_promocode',
-                        value=cupom_code
+                        value=coupon_code
                     )
                 )
 

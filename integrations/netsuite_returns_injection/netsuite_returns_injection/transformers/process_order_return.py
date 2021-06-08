@@ -17,7 +17,7 @@ async def transform_order(cash_sale, ns_return, payments_info, customer_order=No
     cash_refund = _get_cash_refund(ns_return=ns_return,
                                    cash_sale=cash_sale,
                                    store_tz=store_tz)
-    subsidiary_id = int(Utils.get_netsuite_config()['subsidiary_us_internal_id']) if not cash_sale else int(cash_sale['subsidiary']['internalId'])
+    subsidiary_id = int(Utils.get_netsuite_config()['subsidiary_ca_internal_id']) if not cash_sale else int(cash_sale['subsidiary']['internalId'])
     cash_refund_items = await map_cash_refund_items(customer_order,
                                                     ns_return,
                                                     subsidiary_id)
@@ -59,12 +59,12 @@ def _get_cash_refund(ns_return, cash_sale, store_tz):
     # Location can be mapped using the returned_from that is the store_id on NewStore
     return_location_id = ns_return['return_location_id']
     condition = ns_return['items'][0]['item_condition']
-    is_sellable = condition == "Sellable"
+    is_sellable = condition == 'Sellable'
     if not is_sellable:
         LOGGER.info("Item cannot be resold, sending to store's damage location")
     location_id = Utils.get_netsuite_store_internal_id(return_location_id, is_sellable)
     if not location_id:
-        raise Exception(f"Returned_from store {return_location_id} isn't mapped to NetSuite")
+        raise Exception(f"Return location {return_location_id} isn't mapped to NetSuite")
 
     tran_date = Utils.format_datestring_for_netsuite(date_string=ns_return['returned_at'],
                                                      time_zone=store_tz)
@@ -82,7 +82,6 @@ def _get_cash_refund(ns_return, cash_sale, store_tz):
 
     if partner_id > -1:
         cash_refund['partner'] = RecordRef(internalId=partner_id)
-
 
     if cash_sale:
         cash_refund['createdFrom'] = RecordRef(internalId=cash_sale['internalId'])

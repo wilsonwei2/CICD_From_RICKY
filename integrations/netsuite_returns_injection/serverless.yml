@@ -33,6 +33,8 @@ functions:
     handler: netsuite_returns_injection.aws.returns_to_netsuite.handler
     timeout: 300
     memorySize: 256
+    environment:
+      IGNORE_REFUND_PAYMENT_MISMATCHES: False
     events:
       - schedule:
           name: ${self:provider.tenant}-returns-to-netsuite-trigger

@@ -208,11 +208,11 @@ def map_location(customer_order):
     selling_location_id = None
     if customer_order['channel_type'] == 'web':
         location_id = int(NETSUITE_CONFIG['shopify_location_id'])
-        #selling_location_id = int(NETSUITE_CONFIG['shopify_selling_location_internal_id'])
-        subsidiary_id = int(NETSUITE_CONFIG['subsidiary_us_internal_id'])
+        # selling_location_id = int(NETSUITE_CONFIG['shopify_selling_location_internal_id'])
+        subsidiary_id = int(NETSUITE_CONFIG['subsidiary_ca_internal_id'])
     elif channel in NEWSTORE_TO_NETSUITE_LOCATIONS:
         location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[channel]['id']
-        #selling_location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[channel]['selling_id']
+        # selling_location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[channel]['selling_id']
         subsidiary_id = get_subsidiary_id(channel)
     else:
         raise Exception("Channel %s isn't mapped to NetSuite" % channel)

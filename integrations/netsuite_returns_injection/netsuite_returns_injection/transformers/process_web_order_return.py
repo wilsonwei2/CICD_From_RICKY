@@ -32,34 +32,43 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
     if return_authorization:
         LOGGER.info('Create CashRefund from ReturnAuthorization')
         cash_refund = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz)
+        credit_memo = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz, is_credit_memo=True)
     else:
         LOGGER.info('Create standalone CashRefund')
-
         if not location_id:
             raise Exception(f'Returned_from store {return_location_id} wasn\'t found')
 
-        custom_fields_list = map_custom_fields(customer_order)
-        LOGGER.debug(f'custom_fields_list: {custom_fields_list}')
-        LOGGER.info('Map cash refund')
         cash_refund = map_cash_refund(ns_return, location_id, sales_order, return_authorization, store_tz)
-        if custom_fields_list:
-            cash_refund['customFieldList'] = CustomFieldList(custom_fields_list)
-        if not sales_order:
-            # Map Customer
-            LOGGER.info('Map customer')
-            customer = map_customer_information(customer_order, subsidiary_id)
+        credit_memo = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz, is_credit_memo=True)
+
+    custom_fields_list = map_custom_fields(customer_order)
+    LOGGER.debug(f'custom_fields_list: {custom_fields_list}')
+    if custom_fields_list:
+        cash_refund['customFieldList'] = CustomFieldList(custom_fields_list)
+        credit_memo['customFieldList'] = CustomFieldList(custom_fields_list)
+
+    if not sales_order:
+        # Map Customer
+        LOGGER.info('Map customer')
+        customer = map_customer_information(customer_order, subsidiary_id)
 
     LOGGER.info('Map cash refund items')
     cash_refund_items = await map_cash_refund_items(customer_order, ns_return, int(subsidiary_id))
+
     LOGGER.info('Map payment items')
-    payment_items, _ = await map_payment_items(payment_instrument_list=payments_info['instruments'],
-                                               ns_return=ns_return,
-                                               store_tz=store_tz,
-                                               subsidiary_id=subsidiary_id)
+    cash_refund_payment_items, _ = await map_payment_items(payment_instrument_list=payments_info['instruments'],
+                                                           ns_return=ns_return,
+                                                           store_tz=store_tz,
+                                                           subsidiary_id=subsidiary_id)
+    credit_memo_payment_items, _ = await map_payment_items(payment_instrument_list=payments_info['instruments'],
+                                                           ns_return=ns_return,
+                                                           store_tz=store_tz,
+                                                           subsidiary_id=subsidiary_id,
+                                                           is_credit_memo=True)
 
     if not IGNORE_REFUND_PAYMENT_MISMATCHES\
-            and not Utils.verify_all_payments_refunded(payment_items, ns_return['total_refund_amount']):
-        LOGGER.debug(f'transform_order - payment_items {payment_items}')
+            and not Utils.verify_all_payments_refunded(cash_refund_payment_items, ns_return['total_refund_amount']):
+        LOGGER.debug(f'transform_order - payment_items {cash_refund_payment_items}')
         raise Exception(
             'The payments for this order were not all mapped to payments item. Verify logs for more details.')
 
@@ -67,7 +76,10 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
         'customer': customer,
         'cash_refund': cash_refund,
         'cash_refund_items': cash_refund_items,
-        'payment_items': payment_items
+        'credit_memo': credit_memo,
+        'credit_memo_items': cash_refund_items,
+        'cash_refund_payment_items': cash_refund_payment_items,
+        'credit_memo_payment_items': credit_memo_payment_items
     }
 
 
@@ -84,10 +96,10 @@ def map_customer_information(customer_order, subsidiary_id):
     email = customer_order['consumer'].get('email')
 
     netsuite_customer = {
-        "first_name": customer_order['billing_address'].get('first_name', '-'),
-        "second_name": customer_order['billing_address'].get('second_name', ''),
-        "last_name": customer_order['billing_address'].get('last_name', '-'),
-        "phone_number": get_phone_from_object(customer_order['billing_address'])
+        'first_name': customer_order['billing_address'].get('first_name', '-'),
+        'second_name': customer_order['billing_address'].get('second_name', ''),
+        'last_name': customer_order['billing_address'].get('last_name', '-'),
+        'phone_number': get_phone_from_object(customer_order['billing_address'])
     }
 
     customer = build_netsuite_customer(netsuite_customer=netsuite_customer,
@@ -98,17 +110,23 @@ def map_customer_information(customer_order, subsidiary_id):
     return customer
 
 
-def map_cash_refund(ns_return, location_id, sales_order, return_authorization=None, store_tz='America/New_York'):
+def map_cash_refund(ns_return, location_id, sales_order, return_authorization=None, store_tz='America/New_York', is_credit_memo=False): # pylint: disable=too-many-arguments
     tran_date = Utils.format_datestring_for_netsuite(date_string=ns_return['returned_at'], time_zone=store_tz,
                                                      cutoff_index=19, format_string='%Y-%m-%dT%H:%M:%S')
 
     partner_id = int(Utils.get_netsuite_config()['newstore_partner_internal_id'])
 
+    if is_credit_memo:
+        custom_form_internal_id = int(Utils.get_netsuite_config()['credit_memo_custom_form_internal_id'])
+    else:
+        custom_form_internal_id = int(Utils.get_netsuite_config()['cash_return_custom_form_internal_id'])
+
+
     cash_refund = {
         'externalId': ns_return['id'],
         'tranDate': tran_date.date(),
         'location': RecordRef(internalId=location_id),
-        'customForm': RecordRef(internalId=int(Utils.get_netsuite_config()['cash_return_custom_form_internal_id']))
+        'customForm': RecordRef(internalId=custom_form_internal_id)
     }
 
     if partner_id > -1:

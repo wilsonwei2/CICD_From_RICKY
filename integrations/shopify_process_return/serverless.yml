@@ -57,7 +57,6 @@ functions:
         Fn::GetAtt:
           - ShopifyReturnQueue
           - QueueName
-      warehouse_usc: 'Pixior Ecom'
     events:
       - sqs:
           arn:

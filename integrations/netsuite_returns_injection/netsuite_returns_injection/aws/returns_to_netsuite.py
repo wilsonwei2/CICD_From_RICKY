@@ -14,13 +14,12 @@ from netsuite.api.sale import (
     get_sales_order,
     get_return_authorizations,
     get_transaction_with_created_from_id,
-    get_transaction_with_custom_field,
-    update_sales_order
+    get_transaction_with_custom_field
 )
-from netsuite.api.refund import create_cash_refund
+from netsuite.api.refund import create_cash_refund, create_credit_memo
 from netsuite.service import (
-    SalesOrder,
     CashRefundItemList,
+    CreditMemoItemList,
     CustomerAddressbook,
     CustomerAddressbookList,
     RecordRef
@@ -75,15 +74,10 @@ async def process_return(message):
     if customer_order.get('order_timeline'):
         ns_return['returned_at'] = get_return_timeline_timestamp(ns_return, customer_order)
 
-    # VIP orders are $0, so we don't need payment info or store details to process
-    if customer_order.get('coupons') and "VIP" in customer_order.get('coupons', []):
-        return await _handle_vip_order_return(customer_order=customer_order,
-                                              ns_return=ns_return)
-
     is_endless_aisle = Utils.is_endless_aisle(order_payload=customer_order)
 
     # get_payments retrieves a payment account which are assigned the same ID as
-    #   the entity it is assigned to, which is why we're passing in the order_id
+    # the entity it is assigned to, which is why we're passing in the order_id
     payments_info = Utils.get_newstore_conn().get_payments(ns_return['order_id'])
     if not payments_info:
         raise Exception('Payment Account for order %s not found on NewStore' % ns_return['order_id'])
@@ -120,13 +114,13 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
     cash_sale = None
     is_historical = Utils.get_extended_attribute(customer_order['extended_attributes'], 'is_historical')
 
-    if not (is_historical and is_historical.lower() == 'true') \
-            and not customer_order.get("sales_order_external_id", "").startswith("HIST"):
+    if not (is_historical and is_historical.lower() == 'true'):
         # Retrieve the associated order from NetSuite
         cash_sale = get_cash_sale(customer_order['sales_order_external_id'])
         if not cash_sale:
             raise Exception(f"CashSale for order {customer_order['sales_order_external_id']} not found on NetSuite")
-        LOGGER.info(f'CashSale: \n{cash_sale}')
+
+        # LOGGER.info(f'CashSale: \n{cash_sale}')
 
         # In case of return for exchanged order, original order payment must be fetched
         original_order = await _get_original_order(cash_sale)
@@ -162,45 +156,6 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
     return result
 
 
-async def _handle_vip_order_return(customer_order, ns_return):
-    returned_product_ids = [item['product_id'] for item in ns_return['items']]
-    # Verify if return was in store or via web, if it was via web returned_from must be DC
-    # Either way it should have a sales_order
-    order_id = ns_return['order_id']
-    external_order_id = customer_order['sales_order_external_id']
-    # When partner is NewStore, the search uses the order id
-    sales_order = get_sales_order(order_id)
-    if not sales_order:
-        LOGGER.info(f'Search for sales order using order id, {order_id}, not found, try with external order id.')
-        sales_order = get_sales_order(external_order_id)
-
-    if not sales_order:
-        LOGGER.info(f'Sales order for order {ns_return["order_id"]} not found on NetSuite')
-        return False
-    LOGGER.info(f"Sales Order: \n {json.dumps(serialize_object(sales_order), indent=4, default=Utils.json_serial)}")
-    if sales_order.status not in ['_pendingFulfillment', 'Pending Fulfillment']:
-        raise ValueError(f"Sales Order in incorrect state to be closed: {sales_order.status}")
-
-    ns_sales_order = SalesOrder()
-    ns_sales_order.internalId = sales_order.internalId
-    ns_sales_order.itemList = sales_order.itemList
-
-    for item in ns_sales_order.itemList.item:
-        if item.item.internalId in returned_product_ids:
-            item.isClosed = True
-        item.customFieldList = None
-        item.costEstimate = None
-        item.costEstimateType = None
-    LOGGER.info(f"Updated Sales Order: \n{json.dumps(serialize_object(ns_sales_order), indent=4, default=Utils.json_serial)}")
-
-    result, updated_sales_order = update_sales_order(ns_sales_order)
-    if not result:
-        LOGGER.error(f'Failed to update sales order: {updated_sales_order}')
-    else:
-        LOGGER.error(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
-    return result
-
-
 async def _handle_web_order_return(customer_order, ns_return, payments_info):
     returned_product_ids = [item['product_id'] for item in ns_return['items']]
     # Verify if return was in store or via web, if it was via web returned_from must be DC
@@ -209,14 +164,14 @@ async def _handle_web_order_return(customer_order, ns_return, payments_info):
     external_order_id = customer_order['sales_order_external_id']
 
     is_historical = Utils.get_extended_attribute(customer_order['extended_attributes'], 'is_historical')
-    if not (is_historical and is_historical.lower() == 'true') \
-            and not customer_order.get("sales_order_external_id", "").startswith("HIST"):
+    if not (is_historical and is_historical.lower() == 'true'):
         # When partner is NewStore, the search uses the order id
         sales_order = search_sales_order(order_id, external_order_id)
         if not sales_order:
             LOGGER.info(f'SalesOrder for order {ns_return["order_id"]} not found on NetSuite')
             return False
-        LOGGER.info(f'Sales Order: {sales_order}')
+
+        # LOGGER.info(f'Sales Order: {sales_order}')
 
         netsuite_config = Utils.get_netsuite_config()
         if TREAT_ALL_ORDERS_AS_HISTORICAL or ns_return.get('is_historical'):
@@ -300,8 +255,14 @@ def get_return_timeline_timestamp(ns_return, customer_order):
 
 
 async def _verify_return_authorization(return_authorization, returned_product_ids):
-    return_authorization_items = [item.item.internalId for item in return_authorization.itemList.item].sort()
+    return_authorization_items = []
+    for item in return_authorization.itemList.item:
+        product_id = get_product_id_by_netsuite_name(item.item.name, returned_product_ids)
+        if product_id is not None:
+            return_authorization_items.append(product_id)
+    LOGGER.info(f'Returned product ids {returned_product_ids}')
     LOGGER.info(f'return_authorization_items: {return_authorization_items}')
+    return_authorization_items.sort()
     returned_product_ids.sort()
     if not returned_product_ids == return_authorization_items:
         return False
@@ -391,7 +352,10 @@ async def get_return_authorization(return_authorizations, returned_product_ids):
             return_authorization = authorization
     return return_authorization
 
-
+#
+# Sends the web return as CashRefund and CreditMemo to Netsuite.
+# F&O wants that both objects are created.
+#
 def inject_web_return(return_parsed):
     if 'customer' in return_parsed and return_parsed['customer']:
         customer = get_or_create_customer(return_parsed)
@@ -399,22 +363,52 @@ def inject_web_return(return_parsed):
             raise Exception('The customer could not be created')
         return_parsed['cash_refund']['entity'] = RecordRef(internalId=customer['internalId'])
 
+    cash_refund_result = inject_cash_refund(return_parsed)
+
+    credit_memo_result = inject_credit_memo(return_parsed)
+
+    return cash_refund_result and credit_memo_result
+
+#
+# Injects a Cash Refund into Netsuite
+#
+def inject_cash_refund(return_parsed):
     cash_refund = return_parsed['cash_refund']
     cash_refund_items = return_parsed['cash_refund_items']
-    payment_items = return_parsed['payment_items']
+    payment_items = return_parsed['cash_refund_payment_items']
     cash_refund_items_list = cash_refund_items + payment_items
     cash_refund['itemList'] = CashRefundItemList(cash_refund_items_list)
-    result, refund = create_cash_refund(cash_refund)
+    result, response = create_cash_refund(cash_refund)
 
     if not result:
-        for status in refund.status.statusDetail:
+        for status in response.status.statusDetail:
             if status.code == 'DUP_RCRD':
-                LOGGER.info('This record already exists in NetSuite and will be removed from queue.')
+                LOGGER.info('This cash refund record already exists in NetSuite and will be removed from queue.')
                 return True
         LOGGER.error('Error on creating Cash Refund. Cash Refund not created.')
 
     return result
 
+
+#
+# Injects a Credit Memo into Netsuite
+#
+def inject_credit_memo(return_parsed):
+    credit_memo = return_parsed['credit_memo']
+    credit_memo_items = return_parsed['credit_memo_items']
+    payment_items = return_parsed['credit_memo_payment_items']
+    credit_memo_items_list = credit_memo_items + payment_items
+    credit_memo['itemList'] = CreditMemoItemList(credit_memo_items_list)
+    result, response = create_credit_memo(credit_memo)
+
+    if not result:
+        for status in response.status.statusDetail:
+            if status.code == 'DUP_RCRD':
+                LOGGER.info('This credit memo record already exists in NetSuite and will be removed from queue.')
+                return True
+        LOGGER.error('Error on creating Credit Memo. Credit Memo not created.')
+
+    return result
 
 def check_historic_return(payments, return_id):
     for payment in payments['instruments']:
@@ -436,3 +430,14 @@ def is_historical_return(original_payment, return_id):
             return True
 
     return False
+
+#
+# Parses the product id from the netsuite item name
+#
+def get_product_id_by_netsuite_name(netsuite_name, returned_product_ids):
+    product_id = None
+    for possible_item_id in netsuite_name.split(' '):
+        if possible_item_id in returned_product_ids:
+            product_id = possible_item_id
+            break
+    return product_id

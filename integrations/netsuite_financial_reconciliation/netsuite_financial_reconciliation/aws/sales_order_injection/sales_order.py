@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import logging
+import numbers
 import re
 import pytz
 
@@ -181,15 +182,19 @@ def get_payment_items(order_event, order_data, location):
             raise ValueError('Order is flagged as exchange but web exchanges are not supported.')
 
         if method == 'credit_card':
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config()[method].get(provider, {}).get(currency, '')
-            if not payment_item_id:
-                payment_item_id = payment_item_id = params.get_newstore_to_netsuite_payment_items_config()[method].get(provider, '')
+            payment_config = params.get_newstore_to_netsuite_payment_items_config()[method].get(provider, {})
+            if isinstance(payment_config, numbers.Number):
+                payment_item_id = payment_config
+            else:
+                payment_item_id = payment_config.get(currency, '')
         elif method == 'gift_card':
             payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, {}).get(currency, '')
         else:
-            payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, {}).get(currency, '')
-            if not payment_item_id:
-                payment_item_id = params.get_newstore_to_netsuite_payment_items_config().get(method, '')
+            payment_config = params.get_newstore_to_netsuite_payment_items_config().get(method, {})
+            if isinstance(payment_config, numbers.Number):
+                payment_item_id = payment_config
+            else:
+                payment_item_id = payment_config.get(currency, '')
 
         # In case the payment item isn't mapped and the order is WEB utilize Shopify payment item as default
         if not payment_item_id and order_event['channel_type'] == 'web':
@@ -273,11 +278,11 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
         'department': params.RecordRef(internalId=department_id),
         'customFieldList': CustomFieldList([
             StringCustomFieldRef(
-                scriptId='custbodyaccumula_ecomid',
+                scriptId='custbody_nws_shopifyorderid',
                 value=order_event['external_id']
             ),
             StringCustomFieldRef(
-                scriptId='custbody_afaps_ship_taxrate_override',
+                scriptId='custbody_ship_taxrate_override',
                 value=ship_tax
             )
         ])
@@ -416,12 +421,17 @@ def get_sales_order_items(order_event):
             product = get_product_by_name(netsuite_item_id)
             netsuite_item_id = product['internalId']
 
+        # Tax is not mapped to the tax code, we get the tax rate from the details
+        tax_rate_1, tax_rate_2 = get_tax_rates(item)
+
         sales_order_item = {
             'item': RecordRef(internalId=netsuite_item_id),
             'price': params.RecordRef(internalId=params.CUSTOM_PRICE),
             'rate': str(item['pricebook_price']),
             'location': params.RecordRef(internalId=location_id),
-            'taxCode': params.RecordRef(internalId=params.get_tax_code_id(subsidiary_id=subsidiary_id)),
+            # 'taxCode': params.RecordRef(internalId=params.get_tax_code_id(subsidiary_id=subsidiary_id)),
+            'taxRate1': tax_rate_1,
+            'taxRate2': tax_rate_2,
             'quantity': 1
         }
 
@@ -477,7 +487,6 @@ def get_sales_order_items(order_event):
     return sales_order_items
 
 def get_subsidiary_id_for_web():
-    # TODO There might be a different subsidiary for US; check later pylint: disable=fixme
     return params.get_netsuite_config()['subsidiary_ca_internal_id']
 
 
@@ -488,6 +497,61 @@ def get_subsidiary_id_for_store(store_id):
     if not subsidiary_id:
         raise ValueError(f"Unable to find subsidiary for NewStore location '{store_id}'.")
     return subsidiary_id
+
+
+# Extract the tax rates (percentages) from the tax provider details
+# The NewStore payload looks like that for the item:
+#
+# Shopify:
+#
+# "tax_provider_details": [{
+#     "name": "CAN - QC (GST)",
+#     "amount": 1.73,
+#     "rate": 0.05
+# }, {
+#     "name": "CAN - QC (QST)",
+#     "amount": 3.44,
+#     "rate": 0.09975
+# }],
+#
+# Associate App:
+#
+# "tax_provider_details": [{
+#     "name": "CANADA GST/TPS",
+#     "amount": 1.45,
+#     "rate": 0.05
+# }, {
+#     "name": "QUEBEC QST/TVQ",
+#     "amount": 2.89,
+#     "rate": 0.09975
+# }],
+def get_tax_rates(item):
+    tax_rate_1 = 0.0000
+    tax_rate_2 = 0.0000
+
+    ca_tax_rate_1 = False
+    ca_tax_rate_2 = False
+
+    # Map Canadian taxes to the tax rates
+    tax_provider_details = item['tax_provider_details']
+    if tax_provider_details is not None:
+        for tax_detail in tax_provider_details:
+            if tax_detail['name'].find('GST') > -1 or tax_detail['name'].find('HST') > -1:
+                tax_rate_1 = tax_detail['rate'] * 100
+                ca_tax_rate_1 = True
+
+            if tax_detail['name'].find('PST') > -1 or tax_detail['name'].find('QST') > -1:
+                tax_rate_2 = tax_detail['rate'] * 100
+                ca_tax_rate_2 = True
+
+        # If no Canadian tax rates are found, get the rates from the array of details (if existing)
+        if not ca_tax_rate_1 and not ca_tax_rate_2 and len(tax_provider_details) > 0:
+            tax_rate_1 = tax_provider_details[0]['rate'] * 100
+
+            if len(tax_provider_details) > 1:
+                tax_rate_2 = tax_provider_details[1]['rate'] * 100
+
+    return tax_rate_1, tax_rate_2
 
 
 def inject_sales_order(order_event, order_data, consumer):
