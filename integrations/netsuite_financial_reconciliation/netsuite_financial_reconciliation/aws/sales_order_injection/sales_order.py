@@ -537,19 +537,19 @@ def get_tax_rates(item):
     if tax_provider_details is not None:
         for tax_detail in tax_provider_details:
             if tax_detail['name'].find('GST') > -1 or tax_detail['name'].find('HST') > -1:
-                tax_rate_1 = tax_detail['rate'] * 100
+                tax_rate_1 = round(tax_detail['rate'] * 100, 4)
                 ca_tax_rate_1 = True
 
             if tax_detail['name'].find('PST') > -1 or tax_detail['name'].find('QST') > -1:
-                tax_rate_2 = tax_detail['rate'] * 100
+                tax_rate_2 = round(tax_detail['rate'] * 100, 4)
                 ca_tax_rate_2 = True
 
         # If no Canadian tax rates are found, get the rates from the array of details (if existing)
         if not ca_tax_rate_1 and not ca_tax_rate_2 and len(tax_provider_details) > 0:
-            tax_rate_1 = tax_provider_details[0]['rate'] * 100
+            tax_rate_1 = round(tax_provider_details[0]['rate'] * 100, 4)
 
             if len(tax_provider_details) > 1:
-                tax_rate_2 = tax_provider_details[1]['rate'] * 100
+                tax_rate_2 = round(tax_provider_details[1]['rate'] * 100, 4)
 
     return tax_rate_1, tax_rate_2
 
