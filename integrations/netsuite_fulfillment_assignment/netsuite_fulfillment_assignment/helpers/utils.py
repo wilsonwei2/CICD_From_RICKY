@@ -66,11 +66,7 @@ class Utils():
 
     @staticmethod
     def get_netsuite_location_map():
-        if not Utils._newstore_to_netsuite_locations:
-            location_params = json.loads(Utils.get_param_store().get_param(
-                'netsuite/newstore_to_netsuite_locations'))
-            Utils._newstore_to_netsuite_locations = location_params
-        return Utils._newstore_to_netsuite_locations
+        return json.loads(Utils.get_param_store().get_param('netsuite/newstore_to_netsuite_locations'))
 
     @staticmethod
     def _get_netsuite_store_mapping(nws_value):

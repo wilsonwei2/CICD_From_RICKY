@@ -50,6 +50,9 @@ async def process_events(message):
 
     consumer = await get_consumer(order_data)
 
+    # Process virtual/electronic gift cards if needed
+    await ship_virtual_gift_cards(order_data)
+
     return sales_order.inject_sales_order(event_payload, order_data, consumer)
 
 
@@ -76,23 +79,30 @@ def get_order_data(order_id):
         tax
         itemDiscounts
         orderDiscounts
+        status
+        extendedAttributes(first: 20) {
+          nodes {
+            name
+            value
+          }
+        }
       }
     }
     addresses {
         nodes {
-          addressType
-          firstName
-          lastName
-          phone
-          salutation
-          country
-          city
-          addressLine1
-          addressLine2
-          state
-          zipCode
+            addressType
+            firstName
+            lastName
+            phone
+            salutation
+            country
+            city
+            addressLine1
+            addressLine2
+            state
+            zipCode
         }
-      }
+    }
     paymentAccount {
       transactions(filter: {transactionType: {equalTo: "authorize"}}) {
         nodes {
@@ -104,6 +114,17 @@ def get_order_data(order_id):
             paymentProvider
             paymentOrigin
             paymentMethod
+          }
+        }
+      }
+    }
+    fulfillmentRequests(first: 50) {
+      nodes {
+        id
+        items(first: 50) {
+          nodes {
+            id
+            productId
           }
         }
       }
@@ -135,3 +156,69 @@ def order_data_is_complete(order):
         LOGGER.error(f'Order data does not contain items. {order}')
         return False
     return True
+
+#
+# Virtual or Electronic Gift Cards need to be set to shipped and paid immediately. This function
+# checks if there are gift cards in the order, and generates a shipment if so.
+#
+async def ship_virtual_gift_cards(customer_order):
+    items_to_ship = []
+    for line_item in customer_order['items']['nodes']:
+        if is_virtual_gift_card(line_item) and line_item['status'] != 'canceled' and line_item['status'] != 'completed':
+            LOGGER.info(f'Item {line_item} is a virtual gift card.')
+            items_to_ship.append(line_item)
+    if not items_to_ship:
+        return items_to_ship
+
+    shipment_json = {
+        'line_items': [
+            {
+                'product_ids': [item['productId'] for item in items_to_ship],
+                'shipment': {
+                    'tracking_code': 'N/A',
+                    'carrier': 'N/A'
+                }
+            }
+        ]
+    }
+
+    fulfillment_id = get_egc_fulfillment_id(customer_order, items_to_ship[0])
+
+    if not NEWSTORE_HANDLER.send_shipment(fulfillment_id, shipment_json):
+        raise Exception('Fulfillment request was not informed of shipping for virtual gift cards.')
+    LOGGER.info('Fulfillment request informed of shipping for virtual gift cards.')
+    return items_to_ship
+
+
+#
+# Gets the first found fulfillment request id with an EGC. There
+# should be only one fulfillment request with EGCs, so no further check is done.
+#
+def get_egc_fulfillment_id(customer_order, line_item):
+    fulfillment_id = None
+    if customer_order['fulfillmentRequests']['nodes']:
+        for ffr in customer_order['fulfillmentRequests']['nodes']:
+            for item in ffr['items']['nodes']:
+                if item['productId'] == line_item['productId']:
+                    fulfillment_id = ffr['id']
+                    break
+
+    LOGGER.info(f'fulfillment_id for virtual gift cards is {fulfillment_id}')
+
+    return fulfillment_id
+
+#
+# Checks if the given line item is a virtual/electronic gift card. A GraphQL payload is required.
+#
+def is_virtual_gift_card(line_item):
+    is_gc = get_extended_attribute(line_item['extendedAttributes']['nodes'], 'is_gift_card')
+    requires_shipping = get_extended_attribute(line_item['extendedAttributes']['nodes'], 'requires_shipping')
+    return is_gc == 'True' and requires_shipping == 'False'
+
+
+def get_extended_attribute(extended_attributes, key):
+    if extended_attributes:
+        for attr in extended_attributes:
+            if attr['name'] == key:
+                return attr['value']
+    return ''
