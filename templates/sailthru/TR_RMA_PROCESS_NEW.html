@@ -4,7 +4,7 @@
 {lang = !profile.vars.language ? 'en': profile.vars.language}
 {sc = amount}
 {cc = amount_cc}
-{orderNumber = order_number}
+{orderNumber = ORDERNUMBER}
 {returnComment = lang == 'fr' ? "Nous avons le plaisir de vous annoncer que votre retour vient d’être traité." : "We’re happy to report that your return has been processed."}
 
 {if comments}
@@ -139,10 +139,10 @@
                                                                             <img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;">
                                                                         </td>
                                                                         <td width="344">
-                                                                            <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{item.name}</span>
+                                                                            <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{item.material}</span>
                                                                         </td>
                                                                         <td align="center" width="104">
-                                                                            <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{item.qty}</span>
+                                                                            <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{item.quantity}</span>
                                                                         </td>
                                                                     </tr>
                                                                 </table>
