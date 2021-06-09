@@ -1,0 +1,13 @@
+{
+  "head": {
+      "pricebook": "egc-250",
+      "catalog": "storefront-catalog-fr",
+      "currency": "CAD"
+  },
+  "items": [
+      {
+          "product_id": "EGC",
+          "value": 250.00
+      }
+  ]
+}

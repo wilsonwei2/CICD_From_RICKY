@@ -1,0 +1,40 @@
+{
+  "name": "frankandoak",
+  "stages": {
+    "all": {
+      "tenant": "frankandoak",
+      "version": "v0"
+    },
+    "local": {
+      "url_api": "frankandoak.v.newstore.net",
+      "s3_bucket": "frankandoak-l-0-newstore-dmz",
+      "s3_bucket_key": "key",
+      "shopify_url": "https://frank-and-oak-store-dev.myshopify.com",
+      "shopify_username": "shopify_username",
+      "shopify_password": "shopify_password"
+    },
+    "dev": {
+      "url_api": "frankandoak.v.newstore.net",
+      "s3_bucket": "frankandoak-v-0-newstore-dmz"
+    },
+    "sandbox": {
+        "url_api": "frankandoak.x.newstore.net",
+        "s3_bucket": "frankandoak-x-0-newstore-dmz",
+        "url_image_placeholder": "https://s3.amazonaws.com/frankandoak-x-0-newstore-dmz/image_placeholder.jpg"
+    },
+    "demo": {
+        "url_api": "frankandoak.d.newstore.net",
+        "s3_bucket": "frankandoak-d-0-newstore-dmz"
+    },
+    "staging": {
+      "url_api": "frankandoak.s.newstore.net",
+      "s3_bucket": "frankandoak-s-0-newstore-dmz",
+      "url_image_placeholder": "https://s3.amazonaws.com/frankandoak-s-0-newstore-dmz/image_placeholder.jpg"
+    },
+    "production": {
+      "url_api": "frankandoak.p.newstore.net",
+      "s3_bucket": "frankandoak-p-0-newstore-dmz",
+      "url_image_placeholder": "https://s3.amazonaws.com/frankandoak-p-0-newstore-dmz/image_placeholder.jpg"
+    }
+  }
+}

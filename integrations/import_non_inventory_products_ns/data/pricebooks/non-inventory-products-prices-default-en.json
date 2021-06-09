@@ -1,0 +1,21 @@
+{
+  "head": {
+    "pricebook": "default",
+    "shop": "storefront-catalog-en",
+    "currency": "CAD"
+  },
+  "items": [
+    {
+      "product_id": "9090909-999",
+      "value": 0.50
+    },
+    {
+      "product_id": "virtual_giftcard",
+      "value": 0.00
+    },
+    {
+      "product_id": "STYLESHIP-FEE",
+      "value": 25.00
+    }
+  ]
+}
