@@ -424,7 +424,7 @@ def get_newstore_location_from_netsuite_internal_id(location_internal_id):
     newstore_to_netsuite_locations = get_newstore_to_netsuite_locations_config()
     for newstore_location_id in newstore_to_netsuite_locations:
         location_config = newstore_to_netsuite_locations[newstore_location_id]
-        if location_config['id'] == location_internal_id:
+        if str(location_config['id']) == str(location_internal_id):
             return newstore_location_id
 
     return ''
