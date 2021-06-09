@@ -1,0 +1,8 @@
+{
+  "name": "historical_orders_returns",
+  "version": "1.0.0",
+  "description": "historical orders and returns import",
+  "devDependencies": {
+    "serverless-python-requirements": "^5.1.0"
+  }
+}

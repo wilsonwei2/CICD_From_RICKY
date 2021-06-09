@@ -1,0 +1,16 @@
+{
+  "rma_id": "200",
+  "order_id": "0e7e736b-333e-4715-abc6-318bc1b6c6cb",
+  "return": {
+    "is_historical": true,
+    "returned_at": "2021-01-14T15:04:15.000Z",
+    "returned_from": "MTLDC1",
+    "items": [
+      {
+        "product_id": "1110510-5CW-XL",
+        "return_reason": "historical return",
+        "return_code": 2864
+      }
+    ]
+  }
+}
