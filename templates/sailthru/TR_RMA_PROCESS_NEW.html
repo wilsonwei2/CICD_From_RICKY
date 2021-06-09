@@ -1,0 +1,254 @@
+
+
+{currency = !currency ? 'USD' : currency}
+{lang = !profile.vars.language ? 'en': profile.vars.language}
+{sc = amount}
+{cc = amount_cc}
+{orderNumber = order_number}
+{returnComment = lang == 'fr' ? "Nous avons le plaisir de vous annoncer que votre retour vient d’être traité." : "We’re happy to report that your return has been processed."}
+
+{if comments}
+  {switch comments[0]}
+      {case 'Order cancellation'}{lang == 'fr' ? returnComment = "Votre commande " + orderNumber + " vient d’être annulée." : returnComment = "Your order  " + orderNumber + "  has been cancelled."}{/case}
+      {case 'Dead SKUs'}{lang == 'fr' ? returnComment = "Malheureusement, en raison d'un problème d'inventaire, certains des articles de votre commande  " + orderNumber + "  ne sont plus en stock et ne pourront pas vous être livrés.<br/><br/>Afin de nous excuser du désagrément, voici un code de réduction exclusif pour arranger les choses&nbsp;: profitez de 10 $ de rabais* sur votre prochain achat sur frankandoak.com grâce au code<b> " + promotion.code + "</b>." : returnComment = "Unfortunately, due to an inventory issue some of the items from your order  " + orderNumber + "  are no longer in stock and cannot be shipped your way.<br/><br/>We’re sorry for the inconvenience, but here’s an exclusive discount code to make things right: enjoy $10 off* your next purchase at frankandoak.com with the code<b> " + promotion.code + "</b>."}{/case}
+      {case 'Partial Shipments vs Total Shipments'}{lang == 'fr' ? returnComment = "Une partie de votre commande  " + orderNumber + "  vient d’être annulée." : returnComment = "Part of your order  " + orderNumber + "  has been cancelled."}{/case}
+      {case 'Manual Refunds/Returns'}{lang == 'fr' ? returnComment = "Le retour de votre commande  " + orderNumber + "  vient d’être traité." : returnComment = "Your return from order  " + orderNumber + "  has been processed."}{/case}
+      {case 'Item missing from shipment'}{lang == 'fr' ? returnComment = "Nous sommes navrés qu’une partie de votre commande  " + orderNumber + "  n’ait pas été livrée." : returnComment = "We’re sorry that part of your order  " + orderNumber + "  was missing."}{/case}
+      {case 'Delivery Issue / Lost Order'}{lang == 'fr' ? returnComment = "Nous sommes navrés qu’il y ait eu un problème de livraison pour votre commande  " + orderNumber + "." : returnComment = "We’re sorry that there has been a delivery issue with your order  " + orderNumber + "."}{/case}
+      {case 'Defect / Quality Issue'}{lang == 'fr' ? returnComment = "Nous sommes navrés qu’il y ait eu un défaut de qualité sur un article de votre commande  " + orderNumber + "." : returnComment = "We’re sorry there was a quality issue with one of your purchases from order  " + orderNumber + "."}{/case}
+  {/switch}
+{/if}
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <style type="text/css">
+/*<![CDATA[*/
+    #outlook a {padding:0;}
+    body{width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0;}
+    .ExternalClass {width:100%;}
+    .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;} #backgroundTable {margin:0; padding:0; width:100% !important; line-height: 100% !important;}
+    img {outline:none; text-decoration:none; -ms-interpolation-mode: bicubic;}
+    a img {border:none;}
+    .image_fix {display:block;}
+    /*]]>*/
+    </style>
+</head>
+
+<body>
+    <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+
+        <tr class="line">
+            <td bgcolor="#e1e2e3" height="2"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+        </tr>
+        <!-- Contenu -->
+        <tr class="section">
+            <td bgcolor="#ffffff">
+                <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+                    <tr>
+                        <td><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;" width="10" height="1"></td>
+                        <td width="580">
+                            <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+
+        <!-- 30 pixel spacer -->
+        <tr>
+          <td style="font-size: 0; line-height: 0; padding: 20px 0 0">&nbsp;</td>
+        </tr>
+                <!-- F&O Logo -->
+                {include 'header_new_2017'}
+
+
+        <tr>
+                                    <td align="center">
+                                        <a href="https://www.frankandoak.com?utm_source=Transactional&utm_medium=email&utm_content=img&utm_campaign=Return_Processed"><img src="{if lang == 'fr'}https://www.frankandoak.com/media/assets//newsletters/templates/transactional/2002_header-refund-fr.jpg{else}https://www.frankandoak.com/media/assets//newsletters/templates/transactional/2002_header-refund-en.jpg{/if}" alt="" border="0" hspace="0" vspace="0" style="display:block;" width="580" height="">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="40"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                </tr>
+                                 <!-- 1er bloc -->
+                                <tr>
+                                    <td bgcolor="#ffffff">
+                                        <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+                                            <tr>
+                                                <td width="30"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                <td>
+                                                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+                                                        <tr>
+                                                            <td height="30"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span style="font-family:helvetica,arial,sans-serif;font-size:16px;line-height:22px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{if lang == 'fr'}Bonjour{else}Hello{/if} {profile.vars.first_name},</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="20"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{returnComment}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="20"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{if lang == 'fr'}Les articles suivants ont &eacute;t&eacute; retourn&eacute;s avec succ&egrave;s :{else}We processed the following returned items: {/if}</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="20"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                         <tr>
+                                                            <td>
+                                                                <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+                                                                    <tr>
+                                                                        <td width="60">
+                                                                            <img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;">
+                                                                        </td>
+                                                                        <td width="10">
+                                                                            <img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;">
+                                                                        </td>
+                                                                        <td align="left" width="346">
+                                                                            <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:normal;">{if lang == 'fr'}Article{else}Item{/if}</span>
+                                                                        </td>
+                                                                        <td align="center" width="104">
+                                                                            <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:normal;">{if lang == 'fr'}Quantit&eacute;{else}Qty{/if}</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="line">
+                                                            <td bgcolor="#2e2d2c" height="1"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        {foreach items as item}
+                                                        <tr>
+                                                            <td height="20"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+                                                                    <tr>
+                                                                        <td width="60">
+                                                                            <a href="{item.url}"><img src="{item.image}" alt="" border="0" hspace="0" vspace="0" style="" width="60"></a>
+                                                                        </td>
+                                                                        <td width="10">
+                                                                            <img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;">
+                                                                        </td>
+                                                                        <td width="344">
+                                                                            <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{item.name}</span>
+                                                                        </td>
+                                                                        <td align="center" width="104">
+                                                                            <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">{item.qty}</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="20"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        <tr class="line">
+                                                            <td bgcolor="#2e2d2c" height="1"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        {/foreach}
+                                                         <!-- <span style="color:#cc0000;">${number(amount,2)}</span> -->
+                                                        {if sc > 0}
+                                                        <tr>
+                                                            <td height="20"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">
+                                                                    {if lang == 'fr'}Nous avons ajouté <span style="color:#cc0000;">${sc}</span> de crédit en magasin à votre compte Frank And Oak.{else}We have added <span style="color:#cc0000;">${sc}</span> in store credits to your Frank And Oak account.{/if}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                        {/if}
+                                                        <tr>
+                                                            <td height="20"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        {if cc > 0}
+                                                        <!-- Weird Edge Case pour retail (no RTC yet) -->
+                                                         {if shipping_method == 'frankoak_retail'}
+                                                            <tr>
+                                                                <td>
+                                                                    <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">
+                                                                        {if lang == 'fr'}Nous avons ajouté <span style="color:#cc0000;">${cc}</span> de crédit en magasin à votre compte Frank And Oak.{else}We have added <span style="color:#cc0000;">${cc}</span> in store credits to your Frank And Oak account.{/if}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                         {else}
+                                                            <tr>
+                                                                <td>
+                                                                    <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">
+                                                                        {if lang == 'fr'}Nous avons remboursé le montant de <span style="color:#cc0000;">${cc}</span> sur votre carte de crédit.{else}We have refunded <span style="color:#cc0000;">${cc}</span> to the credit card used in the original transaction.{/if}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                            {/if}
+                                                            {/if}
+                                                                <tr>
+                                                                <td height="20"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                                <tr>
+                                                                    <td>
+                                                                        <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">
+                                                                            {if lang == 'fr'}Note: Les crédits Frank And Oak sont immédiatement disponibles dans votre compte. Dans le cas d’un remboursement par carte de crédit ou via PayPal, le montant crédité apparaît sur vos relevés dans un délai de 3 à 5 jours.{else}Note: Store credit will be immediately available on your Frank And Oak account. For refunds via credit card or PayPal, please allow 3 to 5 business days for the credit to appear on your online statement.{/if}
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            </tr>
+                                                        <tr>
+                                                            <td height="30"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="30"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <!-- 2e bloc -->
+                                <tr>
+                                    <td bgcolor="#ffffff">
+                                        <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+                                            <tr>
+                                                <td width="30"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                <td>
+                                                    <table cellpadding="0" cellspacing="0" border="0" align="center" width="100%">
+                                                        <tr>
+                                                            <td height="30"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                <span style="font-family:helvetica,arial,sans-serif;font-size:13px;line-height:19px;color:#2e2d2c;letter-spacing:0.05em;font-weight:100;">
+                                                                {if lang == 'fr'}Des questions ? Répondez à ce courriel ou contactez-nous à{else}Questions? Reply to this email or contact us at{/if} <a href="mailto:memberservices@frankandoak.com" style="color:#2e2d2c;"><span style="color:#2e2d2c;">memberservices@frankandoak.com</span></a>.
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td height="30"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td width="30"><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;"></td>
+
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                {include "footer_new_2017"}
+                            </table>
+                        </td>
+                        <td><img src="https://www.frankandoak.com/media/assets/basics/spacer.png" alt="" border="0" hspace="0" vspace="0" style="display:block;" width="10" height="1"></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    {beacon}
+</body>
+</html>
