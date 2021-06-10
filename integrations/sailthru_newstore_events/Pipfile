@@ -11,6 +11,7 @@ param-store = {path = "./../../shared/3.6/param_store"}
 newstore-common = {path = "./../../shared/common"}
 newstore-adapter = {path = "./../../shared/newstore_adapter"}
 boto3 = "*"
+gql = "*"
 
 [requires]
 python_version = "3.7"
