@@ -168,7 +168,7 @@ def map_items(order, order_name, ns_order):
 
         variant_id = item['variant_id']
         p_id = variant_id
-        sku = item['sku'].lower().startswith('gift-card')
+        sku = item['sku'].lower().startswith('5500000')
 
         is_gift_card = item['gift_card'] or sku
         if is_gift_card and item['requires_shipping']:
