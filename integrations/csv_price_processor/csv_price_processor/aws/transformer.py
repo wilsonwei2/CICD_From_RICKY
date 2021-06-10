@@ -40,11 +40,15 @@ def csv_to_pricebooks(csvfile, currency='USD', catalog='storefront-catalog-en'):
         'items': [],
     }
 
-    for item in reader:
-        product_id = item['ProductSKU']
-        price_book['items'].append({
-            'product_id': product_id,
-            'value': float(item['Price'])
-        })
+    for line_no, item in enumerate(reader, start=1):
+        try:
+            product_id = item['ProductSKU']
+            price_book['items'].append({
+                'product_id': product_id,
+                'value': float(item['Price'])
+            })
+        except Exception:
+            LOGGER.error(f'error proceessing line {line_no}')
+            raise
 
     return price_book
