@@ -3,6 +3,7 @@ service: frankandoak-netsuite-asn-import
 plugins:
   - serverless-python-requirements
   - serverless-pseudo-parameters
+  - serverless-offline
 custom:
   pythonRequirements:
     dockerizePip: false
