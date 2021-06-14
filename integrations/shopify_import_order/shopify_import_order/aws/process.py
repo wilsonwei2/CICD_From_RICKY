@@ -45,12 +45,15 @@ def handler(event, context): # pylint: disable=W0613
             statusCode: 200 or 400 depending on successful order processing
             message: 'processed' or an error message
     """
-    newstore_handler = Utils.get_instance().get_ns_handler()
-    shopify_handler = Utils.get_instance().get_shopify_handler()
-
     order_body = event['body']
+    shop = event['shop']
+    shop_id = Utils.get_instance().get_shop_id(shop)
+
+    shopify_handler = Utils.get_instance().get_shopify_handler(shop_id)
+    newstore_handler = Utils.get_instance().get_ns_handler()
+
     try:
-        order = json.loads(event['body'])
+        order = json.loads(order_body)
 
         if order.get('name').startswith('LGC'):
             LOGGER.info(f'Order is a Loop Gift Card Shopify id {order["id"]}. Name {order.get("name")}. Not injecting....')
@@ -61,7 +64,7 @@ def handler(event, context): # pylint: disable=W0613
 
 
         LOGGER.info('Calculating Order Risk')
-        order_risk = _validate_order_risk(order)
+        order_risk = _validate_order_risk(order, shop_id)
         if order_risk:
             LOGGER.info(f'Order with Shopify ID {order["id"]} is at risk state. Not injecting....')
             return {
@@ -79,7 +82,7 @@ def handler(event, context): # pylint: disable=W0613
             _create_ns_return(order, shopify_handler, newstore_handler)
 
 
-        ns_order = transform(transaction_data, order, is_exchange)
+        ns_order = transform(transaction_data, order, is_exchange, shop)
 
         response = newstore_handler.fulfill_order(ns_order)
 
@@ -108,9 +111,9 @@ def handler(event, context): # pylint: disable=W0613
             LOGGER.exception('Failed to report failed order injection')
 
 
-def _validate_order_risk(order):
+def _validate_order_risk(order, shop_id):
     shopify_order_id = order['id']
-    risks = get_order_risks(shopify_order_id)
+    risks = get_order_risks(shopify_order_id, shop_id)
     external_risks = [risk for risk in risks if risk['source'] == 'External']
     if external_risks:
         risks = external_risks

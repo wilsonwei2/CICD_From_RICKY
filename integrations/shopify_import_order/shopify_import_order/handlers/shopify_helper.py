@@ -7,8 +7,8 @@ SHOPIFY_SERVICE_LEVEL_MAP_CONFIG = Utils.get_instance().get_shopify_service_leve
 
 
 ## Get the order risks from shopify.
-def get_order_risks(order_id):
-    shopify_connector = Utils.get_instance().get_shopify_handler()
+def get_order_risks(order_id, shop_id):
+    shopify_connector = Utils.get_instance().get_shopify_handler(shop_id)
     return shopify_connector.get_order_risks(order_id)
 
 

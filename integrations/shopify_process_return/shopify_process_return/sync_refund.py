@@ -37,6 +37,7 @@ def handler(event, context): # pylint: disable=unused-argument
         channel = the_handler['config']['channel']
         LOGGER.info(f'Processing refunds for channel {channel}')
         the_handler = the_handler['handler']
+        shop_id = the_handler['shop_id']
         last_shopify_refunds = the_handler.get_orders(
             starts_at=start_date.strftime('%Y-%m-%dT%H:%M:00Z'),
             ends_at=end_date.strftime('%Y-%m-%dT%H:%M:00Z'),
@@ -54,11 +55,12 @@ def handler(event, context): # pylint: disable=unused-argument
             for refund in refunds.get('refunds', []):
                 LOGGER.info(f'Processing refund: {json.dumps(refund)}')
                 try:
-                    _drop_to_queue(refund, channel)
+                    _drop_to_queue(refund, channel, shop_id)
                 except Exception: # pylint: disable=broad-except
                     LOGGER.exception('Failed to send refund to process')
 
 
-def _drop_to_queue(message, channel):
+def _drop_to_queue(message, channel, shop_id):
     message['channel'] = channel
+    message['shop_id'] = shop_id
     SQS_HANDLER.push_message(message=json.dumps(message))

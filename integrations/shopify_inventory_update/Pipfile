@@ -8,6 +8,7 @@ name = "pypi"
 [packages]
 newstore-adapter = {path = "./../../shared/newstore_adapter"}
 param_store = {path = "./../../shared/3.6/param_store"}
+pom-common = {path = "./../../shared/pom_common"}
 aiohttp = ">=2.3.1"
 aiobotocore = "0.10.2"
 

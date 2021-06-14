@@ -24,6 +24,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
 
 functions:
   push_refund_to_shopify:

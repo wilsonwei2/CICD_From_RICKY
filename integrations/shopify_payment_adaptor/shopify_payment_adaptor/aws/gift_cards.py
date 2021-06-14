@@ -16,7 +16,7 @@ async def activate_card(amount, currency, customer_id):
     assert amount, 'Could not get ammount'
 
     try:
-        handler = get_shopify_handler()
+        handler = get_shopify_handler(currency)
         LOGGER.info(f'Shopify Customer ID is -- {customer_id}')
         resp = await handler.active_gift_card(amount=amount, currency=currency, customer_id=customer_id)
         return resp
@@ -37,7 +37,7 @@ async def adjust_gift_card(card_number: str, amount: float, reason: str, currenc
     Adjust the value of a gift card
     """
     try:
-        handler = get_shopify_handler()
+        handler = get_shopify_handler(currency)
         LOGGER.info(f'Shopify Gift Card Number is -- {card_number}')
         resp_gift_card = await handler.search_gift_card(card_number)
         if len(resp_gift_card['gift_cards']) == 0:

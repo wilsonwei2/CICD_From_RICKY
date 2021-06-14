@@ -3,7 +3,7 @@ import json
 import logging
 from lambda_utils.sqs.SqsHandler import SqsHandler
 from .shopify.verify_webhook import verify_webhook
-from .utils import get_shopify_config
+from .utils import get_shop_id, get_shopify_config
 
 
 LOGGER = logging.getLogger(__name__)
@@ -30,16 +30,19 @@ def handler(event, context): # pylint: disable=unused-argument
 
 
 def _save_refund(event):
-    the_handler = get_shopify_config()
+    shop_name = event['headers'].get('X-Shopify-Shop-Domain').split('.')[0]
+    shop_id = get_shop_id(shop_name)
+    the_handler = get_shopify_config(shop_id)
 
     if not _verify_webhook(event=event, secret=the_handler['shared_secret']):
         return False
-    _drop_to_queue(event['body'])
+    _drop_to_queue(event['body'], shop_id)
     return True
 
 
-def _drop_to_queue(message):
+def _drop_to_queue(message, shop_id):
     message = json.loads(message)
+    message['shop_id'] = shop_id
     SQS_HANDLER.push_message(message=json.dumps(message))
 
 def _verify_webhook(event, secret):

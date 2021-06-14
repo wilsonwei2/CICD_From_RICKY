@@ -58,7 +58,7 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
         amount_info = body.get('arguments')
         customer_order = await NS_HANDLER.get_customer_order(order_id)
         customer_order = customer_order.get('customer_order', {})
-        shopify_handler = utils.get_shopify_handler()
+        shopify_handler = utils.get_shopify_handler(body['currency'])
         canceled_items = _get_cancelled_items(customer_order)
         is_not_return = False
         is_exchanged = False
@@ -213,7 +213,8 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
                                                                           shopify_order_id,
                                                                           body,
                                                                           financial_instrument_id,
-                                                                          metadata
+                                                                          metadata,
+                                                                          shopify_handler
                                                                           )
             shopify_order = await shopify_handler.get_order(
                 shopify_order_id, 'id,line_items,name,total_price,customer,email,refunds')
@@ -323,9 +324,9 @@ async def _handle_order_refund_appeasement_transaction(transaction,
                                                        shopify_order_id,
                                                        body,
                                                        financial_instrument_id,
-                                                       metadata):
+                                                       metadata,
+                                                       shopify_handler):
     # Find the associated Shopify transaction to determine the proper 'parent_id' for the refund
-    shopify_handler = utils.get_shopify_handler()
     refund_id = _get_refund_id_if_exists(metadata)
     if refund_id:
         refund_data = await shopify_handler.get_refund(shopify_order_id, refund_id)

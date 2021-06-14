@@ -42,7 +42,7 @@ async def _push_capture_to_shopify(body, financial_instrument_id):
         metadata_transaction = transaction.get('metadata', {})
         metadata.update(metadata_transaction)
 
-        shopify_handler = get_shopify_handler()
+        shopify_handler = get_shopify_handler(body['currency'])
         if is_capture_credit_card(transaction['payment_method']) and metadata.get('shopify_order_id'):
             shopify_order_id = metadata['shopify_order_id']
             shopify_order = await shopify_handler.get_order(shopify_order_id, params='id,line_items,name,total_price,financial_status')
@@ -85,7 +85,8 @@ async def _push_capture_to_shopify(body, financial_instrument_id):
                 try:
                     transaction_rsp = await _create_capture_transaction(
                         shopify_order_id,
-                        amount_info.get('amount')
+                        amount_info.get('amount'),
+                        shopify_handler
                     )
                     metadata['shopify_auth_id'] = transaction_rsp.get('transaction', {}).get('parent_id')
                     metadata['shopify_capture_id'] = transaction_rsp.get('transaction', {}).get('id')
@@ -165,9 +166,8 @@ async def _push_capture_to_shopify(body, financial_instrument_id):
         }
 
 
-async def _create_capture_transaction(shopify_order_id, amount):
+async def _create_capture_transaction(shopify_order_id, amount, shopify_handler):
     try:
-        shopify_handler = get_shopify_handler()
         data_transaction = {
             'transaction': {
                 'amount': str(amount),

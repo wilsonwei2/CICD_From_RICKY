@@ -40,7 +40,7 @@ async def _push_revoke_to_shopify(body, financial_instrument_id):
         transaction = next((x for x in body.get(
             'transactions', []) if x.get('reason') in ['authorization', 'capture']), None)
         assert transaction, 'Transaction for revoke not found'
-        shopify_handler = get_shopify_handler()
+        shopify_handler = get_shopify_handler(body['currency'])
         LOGGER.info(transaction)
 
         if transaction and (is_capture_credit_card(transaction['payment_method'])):

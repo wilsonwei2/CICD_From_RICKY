@@ -1,16 +1,19 @@
 import os
-import json
 from .shopify.shopify import ShopifyConnector
 from newstore_adapter.connector import NewStoreConnector
 from param_store.client import ParamStore
+from pom_common.shopify import ShopManager
 
 NS_HANDLER = None
 SF_HANDLER = None
 PARAM_STORE = None
 SHOPIFY_CONFIG = {}
 NEWSTORE_CONFIG = None
+
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
+REGION = os.environ.get('REGION', 'us-east-1')
+
 
 def _get_param_store():
     global PARAM_STORE # pylint: disable=global-statement
@@ -21,20 +24,31 @@ def _get_param_store():
 
 
 def get_all_shopify_handlers():
-    shopify_configs = _get_param_store().get_param('shopify')
-    return _create_shopify_handlers([shopify_configs])
+    shop_manager = ShopManager(TENANT, STAGE, REGION)
+    shopify_configs = [{
+        'config': shop_manager.get_shop_config(shop_id),
+        'shop_id': shop_id
+    } for shop_id in shop_manager.get_shop_ids()]
+    return _create_shopify_handlers(shopify_configs)
 
-def get_shopify_config():
+def get_shop_id(shop_name):
+    get_all_shopify_handlers()
+    for current in get_all_shopify_handlers():
+        if current['config']['shop'] == shop_name:
+            return current['shop_id']
+    return None
+
+def get_shopify_config(shop_id):
     global SHOPIFY_CONFIG # pylint: disable=global-statement
     if not SHOPIFY_CONFIG:
-        param_store = _get_param_store()
-        SHOPIFY_CONFIG = json.loads(param_store.get_param('shopify'))
+        shop_manager = ShopManager(TENANT, STAGE, REGION)
+        SHOPIFY_CONFIG = shop_manager.get_shop_config(shop_id)
     return SHOPIFY_CONFIG
 
-def get_shopify_handler():
+def get_shopify_handler(shop_id):
     global SF_HANDLER # pylint: disable=global-statement
     if not SF_HANDLER:
-        shopify_config = get_shopify_config()
+        shopify_config = get_shopify_config(shop_id)
         SF_HANDLER = ShopifyConnector(
             api_key=shopify_config['username'],
             password=shopify_config['password'],
@@ -69,7 +83,7 @@ def _create_shopify_handlers(configs):
     handlers = []
 
     for conf in configs:
-        config = json.loads(conf)
+        config = conf['config']
         config['channel'] = "USC"
         shopify_handler = ShopifyConnector(
             api_key=config['username'],
@@ -78,7 +92,8 @@ def _create_shopify_handlers(configs):
         )
         handlers.append({
             'handler': shopify_handler,
-            'config': config
+            'config': config,
+            'shop_id': conf['shop_id']
         })
 
     return handlers

@@ -25,6 +25,7 @@ def handler(event, context): # pylint: disable=W0613
         LOGGER.debug(f'Received Shopify event: {json.dumps(event, indent=4)}')
         order = event['body']
         order_id = event['headers'].get('X-Shopify-Order-Id')
+        shop_name = event['headers'].get('X-Shopify-Shop-Domain').split('.')[0]
 
         LOGGER.debug(json.dumps(order))
         ## Making sure that the newstore -- tags are not added to the order.
@@ -37,17 +38,16 @@ def handler(event, context): # pylint: disable=W0613
                 'statusCode': 200,
                 'body': json.dumps({'message': 'Order already processed by newstore'})
             }
-        shopify_config = json.loads(Utils.get_instance().get_parameter_store().get_param('shopify'))
-        shopify_secret = shopify_config['shared_secret']
 
+        shopify_secret = Utils.get_instance().get_shopify_config(shop_name)['shared_secret']
         hmac = event['headers'].get('X-Shopify-Hmac-Sha256')
+
         if not verify_webhook(order, shopify_secret, hmac):
             LOGGER.error(f'Error verifying Shopify HMAC: {json.dumps(event, indent=4)}', exc_info=True)
             return {'statusCode': 500}
 
         LOGGER.info(f'Hmac check passed, sending order {order_id} to processor lambda')
-
-        process_order_call(PROCESS_ORDER_LAMBDA_NAME, order)
+        process_order_call(PROCESS_ORDER_LAMBDA_NAME, order, shop_name)
 
     except Exception:
         LOGGER.exception('Failed to create Order')
@@ -58,11 +58,11 @@ def handler(event, context): # pylint: disable=W0613
     }
 
 
-def process_order_call(function_name, payload, params=None):
+def process_order_call(function_name, payload, shop_name, params=None):
     session = boto3.session.Session()
     lambda_cli = session.client('lambda')
     return lambda_cli.invoke(
         FunctionName=function_name,
         InvocationType='Event',
-        Payload=json.dumps({'body': payload, 'queryStringParameters': params}),
+        Payload=json.dumps({'body': payload, 'shop': shop_name, 'queryStringParameters': params}),
     )

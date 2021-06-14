@@ -9,6 +9,7 @@ from shopify_inventory_update.handlers.shopify_handler import ShopifyConnector
 from shopify_inventory_update.handlers.sqs_handler import SqsHandler
 
 from param_store.client import ParamStore
+from pom_common.shopify import ShopManager
 
 LOGGER = logging.getLogger(__name__)
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
@@ -16,8 +17,10 @@ LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INF
 LOGGER.setLevel(LOG_LEVEL)
 SQS_HANDLER = None
 WORKER_TRIGGER_DEFAULT_NAME = 'shopify_availability_export_worker'
-TENANT = os.environ['TENANT'] or 'frankandoak'
-STAGE = os.environ['STAGE'] or 'x'
+
+TENANT = os.environ.get('TENANT', 'frankandoak')
+STAGE = os.environ.get('STAGE', 'x')
+REGION = os.environ.get('REGION', 'us-east-1')
 
 
 def handler(event, context):
@@ -46,16 +49,15 @@ async def _sync_inventory(loop, context):
     Arguments:
         loop {EventLoop} -- Async event loop
     """
-    # Handler for AWS SQS
-    param_store = ParamStore(TENANT, STAGE)
-    shopify_config = json.loads(param_store.get_param('shopify'))
+    shop_manager = ShopManager(TENANT, STAGE, REGION)
+    shopify_configs = [shop_manager.get_shop_config(shop_id) for shop_id in shop_manager.get_shop_ids()]
 
-    global shopify_connector
-    shopify_connector = ShopifyConnector(
+    shopify_connectors = [ShopifyConnector(
         shopify_config['username'],
         shopify_config['password'],
         shopify_config['shop']
-    )
+    ) for shopify_config in shopify_configs]
+
     global sqs_handler
     sqs_handler = SqsHandler(
         os.environ.get("SQS_NAME")
@@ -86,7 +88,7 @@ async def _sync_inventory(loop, context):
                     updated_products = defining_product(products)
                     # create list of task to process for each variant
                     tasks += [asyncio.ensure_future(_update_variant_at_shopify(
-                        updated_products, shopify_connector, receipt_handle))]
+                        updated_products, shopify_connectors, receipt_handle))]
 
         message_count = await sqs_handler.get_messages_count()
         LOGGER.info('%s available in the queue...',
@@ -106,24 +108,24 @@ def defining_product(products):
     } for key, value in products.items()]
 
 
-async def _update_variant_at_shopify(products, shopify_connector, receipt_handle):
+async def _update_variant_at_shopify(products, shopify_connectors, receipt_handle):
     global sqs_handler
-    try:
-        products = await _create_deltas_for_inventory(products)
-        response = {}
-        if len(products) > 0:
-            response = await shopify_connector.update_inventory_quantity_graphql(products, products[0]['location_id'])
-        else:
-            LOGGER.info('No deltas created - no update send.')
-        await sqs_handler.delete_message(receipt_handle)
-        return response
-    except Exception:
-        LOGGER.exception('Failed to process bulk variant update')
-        raise
+
+    for shopify_connector in shopify_connectors:
+        try:
+            products = await _create_deltas_for_inventory(products, shopify_connector)
+            if len(products) > 0:
+                await shopify_connector.update_inventory_quantity_graphql(products, products[0]['location_id'])
+            else:
+                LOGGER.info('No deltas created - no update send.')
+        except Exception:
+            LOGGER.exception('Failed to process bulk variant update')
+            raise
+
+    await sqs_handler.delete_message(receipt_handle)
 
 
-async def _create_deltas_for_inventory(products):
-    global shopify_connector
+async def _create_deltas_for_inventory(products, shopify_connector):
     LOGGER.info('Fetching inventory levels from Shopify')
     inventory_shopify = _transform_to_dictionary_inventory_map(await shopify_connector.get_inventory_quantity(products, products[0]['location_id']))
     LOGGER.info('Response from transform ')

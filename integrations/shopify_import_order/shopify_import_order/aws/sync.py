@@ -12,7 +12,7 @@ from shopify_import_order.handlers.utils import Utils
 IMPORT_ORDER_ENDPOINT = os.environ.get('ORDER_IMPORT_API') + '/d/process/shopify/order'
 RETRIEVE_ORDERS_FROM_HOURS = int(os.environ.get('HOURS_TO_CHECK', '1'))
 NS_HANDLER = Utils.get_instance().get_ns_handler()
-SHOPIFY_HANDLER = Utils.get_instance().get_shopify_handler()
+SHOPIFY_HANDLERS = Utils.get_instance().get_shopify_handlers()
 LIMIT = 250
 LOGGER = logging.getLogger(__name__)
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
@@ -35,11 +35,14 @@ def handler(event, context): # pylint: disable=W0613
     """
     LOGGER.info('INSIDE SYNC')
 
+    for shopify_handler in SHOPIFY_HANDLERS:
+        shopify_secret = Utils.get_instance().get_shopify_config(shopify_handler.get_shop())['shared_secret']
+        sync(event, shopify_handler, shopify_secret)
+
+
+def sync(event, shopify_handler, secret):
     end_date = None
     start_date = None
-
-    shopify_config = json.loads(Utils.get_instance().get_parameter_store().get_param('shopify'))
-    secret = shopify_config['shared_secret']
 
     # If event is CloudWatch it means that it should use the HOURS_TO_CHECK
     # Else it's from API Gateway so it should have the start_date and end_date on payload
@@ -72,7 +75,7 @@ def handler(event, context): # pylint: disable=W0613
 
     if start_date and end_date:
         LOGGER.info(f'Getting orders between {starts_at} and {ends_at}')
-        last_shopify_orders = SHOPIFY_HANDLER.get_orders(
+        last_shopify_orders = shopify_handler.get_orders(
             starts_at=starts_at,
             ends_at=ends_at,
             params=None,
@@ -80,7 +83,7 @@ def handler(event, context): # pylint: disable=W0613
         )
     else:
         LOGGER.info(f'Getting orders in list {shopify_order_list}.')
-        last_shopify_orders = SHOPIFY_HANDLER.get_orders(
+        last_shopify_orders = shopify_handler.get_orders(
             limit=LIMIT,
             starts_at=None,
             ends_at=None,

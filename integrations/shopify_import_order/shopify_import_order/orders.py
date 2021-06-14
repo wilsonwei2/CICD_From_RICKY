@@ -16,7 +16,7 @@ LOGGER.setLevel(LOG_LEVEL)
 SHOPIFY_CHANNEL = 'USC'
 
 
-def transform(transaction_data, order, is_exchange):
+def transform(transaction_data, order, is_exchange, shop):
     order_customer = order.get('customer', {})
     order_name = str(order['name']).replace('#', '')
 
@@ -56,7 +56,7 @@ def transform(transaction_data, order, is_exchange):
             }
         ],
         'payments': map_payments(transaction_data, order_name, order, is_exchange),
-        'extended_attributes': map_extended_attributes(order, order_name, is_exchange),
+        'extended_attributes': map_extended_attributes(order, order_name, is_exchange, shop),
         'notification_blacklist': notification_blacklist
     }
 
@@ -82,7 +82,7 @@ def get_address(order_address):
     }
 
 
-def map_extended_attributes(order, order_name, is_exchange):
+def map_extended_attributes(order, order_name, is_exchange, shop):
     return [
         {
             'name': 'returnly_exchange',
@@ -91,6 +91,11 @@ def map_extended_attributes(order, order_name, is_exchange):
         {
             'name': 'external_order_id',
             'value': order_name
+        }
+        ,
+        {
+            'name': 'external_shop',
+            'value': shop
         },
         {
             'name': 'order_id',

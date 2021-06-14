@@ -1,18 +1,21 @@
 from shopify_import_order.handlers.newstore import NShandler
 from shopify_adapter.connector import ShopifyConnector
 from param_store.client import ParamStore
+from pom_common.shopify import ShopManager
 import os
 import json
 
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
+REGION = os.environ.get('REGION', 'us-east-1')
 
 
 class Utils():
     __instance = None
     param_store = None
     ns_handler = None
-    shopify_handler = None
+    shopify_handlers = {}
+    shopify_configs = {}
     shopify_service_level_map = None
 
     @staticmethod
@@ -44,15 +47,36 @@ class Utils():
             )
         return self.ns_handler
 
-    def get_shopify_handler(self):
-        if not self.shopify_handler:
-            shopify_config = json.loads(self.get_parameter_store().get_param('shopify'))
-            self.shopify_handler = ShopifyConnector(
-                api_key=shopify_config['username'],
-                password=shopify_config['password'],
-                shop=shopify_config['shop']
-            )
-        return self.shopify_handler
+    def get_shopify_handlers(self):
+        if len(self.shopify_handlers) == 0:
+            shop_manager = ShopManager(TENANT, STAGE, REGION)
+
+            for shop_id in shop_manager.get_shop_ids():
+                current_config = shop_manager.get_shop_config(shop_id)
+                self.shopify_configs[shop_id] = current_config
+
+                self.shopify_handlers[shop_id] = ShopifyConnector(
+                    api_key=current_config['username'],
+                    password=current_config['password'],
+                    shop=current_config['shop']
+                )
+
+        return self.shopify_handlers.values()
+
+    def get_shopify_handler(self, shop_id):
+        self.get_shopify_handlers()
+        return self.shopify_handlers[shop_id] if shop_id in self.shopify_handlers else None
+
+    def get_shop_id(self, shop_name):
+        self.get_shopify_handlers()
+        for shop_id, config in self.shopify_configs.items():
+            if config['shop'] == shop_name:
+                return shop_id
+        return None
+
+    def get_shopify_config(self, shop_name):
+        self.get_shopify_handlers()
+        return next(filter(lambda config: config['shop'] == shop_name, self.shopify_configs.values()), None)
 
     def get_shopify_service_level_map(self):
         if not self.shopify_service_level_map:
