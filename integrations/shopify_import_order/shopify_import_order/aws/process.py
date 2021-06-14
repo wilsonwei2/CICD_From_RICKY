@@ -148,10 +148,10 @@ def get_shipping_offer_token(order, newstore_handler):
                     'longitude': longitude
                 }
             },
-            'bag': [get_bag_item(line_item) for line_items in order.get('line_items', [])]
+            'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])]
         }).get('options', [])
 
-        selected_option = filter(next(lambda option: option['fulfillment_node_id'] == store_id, in_store_pickup_options), None)
+        selected_option = next(filter(lambda option: option['fulfillment_node_id'] == store_id, in_store_pickup_options), None)
 
         if selected_option is not None:
             shipping_offer_token = selected_option['in_store_pickup_option']['shipping_offer_token']

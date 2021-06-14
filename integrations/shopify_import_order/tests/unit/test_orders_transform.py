@@ -56,6 +56,23 @@ class TestFrankandoakImportOrderTransformer(unittest.TestCase):
         except Exception as ex:
             raise self.failureException('{} raised'.format(ex))
 
+    def test_trasform_with_pickup_in_store(self):
+        order = self._load_json_file('shopify_order_webhook.json')
+        transactions = self._load_json_file('shopify_order_transactions.json')['transactions']
+        order_transformed = self._load_json_file('order_transformed_pickup_in_store.json')
+        order_schema = self._load_json_file('order_schema.json')
+
+        response = self.transform(transactions, order, False, 'test-shop', 'test-shipping-offer-token')
+
+        self._assert_json(self, response, order_transformed)
+        self._assert_json(self, order_transformed, response)
+
+        try:
+            validate(response, order_schema)
+        except Exception as ex:
+            raise self.failureException('{} raised'.format(ex))
+
+
     def test_get_refund(self):
         refunds = self._load_json_file('shopify_order_refunds.json')['refunds']
         refund_returned = self._load_json_file('refund_returned.json')

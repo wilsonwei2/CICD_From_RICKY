@@ -4,7 +4,6 @@ import os
 import copy
 from decimal import Decimal
 from shopify_import_order.handlers import shopify_helper
-from shopify_import_order.handlers.utils import Utils
 
 PROCESSOR = os.environ.get('PAYMENT_PROCESSOR', 'shopify')
 GIFTCARD_ELECTRONIC = os.environ.get('giftcard_electronic', 'EGC')
@@ -16,7 +15,7 @@ LOGGER.setLevel(LOG_LEVEL)
 SHOPIFY_CHANNEL = 'USC'
 
 
-def transform(transaction_data, order, is_exchange, shop, shipping_offer_token = None):
+def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=None):
     order_customer = order.get('customer', {})
     order_name = str(order['name']).replace('#', '')
 
