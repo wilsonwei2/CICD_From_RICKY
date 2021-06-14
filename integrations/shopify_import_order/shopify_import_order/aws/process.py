@@ -78,8 +78,8 @@ def handler(event, context): # pylint: disable=W0613
         if is_exchange:
             _create_ns_return(order, shopify_handler, newstore_handler)
 
-
-        ns_order = transform(transaction_data, order, is_exchange)
+        shipping_offer_token = get_shipping_offer_token(order, newstore_handler)
+        ns_order = transform(transaction_data, order, is_exchange, shipping_offer_token)
 
         response = newstore_handler.fulfill_order(ns_order)
 
@@ -121,6 +121,47 @@ def _validate_order_risk(order):
         if 'cancel' in recommendation.lower():
             return True
     return False
+
+
+def get_shipping_offer_token(order, newstore_handler):
+    shipping_offer_token = None
+    billing_address = order.get('billing_address', None)
+    shipping_address = order.get('shipping_address', None)
+
+    def get_bag_item(line_item):
+        return {
+            'product_id': line_item['product_id'],
+            'quantity': line_item['quantity']
+        }
+
+    if shipping_address is None and billing_address is not None:
+        store_id = order['shipping_lines'][0]['code']
+        latitude, longitude = get_store_geo_location(store_id, newstore_handler)
+
+        in_store_pickup_options = newstore_handler.get_in_store_pickup_options({
+            'location': {
+                'geo': {
+                    'latitude': latitude,
+                    'longitude': longitude
+                }
+            },
+            'bag': [get_bag_item(line_item) for line_items in order.get('line_items', [])]
+        }).get('options', [])
+
+        selected_option = filter(next(lambda option: option['fulfillment_node_id'] == store_id, in_store_pickup_options), None)
+
+        if selected_option is not None:
+            shipping_offer_token = selected_option['in_store_pickup_option']['shipping_offer_token']
+
+    return shipping_offer_token
+
+
+def get_store_geo_location(store_id, newstore_handler):
+    store = newstore_handler.get_store(store_id)
+    latitude = store['physical_address']['latitude']
+    longitude = store['physical_address']['longitude']
+
+    return latitude, longitude
 
 
 def get_transaction_data(shopify_adaptor, order):

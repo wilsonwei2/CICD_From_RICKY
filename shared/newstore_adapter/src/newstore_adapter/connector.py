@@ -112,7 +112,7 @@ class NewStoreConnector(object):
         return response.json()
 
     def get_store(self, store_id):
-        url = 'https://%s/_/v0/dontuse/stores/%s' % (self.host, store_id)
+        url = 'https://%s/_/v0/stores/%s' % (self.host, store_id)
         try:
             response = self.newstore_adapter.get_request(url)
         except NewStoreAdapterException:
