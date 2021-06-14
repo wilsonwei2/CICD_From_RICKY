@@ -345,7 +345,7 @@ def get_tax_rates(item):
     ca_tax_rate_2 = False
 
     # Map Canadian taxes to the tax rates
-    tax_provider_details = item['tax_provider_details']
+    tax_provider_details = item.get('tax_provider_details', None)
     if tax_provider_details is not None:
         for tax_detail in tax_provider_details:
             if tax_detail['name'].find('GST') > -1 or tax_detail['name'].find('HST') > -1:
