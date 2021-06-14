@@ -127,6 +127,7 @@ def _validate_order_risk(order, shop_id):
 
 
 def get_shipping_offer_token(order, newstore_handler):
+    LOGGER.debug('Trying to get a pickup in store shipping offer token.')
     shipping_offer_token = None
     billing_address = order.get('billing_address', None)
     shipping_address = order.get('shipping_address', None)
@@ -138,23 +139,29 @@ def get_shipping_offer_token(order, newstore_handler):
         }
 
     if shipping_address is None and billing_address is not None:
-        store_id = order['shipping_lines'][0]['code']
-        latitude, longitude = get_store_geo_location(store_id, newstore_handler)
+        try:
+            shipping_code = order['shipping_lines'][0]['code']
+            LOGGER.debug(f'Try to get geo location for shipping code: {shipping_code}')
+            latitude, longitude = get_store_geo_location(shipping_code, newstore_handler)
 
-        in_store_pickup_options = newstore_handler.get_in_store_pickup_options({
-            'location': {
-                'geo': {
-                    'latitude': latitude,
-                    'longitude': longitude
-                }
-            },
-            'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])]
-        }).get('options', [])
+            in_store_pickup_options = newstore_handler.get_in_store_pickup_options({
+                'location': {
+                    'geo': {
+                        'latitude': latitude,
+                        'longitude': longitude
+                    }
+                },
+                'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])]
+            }).get('options', [])
 
-        selected_option = next(filter(lambda option: option['fulfillment_node_id'] == store_id, in_store_pickup_options), None)
+            selected_option = next(filter(lambda option: option['fulfillment_node_id'] == store_id, in_store_pickup_options), None)
 
-        if selected_option is not None:
-            shipping_offer_token = selected_option['in_store_pickup_option']['shipping_offer_token']
+            if selected_option is not None:
+                shipping_offer_token = selected_option['in_store_pickup_option']['shipping_offer_token']
+
+            LOGGER.debug(f'Got pickup in store shipping offer token: {shipping_offer_token}')
+        except: # pylint: disable=W0702
+            LOGGER.debug('Could not get a shipping offer token, no pickup in store.')
 
     return shipping_offer_token
 
