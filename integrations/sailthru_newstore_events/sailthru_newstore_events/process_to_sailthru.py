@@ -107,19 +107,14 @@ def require_shipping(item):
 def _sailthru_mapping_sc(data, order):
     country = order['shipping_address']['country_code']
     templates = get_param(os.environ.get('SAILTHRU_TEMPLATES_PARAM', 'sailthru_templates'))
-    # get language of template with store id as mapped in parameter, default to english
-    template_language = get_param(
-        os.environ.get('STORE_LANGUAGE_MAPPING', 'non_english_store_language_mapping')).get(
-            data['fulfillment_location_id'], 'english')
-    # lots of different countries utilize EU templates, use as default if no mapping found for specific country
-    template = templates.get(
-        f'template_{country.lower()}', templates['template_ca'])[template_language].get('ship_confirmation')
+    template = templates.get('ship_confirmation')
     if not template:
         LOGGER.info(
             f'No template exists for this shipping confirmation event. '
-            f'Country code: {country}, language: {template_language}.'
+            f'Country code: {country}.'
         )
         return {}
+    language = _get_language(order)
     shipped_products = _get_payload_items_details(order['ordered_products'], data['items'])
     shipment = _get_apropos_shipment(
         order['shipments'], next((item['tracking_code'] for item in data['items'] if item.get('tracking_code')), None))
@@ -129,6 +124,7 @@ def _sailthru_mapping_sc(data, order):
             'template': template,
             'email': order['billing_address'].get('email'),
             'vars': {
+                'language': language,
                 'items': [
                     {
                         'material': product['name'],
@@ -196,28 +192,20 @@ def _sailthru_mapping_sc(data, order):
 def _sailthru_mapping_oc(data, order):
     country = order['shipping_address']['country_code']
     templates = get_param(os.environ.get('SAILTHRU_TEMPLATES_PARAM', 'sailthru_templates'))
-    # get language of template with store id as mapped in parameter, default to english
-    template_language = get_param(
-        os.environ.get('STORE_LANGUAGE_MAPPING', 'non_english_store_language_mapping')).get(
-            order['channel'], 'english')
-    # burton_cancel_codes = os.environ['BURTON_CANCEL_CODES'].split(',')
-    # cancellation_type = 'burton_cancel' \
-    #    if str(data['items'][0]['cancellation_code']) in burton_cancel_codes else 'customer_cancel'
-    # lots of different countries utilize EU templates, use as default if no mapping found for specific country
-    template = templates.get(
-        f'template_{country.lower()}', templates['template_ca'])[template_language].get('order_cancel')
-    #    f'template_{country.lower()}', templates['template_eu'])[template_language].get(cancellation_type)
+    template = templates.get('order_cancel')
     if not template:
         LOGGER.info(
             f'No template exists for this order cancellation event. '
-            f'Country code: {country}, language: {template_language}.'
+            f'Country code: {country}.'
         )
         return {}
+    language = _get_language(order)
     cancelled_products = _get_payload_items_details(order['ordered_products'], data['items'])
     payload = {
         'template': template,
         'email': order['billing_address'].get('email'),
         'vars': {
+            'language': language,
             'items': [
                 {
                     'material': product['name'],
@@ -241,6 +229,19 @@ def _sailthru_mapping_oc(data, order):
     }
     LOGGER.info(f'Created payload: {json.dumps(payload)}')
     return payload
+
+
+def _get_language(ns_order):
+    lang = 'en'
+    if ns_order['channel_type'] == 'store':
+        lang = get_param(
+            os.environ.get('STORE_LANGUAGE_MAPPING', 'non_english_store_language_mapping')).get(ns_order['channel'], 'en')
+    else:
+        # web
+        if ns_order['billing_address']['country_code'] == 'CA' and ns_order['billing_address']['state'] == 'QC':
+            # Quebec
+            lang = 'fr'
+    return lang
 
 
 def _get_extended_attribute(extended_attributes: dict, attribute_name: str, default: str = None):
