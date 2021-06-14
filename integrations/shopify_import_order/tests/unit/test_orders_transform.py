@@ -46,7 +46,7 @@ class TestFrankandoakImportOrderTransformer(unittest.TestCase):
         order_transformed = self._load_json_file('order_transformed.json')
         order_schema = self._load_json_file('order_schema.json')
 
-        response = self.transform(transactions, order, False)
+        response = self.transform(transactions, order, False, 'test-shop', None)
 
         self._assert_json(self, response, order_transformed)
         self._assert_json(self, order_transformed, response)

@@ -41,6 +41,8 @@ class ShopifyConnector:
             else:
                 self.url = '{url}/admin'.format(url=url)
 
+    def get_shop(self):
+        return self.shop
 
     def get_product_count(self, params={}):
         endpoint = '{url}/products/count.json'.format(
@@ -160,7 +162,7 @@ class ShopifyConnector:
                 break
 
         return orders
-        
+
     def get_historical_orders(self, starts_at, ends_at, params, status='any', limit=250, page=1,
                               timestamp_type='created_at'):
         """
@@ -438,7 +440,7 @@ class ShopifyConnector:
         """
         endpoint = '{url}/customers/{id}.json'.format(
             url=self.url, id=customer_id)
-        
+
         response = requests.put(
             url=endpoint, headers=self.auth_header, json=customer)
 

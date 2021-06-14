@@ -1,0 +1,195 @@
+{
+  "head": {
+      "locale": "en-US",
+      "catalog": "storefront-catalog-en",
+      "is_master": true
+  },
+  "items": [
+      {
+          "shipping_weight_unit": "lb",
+          "is_searchable": true,
+          "is_available": true,
+          "keywords": [
+              "gift-card"
+          ],
+          "show_in_listing": true,
+          "images": [
+             {
+              "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/gift_card_7_650x.jpg?v=1621101079",
+              "title": "Frank And Oak Physical Gift Card",
+              "is_main": true,
+              "alt_text": "Frank And Oak Physical Gift Card"
+            }
+          ],
+          "extended_attributes": [
+              {
+                  "name": "pricebooks",
+                  "value": "pgc-25,pgc-50,pgc-75,pgc-100,pgc-150,pgc-200,pgc-250"
+              },
+              {
+                  "name": "product_created_at",
+                  "value": "2020-11-28T14:37:35-04:00"
+              },
+              {
+                  "name": "variant_created_at",
+                  "value": "2020-11-28T14:37:35-04:00"
+              },
+              {
+                  "name": "product_updated_at",
+                  "value": "2020-11-29T06:32:26-04:00"
+              },
+              {
+                  "name": "variant_updated_at",
+                  "value": "2020-11-29T06:32:26-04:00"
+              },
+              {
+                  "name": "handle",
+                  "value": "newstore-gift-card"
+              },
+              {
+                  "name": "published_at",
+                  "value": "2020-11-28T14:35:49-04:00"
+              },
+              {
+                  "name": "published_scope",
+                  "value": "global"
+              },
+              {
+                  "name": "fulfillment_service",
+                  "value": "manual"
+              },
+              {
+                  "name": "inventory_policy",
+                  "value": "deny"
+              }
+          ],
+          "title": "Frank And Oak Physical Gift Card",
+          "shipping_weight_value": 0.00,
+          "tax_class_id": "PG050000",
+          "categories": [
+              {
+                  "path": "All"
+              },
+              {
+                  "path": "All > Gift Card",
+                  "is_main": true
+              }
+          ],
+          "shipping_dimension_height": 0.00,
+          "description": "Physical Gift Card for online and store purchases",
+          "brand": "",
+          "material": "",
+          "shipping_dimension_length": 0.00,
+          "variation_color_value": "",
+          "google_category": "none",
+          "shipping_dimension_width": 0.00,
+          "manufacturer": null,
+          "shipping_dimension_unit": "cm",
+          "product_id": "PGC",
+          "variant_group_id": "5500000-000",
+          "external_identifiers": [
+              {
+                  "type": "sku",
+                  "value": "PGC"
+              }
+          ],
+          "caption": "5500000-000",
+          "variation_additional_1_value": "Custom",
+          "variation_additional_1_name": "fit",
+          "variation_size_value": "Custom"
+      },
+      {
+          "shipping_weight_unit": "lb",
+          "is_searchable": true,
+          "is_available": true,
+          "keywords": [
+              "gift-card"
+          ],
+          "show_in_listing": true,
+          "images": [
+             {
+              "url": "https://cdn.shopify.com/s/files/1/0554/4643/8044/products/gift_card_7_650x.jpg?v=1621101079",
+              "title": "Frank And Oak Electronic Gift Card",
+              "is_main": true,
+              "alt_text": "Frank And Oak Electronic Gift Card"
+            }
+          ],
+          "extended_attributes": [
+              {
+                  "name": "pricebooks",
+                  "value": "egc-25,egc-50,egc-75,egc-100,egc-150,egc-200,egc-250"
+              },
+              {
+                  "name": "product_created_at",
+                  "value": "2020-11-28T14:37:35-04:00"
+              },
+              {
+                  "name": "variant_created_at",
+                  "value": "2020-11-28T14:37:35-04:00"
+              },
+              {
+                  "name": "product_updated_at",
+                  "value": "2020-11-29T06:32:26-04:00"
+              },
+              {
+                  "name": "variant_updated_at",
+                  "value": "2020-11-29T06:32:26-04:00"
+              },
+              {
+                  "name": "handle",
+                  "value": "newstore-gift-card"
+              },
+              {
+                  "name": "published_at",
+                  "value": "2020-11-28T14:35:49-04:00"
+              },
+              {
+                  "name": "published_scope",
+                  "value": "global"
+              },
+              {
+                  "name": "fulfillment_service",
+                  "value": "manual"
+              },
+              {
+                  "name": "inventory_policy",
+                  "value": "deny"
+              }
+          ],
+          "title": "Frank And Oak Electronic Gift Card",
+          "shipping_weight_value": 0.00,
+          "tax_class_id": "PG050000",
+          "categories": [
+              {
+                  "path": "All"
+              },
+              {
+                  "path": "All > Gift Card",
+                  "is_main": true
+              }
+          ],
+          "shipping_dimension_height": 0.00,
+          "description": "Electronic Gift Card for online purchases & retail purchases",
+          "brand": "",
+          "material": "",
+          "shipping_dimension_length": 0.00,
+          "variation_color_value": "",
+          "google_category": "none",
+          "shipping_dimension_width": 0.00,
+          "manufacturer": null,
+          "shipping_dimension_unit": "cm",
+          "product_id": "EGC",
+          "variant_group_id": "virtual_giftcard",
+          "external_identifiers": [
+              {
+                  "type": "sku",
+                  "value": "EGC"
+              }
+          ],
+          "caption": "virtual_giftcard",
+          "variation_additional_1_value": "Custom",
+          "variation_additional_1_name": "fit",
+          "variation_size_value": "Custom"
+      }
+  ]
+}

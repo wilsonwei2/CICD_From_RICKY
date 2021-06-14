@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2015, 2016, 2017 NewStore, Inc. All rights reserved.
 
-import os, json, logging, asyncio
+import json
+import logging
+import asyncio
 from requests import post
-from param_store.client import ParamStore
-from shopify_gift_card.aws.shopify_gift_card_balance import _get_card, TENANT, STAGE
+from pom_common.shopify import ShopManager
+from shopify_gift_card.aws.shopify_gift_card_balance import _get_card, TENANT, STAGE, REGION
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 
-'''
-Lambda for activating and issuing gift card with shopify
+# Lambda for activating and issuing gift card with shopify
+# For use with API Gateway
 
-For use with API Gateway
-'''
-
-
-def handler(event, context):
+def handler(event, _): # pylint: disable=R0911
     LOGGER.debug(json.dumps(event, indent=2))
 
     is_issue = event['path'].endswith('/issue')
@@ -27,25 +25,25 @@ def handler(event, context):
             assert body.get('card_number')
         assert body.get('amount')
         assert {'value', 'currency'} <= body['amount'].keys()
-    except Exception as e:
+    except Exception as e: # pylint: disable=W0703
         LOGGER.exception(str(e), exc_info=True)
         return _400_error('Bad input')
-    
+
     try:
         resp = activate(is_issue, **body)
     except AssertionError as e:
         LOGGER.exception(str(e), exc_info=True)
-        return _400_error(body=e.data)
+        return _400_error(body=str(e))
     except TypeError as e:
         LOGGER.exception(str(e), exc_info=True)
         try:
             return _400_error(str(e).split('activate() ')[1].capitalize())
-        except Exception:
+        except Exception: # pylint: disable=W0703
             LOGGER.exception(str(e), exc_info=True)
             return _400_error('Bad input')
 
     if isinstance(resp, AssertionError):
-        LOGGER.warn(resp.data)
+        LOGGER.warning(resp.data)
         return _400_error(body=resp.data)
 
     LOGGER.debug(f'resp: {resp}')
@@ -63,7 +61,7 @@ def handler(event, context):
     }
 
 
-def activate(is_issue: bool, amount: dict, card_number: str=None, idempotence_key: str=None, correlation_id: str=None, **kwargs):
+def activate(is_issue: bool, amount: dict, card_number: str = None, idempotence_key: str = None, correlation_id: str = None, **_):
     LOGGER.info('Activate')
     if correlation_id and not is_issue:
         raise TypeError(
@@ -77,31 +75,35 @@ def activate(is_issue: bool, amount: dict, card_number: str=None, idempotence_ke
                 "activate() got an unexpected keyword argument 'card_number'")
     if card_number.startswith('shopify-giftcard-v1-'):
         card_number = card_number[20:]
-    
-    param_store = ParamStore(TENANT, STAGE)
-    shopify_config = json.loads(param_store.get_param('shopify'))
+
+    shop_manager = ShopManager(TENANT, STAGE, REGION)
+    shopify_config = next(
+        filter(
+            lambda cnf: cnf['currency'] == amount['currency'], [shop_manager.get_shop_config(shop_id) for shop_id in shop_manager.get_shop_ids()]),
+        None
+    )
 
     loop = asyncio.get_event_loop()
     cards = loop.run_until_complete(_get_card(card_number, shopify_config))
 
     card = None
     if len(cards) > 0:
-        for c in cards:
-            if card_number.endswith(c['last_characters']):
-                card = c
+        for current_card in cards:
+            if card_number.endswith(current_card['last_characters']):
+                card = current_card
                 break
     if card and not card['disabled_at']:
-        LOGGER.info('Card already exist and is activated, returning it %s', json.dumps(card))
-        resp =  {
+        LOGGER.info(f'Card already exist and is activated, returning it {json.dumps(card)}')
+        resp = {
             'identifier': {
                 'number': card_number
             }
-        }  
+        }
     else:
         shop = shopify_config['shop']
         host = 'myshopify.com/admin'
 
-        AUTH = (shopify_config['username'], shopify_config['password'])
+        auth = (shopify_config['username'], shopify_config['password'])
         payload = {
             'gift_card': {
                 'code': card_number,
@@ -109,19 +111,19 @@ def activate(is_issue: bool, amount: dict, card_number: str=None, idempotence_ke
                 'currency': amount['currency'].upper()
             }
         }
-        
+
         LOGGER.info(f'POST https://{shop}.{host}/gift_cards.json')
         LOGGER.info(json.dumps(payload, indent=4))
 
-        r = post(f"https://{shop}.{host}/gift_cards.json", auth=AUTH, json=payload)
-        if not r.ok:
+        response = post(f"https://{shop}.{host}/gift_cards.json", auth=auth, json=payload)
+        if not response.ok:
             e = AssertionError()
-            e.data = {'error_code': str(r.status_code), 'message': r.reason,
-                      'details': r.json(), 'request_accepted': False}
+            e.data = {'error_code': str(response.status_code), 'message': response.reason,
+                      'details': response.json(), 'request_accepted': False}
             return e
         resp = {
             'identifier': {
-                'number': r.json()['gift_card']['code']
+                'number': response.json()['gift_card']['code']
             }
         }
 

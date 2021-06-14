@@ -25,6 +25,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
     newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
     newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
     newstore_use_auth_lambda: 1
@@ -47,6 +48,7 @@ functions:
     environment:
       STAGE: ${self:provider.stage}
       TENANT: ${self:provider.tenant}
+      REGION: ${self:provider.region}
       LOG_LEVEL: info
       PUSH_TO_QUEUE_LAMBDA_NAME: ${self:provider.tenant}-availabilities-to-queue
       FORCE_CHECKING_FOR_JOB: True
@@ -64,6 +66,7 @@ functions:
     environment:
       STAGE: ${self:provider.stage}
       TENANT: ${self:provider.tenant}
+      REGION: ${self:provider.region}
       LOG_LEVEL: info
       SQS_NAME: !GetAtt shopifyAvailabilityItemQueue.QueueName
       PUSH_TO_SHOPIFY_LAMBDA_NAME: ${self:provider.tenant}-inventory-push-to-shopify
@@ -84,6 +87,7 @@ functions:
       SQS_NAME: !GetAtt shopifyAvailabilityItemQueue.QueueName
       STAGE: ${self:provider.stage}
       TENANT: ${self:provider.tenant}
+      REGION: ${self:provider.region}
       LOG_LEVEL: info
       TRIGGER_NAME: shopify_availability_export_worker
 

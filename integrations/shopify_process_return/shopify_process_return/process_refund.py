@@ -49,16 +49,17 @@ def _process_refund(raw, newstore_handler):
     refund = json.loads(raw)
     # Transform Shopify format to NS format
     data_to_send = _transform_data_to_send(refund)
+    shop_id = refund['shop_id']
     if len(refund.get('refund_line_items', [])) == 0:
         LOGGER.info('Processing an order appeasment')
-        return _create_refund(data_to_send, refund, newstore_handler)
+        return _create_refund(data_to_send, refund, newstore_handler, shop_id)
     LOGGER.info('Processing an order return')
-    return _create_return(data_to_send, refund, newstore_handler)
+    return _create_return(data_to_send, refund, newstore_handler, shop_id)
 
 
-def _create_refund(refund_data, refund, newstore_handler):
+def _create_refund(refund_data, refund, newstore_handler, shop_id):
     LOGGER.info(f'Data for refund {json.dumps(refund_data, indent=4)}')
-    ns_external_order_id = get_order_name(refund['order_id'])
+    ns_external_order_id = get_order_name(refund['order_id'], shop_id)
     ns_order = newstore_handler.get_external_order(ns_external_order_id.replace("#", ""))
 
     if ns_order:
@@ -82,9 +83,9 @@ def _create_refund(refund_data, refund, newstore_handler):
     return False
 
 
-def _create_return(return_data, refund, newstore_handler):
+def _create_return(return_data, refund, newstore_handler, shop_id):
     LOGGER.info(f'Data for return {json.dumps(return_data, indent=4)}')
-    ns_external_order_id = get_order_name(refund['order_id'])
+    ns_external_order_id = get_order_name(refund['order_id'], shop_id)
     ns_order = newstore_handler.get_external_order(ns_external_order_id.replace("#", ""))
 
     if ns_order:
@@ -110,8 +111,8 @@ def _create_return(return_data, refund, newstore_handler):
     return False
 
 
-def get_order_name(order_id):
-    shopify_handler = get_shopify_handler()
+def get_order_name(order_id, shop_id):
+    shopify_handler = get_shopify_handler(shop_id)
     order = shopify_handler.get_order(order_id, params='name')
     if not order:
         LOGGER.error('Couldn\'t get order from Shopify.')

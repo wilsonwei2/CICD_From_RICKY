@@ -136,6 +136,10 @@
             "value": "9999"
         },
         {
+            "name": "external_shop",
+            "value": "test-shop"
+        },
+        {
             "name": "order_id",
             "value": "820982911946154508"
         },

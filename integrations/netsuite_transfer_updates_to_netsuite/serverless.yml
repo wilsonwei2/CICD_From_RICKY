@@ -32,7 +32,7 @@ functions:
     name: ${self:provider.tenant}-tu-item-receipt
     handler: netsuite_transfer_updates_to_netsuite.aws.process_asn_event.handler
     timeout: 300
-    memorySize: 256
+    memorySize: 256\
     environment:
       EVENT_ID_CACHE: !Ref InventoryTransferEventIdCache
       SQS_QUEUE: !GetAtt InventoryTransferQueue.QueueName
@@ -42,6 +42,7 @@ functions:
       - schedule:
           name: ${self:provider.tenant}-tu-item-receipt-trigger
           rate: rate(5 minutes)
+
   transfer_update:
     name: ${self:provider.tenant}-tu-fulfill-tos
     handler: netsuite_transfer_updates_to_netsuite.aws.process_transfer_event.handler

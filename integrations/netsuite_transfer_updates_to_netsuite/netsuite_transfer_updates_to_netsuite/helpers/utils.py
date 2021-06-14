@@ -134,9 +134,7 @@ class Utils():
     def get_subsidiary_from_currency(currency_id):
         subsidiary_map = {
             int(Utils.get_netsuite_config()['currency_usd_internal_id']): int(Utils.get_netsuite_config()['subsidiary_us_internal_id']),
-            int(Utils.get_netsuite_config()['currency_cad_internal_id']): int(Utils.get_netsuite_config()['subsidiary_ca_internal_id']),
-            int(Utils.get_netsuite_config()['currency_gbp_internal_id']): int(Utils.get_netsuite_config()['subsidiary_uk_internal_id']),
-            int(Utils.get_netsuite_config()['currency_eur_internal_id']): int(Utils.get_netsuite_config()['subsidiary_uk_internal_id'])
+            int(Utils.get_netsuite_config()['currency_cad_internal_id']): int(Utils.get_netsuite_config()['subsidiary_ca_internal_id'])
         }
         return subsidiary_map.get(int(currency_id))
 

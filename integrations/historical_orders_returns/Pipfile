@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[packages]
+boto3 = "*"
+moto = "*"
+docker = "*"
+pyyaml = "*"
+newstore-adapter = {path = "./../../shared/newstore_adapter"}
+newstore-common = {path = "./../../shared/common"}
+gql = "*"
+
+[requires]
+python_version = "3.7"

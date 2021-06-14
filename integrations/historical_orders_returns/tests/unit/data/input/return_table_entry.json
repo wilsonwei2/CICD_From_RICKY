@@ -1,0 +1,5 @@
+{
+  "rma_id": "200",
+  "payload": "{\"rma_id\": \"200\", \"order_id\": \"1031\", \"order_increment_id\": \"1101790816\", \"status\": \"authorized\", \"protect_code\": \"09b22e\", \"date_requested\": \"2021-01-14 15:04:15\", \"customer_email\": \"chikinnormal@foak.ws\", \"items\": [{\"sku\": \"1110510-5CW-XL\", \"qtyRemaining\": 0, \"qtyReturning\": 1, \"qtyAuthorized\": 1, \"qtyReturned\": 0, \"return_code\": \"2864\", \"reason_subreason\": \"\", \"reason_comment\": \"\", \"reason_code\": \"\"}], \"returned_at\": \"\", \"refunded_amount\": \"\", \"refunded_currency\": \"\", \"returned_from\": {\"address1\": \"160 St-Viateur\", \"address2\": \"\", \"city\": \"Montreal\", \"country_code\": \"CA\", \"country\": \"Canada\", \"country_name\": \"Canada\", \"company\": null, \"first_name\": \"Chikin\", \"last_name\": \"Norm\", \"name\": \"Chikin Norm\", \"phone\": \"5141234567\", \"province\": \"Quebec\", \"province_code\": \"QC\", \"zip\": \"H2T 1A8\"}, \"returned_by\": \"chikinnormal@foak.ws\"}",
+  "status": "new"
+}

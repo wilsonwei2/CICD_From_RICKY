@@ -16,7 +16,7 @@ LOGGER.setLevel(LOG_LEVEL)
 SHOPIFY_CHANNEL = 'USC'
 
 
-def transform(transaction_data, order, is_exchange, shipping_offer_token = None):
+def transform(transaction_data, order, is_exchange, shop, shipping_offer_token = None):
     order_customer = order.get('customer', {})
     order_name = str(order['name']).replace('#', '')
 
@@ -56,7 +56,7 @@ def transform(transaction_data, order, is_exchange, shipping_offer_token = None)
             }
         ],
         'payments': map_payments(transaction_data, order_name, order, is_exchange),
-        'extended_attributes': map_extended_attributes(order, order_name, is_exchange),
+        'extended_attributes': map_extended_attributes(order, order_name, is_exchange, shop),
         'notification_blacklist': notification_blacklist
     }
 
@@ -82,7 +82,7 @@ def get_address(order_address):
     }
 
 
-def map_extended_attributes(order, order_name, is_exchange):
+def map_extended_attributes(order, order_name, is_exchange, shop):
     return [
         {
             'name': 'returnly_exchange',
@@ -91,6 +91,11 @@ def map_extended_attributes(order, order_name, is_exchange):
         {
             'name': 'external_order_id',
             'value': order_name
+        }
+        ,
+        {
+            'name': 'external_shop',
+            'value': shop
         },
         {
             'name': 'order_id',
@@ -168,7 +173,7 @@ def map_items(order, order_name, ns_order):
 
         variant_id = item['variant_id']
         p_id = variant_id
-        sku = item['sku'].lower().startswith('gift-card')
+        sku = item['sku'].lower().startswith('5500000')
 
         is_gift_card = item['gift_card'] or sku
         if is_gift_card and item['requires_shipping']:
@@ -425,6 +430,7 @@ def _get_shipping_option(order, shipping_offer_token):
                 'tax': 0.0
             }
         else:
+            code = _get_non_null_field(shipping_lines[0], 'code', '').lower()
             title = _get_non_null_field(shipping_lines[0], 'title', '').lower()
             service_level_identifier = shopify_helper.get_shipment_service_level(code, title)
             LOGGER.info(f'Service level identified from is {service_level_identifier}')

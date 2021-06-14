@@ -5,15 +5,17 @@ import logging
 from shopify_payment_adaptor.handlers.shopify_handler import ShopifyConnector
 from shopify_payment_adaptor.handlers.ns_handler import NShandler
 from param_store.client import ParamStore
+from pom_common.shopify import ShopManager
 
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
+REGION = os.environ.get('REGION', 'us-east-1')
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
 PARAM_STORE = None
-SHOPIFY_HANDLER = {}
+SHOPIFY_HANDLERS = {}
 NEWSTORE_HANDLER = None
 
 TRUE_VALUES = ['true', '1', 't']
@@ -71,17 +73,26 @@ def get_newstore_handler():
     return NEWSTORE_HANDLER
 
 
-def get_shopify_handler():
-    LOGGER.info(f'Getting Shopify info')
+def get_shopify_handlers():
+    global SHOPIFY_HANDLERS
+    if len(SHOPIFY_HANDLERS) == 0:
+        shop_manager = ShopManager(TENANT, STAGE, REGION)
 
-    global SHOPIFY_HANDLER
-    if not SHOPIFY_HANDLER:
-        handler_info = get_parameter_store().get_param('shopify')
-        shopify_config = json.loads(handler_info)
-        SHOPIFY_HANDLER = ShopifyConnector(
-            api_key=shopify_config['username'],
-            password=shopify_config['password'],
-            shop=shopify_config['shop']
-        )
+        for shop_id in shop_manager.get_shop_ids():
+            shopify_config = shop_manager.get_shop_config(shop_id)
+            currency = shopify_config['currency']
 
-    return SHOPIFY_HANDLER
+            SHOPIFY_HANDLERS[currency] = ShopifyConnector(
+                api_key=shopify_config['username'],
+                password=shopify_config['password'],
+                shop=shopify_config['shop']
+            )
+
+    return SHOPIFY_HANDLERS.values()
+
+
+def get_shopify_handler(currency):
+    if len(SHOPIFY_HANDLERS) == 0:
+        get_shopify_handlers()
+
+    return SHOPIFY_HANDLERS[currency]

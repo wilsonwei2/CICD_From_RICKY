@@ -9,6 +9,7 @@ verify_ssl = true
 newstore-adapter = {path = "./../../shared/newstore_adapter"}
 shopify-adapter = {path = "./../../shared/shopify_adapter"}
 param-store = {path = "./../../shared/3.6/param_store"}
+pom-common = {path = "./../../shared/pom_common"}
 jsonschema = "*"
 simplejson = "*"
 aiohttp="3.0.1"

@@ -244,9 +244,13 @@ class ShopifyConnector:
                     # Limit number of retries
                     if attempts <= 3:
                         LOGGER.info(f'Remove variants or Setting Inventory. Attempts: {attempts}')
-                        indexes = [int(error['field'][1]) for error in errors]
-                        indexes.reverse()
-                        error_index = len(indexes) -1
+                        try:
+                            indexes = [int(error['field'][1]) for error in errors]
+                            indexes.reverse()
+                            error_index = len(indexes) -1
+                        except:
+                            LOGGER.warning('Failed to handle errors aborting.')
+                            return None
 
                         for idx in indexes:
                             LOGGER.info(f'errors[error_index]: {errors[error_index]}')

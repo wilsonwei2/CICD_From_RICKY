@@ -25,6 +25,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
 
 functions:
   shopify_gift_card_activate:

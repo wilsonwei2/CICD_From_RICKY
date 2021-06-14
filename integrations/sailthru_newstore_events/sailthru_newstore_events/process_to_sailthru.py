@@ -47,6 +47,10 @@ def _process_event(data: dict, event_name: str, context):
         return f'Order {data["order_id"]} not in list of countries to process, ignoring...'
     LOGGER.info(f'NewStore order: {json.dumps(ns_order)}')
     if 'fulfillment' in event_name:
+        _filter_sc_items(data, ns_handler)
+        if len(data['items']) == 0:
+            return {}
+
         body = _sailthru_mapping_sc(data, ns_order)
     else:
         body = _sailthru_mapping_oc(data, ns_order)
@@ -59,6 +63,45 @@ def _process_event(data: dict, event_name: str, context):
                 os.environ.get('INVOKE_SAILTHRU_LAMBDA', f'{TENANT}-sailthru'),
                 payload=payload)
 
+def _filter_sc_items(data, ns_handler):
+    order_item_ids = list(map(lambda item: item['id'], data['items']))
+    order_item_data = ns_handler.graphql("""
+    query OrderItems($order_item_ids: [String!]) {
+        orderItems(filter: {id: {in: $order_item_ids}}) {
+            nodes {
+                id
+                productId
+                extendedAttributes {
+                    nodes {
+                        name
+                        value
+                    }
+                }
+            }
+        }
+    }""", {
+        "order_item_ids": order_item_ids
+    })
+
+    for item in order_item_data['orderItems']['nodes']: # pylint: disable=too-many-nested-blocks
+        if not require_shipping(item):
+            for order_li in data['items']:
+                if order_li['id'] == item['id']:
+                    data['items'].remove(order_li)
+                    break
+
+
+def get_extended_attribute(extended_attributes, key):
+    if not extended_attributes or not key:
+        return None
+    result = next((item['value'] for item in extended_attributes if item['name'] == key), None)
+    return result
+
+
+def require_shipping(item):
+    requires_shipping = get_extended_attribute(item.get('extended_attributes'), 'requires_shipping')
+    # If it's requires_shipping is None assume that it needs shipping
+    return requires_shipping is None or requires_shipping.lower() == 'true'
 
 # shipping confirmation data mapping
 def _sailthru_mapping_sc(data, order):

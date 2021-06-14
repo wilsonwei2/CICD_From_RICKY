@@ -8,8 +8,8 @@ verify_ssl = true
 [packages]
 newstore_adapter = {path = "./../../shared/newstore_adapter"}
 shopify_adapter = {path = "./../../shared/shopify_adapter"}
-param_store = {path = "./../../shared/3.6/param_store"}
 lambda_utils = {path = "./../../shared/lambda_utils"}
+pom-common = {path = "./../../shared/pom_common"}
 aiohttp="3.0.1"
 requests="v2.20.1"
 redis="3.0.1"
