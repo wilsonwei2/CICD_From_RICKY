@@ -273,7 +273,7 @@ def transform_extended_attributes(variant, master, tags):
         })
 
     extended_attributes.append({
-        'name': 'finalsale',
+        'name': 'final_sale',
         'value': 'true' if final_sale else 'false'
     })
 

@@ -120,7 +120,7 @@
           "value": "41604116971676"
         },
         {
-          "name": "finalsale",
+          "name": "final_sale",
           "value": "true"
         }
       ],
@@ -273,7 +273,7 @@
           "value": "41604117004444"
         },
         {
-          "name": "finalsale",
+          "name": "final_sale",
           "value": "true"
         }
       ],
@@ -426,7 +426,7 @@
           "value": "41604117037212"
         },
         {
-          "name": "finalsale",
+          "name": "final_sale",
           "value": "true"
         }
       ],
@@ -579,7 +579,7 @@
           "value": "41604117069980"
         },
         {
-          "name": "finalsale",
+          "name": "final_sale",
           "value": "true"
         }
       ],
@@ -732,7 +732,7 @@
           "value": "41604117102748"
         },
         {
-          "name": "finalsale",
+          "name": "final_sale",
           "value": "true"
         }
       ],
