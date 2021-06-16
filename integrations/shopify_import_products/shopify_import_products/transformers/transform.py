@@ -281,7 +281,7 @@ def transform_extended_attributes(variant, master, tags):
 
 
 def is_final_sale(tags):
-    final_sale = next(filter(lambda tag: 'custitem_fao_FinalSale' in tag, tags), None)
+    final_sale = next(filter(lambda tag: 'custitem_fao_finalsale' in tag.lower(), tags), None)
 
     if final_sale is not None:
         return final_sale.split(':')[1].strip().lower() == 'yes'
