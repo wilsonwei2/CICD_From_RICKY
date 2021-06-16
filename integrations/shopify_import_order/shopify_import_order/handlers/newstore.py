@@ -133,7 +133,7 @@ class NShandler():
         response.raise_for_status()
 
     def get_store(self, store_id):
-        url = f'https://{self.host}/v0/d/stores/{store_id}'
+        url = f'https://{self.host}/v0/i/stores/{store_id}'
         response = requests.get(url=url, headers=self.get_headers())
         response.raise_for_status()
         return response.json()

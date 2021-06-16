@@ -22,7 +22,6 @@ LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INF
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
 
-
 def _str_2_bool(b_str):
     return b_str.lower() in ('yes', 'true', '1')
 
@@ -134,7 +133,7 @@ def get_shipping_offer_token(order, newstore_handler):
 
     def get_bag_item(line_item):
         return {
-            'product_id': line_item['product_id'],
+            'product_id': str(line_item['product_id']),
             'quantity': line_item['quantity']
         }
 
@@ -145,7 +144,7 @@ def get_shipping_offer_token(order, newstore_handler):
             latitude, longitude = get_store_geo_location(shipping_code, newstore_handler)
             LOGGER.debug(f'Latitude: {latitude}, Longitude: {longitude}')
 
-            in_store_pickup_options = newstore_handler.get_in_store_pickup_options({
+            payload = {
                 'location': {
                     'geo': {
                         'latitude': latitude,
@@ -153,7 +152,8 @@ def get_shipping_offer_token(order, newstore_handler):
                     }
                 },
                 'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])]
-            }).get('options', [])
+            }
+            in_store_pickup_options = newstore_handler.get_in_store_pickup_options(payload).get('options', [])
             LOGGER.debug(f'In store pickup options: {in_store_pickup_options}')
 
             selected_option = next(filter(lambda option: option['fulfillment_node_id'] == shipping_code, in_store_pickup_options), None)
