@@ -45,7 +45,7 @@ def handler(event, context): # pylint: disable=W0613
             statusCode: 200 or 400 depending on successful order processing
             message: 'processed' or an error message
     """
-    order_body = event['body']
+    order_body = str(event['body'])
     shop = event['shop']
     shop_id = Utils.get_instance().get_shop_id(shop)
 
