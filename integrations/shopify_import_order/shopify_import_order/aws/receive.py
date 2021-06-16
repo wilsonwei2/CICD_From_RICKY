@@ -23,7 +23,7 @@ def handler(event, context): # pylint: disable=W0613
     """
     try:
         LOGGER.debug(f'Received Shopify event: {json.dumps(event, indent=4)}')
-        order = event['body']
+        order = str(event['body'])
         order_id = event['headers'].get('X-Shopify-Order-Id')
         shop_name = event['headers'].get('X-Shopify-Shop-Domain').split('.')[0]
 
