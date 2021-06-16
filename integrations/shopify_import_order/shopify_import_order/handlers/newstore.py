@@ -131,3 +131,9 @@ class NShandler():
         LOGGER.info("Delete Order Note")
         response = requests.delete(url, headers=self.get_headers())
         response.raise_for_status()
+
+    def get_store(self, store_id):
+        url = f'https://{self.host}/v0/d/stores/{store_id}'
+        response = requests.get(url=url, headers=self.get_headers())
+        response.raise_for_status()
+        return response.json()
