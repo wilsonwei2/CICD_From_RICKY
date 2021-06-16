@@ -143,6 +143,7 @@ def get_shipping_offer_token(order, newstore_handler):
             shipping_code = order['shipping_lines'][0]['code']
             LOGGER.debug(f'Try to get geo location for shipping code: {shipping_code}')
             latitude, longitude = get_store_geo_location(shipping_code, newstore_handler)
+            LOGGER.debug(f'Latitude: {latitude}, Longitude: {longitude}')
 
             in_store_pickup_options = newstore_handler.get_in_store_pickup_options({
                 'location': {
@@ -153,15 +154,18 @@ def get_shipping_offer_token(order, newstore_handler):
                 },
                 'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])]
             }).get('options', [])
+            LOGGER.debug(f'In store pickup options: {in_store_pickup_options}')
 
-            selected_option = next(filter(lambda option: option['fulfillment_node_id'] == store_id, in_store_pickup_options), None)
+            selected_option = next(filter(lambda option: option['fulfillment_node_id'] == shipping_code, in_store_pickup_options), None)
+            LOGGER.debug(f'Selected option: {selected_option}')
 
             if selected_option is not None:
                 shipping_offer_token = selected_option['in_store_pickup_option']['shipping_offer_token']
 
             LOGGER.debug(f'Got pickup in store shipping offer token: {shipping_offer_token}')
-        except: # pylint: disable=W0702
+        except Exception as error: # pylint: disable=W0702
             LOGGER.debug('Could not get a shipping offer token, no pickup in store.')
+            LOGGER.debug(str(error))
 
     return shipping_offer_token
 
