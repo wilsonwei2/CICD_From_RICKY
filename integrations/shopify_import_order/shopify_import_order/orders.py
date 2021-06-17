@@ -59,6 +59,9 @@ def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=N
         'notification_blacklist': notification_blacklist
     }
 
+    if 'shipping_offer_token' in ns_order['shipments'][0]['shipping_option']:
+        del ns_order['shipping_address']
+
     if order.get('browser_ip') and order.get('browser_ip') != "None":
         ns_order['ip_address'] = order['browser_ip']
 
