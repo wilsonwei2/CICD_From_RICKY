@@ -58,8 +58,27 @@
   "return_receipt": {
     "title": "Reçu de retour",
     "refunds": "Remboursements",
-    "reason": "Reason",
+    "reason": "Raison",
     "note": "Note",
-    "credit_card_note": "Please note, credit card refunds may take a few days to be reflected on your account due to bank processing time."
+    "credit_card_note": "Veuillez noter que les remboursements par carte de crédit peuvent prendre quelques jours pour être reflétés sur votre compte en raison du temps de traitement bancaire."
+  },
+  "consumer_capture_email": {
+    "title": "Votre reçu Frank And Oak",
+    "header": "Merci pour votre achat.",
+    "text1": "Bonjour",
+    "text2": ", nous espérons que vous aimez l'achat que vous avez effectué aujourd'hui. S'il vous plaît voir ci-joint pour votre reçu.",
+    "greeting": "Cordialement,",
+    "customer_service": "L'équipe de service aux membres Frank And Oak"
+  },
+  "return_receipt_email": {
+    "title": "Commande retournée",
+    "header": "Certains items dans votre commande ont été retournés.",
+    "text1": "Bonjour",
+    "text2": ", veuillez prévoir 10 jours ouvrables pendant que nous traitons votre remboursement. S'il vous plaît voir ci-joint votre reçu",
+    "text3": "Conformément à notre polituque de retour, le remboursement sera effectué sur la carte de crédit d'origine utilisée pour passer la commande.",
+    "text4": "Tous les frais de douane, droits et taxes ne sont pas remboursables.",
+    "text5": "Le montant sera reflété sur votre prochain relevé de carte de crédit, selon le cycle de facturation.",
+    "greeting": "Cordialement,",
+    "customer_service": "L'équipe de service aux membres Frank And Oak"
   }
 }

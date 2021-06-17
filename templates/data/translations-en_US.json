@@ -36,7 +36,7 @@
       "total_refund": "Total to be refunded",
       "method": "Method",
       "amount": "Amount"
-  },
+    },
     "payment": {
       "gift_card": "Gift Card",
       "paypal": "PayPal",
@@ -61,5 +61,24 @@
     "reason": "Reason",
     "note": "Note",
     "credit_card_note": "Please note, credit card refunds may take a few days to be reflected on your account due to bank processing time."
+  },
+  "consumer_capture_email": {
+    "title": "Your Receipt from Frank And Oak",
+    "header": "Thank you for your purchase.",
+    "text1": "Hello",
+    "text2": ", we hope you love the purchase you made today. Please see attached for your receipt.",
+    "greeting": "Sincerely,",
+    "customer_service": "Frank And Oak Member Services"
+  },
+  "return_receipt_email": {
+    "title": "Order item returned",
+    "header": "Item(s) in your order have been returned.",
+    "text1": "Hello",
+    "text2": ", please allow for 10 business days as we process your refund. Please see attached for your receipt.",
+    "text3": "Refunds will be issued to to the original credit card used to place the order for merchandise that comply with our Returns Policy.",
+    "text4": "All custom fees, duties, and taxes are non-refundable.",
+    "text5": "The amount will be reflected on your next credit card statement, according to the billing cycle.",
+    "greeting": "Sincerely,",
+    "customer_service": "Frank And Oak Member Services"
   }
 }

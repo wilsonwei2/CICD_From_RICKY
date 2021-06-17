@@ -1,19 +1,19 @@
 {% extends 'email_base' %}
 
-{% block title %}Order item returned{% endblock %}
+{% block title %}[[[title]]]{% endblock %}
 
-{% block header %}Item(s) in your order have been returned.{% endblock %}
+{% block header %}[[[header]]]{% endblock %}
 
 {% block body %}
 	<table class="email-body" cellpadding="0" cellspacing="0" border="0" align="center">
 		<tr>
 			<td>
-				<p style="padding-left:30px;">Hello {{consumer_name | default("shopper")}}, please allow for 10 business days as we process your refund. Please see attached for your receipt.</p>
-				<p style="padding-left:60px;">Refunds will be issued to to the original credit card used to place the order for merchandise that comply with our Returns Policy.</p>
-				<p style="padding-left:60px;">All custom fees, duties, and taxes are non-refundable.</p>
-				<p style="padding-left:60px;">The amount will be reflected on your next credit card statement, according to the billing cycle.</p>
-				<p class="signature" style="padding-left:60px;">Sincerely,</p>
-				<p class="signature" style="padding-left:60px;">Frank And Oak Customer Service</p>
+				<p style="padding-left:30px;">[[[text1]]] {{consumer_name | default("shopper")}}[[[text2]]]</p>
+				<p style="padding-left:60px;">[[[text3]]]</p>
+				<p style="padding-left:60px;">[[[text4]]]</p>
+				<p style="padding-left:60px;">[[[text5]]]</p>
+				<p class="signature" style="padding-left:60px;">[[[greeting]]]</p>
+				<p class="signature" style="padding-left:60px;">[[[customer_service]]]</p>
 			</td>
 		</tr>
 	</table>
