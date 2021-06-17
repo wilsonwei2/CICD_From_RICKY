@@ -11,17 +11,6 @@
     "external_customer_id": "115310627314723954",
     "placed_at": "2020-09-10T18:53:45-04:00",
     "price_method": "tax_excluded",
-    "shipping_address": {
-        "first_name": "Steve",
-        "last_name": "Shipper",
-        "country": "US",
-        "zip_code": "40003",
-        "city": "Shippington",
-        "state": "KY",
-        "address_line_1": "123 Shipping Street",
-        "address_line_2": "",
-        "phone": "555-555-SHIP"
-    },
     "billing_address": {
         "first_name": "Bob",
         "last_name": "Biller",

@@ -22,9 +22,6 @@ LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INF
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
 
-import ptvsd
-ptvsd.enable_attach(address=('localhost', 3001), redirect_output=True)
-ptvsd.wait_for_attach()
 
 def _str_2_bool(b_str):
     return b_str.lower() in ('yes', 'true', '1')
@@ -48,8 +45,8 @@ def handler(event, context): # pylint: disable=W0613
             statusCode: 200 or 400 depending on successful order processing
             message: 'processed' or an error message
     """
-    order_body = json.loads(event['body'])['body'] # TODO rollback
-    shop = json.loads(event['body'])['shop'] # TODO rollback
+    order_body = event['body']
+    shop = event['shop']
     shop_id = Utils.get_instance().get_shop_id(shop)
 
     shopify_handler = Utils.get_instance().get_shopify_handler(shop_id)
