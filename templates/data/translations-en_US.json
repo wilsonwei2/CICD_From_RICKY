@@ -46,7 +46,11 @@
     "footer": {
       "at": "at",
       "page": "Page",
-      "of": "of"
+      "of": "of",
+      "do_not_reply": "Please do not reply to this email",
+      "visit_store": "Visit our store",
+      "or": "or",
+      "contact": "Contact Us"
     }
   },
   "sales_receipt": {
