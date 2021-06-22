@@ -23,7 +23,7 @@ def split_csv_file(s3_bucket_name, s3_file_key):
     try:
         s3_object = S3.Object(s3_bucket_name, s3_file_key)
         csvdata = s3_object.get()['Body'].read().decode('utf-8')
-        data = csv.DictReader(StringIO(csvdata), delimiter=CSV_DELIMITER)
+        data = csv.DictReader(StringIO(csvdata, newline=None), delimiter=CSV_DELIMITER)
 
         current_limit = int(CSV_ROW_LIMIT)
         current_piece = 1
