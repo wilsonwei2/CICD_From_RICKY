@@ -205,7 +205,7 @@
                             <p class="total">{{transaction.metadata.brand}} {{transaction.metadata.last4 }}</p>
                         {% endif %}
                         {% if refund_instrument.payment_method == "paypal"%}
-                            <p class="total"> [[[#payment.paypay]]] </p>
+                            <p class="total"> [[[#payment.paypal]]] </p>
                         {% endif %}
                         {% if refund_instrument.payment_method == "gift_card"%}
                             <p class="total"> [[[#payment.gift_card]]] </p>

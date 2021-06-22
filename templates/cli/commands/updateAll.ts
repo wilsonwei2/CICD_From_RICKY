@@ -44,13 +44,12 @@ const addLocales = (locales: string[]) => switchMap((file: FileData) => from(loc
   map((locale) => ({ locale, ...file })),
 ));
 
-const doTranslations = (skipTranslation: boolean) => mergeMap(async (file: FileData) => (
+const doTranslations = (skipTranslation: boolean) => concatMap((file: FileData) => (
   skipTranslation || !file.locale
-    ? file
-    : {
-      ...file,
-      content: await addTranslations(file.content, file.file, file.locale),
-    }
+    ? of(file)
+    : from(addTranslations(file.content, file.file, file.locale)).pipe(
+      map((content) => ({ ...file, content })),
+    )
 ));
 
 const updateAll = setupCommand(async (locales: string[], { skipTranslation }) => {
@@ -69,7 +68,6 @@ const updateAll = setupCommand(async (locales: string[], { skipTranslation }) =>
       console.info(`ìmporting ${type} ${chalk.yellow(file)} ${locale ? `(${chalk.blue(locale)})` : ''}`);
       return type === 'template' && locale
         ? updateTemplate(basename, locale, content) : updateStyle(file, content);
-      return of(true);
     }),
   ).subscribe();
 });
