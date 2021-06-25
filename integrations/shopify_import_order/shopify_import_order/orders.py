@@ -4,7 +4,6 @@ import os
 import copy
 from decimal import Decimal
 from shopify_import_order.handlers import shopify_helper
-from shopify_import_order.handlers.utils import Utils
 
 PROCESSOR = os.environ.get('PAYMENT_PROCESSOR', 'shopify')
 GIFTCARD_ELECTRONIC = os.environ.get('giftcard_electronic', 'EGC')
@@ -16,7 +15,7 @@ LOGGER.setLevel(LOG_LEVEL)
 SHOPIFY_CHANNEL = 'USC'
 
 
-def transform(transaction_data, order, is_exchange, shop):
+def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=None):
     order_customer = order.get('customer', {})
     order_name = str(order['name']).replace('#', '')
 
@@ -52,13 +51,16 @@ def transform(transaction_data, order, is_exchange, shop):
         'shipments': [
             {
                 'items': [],
-                'shipping_option': _get_shipping_option(order)
+                'shipping_option': _get_shipping_option(order, shipping_offer_token)
             }
         ],
         'payments': map_payments(transaction_data, order_name, order, is_exchange),
         'extended_attributes': map_extended_attributes(order, order_name, is_exchange, shop),
         'notification_blacklist': notification_blacklist
     }
+
+    if 'shipping_offer_token' in ns_order['shipments'][0]['shipping_option']:
+        del ns_order['shipping_address']
 
     if order.get('browser_ip') and order.get('browser_ip') != "None":
         ns_order['ip_address'] = order['browser_ip']
@@ -414,7 +416,7 @@ def refunded_transactions(transaction_data):
     return refunded
 
 
-def _get_shipping_option(order):
+def _get_shipping_option(order, shipping_offer_token):
     '''
     Get shipping option -- original and should work,
     the call is made in transform.
@@ -423,17 +425,15 @@ def _get_shipping_option(order):
     LOGGER.info('Inside shipping options')
 
     if shipping_lines:
-        code = _get_non_null_field(shipping_lines[0], 'code', '').lower()
-        title = _get_non_null_field(shipping_lines[0], 'title', '').lower()
-
-        if code in ("pickup in store", "store-pickup"):
-            token_response = _get_shipping_offer_token(order)
+        if shipping_offer_token is not None:
             shipping_option = {
-                'shipping_offer_token': token_response,
+                'shipping_offer_token': shipping_offer_token,
                 'price': 0.0,
                 'tax': 0.0
             }
         else:
+            code = _get_non_null_field(shipping_lines[0], 'code', '').lower()
+            title = _get_non_null_field(shipping_lines[0], 'title', '').lower()
             service_level_identifier = shopify_helper.get_shipment_service_level(code, title)
             LOGGER.info(f'Service level identified from is {service_level_identifier}')
             shipping_option = {
@@ -460,60 +460,3 @@ def _get_shipping_taxes(shipping_line):
     for tax in shipping_line['tax_lines']:
         shipping_taxes_total += float(tax.get('price', '0.0'))
     return round(shipping_taxes_total, 2)
-
-
-# This function is for getting offer token to be injected with only BOPIS orders
-def _get_shipping_offer_token(order):
-    newstore_conn = Utils.get_instance().get_ns_handler()
-    LOGGER.info('Inside get shipping offer token')
-    param_store = Utils.get_instance().get_parameter_store()
-    bag = []
-    for item in order['line_items']:
-        sku = item['sku']
-        ns_product = newstore_conn.get_product(sku)
-        ns_id = ns_product['product_id']
-        LOGGER.info(f'product id is {ns_id}')
-        qty = item['quantity']
-        bag_dict = {
-            "product_id": ns_id,
-            "quantity": qty
-        }
-        bag.append(bag_dict)
-
-    LOGGER.info(f'Bag has the following products: {bag}')
-
-    store_name = ''
-    for note in order['note_attributes']:
-        if note['name'] == 'Pickup-Location-Company':
-            store_name = note['value'].lower()
-            break
-    LOGGER.info(f'Store name is {store_name}')
-
-    store_geo_locations = json.loads(param_store.get_param('store_geo_locations'))
-    store_details = store_geo_locations.get(store_name)
-    request_json = {
-        "location": {
-            "geo": {
-                "latitude": store_details.get('latitude'),
-                "longitude": store_details.get('longitude')
-            }
-        },
-        "bag": bag,
-        "options": {
-            "search_radius": 10,
-            "show_stores_without_atp": True
-        }
-    }
-
-    response = newstore_conn.get_in_store_pickup_options(request_json)
-    options = response.get('options')
-    LOGGER.debug(f'options are {options}')
-    LOGGER.debug((f'store details are {store_details}'))
-
-    chosen_option = [d for d in options if d['fulfillment_node_id'] == store_details.get('store_id')][0]
-    LOGGER.debug(f'chosen options are {chosen_option}')
-    option_data = chosen_option.get('in_store_pickup_option', '')
-    LOGGER.info(f'option data is {option_data}')
-    token_response = option_data.get('shipping_offer_token', '')
-
-    return token_response

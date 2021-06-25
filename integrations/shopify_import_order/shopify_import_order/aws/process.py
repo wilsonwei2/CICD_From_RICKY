@@ -81,8 +81,8 @@ def handler(event, context): # pylint: disable=W0613
         if is_exchange:
             _create_ns_return(order, shopify_handler, newstore_handler)
 
-
-        ns_order = transform(transaction_data, order, is_exchange, shop)
+        shipping_offer_token = get_shipping_offer_token(order, newstore_handler)
+        ns_order = transform(transaction_data, order, is_exchange, shop, shipping_offer_token)
 
         response = newstore_handler.fulfill_order(ns_order)
 
@@ -124,6 +124,59 @@ def _validate_order_risk(order, shop_id):
         if 'cancel' in recommendation.lower():
             return True
     return False
+
+
+def get_shipping_offer_token(order, newstore_handler):
+    LOGGER.debug('Trying to get a pickup in store shipping offer token.')
+    shipping_offer_token = None
+    billing_address = order.get('billing_address', None)
+    shipping_address = order.get('shipping_address', None)
+
+    def get_bag_item(line_item):
+        return {
+            'product_id': line_item['sku'],
+            'quantity': line_item['quantity']
+        }
+
+    if shipping_address is None and billing_address is not None:
+        try:
+            shipping_code = order['shipping_lines'][0]['code']
+            LOGGER.debug(f'Try to get geo location for shipping code: {shipping_code}')
+            latitude, longitude = get_store_geo_location(shipping_code, newstore_handler)
+            LOGGER.debug(f'Latitude: {latitude}, Longitude: {longitude}')
+
+            payload = {
+                'location': {
+                    'geo': {
+                        'latitude': latitude,
+                        'longitude': longitude
+                    }
+                },
+                'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])]
+            }
+            in_store_pickup_options = newstore_handler.get_in_store_pickup_options(payload).get('options', [])
+            LOGGER.debug(f'In store pickup options: {in_store_pickup_options}')
+
+            selected_option = next(filter(lambda option: option['fulfillment_node_id'] == shipping_code, in_store_pickup_options), None)
+            LOGGER.debug(f'Selected option: {selected_option}')
+
+            if selected_option is not None:
+                shipping_offer_token = selected_option['in_store_pickup_option']['shipping_offer_token']
+
+            LOGGER.debug(f'Got pickup in store shipping offer token: {shipping_offer_token}')
+        except Exception as error: # pylint: disable=W0702
+            LOGGER.debug('Could not get a shipping offer token, no pickup in store.')
+            LOGGER.debug(str(error))
+
+    return shipping_offer_token
+
+
+def get_store_geo_location(store_id, newstore_handler):
+    store = newstore_handler.get_store(store_id)
+    latitude = store['physical_address']['latitude']
+    longitude = store['physical_address']['longitude']
+
+    return latitude, longitude
 
 
 def get_transaction_data(shopify_adaptor, order):
