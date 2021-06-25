@@ -4,7 +4,6 @@ from time import time
 import logging
 from urllib.parse import unquote
 import boto3
-from s3_to_newstore.utils import Utils
 from newstore_adapter.connector import NewStoreConnector
 
 S3 = boto3.client('s3')
@@ -33,14 +32,7 @@ def handler(event, context):
     """
     LOGGER.debug(f"Event: {json.dumps(event, indent=2)}")
 
-    newstore_config = Utils.get_instance().get_newstore_config()
-    ns_handler = NewStoreConnector(
-        tenant='frankandoak',
-        context=context,
-        username=newstore_config['username'],
-        password=newstore_config['password'],
-        host=newstore_config['host']
-    )
+    ns_handler = NewStoreConnector(tenant='frankandoak', context=context)
     entities = [i.strip() for i in ENTITIES_CSV.split(',')]
 
     for record in event['Records']:
