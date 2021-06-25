@@ -35,7 +35,9 @@ NEWSTORE_TO_NETSUITE_LOCATIONS = util.get_newstore_to_netsuite_locations_config(
 NEWSTORE_TO_NETSUITE_CHANNEL = util.get_newstore_to_netsuite_channel_config()
 NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS = util.get_newstore_to_netsuite_payment_items_config()
 # TODO check if we need the below feature for the integration pylint: disable=fixme
-NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT = {} # util.get_newstore_to_netsuite_payment_account_config()
+# util.get_newstore_to_netsuite_payment_account_config()
+NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT = {}
+
 
 def handler(event, context):  # pylint: disable=W0613
     global NEWSTORE_HANDLER  # pylint: disable=W0603
@@ -58,7 +60,8 @@ def handler(event, context):  # pylint: disable=W0613
 
 
 def create_cash_sale(order):
-    store_id = order['channel']  # when channel_type==store then channel represents the store_id
+    # when channel_type==store then channel represents the store_id
+    store_id = order['channel']
     subsidiary_id = util.get_subsidiary_id(store_id)
     partner_id = int(NETSUITE_CONFIG['newstore_partner_internal_id'])
 
@@ -73,15 +76,19 @@ def create_cash_sale(order):
         raise Exception('Channel_id %s isn\'t mapped to NetSuite' % store_id)
 
     custom_fields_list = [
-        StringCustomFieldRef(scriptId='custbody_nws_shopifyorderid', value=order['externalId'])
+        StringCustomFieldRef(
+            scriptId='custbody_nws_shopifyorderid', value=order['externalId'])
     ]
 
     placed_at_string = order['placedAt']
-    tran_date = datetime.strptime(placed_at_string[:19], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
-    tran_date = tran_date.astimezone(pytz.timezone(NETSUITE_CONFIG.get('NETSUITE_DATE_TIMEZONE', 'US/Eastern')))
+    tran_date = datetime.strptime(
+        placed_at_string[:19], '%Y-%m-%dT%H:%M:%S').replace(tzinfo=timezone.utc)
+    tran_date = tran_date.astimezone(pytz.timezone(
+        NETSUITE_CONFIG.get('NETSUITE_DATE_TIMEZONE', 'US/Eastern')))
 
     cash_sale = {
-        'externalId': order['externalId'],  # Order id will be used to lookup order on NetSuite on other newstore events
+        # Order id will be used to lookup order on NetSuite on other newstore events
+        'externalId': order['externalId'],
         'currency': RecordRef(internalId=currency_id),
         'subsidiary': RecordRef(internalId=subsidiary_id),
         'customForm': RecordRef(internalId=int(NETSUITE_CONFIG['cash_sale_custom_form_internal_id'])),
@@ -120,7 +127,8 @@ def get_order_shipping_address(order):
 
 
 def get_customer_info(order):
-    store_id = order['channel']  # when channel_type==store then channel represents the store_id
+    # when channel_type==store then channel represents the store_id
+    store_id = order['channel']
     subsidiary_id = util.get_subsidiary_id(store_id)
 
     customer_email = order['customerEmail']
@@ -130,7 +138,8 @@ def get_customer_info(order):
     if shipping_address and customer_email:
         customer_custom_field_list = [SelectCustomFieldRef(
             scriptId='custentity_nws_profilesource',
-            value=ListOrRecordRef(internalId=NEWSTORE_TO_NETSUITE_CHANNEL['store'])
+            value=ListOrRecordRef(
+                internalId=NEWSTORE_TO_NETSUITE_CHANNEL['store'])
         )]
         if store_id in NEWSTORE_TO_NETSUITE_LOCATIONS:
             store_location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
@@ -141,7 +150,8 @@ def get_customer_info(order):
                 )
             )
         else:
-            LOGGER.warning(f'Store id where the consumer was created {store_id} isn\'t mapped to NetSuite')
+            LOGGER.warning(
+                f'Store id where the consumer was created {store_id} isn\'t mapped to NetSuite')
 
         customer = {
             'customForm': RecordRef(internalId=int(NETSUITE_CONFIG['customer_custom_form_internal_id'])),
@@ -157,7 +167,8 @@ def get_customer_info(order):
         customer['companyName'] = re.sub(' +', ' ', ' '.join(
             (customer['firstName'], customer['lastName'])))
         if customer_custom_field_list:
-            customer['customFieldList'] = CustomFieldList(customer_custom_field_list)
+            customer['customFieldList'] = CustomFieldList(
+                customer_custom_field_list)
     else:
         # If store exists in mapping, default customer for store
         if store_id in NEWSTORE_TO_NETSUITE_LOCATIONS:
@@ -175,7 +186,8 @@ def get_customer_info(order):
 
 
 def upsert_netsuite_customer(customer):
-    netsuite_customer_internal_id = lookup_customer_id_by_name_and_email(customer)
+    netsuite_customer_internal_id = lookup_customer_id_by_name_and_email(
+        customer)
     if netsuite_customer_internal_id:
         return netsuite_customer_internal_id
 
@@ -189,7 +201,8 @@ def get_customer_netsuite_internal_id(order):
     return RecordRef(internalId=netsuite_customer_internal_id)
 
 
-def get_capture_transactions(order):  # extracts transactions from order data (GraphQL API response)
+# extracts transactions from order data (GraphQL API response)
+def get_capture_transactions(order):
     transactions = []
     for transaction in order['paymentAccount']['transactions']['nodes']:
         if transaction['transactionType'] == 'capture':
@@ -197,7 +210,8 @@ def get_capture_transactions(order):  # extracts transactions from order data (G
     return transactions
 
 
-def get_capture_transactions_rest(payments_info):  # extracts transactions from order data (REST API response)
+# extracts transactions from order data (REST API response)
+def get_capture_transactions_rest(payments_info):
     transactions = []
     for instrument in payments_info['instruments']:
         for original_transaction in instrument['original_transactions']:
@@ -221,7 +235,8 @@ def create_payment_items(order):
         LOGGER.info(f'Payments Info: {payments_info}')
         assert payments_info, 'Payment info not available yet, fallback and retry this order later.'
 
-    store_id = order['channel']  # when channel_type==store then channel represents the store_id
+    # when channel_type==store then channel represents the store_id
+    store_id = order['channel']
     subsidiary_id = util.get_subsidiary_id(store_id)
     location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
 
@@ -234,18 +249,22 @@ def create_payment_items(order):
     LOGGER.info('Transactions from capture order')
     LOGGER.info(json.dumps(transactions))
     for transaction in transactions:
-        method = transaction.get('instrument', {}).get('paymentMethod', transaction.get('payment_method', '')).lower()
-        provider = transaction.get('instrument', {}).get('paymentProvider', transaction.get('payment_provider', '')).lower()
+        method = transaction.get('instrument', {}).get(
+            'paymentMethod', transaction.get('payment_method', '')).lower()
+        provider = transaction.get('instrument', {}).get(
+            'paymentProvider', transaction.get('payment_provider', '')).lower()
         currency = transaction['currency'].lower()
 
         if method == 'credit_card':
-            payment_config = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[method].get(provider, {})
+            payment_config = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[method].get(
+                provider, {})
             if isinstance(payment_config, numbers.Number):
                 payment_item_id = payment_config
             else:
                 payment_item_id = payment_config.get(currency, '')
         elif method == 'gift_card':
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get('gift_card', {}).get(currency, '')
+            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(
+                'gift_card', {}).get(currency, '')
         else:
             payment_config = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(method, {})
             if isinstance(payment_config, numbers.Number):
@@ -260,7 +279,8 @@ def create_payment_items(order):
                 msg = f'Payment Item for payment method {method} not mapped.'
             raise ValueError(msg)
 
-        capture_amount = float(transaction.get('amount', transaction.get('capture_amount', '0.0')))
+        capture_amount = float(transaction.get(
+            'amount', transaction.get('capture_amount', '0.0')))
         if capture_amount != 0:
             payment_items.append({
                 'item': RecordRef(internalId=payment_item_id),
@@ -273,13 +293,15 @@ def create_payment_items(order):
     return payment_items
 
 # TODO Check if payment methods are used - this seems to be introduced just for ML pylint: disable=fixme
+
+
 def get_payment_method(order):
     transactions = get_capture_transactions(order)
     payment_account_id = None
-    ## 1-adyen, cash, giftcard
-    ## 2-cash, giftcard, adyen
-    ## 4-cash, giftcard, cash
-    ## 3-giftcard, giftcard
+    # 1-adyen, cash, giftcard
+    # 2-cash, giftcard, adyen
+    # 4-cash, giftcard, cash
+    # 3-giftcard, giftcard
     """
     in case of split payments, When ‘Adyen’ is involved -  always map to Adyen (internal ID:13)
     Cash & Gift card - map to Cash (internal ID: 1)
@@ -288,17 +310,20 @@ def get_payment_method(order):
         payment_method = transaction['instrument']['paymentMethod'].lower()
         if payment_method == 'credit_card':
             provider = transaction['instrument']['paymentProvider'].lower()
-            payment_account_id = NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT['credit_card'].get(provider, '')
+            payment_account_id = NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT['credit_card'].get(
+                provider, '')
             break
         elif payment_method == 'cash':
-            payment_account_id = NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT.get('cash', '')
+            payment_account_id = NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT.get(
+                'cash', '')
             if len(transactions) > 1:
                 continue
             else:
                 break
         elif payment_method == 'gift_card':
             currency = transaction['currency'].lower()
-            payment_account_id = NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT.get('gift_card', {}).get(currency, '')
+            payment_account_id = NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT.get(
+                'gift_card', {}).get(currency, '')
         else:
             raise ValueError(f'Payment method {payment_method} is not mapped.')
         LOGGER.info("Payment Account id from paramstore for the transaction ")
@@ -369,7 +394,8 @@ def get_tax_rates(item):
 def create_cash_sale_items(order_event, order):
     cash_sale_items = []
 
-    store_id = order['channel']  # when channel_type==store then channel represents the store_id
+    # when channel_type==store then channel represents the store_id
+    store_id = order['channel']
     subsidiary_id = util.get_subsidiary_id(store_id)
     location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
 
@@ -391,31 +417,37 @@ def create_cash_sale_items(order_event, order):
         # Tax is not mapped to the tax code, we get the tax rate from the details
         tax_rate_1, tax_rate_2 = get_tax_rates(item)
 
+        # Adding the custom taxes
+        item_custom_field_list.append(StringCustomFieldRef(
+            scriptId='custcol_nws_tax_rate_1', value=tax_rate_1))
+        item_custom_field_list.append(StringCustomFieldRef(
+            scriptId='custcol_nws_tax_rate_2', value=tax_rate_2))
+
         cash_sale_item = {
             'item': RecordRef(internalId=netsuite_item_id),
             'price': RecordRef(internalId=util.CUSTOM_PRICE),
             'rate': item['pricebook_price'],
             'location': RecordRef(internalId=location_id),
             'taxCode': RecordRef(internalId=util.get_tax_code_id(subsidiary_id=subsidiary_id)),
-            # 'taxRate1': tax_rate_1,
-            # 'taxRate2': tax_rate_2,
             'quantity': 1
         }
 
         if float(item['tax']) > 0:
-            tax_rate = round(float(item['tax']) * 100 / float(item['pricebook_price']), 4)
+            tax_rate = round(float(item['tax']) *
+                             100 / float(item['pricebook_price']), 4)
         else:
             tax_rate = 0.0
 
         item_custom_field_list.append(
             StringCustomFieldRef(
-                scriptId='custcol_taxrateoverride',
+                scriptId='custcol_nws_override_taxcode',
                 value=tax_rate
             )
         )
 
         if item_custom_field_list:
-            cash_sale_item['customFieldList'] = CustomFieldList(item_custom_field_list)
+            cash_sale_item['customFieldList'] = CustomFieldList(
+                item_custom_field_list)
 
         cash_sale_items.append(cash_sale_item)
 
@@ -530,21 +562,25 @@ async def process_events(message):
     LOGGER.info(json.dumps(order))
 
     if not order_data_is_complete(order):
-        raise Exception(f'Error on creating Cash Sale. Required data are not available via GraphQL API. {order}')
+        raise Exception(
+            f'Error on creating Cash Sale. Required data are not available via GraphQL API. {order}')
 
     cash_sale = create_cash_sale(order)
     cash_sale['entity'] = get_customer_netsuite_internal_id(order)
-    cash_sale['itemList'] = CashSaleItemList(create_cash_sale_item_list(order_payload, order))
+    cash_sale['itemList'] = CashSaleItemList(
+        create_cash_sale_item_list(order_payload, order))
     # TODO Enable again once we know if payment items can be used pylint: disable=fixme
     # if order['paymentAccount'] is not None:
     #    payment_method_id = get_payment_method(order)
     #    cash_sale['paymentMethod'] = RecordRef(internalId=payment_method_id)
+    LOGGER.info('Going to send cash sale')
 
-    # LOGGER.info(f'Sending cash sale to NetSuite: {cash_sale}')
+    LOGGER.info(f'Sending cash sale to NetSuite: {cash_sale}')
     result, _, _ = create_cashsale(cash_sale)
 
     if not result:
-        LOGGER.error(f'Error on creating Cash Sale. Cash Sale not created: {result}')
+        LOGGER.error(
+            f'Error on creating Cash Sale. Cash Sale not created: {result}')
     else:
-        LOGGER.info('Cash Sale created successfully.')
+        LOGGER.info(f'Cash Sale created successfully: {result}')
     return result
