@@ -9,6 +9,7 @@ from newstore_adapter.connector import NewStoreConnector
 S3 = boto3.client('s3')
 ENTITIES_CSV = os.environ['ENTITIES']
 PROVIDER = os.environ['PROVIDER']
+TENANT = os.environ['TENANT']
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.DEBUG)
 
@@ -32,7 +33,7 @@ def handler(event, context):
     """
     LOGGER.debug(f"Event: {json.dumps(event, indent=2)}")
 
-    ns_handler = NewStoreConnector(tenant='frankandoak', context=context)
+    ns_handler = NewStoreConnector(tenant=TENANT, context=context)
     entities = [i.strip() for i in ENTITIES_CSV.split(',')]
 
     for record in event['Records']:
