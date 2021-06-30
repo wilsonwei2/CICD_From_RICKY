@@ -16,6 +16,31 @@ import logging
 import random
 import time
 import os
+import logging.config
+
+logging.config.dictConfig({
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(name)s: %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'zeep.transports': {
+            'level': 'DEBUG',
+            'propagate': True,
+            'handlers': ['console'],
+        },
+    }
+})
+
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -33,7 +58,7 @@ def make_passport2():
 
 
 """
-Token Based Authentification 
+Token Based Authentification
 """
 def make_passport():
     # Only process this if tba is enabled in the lambda, otherwise there will be a module initialization error

@@ -369,7 +369,7 @@ def get_product_by_external_id(name):
         # The search can return nothing, meaning the product doesn't exist
         if search_result.recordList:
             return search_result.recordList.record[0]
-    return None
+    raise Exception(f'External Product ID not Found in NetSuite. {name}')
 
 
 def get_product_by_name(name):
@@ -390,7 +390,8 @@ def get_product_by_name(name):
             return search_result.recordList.record[0]
         # If the name isn't in itemId then look at external id
         return get_product_by_external_id(name)
-    return None
+    raise Exception(
+        f'Product not Found in NetSuite. {name}')
 
 
 def get_sales_order_items(order_event):
