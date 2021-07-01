@@ -50,13 +50,21 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         }
         from shopify_import_products.transformers import transform # pylint: disable=C0415
         self.transform = transform
+        self.custom_size_mapping = {
+            'XXS': 'XXS/TTP',
+            'XS': 'XS/TP',
+            'M': 'M/M',
+            'L': 'L/G',
+            'XL': 'XL/TG',
+            'XXL': 'XXL/TTG'
+        }
 
     def test_transform(self):
         products_jsonl = self._load_jsonl_file('shopify_products.jsonl')
         products_transformed = self._load_json_file('products_transformed.json')
         categories_transformed = self._load_json_file('categories_transformed.json')
 
-        products_slices, categories = self.transform.transform_products(products_jsonl, 1000)
+        products_slices, categories = self.transform.transform_products(products_jsonl, 1000, self.custom_size_mapping)
 
         self.assertEqual(len(products_slices), 1)
         self._assert_json(self, products_slices[0], products_transformed)
@@ -78,7 +86,7 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         products_transformed = self._load_json_file('products_transformed_fr.json')
         categories_transformed = self._load_json_file('categories_transformed_fr.json')
 
-        products_slices, categories = self.transform.transform_products(products_jsonl, 1000, 'fr-CA')
+        products_slices, categories = self.transform.transform_products(products_jsonl, 1000, self.custom_size_mapping, 'fr-CA')
 
         self.assertEqual(len(products_slices), 1)
         self._assert_json(self, products_slices[0], products_transformed)
@@ -97,8 +105,8 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
 
     def test_transform_returns_products_slices(self):
         products_jsonl = self._load_jsonl_file('shopify_products.jsonl')
-        products_slices_1, _ = self.transform.transform_products(products_jsonl, 1)
-        products_slices_2, _ = self.transform.transform_products(products_jsonl, 2)
+        products_slices_1, _ = self.transform.transform_products(products_jsonl, 1, self.custom_size_mapping)
+        products_slices_2, _ = self.transform.transform_products(products_jsonl, 2, self.custom_size_mapping)
 
         self.assertEqual(len(products_slices_1), 5)
         self.assertEqual(len(products_slices_2), 3)

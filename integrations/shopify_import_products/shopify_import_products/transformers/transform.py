@@ -16,7 +16,7 @@ TRANSFORMED_CATEGORIES = [{
 }]
 
 
-def transform_products(jsonl_data, products_per_file, locale=None):
+def transform_products(jsonl_data, products_per_file, custom_size_mapping, locale=None):
     build_object_cache([json.loads(line) for line in jsonl_data.splitlines()])
 
     locale_code = 'en-US' if not locale else locale
@@ -30,7 +30,7 @@ def transform_products(jsonl_data, products_per_file, locale=None):
                 'shop': f'storefront-catalog-{catalog}',
                 'is_master': True
             },
-            'items': [transform_variant(variant, locale) for variant in variants]
+            'items': [transform_variant(variant, custom_size_mapping, locale) for variant in variants]
         })
 
     transformed_categories = {
@@ -70,9 +70,11 @@ def build_object_cache(json_objects):
             PRODUCT_IMAGES[parent_id].append(current_object)
 
 
-def transform_variant(variant, locale=None):
+def transform_variant(variant, custom_size_mapping, locale=None):
     master = MASTER_PRODUCTS[variant['__parentId']]
     tags = master.get('tags', []) or []
+    variation_size_value = get_option(1, variant, master)
+    size_mapping = get_size_mapping(variation_size_value, custom_size_mapping)
 
     transformed_variant = {
         'is_searchable': True,
@@ -88,12 +90,12 @@ def transform_variant(variant, locale=None):
         'shipping_weight_unit': transform_weight_unit(variant.get('weightUnit', None)),
         'shipping_weight_value': float(variant.get('weight', 2)) or 2,
         'variation_color_value': get_option(2, variant, master),
-        'variation_size_value': get_option(1, variant, master),
+        'variation_size_value': variation_size_value,
         'tax_class_id': variant.get('taxCode', '') or '',
         'shipping_dimension_unit': 'cm',
         'images': transform_images(master),
         'external_identifiers': transform_external_identifiers(variant),
-        'extended_attributes': transform_extended_attributes(variant, master, tags),
+        'extended_attributes': transform_extended_attributes(variant, master, tags, size_mapping),
         'shipping_dimension_length': 0.0,
         'shipping_dimension_width': 0.0,
         'shipping_dimension_height': 0.0,
@@ -107,6 +109,13 @@ def transform_variant(variant, locale=None):
         transformed_variant = translate_attributes(transformed_variant, master.get('translations'))
 
     return transformed_variant
+
+
+def get_size_mapping(variation_size_value, custom_size_mapping):
+    upcase_size = variation_size_value.upper()
+
+    return custom_size_mapping[upcase_size] \
+        if upcase_size in custom_size_mapping else upcase_size
 
 
 def get_option(position, variant, master):
@@ -190,7 +199,7 @@ def transform_external_identifiers(variant):
     return external_identifiers
 
 
-def transform_extended_attributes(variant, master, tags):
+def transform_extended_attributes(variant, master, tags, size_mapping):
     extended_attributes = []
 
     master_created_at = master.get('createdAt')
@@ -275,6 +284,11 @@ def transform_extended_attributes(variant, master, tags):
     extended_attributes.append({
         'name': 'final_sale',
         'value': 'true' if final_sale else 'false'
+    })
+
+    extended_attributes.append({
+        'name': 'size_custom',
+        'value': size_mapping
     })
 
     return extended_attributes
