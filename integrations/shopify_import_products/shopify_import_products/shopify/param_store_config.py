@@ -7,6 +7,7 @@ class ParamStoreConfig:
     param_store = None
     shopify_config = None
     newstore_config = None
+    shopify_custom_size_mapping = None
 
     def __init__(self, tenant, stage):
         self.tenant = tenant
@@ -26,3 +27,8 @@ class ParamStoreConfig:
         if not self.newstore_config:
             self.newstore_config = json.loads(self.get_param_store().get_param('newstore'))
         return self.newstore_config
+
+    def get_shopify_custom_size_mapping(self):
+        if not self.shopify_custom_size_mapping:
+            self.shopify_custom_size_mapping = json.loads(self.get_param_store().get_param('shopify/custom_size_mapping'))
+        return self.shopify_custom_size_mapping

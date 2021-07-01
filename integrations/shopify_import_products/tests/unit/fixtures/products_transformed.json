@@ -122,6 +122,10 @@
         {
           "name": "final_sale",
           "value": "true"
+        },
+        {
+          "name": "size_custom",
+          "value": "L/G"
         }
       ],
       "keywords": [
@@ -275,6 +279,10 @@
         {
           "name": "final_sale",
           "value": "true"
+        },
+        {
+          "name": "size_custom",
+          "value": "M/M"
         }
       ],
       "keywords": [
@@ -428,6 +436,10 @@
         {
           "name": "final_sale",
           "value": "true"
+        },
+        {
+          "name": "size_custom",
+          "value": "S"
         }
       ],
       "keywords": [
@@ -581,6 +593,10 @@
         {
           "name": "final_sale",
           "value": "true"
+        },
+        {
+          "name": "size_custom",
+          "value": "XL/TG"
         }
       ],
       "keywords": [
@@ -734,6 +750,10 @@
         {
           "name": "final_sale",
           "value": "true"
+        },
+        {
+          "name": "size_custom",
+          "value": "XS/TP"
         }
       ],
       "keywords": [

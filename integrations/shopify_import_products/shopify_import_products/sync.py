@@ -4,6 +4,7 @@ from lambda_utils.events.events_handler import EventsHandler
 from shopify_import_products.transformers.transform import transform_products
 from shopify_import_products.dynamodb import get_dynamodb_resource, get_item, update_item
 from shopify_import_products.shopify.graphql import ShopifyAPI
+from shopify_import_products.shopify.param_store_config import ParamStoreConfig
 import logging
 import os
 
@@ -11,6 +12,10 @@ LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
 
 TRIGGER_NAME = str(os.environ.get('shopify_import_products_trigger', 'shopify_import_products_trigger'))
+
+TENANT = os.environ.get('TENANT') or 'frankandoak'
+STAGE = os.environ.get('STAGE') or 'x'
+CUSTOM_SIZE_MAPPING = ParamStoreConfig(TENANT, STAGE).get_shopify_custom_size_mapping()
 
 
 def run(env_variables):
@@ -60,7 +65,7 @@ def run(env_variables):
 
 def import_products(text, env_variables, is_full=False, locale=None):
     products_per_file = int(os.environ.get('products_per_file', '1000'))
-    products_slices, categories = transform_products(text, products_per_file, locale)
+    products_slices, categories = transform_products(text, products_per_file, CUSTOM_SIZE_MAPPING, locale)
     run_full_import = is_full
 
     s3_bucket = os.environ['s3_bucket']
