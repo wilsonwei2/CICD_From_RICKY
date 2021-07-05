@@ -145,6 +145,11 @@
                   <td class="desc">
                     <strong>{{ item.product_name }}</strong><br>
                     [[[#contents.item.size]]] {{ item.product_attributes.variation_size_value }}
+                    {% for ext_attr in item.extended_attributes %}
+                      {% if ext_attr.name == 'final_sale' and ext_attr.value == 'true' %}
+                        <br/>[[[#contents.item.final_sale]]]
+                      {% endif %}
+                    {% endfor %}
                   </td>
                   <td class="epc">
                     <span> {{ item.external_identifier.epc if item.external_identifier and item.external_identifier.epc else '---' }} </span>

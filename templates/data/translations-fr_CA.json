@@ -22,7 +22,8 @@
       "item": {
         "size": "Grandeur",
         "items_purchased": "Items Achetés",
-        "items_returned": "Items retournés"
+        "items_returned": "Items retournés",
+        "final_sale": "Vente finale"
       }
     },
     "subjects": {

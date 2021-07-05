@@ -22,7 +22,8 @@
       "item": {
         "size": "Size",
         "items_purchased": "Items Purchased",
-        "items_returned": "Items Returned"
+        "items_returned": "Items Returned",
+        "final_sale": "final sale"
       }
     },
     "subjects": {
