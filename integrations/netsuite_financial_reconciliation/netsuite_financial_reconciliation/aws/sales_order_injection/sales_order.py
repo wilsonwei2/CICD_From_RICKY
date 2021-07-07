@@ -423,16 +423,21 @@ def get_sales_order_items(order_event):
             netsuite_item_id = product['internalId']
 
         # Tax is not mapped to the tax code, we get the tax rate from the details
-        tax_rate_1, tax_rate_2 = get_tax_rates(item)
+         # Tax is not mapped to the tax code, we get the tax rate from the details
+        tax_rates = get_tax_rates(item)
+        for index, tax_rate in enumerate(tax_rates):
+            # Adding the custom taxes
+            script_id = f"custcol_nws_tax_rate_{index+1}"
+            item_custom_field_list.append(StringCustomFieldRef(
+                scriptId=script_id, value=tax_rate))
+
 
         sales_order_item = {
             'item': RecordRef(internalId=netsuite_item_id),
             'price': params.RecordRef(internalId=params.CUSTOM_PRICE),
             'rate': str(item['pricebook_price']),
             'location': params.RecordRef(internalId=location_id),
-            # 'taxCode': params.RecordRef(internalId=params.get_tax_code_id(subsidiary_id=subsidiary_id)),
-            'taxRate1': tax_rate_1,
-            'taxRate2': tax_rate_2,
+            'taxCode': params.RecordRef(internalId=params.get_tax_code_id(subsidiary_id=subsidiary_id)),
             'quantity': 1
         }
 
@@ -464,7 +469,7 @@ def get_sales_order_items(order_event):
 
         item_custom_field_list.append(
             StringCustomFieldRef(
-                scriptId='custcol_taxrateoverride',
+                scriptId='custcol_nws_override_taxcode',
                 value=tax_rate
             )
         )
@@ -527,8 +532,7 @@ def get_subsidiary_id_for_store(store_id):
 #     "rate": 0.09975
 # }],
 def get_tax_rates(item):
-    tax_rate_1 = 0.0000
-    tax_rate_2 = 0.0000
+    tax_rates = []
 
     ca_tax_rate_1 = False
     ca_tax_rate_2 = False
@@ -538,21 +542,20 @@ def get_tax_rates(item):
     if tax_provider_details is not None:
         for tax_detail in tax_provider_details:
             if tax_detail['name'].find('GST') > -1 or tax_detail['name'].find('HST') > -1:
-                tax_rate_1 = round(tax_detail['rate'] * 100, 4)
+                tax_rates.append(round(tax_detail['rate'] * 100, 4))
                 ca_tax_rate_1 = True
 
             if tax_detail['name'].find('PST') > -1 or tax_detail['name'].find('QST') > -1:
-                tax_rate_2 = round(tax_detail['rate'] * 100, 4)
+                tax_rates.append(round(tax_detail['rate'] * 100, 4))
                 ca_tax_rate_2 = True
 
         # If no Canadian tax rates are found, get the rates from the array of details (if existing)
         if not ca_tax_rate_1 and not ca_tax_rate_2 and len(tax_provider_details) > 0:
-            tax_rate_1 = round(tax_provider_details[0]['rate'] * 100, 4)
+            for tax_detail in tax_provider_details:
+                tax_rate = round(tax_detail['rate'] * 100, 4)
+                tax_rates.append(tax_rate)
 
-            if len(tax_provider_details) > 1:
-                tax_rate_2 = round(tax_provider_details[1]['rate'] * 100, 4)
-
-    return tax_rate_1, tax_rate_2
+    return tax_rates
 
 
 def inject_sales_order(order_event, order_data, consumer):
