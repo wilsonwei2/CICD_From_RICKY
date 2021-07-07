@@ -571,7 +571,7 @@ def inject_sales_order(order_event, order_data, consumer):
         netsuite_sales_order_items.append(SalesOrderItem(**item))
     netsuite_sales_order['itemList'] = SalesOrderItemList(netsuite_sales_order_items)
 
-    result, sale, _ = None  # create_salesorder(netsuite_sales_order)
+    result, sale, _ = create_salesorder(netsuite_sales_order)
     if not result:
         raise Exception(f'Error on creating SalesOrder. SalesOrder not created. {result}')
 
