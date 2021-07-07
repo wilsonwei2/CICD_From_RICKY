@@ -363,8 +363,7 @@ def get_order_items(order):  # extract items from GraphQL API response
 #     "rate": 0.09975
 # }],
 def get_tax_rates(item):
-    tax_rate_1 = 0.0000
-    tax_rate_2 = 0.0000
+    tax_rates = []
 
     ca_tax_rate_1 = False
     ca_tax_rate_2 = False
@@ -374,21 +373,20 @@ def get_tax_rates(item):
     if tax_provider_details is not None:
         for tax_detail in tax_provider_details:
             if tax_detail['name'].find('GST') > -1 or tax_detail['name'].find('HST') > -1:
-                tax_rate_1 = round(tax_detail['rate'] * 100, 4)
+                tax_rates.append(round(tax_detail['rate'] * 100, 4))
                 ca_tax_rate_1 = True
 
             if tax_detail['name'].find('PST') > -1 or tax_detail['name'].find('QST') > -1:
-                tax_rate_2 = round(tax_detail['rate'] * 100, 4)
+                tax_rates.append(round(tax_detail['rate'] * 100, 4))
                 ca_tax_rate_2 = True
 
         # If no Canadian tax rates are found, get the rates from the array of details (if existing)
         if not ca_tax_rate_1 and not ca_tax_rate_2 and len(tax_provider_details) > 0:
-            tax_rate_1 = round(tax_provider_details[0]['rate'] * 100, 4)
+            for tax_detail in tax_provider_details:
+                tax_rate = round(tax_detail['rate'] * 100, 4)
+                tax_rates.append(tax_rate)
 
-            if len(tax_provider_details) > 1:
-                tax_rate_2 = round(tax_provider_details[1]['rate'] * 100, 4)
-
-    return tax_rate_1, tax_rate_2
+    return tax_rates
 
 
 def create_cash_sale_items(order_event, order):
@@ -415,13 +413,12 @@ def create_cash_sale_items(order_event, order):
             netsuite_item_id = product['internalId']
 
         # Tax is not mapped to the tax code, we get the tax rate from the details
-        tax_rate_1, tax_rate_2 = get_tax_rates(item)
-
-        # Adding the custom taxes
-        item_custom_field_list.append(StringCustomFieldRef(
-            scriptId='custcol_nws_tax_rate_1', value=tax_rate_1))
-        item_custom_field_list.append(StringCustomFieldRef(
-            scriptId='custcol_nws_tax_rate_2', value=tax_rate_2))
+        tax_rates = get_tax_rates(item)
+        for index, tax_rate in enumerate(tax_rates):
+            # Adding the custom taxes
+            script_id = f"custcol_nws_tax_rate_{index+1}"
+            item_custom_field_list.append(StringCustomFieldRef(
+                scriptId=script_id, value=tax_rate))
 
         cash_sale_item = {
             'item': RecordRef(internalId=netsuite_item_id),
@@ -560,7 +557,6 @@ async def process_events(message):
 
     LOGGER.info('order data in process events')
     LOGGER.info(json.dumps(order))
-
     if not order_data_is_complete(order):
         raise Exception(
             f'Error on creating Cash Sale. Required data are not available via GraphQL API. {order}')
