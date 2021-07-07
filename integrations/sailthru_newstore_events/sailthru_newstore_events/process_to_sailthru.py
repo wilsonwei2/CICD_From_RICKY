@@ -138,7 +138,8 @@ def _sailthru_mapping_sc(data, order):
                             'full': {
                                 'url': product['image']
                             }
-                        }
+                        },
+                        "finalSale": _get_extended_attribute(product['extended_attributes'], 'final_sale', 'false'),
                     } for product in shipped_products.values()
                 ],
                 'ORDERPLACEDDATE': order['created_at'],
@@ -219,7 +220,8 @@ def _sailthru_mapping_oc(data, order):
                         'full': {
                             'url': product['image']
                         }
-                    }
+                    },
+                    "finalSale": _get_extended_attribute(product['extended_attributes'], 'final_sale', 'false'),
                 } for product in cancelled_products.values()
             ],
             'BILLINGNAME':
