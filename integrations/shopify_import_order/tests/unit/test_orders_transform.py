@@ -32,8 +32,21 @@ class TestFrankandoakImportOrderTransformer(unittest.TestCase):
 
     def setUp(self):
         Utils.get_instance().shopify_service_level_map = {
-            "standard shipping": "UPS_SUREPOST",
-            "generic shipping": "UPS_GROUND"
+            'CA': {
+                'default': 'REGULAR_PARCEL',
+                'Standard': 'REGULAR_PARCEL',
+                'Express': 'EXPRESS_POST',
+            },
+            'US': {
+                'default': 'REGULAR_PARCEL',
+                'Standard': 'GROUND',
+                'Express': '3DAYSELECT',
+            },
+            'INT': {
+                'default': 'PRIORITY_INTER',
+                'Standard': 'PRIORITY_INTER',
+                'Express': 'EXPRESS_INTER',
+            }
         }
         from shopify_import_order.orders import transform
         from shopify_import_order.aws.process import _get_refund

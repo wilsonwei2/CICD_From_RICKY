@@ -424,6 +424,12 @@ def _get_shipping_option(order, shipping_offer_token):
     shipping_lines = order.get('shipping_lines', [])
     LOGGER.info('Inside shipping options')
 
+    shipping_address = order.get('shipping_address', {})
+    shipping_country_code = ''
+
+    if 'country_code' in shipping_address:
+        shipping_country_code = shipping_address['country_code']
+
     if shipping_lines:
         if shipping_offer_token is not None:
             shipping_option = {
@@ -434,7 +440,7 @@ def _get_shipping_option(order, shipping_offer_token):
         else:
             code = _get_non_null_field(shipping_lines[0], 'code', '').lower()
             title = _get_non_null_field(shipping_lines[0], 'title', '').lower()
-            service_level_identifier = shopify_helper.get_shipment_service_level(code, title)
+            service_level_identifier = shopify_helper.get_shipment_service_level(code, title, shipping_country_code)
             LOGGER.info(f'Service level identified from is {service_level_identifier}')
             shipping_option = {
                 'service_level_identifier': service_level_identifier,
@@ -442,7 +448,7 @@ def _get_shipping_option(order, shipping_offer_token):
                 'tax': _get_shipping_taxes(shipping_lines[0])
             }
     else:
-        service_level_identifier = shopify_helper.get_shipment_service_level('', '') # Get default
+        service_level_identifier = shopify_helper.get_shipment_service_level() # Get default
         LOGGER.warning(f"Order doesn't have shipping lines, utilizing default shipping {service_level_identifier}.")
 
         shipping_option = {
