@@ -42,7 +42,7 @@ async def _push_capture_to_shopify(body, financial_instrument_id):
         metadata_transaction = transaction.get('metadata', {})
         metadata.update(metadata_transaction)
 
-        shopify_handler = get_shopify_handler(body['currency'])
+        shopify_handler = get_shopify_handler(amount_info.get('currency'))
         if is_capture_credit_card(transaction['payment_method']) and metadata.get('shopify_order_id'):
             shopify_order_id = metadata['shopify_order_id']
             shopify_order = await shopify_handler.get_order(shopify_order_id, params='id,line_items,name,total_price,financial_status')
