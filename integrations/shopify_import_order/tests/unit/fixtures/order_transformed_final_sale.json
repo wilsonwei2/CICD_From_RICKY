@@ -62,7 +62,7 @@
                         },
                         {
                             "name": "final_sale",
-                            "value": "false"
+                            "value": "true"
                         }
                     ]
                 },
@@ -101,13 +101,13 @@
                         },
                         {
                             "name": "final_sale",
-                            "value": "false"
+                            "value": "true"
                         }
                     ]
                 }
             ],
             "shipping_option": {
-                "service_level_identifier": "REGULAR_PARCEL",
+                "service_level_identifier": "UPS_GROUND",
                 "price": 10,
                 "tax": 0
             }

@@ -48,6 +48,10 @@
                         {
                             "name": "external_item_id",
                             "value": "866550311766439020"
+                        },
+                        {
+                            "name": "final_sale",
+                            "value": "false"
                         }
                     ]
                 },
@@ -83,6 +87,10 @@
                         {
                             "name": "external_item_id",
                             "value": "141249953214522974"
+                        },
+                        {
+                            "name": "final_sale",
+                            "value": "false"
                         }
                     ]
                 }
