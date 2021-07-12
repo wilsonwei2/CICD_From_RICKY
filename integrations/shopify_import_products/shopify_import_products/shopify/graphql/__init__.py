@@ -1,3 +1,4 @@
+from integrations.shopify_import_order.shopify_import_order.handlers.utils import REGION
 from shopify_import_products.shopify.graphql.queries import START_BULK_OPERATIONS, POLL_OPERATION_STATUS
 from shopify_import_products.shopify.param_store_config import ParamStoreConfig
 import logging
@@ -9,7 +10,8 @@ LOGGER.setLevel(logging.INFO)
 
 TENANT = os.environ.get('TENANT') or 'frankandoak'
 STAGE = os.environ.get('STAGE') or 'x'
-CONFIG = ParamStoreConfig(TENANT, STAGE).get_shopify_config()
+REGION = os.environ.get('REGION') or 'us-east-1'
+CONFIG = ParamStoreConfig(TENANT, STAGE, REGION).get_shopify_config()
 
 
 class ShopifyAPI:
