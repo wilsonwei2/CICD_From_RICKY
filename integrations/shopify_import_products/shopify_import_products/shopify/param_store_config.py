@@ -1,4 +1,3 @@
-from integrations.shopify_import_order.shopify_import_order.handlers.utils import TENANT
 import json
 # From shared
 from param_store.client import ParamStore
