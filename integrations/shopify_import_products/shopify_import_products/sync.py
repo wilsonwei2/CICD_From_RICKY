@@ -15,7 +15,8 @@ TRIGGER_NAME = str(os.environ.get('shopify_import_products_trigger', 'shopify_im
 
 TENANT = os.environ.get('TENANT') or 'frankandoak'
 STAGE = os.environ.get('STAGE') or 'x'
-CUSTOM_SIZE_MAPPING = ParamStoreConfig(TENANT, STAGE).get_shopify_custom_size_mapping()
+REGION = os.environ.get('REGION') or 'us-east-1'
+CUSTOM_SIZE_MAPPING = ParamStoreConfig(TENANT, STAGE, REGION).get_shopify_custom_size_mapping()
 
 
 def run(env_variables):

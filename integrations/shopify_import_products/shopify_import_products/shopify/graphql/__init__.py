@@ -9,7 +9,8 @@ LOGGER.setLevel(logging.INFO)
 
 TENANT = os.environ.get('TENANT') or 'frankandoak'
 STAGE = os.environ.get('STAGE') or 'x'
-CONFIG = ParamStoreConfig(TENANT, STAGE).get_shopify_config()
+REGION = os.environ.get('REGION') or 'us-east-1'
+CONFIG = ParamStoreConfig(TENANT, STAGE, REGION).get_shopify_config()
 
 
 class ShopifyAPI:

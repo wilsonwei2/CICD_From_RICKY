@@ -19,6 +19,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
     SHOPIFY_HOST: myshopify.com/admin
     SQS_INVENTORY_QUEUE_NAME: ${self:provider.tenant}-set-shopify-inventory-location.fifo
     SQS_INVENTORY_DLQ_NAME: ${self:provider.tenant}-set-shopify-inventory-location-dlq.fifo
