@@ -167,6 +167,7 @@ def map_payments(transaction_data, order_name, order, is_exchange):
 def map_items(order, order_name, ns_order):
     has_electronic_giftcard = False
     has_shipping_items = False
+    final_sale = _is_final_sale(order)
     items = []
     for item in order['line_items']:
         ## Adding Discounts
@@ -220,6 +221,10 @@ def map_items(order, order_name, ns_order):
                     {
                         'name': 'external_item_id',
                         'value': str(item['id'])
+                    },
+                    {
+                        'name': 'final_sale',
+                        'value': 'true' if final_sale else 'false'
                     }
                 ]
             }
@@ -287,6 +292,10 @@ def map_taxes(item):
             }
         )
     return item_tax_lines, tax_lines_highs_lows
+
+
+def _is_final_sale(order):
+    return 'final sale' in order.get('tags', '').lower()
 
 
 def _add_discount(discount_master, added_discount):

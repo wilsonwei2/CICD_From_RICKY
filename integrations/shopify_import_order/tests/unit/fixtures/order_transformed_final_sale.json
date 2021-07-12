@@ -62,7 +62,7 @@
                         },
                         {
                             "name": "final_sale",
-                            "value": "false"
+                            "value": "true"
                         }
                     ]
                 },
@@ -101,7 +101,7 @@
                         },
                         {
                             "name": "final_sale",
-                            "value": "false"
+                            "value": "true"
                         }
                     ]
                 }
