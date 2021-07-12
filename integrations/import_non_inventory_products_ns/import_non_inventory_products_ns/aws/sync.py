@@ -21,7 +21,7 @@ def run(env_variables):
         jobs_manager = JobsManager(env_variables, import_type, s3_handler, source_uri, False)
         LOGGER.info(f'Sending non inventory {import_type} to the import_api')
 
-        transformed_uri = f'{source_uri}non-inventory-{import_type}.json.zip'
+        transformed_uri = s3_handler.get_presigned_url(f'non-inventory-{import_type}.json.zip')
         LOGGER.info(f'Transformed URI: {transformed_uri}')
 
         import_job = jobs_manager.create_job(False)
