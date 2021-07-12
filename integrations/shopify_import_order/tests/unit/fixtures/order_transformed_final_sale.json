@@ -107,7 +107,7 @@
                 }
             ],
             "shipping_option": {
-                "service_level_identifier": "UPS_GROUND",
+                "service_level_identifier": "REGULAR_PARCEL",
                 "price": 10,
                 "tax": 0
             }
