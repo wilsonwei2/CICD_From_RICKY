@@ -62,6 +62,11 @@ class S3Handler:
         self.load_s3_Object()
         return self.object
 
+    def get_presigned_url(self, filename=''):
+        return self.getS3().generate_presigned_url('get_object', Params={
+            'Bucket': self.getS3BucketName(),
+            'Key': f'{self.getS3BucketKey()}{filename}'
+        })
 
     def getKeySize(self):
         return self.object.content_length
