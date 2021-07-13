@@ -99,10 +99,10 @@ resources:
       Type: "AWS::SQS::Queue"
       Properties:
         QueueName: ${self:provider.tenant}-refunds-processor
-        VisibilityTimeout: 120
+        VisibilityTimeout: 300
         RedrivePolicy:
           deadLetterTargetArn: !GetAtt ShopifyReturnDeadLetterQueue.Arn
-          maxReceiveCount: 5
+          maxReceiveCount: 24
 
     ShopifyReturnDeadLetterQueue:
       Type: "AWS::SQS::Queue"

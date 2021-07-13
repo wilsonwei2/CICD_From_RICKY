@@ -60,7 +60,7 @@ def _process_refund(raw, newstore_handler):
 def _create_refund(refund_data, refund, newstore_handler, shop_id):
     LOGGER.info(f'Data for refund {json.dumps(refund_data, indent=4)}')
     ns_external_order_id = get_order_name(refund['order_id'], shop_id)
-    ns_order = newstore_handler.get_external_order(ns_external_order_id.replace("#", ""))
+    ns_order = _get_external_order(ns_external_order_id, newstore_handler)
 
     if ns_order:
         ns_order_id = ns_order['order_uuid']
@@ -79,14 +79,13 @@ def _create_refund(refund_data, refund, newstore_handler, shop_id):
             return True
         LOGGER.info(f'Refund already exists on NewStore for order {ns_order_id}')
         return True
-    LOGGER.error('Couldn\'t get order from NewStore.')
     return False
 
 
 def _create_return(return_data, refund, newstore_handler, shop_id):
     LOGGER.info(f'Data for return {json.dumps(return_data, indent=4)}')
     ns_external_order_id = get_order_name(refund['order_id'], shop_id)
-    ns_order = newstore_handler.get_external_order(ns_external_order_id.replace("#", ""))
+    ns_order = _get_external_order(ns_external_order_id, newstore_handler)
 
     if ns_order:
         ns_order_id = ns_order['order_uuid']
@@ -106,9 +105,16 @@ def _create_return(return_data, refund, newstore_handler, shop_id):
             return True
         LOGGER.info(f'Return already exists on NewStore for order {ns_order_id}')
         return True
-
-    LOGGER.error('Couldn\'t get order from NewStore.')
     return False
+
+
+def _get_external_order(external_order_id, newstore_handler):
+    try:
+        return newstore_handler.get_external_order(external_order_id.replace("#", ""))
+    except Exception as ex: # pylint: disable=broad-except
+        LOGGER.error('Couldn\'t get order from NewStore.')
+        LOGGER.exception(str(ex))
+    return None
 
 
 def get_order_name(order_id, shop_id):

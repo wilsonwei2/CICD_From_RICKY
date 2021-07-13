@@ -1,26 +1,16 @@
 import os
 from .shopify.shopify import ShopifyConnector
 from newstore_adapter.connector import NewStoreConnector
-from param_store.client import ParamStore
 from pom_common.shopify import ShopManager
 
 NS_HANDLER = None
 SF_HANDLER = None
-PARAM_STORE = None
 SHOPIFY_CONFIG = {}
 NEWSTORE_CONFIG = None
 
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
 REGION = os.environ.get('REGION', 'us-east-1')
-
-
-def _get_param_store():
-    global PARAM_STORE # pylint: disable=global-statement
-    if not PARAM_STORE:
-        PARAM_STORE = ParamStore(TENANT, STAGE)
-
-    return PARAM_STORE
 
 
 def get_all_shopify_handlers():
@@ -102,5 +92,5 @@ def _create_shopify_handlers(configs):
 def get_newstore_handler(context):
     global NS_HANDLER # pylint: disable=global-statement
     if not NS_HANDLER:
-        NS_HANDLER = NewStoreConnector(TENANT, context)
+        NS_HANDLER = NewStoreConnector(TENANT, context, raise_errors=True)
     return NS_HANDLER
