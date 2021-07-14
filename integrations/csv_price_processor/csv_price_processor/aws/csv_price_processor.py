@@ -58,7 +58,7 @@ def find_records(records):
         file_name = splitted_key[-1]
         obj_path = '/'.join(splitted_key[:-1])
 
-        matcher = re.search(r'^([a-zA-Z0-9]*)_([A-Z]{3})_([A-Z]{3})_(\d{8})\.csv$', file_name)
+        matcher = re.search(r'^([a-zA-Z0-9]*)_([A-Z]{3})_([A-Z]{3})_(\d{14})\.csv$', file_name)
         if not matcher:
             LOGGER.error(f'invalid file name: {file_name} - skipping')
             continue

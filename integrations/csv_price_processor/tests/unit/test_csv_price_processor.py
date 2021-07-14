@@ -3,8 +3,8 @@ from moto import mock_s3
 
 REGION = 'us-east-1'
 TEST_BUCKET_NAME = 'testbucket'
-TEST_OBJECT_KEY = 'path/to/FAONSPRC_CAD_RET_20210428.csv'
-TEST_OBJECT2_KEY = 'path/to/FAONSPRC_CAD_SAL_20210428.csv'
+TEST_OBJECT_KEY = 'path/to/FAONSPRC_CAD_RET_20210428123211.csv'
+TEST_OBJECT2_KEY = 'path/to/FAONSPRC_CAD_SAL_20210428123211.csv'
 
 
 @mock_s3
