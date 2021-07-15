@@ -1,5 +1,4 @@
 import os
-import json
 import logging
 import requests
 from requests import HTTPError
@@ -71,14 +70,15 @@ class NShandler():
 
     def fulfill_order(self, order_data):
         url = f'https://{self.host}/v0/d/fulfill_order'
-        LOGGER.info(f"Sending order {order_data['external_id']} to {url}")
-        LOGGER.info(f"Order: \n{json.dumps(order_data, indent=4)}")
+        LOGGER.info(
+            f"Sending order {order_data['external_id']} to {url} Payload {order_data}")
 
         response = requests.post(url, headers=self.get_headers(), json=order_data)
         try:
             response.raise_for_status()
         except HTTPError as ex:
-            LOGGER.error(f'Response: {response.text}; \nException: {str(ex)}', exc_info=True)
+            LOGGER.error(
+                f"Response for order {order_data['external_id']} {response.text}; \nException: {str(ex)}", exc_info=True)
             raise
         return response.json()
 
