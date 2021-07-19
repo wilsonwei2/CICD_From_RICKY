@@ -1,0 +1,331 @@
+{
+  "address_changed": false,
+  "billing_address": {
+    "address_line_1": "3620 Rue Arbour",
+    "address_line_2": "",
+    "city": "Québec",
+    "country_code": "CA",
+    "email": "peter@mailinator.com",
+    "first_name": "Peter",
+    "last_name": "Testometer",
+    "phone": "",
+    "province": "",
+    "salutation": "",
+    "second_name": "",
+    "state": "QC",
+    "suffix": "",
+    "title": "",
+    "zip_code": "G2B 4A6"
+  },
+  "channel": "USC",
+  "channel_type": "web",
+  "created_at": "2021-06-28T16: 26: 42",
+  "created_by_label": "",
+  "customer_uuid": "26b77202-56e3-43c1-af8a-41894b155a85",
+  "extended_attributes": [
+    {
+      "name": "returnly_exchange",
+      "value": "False"
+    },
+    {
+      "name": "external_order_id",
+      "value": "11008997"
+    },
+    {
+      "name": "external_shop",
+      "value": "frank-and-oak-store-dev"
+    },
+    {
+      "name": "order_id",
+      "value": "4009148350620"
+    },
+    {
+      "name": "ext_channel_name",
+      "value": "USC"
+    },
+    {
+      "name": "is_historical",
+      "value": "False"
+    },
+    {
+      "name": "order_memo",
+      "value": ""
+    }
+  ],
+  "external_customer_id": "5182984683676",
+  "external_order_id": "11008997",
+  "order_id": "FAO-X000010796",
+  "order_uuid": "6840f40c-65c4-5ff7-a23e-92e0e311091a",
+  "ordered_products": [
+    {
+      "category": "",
+      "custom_attributes": [
+        {
+          "name": "requires_shipping",
+          "value": "True"
+        },
+        {
+          "name": "external_item_id",
+          "value": "10193381687452"
+        },
+        {
+          "name": "is_gift_card",
+          "value": "False"
+        }
+      ],
+      "extended_attributes": [
+        {
+          "name": "requires_shipping",
+          "value": "True"
+        },
+        {
+          "name": "external_item_id",
+          "value": "10193381687452"
+        },
+        {
+          "name": "is_gift_card",
+          "value": "False"
+        }
+      ],
+      "id": "1210161-002-34",
+      "image": "https:res.cloudinary.com/newstore-sandbox/image/upload/v1624347174/x/frankandoak/fcaf55f6948531d37356c47114fdecae.jpg",
+      "item_id": "5668de56-deee-4464-8289-c3fb47eca703",
+      "name": "\"Good\" Cotton City Jogger in Black",
+      "price": {
+        "adjusted_total": 0,
+        "adjustment": 0,
+        "base": 45.96,
+        "catalog": 39.97,
+        "currency": "CAD",
+        "gross": 45.96,
+        "net": 39.97,
+        "tax": 5.99,
+        "tax_class_id": ""
+      },
+      "product_sku": "1210161-002-34",
+      "quantity": 1,
+      "variation_attribute_1_value": "",
+      "variation_attribute_2_value": "",
+      "variation_color_value": "",
+      "variation_size_value": "34"
+    }
+  ],
+  "payments": [
+    {
+      "currency": "CAD",
+      "instrument_id": "b49ede7a-6f43-419c-9518-20a4d0e319bf",
+      "method": "credit_card",
+      "status_description": "We authorized the given amount on your credit card.",
+      "status_label": "Authorized",
+      "uuid": "b49ede7a-6f43-419c-9518-20a4d0e319bf"
+    }
+  ],
+  "revision": 5,
+  "shipments": [
+    {
+      "accounting_entity": {
+        "accounting_address": {
+          "address_line_1": "",
+          "address_line_2": "",
+          "city": "",
+          "country": "",
+          "country_code": "",
+          "name": "",
+          "state": "",
+          "zip_code": ""
+        },
+        "id": ""
+      },
+      "details": {
+        "carrier": "",
+        "delivered_at": "None",
+        "delivery_forecast": "None",
+        "delivery_status_date": "2021-06-28T16: 28: 12.310774",
+        "delivery_status_id": "pending",
+        "delivery_status_label": "Pending",
+        "method": "Standard Delivery Shopify",
+        "shipping_packages": "None"
+      },
+      "items": [
+        {
+          "category": "",
+          "custom_attributes": [
+            {
+              "name": "is_gift_card",
+              "value": "False"
+            },
+            {
+              "name": "requires_shipping",
+              "value": "True"
+            },
+            {
+              "name": "external_item_id",
+              "value": "10193381687452"
+            }
+          ],
+          "extended_attributes": [
+            {
+              "name": "is_gift_card",
+              "value": "False"
+            },
+            {
+              "name": "requires_shipping",
+              "value": "True"
+            },
+            {
+              "name": "external_item_id",
+              "value": "10193381687452"
+            }
+          ],
+          "id": "1210161-002-34",
+          "image": "https:res.cloudinary.com/newstore-sandbox/image/upload/v1624347174/x/frankandoak/fcaf55f6948531d37356c47114fdecae.jpg",
+          "item_id": "5668de56-deee-4464-8289-c3fb47eca703",
+          "name": "\"Good\" Cotton City Jogger in Black",
+          "price": {
+            "adjusted_total": 0,
+            "adjustment": 0,
+            "base": 45.96,
+            "catalog": 39.97,
+            "currency": "CAD",
+            "gross": 45.96,
+            "net": 39.97,
+            "tax": 5.99,
+            "tax_class_id": ""
+          },
+          "product_sku": "1210161-002-34",
+          "quantity": 1,
+          "variation_attribute_1_value": "",
+          "variation_attribute_2_value": "",
+          "variation_color_value": "",
+          "variation_size_value": "34"
+        }
+      ],
+      "links": {
+        "invoice": "",
+        "return_label": "",
+        "sales_receipt": ""
+      },
+      "price": {
+        "adjusted_total": 0,
+        "adjustment": 0,
+        "base": 45.96,
+        "gross": 45.96,
+        "net": 39.97,
+        "tax": 5.99
+      },
+      "products": [
+        {
+          "category": "",
+          "custom_attributes": [
+            {
+              "name": "is_gift_card",
+              "value": "False"
+            },
+            {
+              "name": "requires_shipping",
+              "value": "True"
+            },
+            {
+              "name": "external_item_id",
+              "value": "10193381687452"
+            }
+          ],
+          "extended_attributes": [
+            {
+              "name": "is_gift_card",
+              "value": "False"
+            },
+            {
+              "name": "requires_shipping",
+              "value": "True"
+            },
+            {
+              "name": "external_item_id",
+              "value": "10193381687452"
+            }
+          ],
+          "id": "1210161-002-34",
+          "image": "https: res.cloudinary.com/newstore-sandbox/image/upload/v1624347174/x/frankandoak/fcaf55f6948531d37356c47114fdecae.jpg",
+          "item_id": "5668de56-deee-4464-8289-c3fb47eca703",
+          "name": "\"Good\" Cotton City Jogger in Black",
+          "price": {
+            "adjusted_total": 0,
+            "adjustment": 0,
+            "base": 45.96,
+            "catalog": 39.97,
+            "currency": "CAD",
+            "gross": 45.96,
+            "net": 39.97,
+            "tax": 5.99,
+            "tax_class_id": ""
+          },
+          "product_sku": "1210161-002-34",
+          "variation_attribute_1_value": "",
+          "variation_attribute_2_value": "",
+          "variation_color_value": "",
+          "variation_size_value": "34"
+        }
+      ],
+      "returns": [
+        {
+          "items": [
+            {
+              "product_id": "1210161-002-34",
+              "quantity": 1,
+              "return_code": 0,
+              "return_reason": "test",
+              "returned_at": "2021-07-05T10: 25: 22"
+            }
+          ],
+          "refund_note": "",
+          "return_id": "9e41b875-060b-4008-a8bb-7a4fedc1a27f"
+        }
+      ],
+      "shipment_uuid": "4c97eef0-0dd8-4b77-af08-1b8c393de504",
+      "shipping_from": "CA",
+      "store_address": "None",
+      "totals": {
+        "currency": "CAD",
+        "gift_wrapping_taxes": 0,
+        "gift_wrapping_total": 0,
+        "grand_total": 45.96,
+        "merchandise_total": 39.97,
+        "order_total": 45.96,
+        "shipping_taxes": 0,
+        "shipping_total": 0,
+        "taxes": 5.99
+      }
+    }
+  ],
+  "shipping_address": {
+    "address_line_1": "3620 Rue Arbour",
+    "address_line_2": "",
+    "city": "Québec",
+    "country_code": "CA",
+    "first_name": "Peter",
+    "last_name": "Testometer",
+    "phone": "",
+    "province": "",
+    "salutation": "",
+    "second_name": "",
+    "state": "QC",
+    "suffix": "",
+    "title": "",
+    "zip_code": "G2B 4A6"
+  },
+  "status_description": "",
+  "status_label": "Pending",
+  "taxation": "gross",
+  "totals": {
+    "currency": "CAD",
+    "gift_wrapping_taxes": 0,
+    "gift_wrapping_total": 0,
+    "grand_total": 45.96,
+    "merchandise_total": 39.97,
+    "order_total": 45.96,
+    "shipping_taxes": 0,
+    "shipping_total": 0,
+    "taxes": 5.99
+  },
+  "value_added_services": "None"
+}

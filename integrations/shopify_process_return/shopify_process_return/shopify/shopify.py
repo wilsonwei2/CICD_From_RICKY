@@ -159,12 +159,13 @@ class ShopifyConnector:
         params allows to pass a filter of the fields that should be available in the response
         """
         endpoint = f'{self.url}/orders/{order_id}.json'
+        LOGGER.info(endpoint)
         response = requests.get(url=endpoint, headers=self.auth_header, params={'fields': params})
+        LOGGER.info(response.json())
         try:
             response.raise_for_status()
         except Exception:
             LOGGER.exception('Failed to get order info')
             LOGGER.error(response.text)
             raise Exception(response.text)
-        LOGGER.info(response.text)
         return response.json()['order']

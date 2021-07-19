@@ -3,6 +3,7 @@ service: frankandoak-shopify-process-return
 plugins:
   - serverless-python-requirements
   - serverless-pseudo-parameters
+  - serverless-offline
 custom:
   pythonRequirements:
     dockerizePip: false
@@ -55,6 +56,7 @@ functions:
     timeout: 120
     memorySize: 128
     environment:
+      warehouse_usc: USC
       sqs_returns_name:
         Fn::GetAtt:
           - ShopifyReturnQueue

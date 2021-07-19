@@ -4,6 +4,10 @@ Module shop_manager.py
 from pom_common.aws.secrets_manager import get_secret_value
 import boto3
 import json
+import logging
+
+LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.INFO)
 
 
 class InvalidShopId(Exception):
@@ -11,10 +15,15 @@ class InvalidShopId(Exception):
 
 
 def get_shopify_param(tenant, stage):
-    ssm_client = boto3.client('ssm')
-    response = ssm_client.get_parameter(Name=f'/{tenant}/{stage}/shopify', WithDecryption=False)
-    return json.loads(response['Parameter']['Value'])
-
+    path = f'/{tenant}/{stage}/shopify'
+    try:
+        ssm_client = boto3.client('ssm')
+        response = ssm_client.get_parameter(
+            Name=path, WithDecryption=False)
+        return json.loads(response['Parameter']['Value'])
+    except Exception:
+        LOGGER.exception(f'Error when trying to get parameter {path}')
+        return None
 
 class ShopManager:
     shop_ids = []

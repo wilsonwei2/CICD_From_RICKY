@@ -12,6 +12,8 @@ param-store = {path = "./../../shared/3.6/param_store"}
 newstore-adapter = {path = "./../../shared/newstore_adapter"}
 pom-common = {path = "./../../shared/pom_common"}
 requests = "*"
+requests_mock = "*"
+
 
 [requires]
 python_version = "3.7"

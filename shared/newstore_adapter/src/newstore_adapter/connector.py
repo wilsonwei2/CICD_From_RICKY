@@ -31,6 +31,7 @@ class NewStoreConnector(object):
             if self.raise_errors:
                 raise
             return None
+        logger.info(response.json())
         return response.json()
 
     def get_customer_order(self, order_id):
@@ -420,6 +421,7 @@ class NewStoreConnector(object):
             if self.raise_errors:
                 raise ns_err
             return None
+        logger.info(response.json())
         return response.json().get('refunds', [])
 
     def create_refund(self, order_id, refund_json):
