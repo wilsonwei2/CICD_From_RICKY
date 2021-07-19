@@ -11,6 +11,7 @@ NEWSTORE_CONFIG = None
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
 REGION = os.environ.get('REGION', 'us-east-1')
+CHANNEL = os.environ.get('warehouse_usc', 'MTLDC1')
 
 
 def get_all_shopify_handlers():
@@ -74,7 +75,7 @@ def _create_shopify_handlers(configs):
 
     for conf in configs:
         config = conf['config']
-        config['channel'] = "USC"
+        config['channel'] = CHANNEL
         shopify_handler = ShopifyConnector(
             api_key=config['username'],
             password=config['password'],
