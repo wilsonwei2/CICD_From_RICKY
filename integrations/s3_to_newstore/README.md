@@ -24,7 +24,6 @@ Listens to ObjectCreated:Put and ObjectCreated:Create event on configured S3 buc
 [api: NewStore import]      [api: NewStore import]
 ```
 
-
 ## Environment
 
 ### S3 Triggers

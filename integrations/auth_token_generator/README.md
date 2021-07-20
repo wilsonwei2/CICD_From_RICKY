@@ -29,3 +29,4 @@ Checks the expiry of the token. Also an `EXPIRY_OFFSET` can be configured - the 
         self.token = output
 
         return output
+
