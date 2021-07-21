@@ -17,14 +17,11 @@ from shopify_import_order.returns import NewStoreReturnService
 
 TENANT = os.environ.get('TENANT') or 'frankandoak'
 STAGE = os.environ.get('STAGE') or 'x'
+BLOCK_BEFORE_DATE = os.environ.get('BLOCK_BEFORE_DATE')
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
-
-
-def _str_2_bool(b_str):
-    return b_str.lower() in ('yes', 'true', '1')
 
 
 def handler(event, context): # pylint: disable=W0613
@@ -56,17 +53,23 @@ def handler(event, context): # pylint: disable=W0613
         order = json.loads(order_body)
 
         if order.get('name').startswith('LGC'):
-            LOGGER.info(f'Order is a Loop Gift Card Shopify id {order["id"]}. Name {order.get("name")}. Not injecting....')
+            LOGGER.info(f'Order is a Loop Gift Card Shopify id {order["id"]}. Name {order.get("name")}. Not injecting.')
             return {
                 'statusCode':200,
                 'body': 'Order is a LGC'
             }
 
+        if is_historical(order):
+            LOGGER.info(f'Import of historical order with Shopify id {order["id"]} is blocked. Not injecting.')
+            return {
+                'statusCode': 200,
+                'body': 'Order is historical'
+            }
 
         LOGGER.info('Calculating Order Risk')
         order_risk = _validate_order_risk(order, shop_id)
         if order_risk:
-            LOGGER.info(f'Order with Shopify ID {order["id"]} is at risk state. Not injecting....')
+            LOGGER.info(f'Order with Shopify ID {order["id"]} is at risk state. Not injecting.')
             return {
                 'statusCode':200,
                 'body': 'Order at Risk by Kount System not injecting into NewStore'
@@ -123,6 +126,20 @@ def _validate_order_risk(order, shop_id):
         LOGGER.debug(f'Shopify Order Id with id # {shopify_order_id} has recommendation level as {recommendation}')
         if 'cancel' in recommendation.lower():
             return True
+    return False
+
+
+def is_historical(order):
+    if order.get('source_name') == 'magento':
+        return True
+
+    block_before_date = datetime.datetime.fromisoformat(BLOCK_BEFORE_DATE)
+    processed_at = datetime.datetime.strptime(order['processed_at'], "%Y-%m-%dT%H:%M:%S%z")
+    block_before_date = block_before_date.replace(tzinfo=processed_at.tzinfo)
+
+    if block_before_date > processed_at:
+        return True
+
     return False
 
 

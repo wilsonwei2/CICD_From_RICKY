@@ -48,6 +48,7 @@ functions:
       LOCALE: en-US
       USE_HACKS: 'False'
       SLACK_HOOK_URL: ''
+      BLOCK_BEFORE_DATE: '2021-07-20'
     events:
       - http: POST /d/process/shopify/order
   sync_orders:
