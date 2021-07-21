@@ -17,7 +17,7 @@
     "title": "",
     "zip_code": "G2B 4A6"
   },
-  "channel": "USC",
+  "channel": "MTLDC1",
   "channel_type": "web",
   "created_at": "2021-06-28T16: 26: 42",
   "created_by_label": "",
@@ -41,7 +41,7 @@
     },
     {
       "name": "ext_channel_name",
-      "value": "USC"
+      "value": "MTLDC1"
     },
     {
       "name": "is_historical",

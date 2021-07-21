@@ -30,14 +30,14 @@ def _str_2_bool(b_str):
 def handler(event, context): # pylint: disable=W0613
     """
     Take new shopify order from webhook call. Should include a query parameter
-    denoting which shopify channel the order is coming from (e.g., 'USC').
+    denoting which shopify channel the order is coming from (e.g., 'MTLDC1').
     Transform the order into Newstore format and fulfill the order through
     Newstore's API.
 
     Args:
         event:
             body: Shopify order JSON.
-            queryStringParameters['channel']: Shopify instance channel (e.g., 'USC')
+            queryStringParameters['channel']: Shopify instance channel (e.g., 'MTLDC1')
         context: function context
 
     Returns:

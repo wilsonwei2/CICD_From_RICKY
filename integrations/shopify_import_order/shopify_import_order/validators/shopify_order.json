@@ -1,9 +1,9 @@
 {
   "shop": "storefront-catalog-en",
   "shop_locale": "en-US",
-  "external_id": "USC-24023318952",
+  "external_id": "MTLDC1-24023318952",
   "channel_type": "web",
-  "channel_name": "USC",
+  "channel_name": "MTLDC1",
   "currency": "USD",
   "customer_name": "John Dow",
   "customer_email": "johndow.califonia@gmail.com",
@@ -71,7 +71,7 @@
     },
     {
       "name": "ext_channel_name",
-      "value": "USC"
+      "value": "MTLDC1"
     }
   ],
   "notification_blacklist": [

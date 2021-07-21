@@ -56,7 +56,7 @@ functions:
     timeout: 120
     memorySize: 128
     environment:
-      warehouse_usc: USC
+      warehouse_usc: MTLDC1
       sqs_returns_name:
         Fn::GetAtt:
           - ShopifyReturnQueue

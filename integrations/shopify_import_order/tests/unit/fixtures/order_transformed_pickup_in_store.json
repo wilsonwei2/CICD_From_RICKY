@@ -3,7 +3,7 @@
     "shop_locale": "en-US",
     "external_id": "9999",
     "channel_type": "web",
-    "channel_name": "USC",
+    "channel_name": "MTLDC1",
     "currency": "USD",
     "customer_name": "John Smith",
     "customer_email": "jon@doe.ca",
@@ -113,7 +113,7 @@
             "metadata": {
                 "external_order_id": "9999",
                 "shopify_order_id": "820982911946154508",
-                "channel": "USC",
+                "channel": "MTLDC1",
                 "transaction_id": "389404469",
                 "credit_card_bin": "",
                 "avs_result_code": "",
@@ -142,7 +142,7 @@
         },
         {
             "name": "ext_channel_name",
-            "value": "USC"
+            "value": "MTLDC1"
         },
         {
             "name": "is_historical",
