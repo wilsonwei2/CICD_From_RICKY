@@ -59,15 +59,19 @@ def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=N
         'notification_blacklist': notification_blacklist
     }
 
-    if 'shipping_offer_token' in ns_order['shipments'][0]['shipping_option']:
-        del ns_order['shipping_address']
-
     if order.get('browser_ip') and order.get('browser_ip') != "None":
         ns_order['ip_address'] = order['browser_ip']
 
     map_items(order, order_name, ns_order)
 
+    if 'shipping_offer_token' in ns_order['shipments'][0]['shipping_option'] or not has_shipment(order):
+        del ns_order['shipping_address']
+
     return ns_order
+
+
+def has_shipment(order):
+    return next((True for item in order['line_items'] if item['requires_shipping']), False)
 
 
 def get_address(order_address):
