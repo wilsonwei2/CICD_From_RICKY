@@ -98,7 +98,8 @@
         "lambda:Update*",
         "lambda:PublishVersion",
         "lambda:AddPermission",
-        "lambda:RemovePermission"
+        "lambda:RemovePermission",
+        "lambda:CreateEventSourceMapping"
       ],
       "Resource": [
         "arn:aws:lambda:us-east-1:*:function:*"
@@ -194,6 +195,11 @@
       "Resource": [
         "arn:aws:transfer:*:*:server/*"
       ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": "states:CreateStateMachine",
+      "Resource": "arn:aws:states:*:*:stateMachine:*"
     }
   ]
 }
