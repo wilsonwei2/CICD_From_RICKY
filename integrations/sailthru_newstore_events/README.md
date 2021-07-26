@@ -61,4 +61,3 @@ NS_STAGE: deployment stage
 SAILTHRU_HOOK_NAME: name of event stream integration hook
 EVENTS_TO_FILTER: events to be filtered by the integration hook
 NEWSTORE_CREDS_PARAM: path to the NewStore credentials parameter in Param Store
-
