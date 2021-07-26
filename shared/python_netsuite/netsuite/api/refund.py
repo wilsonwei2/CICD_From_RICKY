@@ -1,7 +1,8 @@
 from netsuite.client import client, passport, app_info, make_passport
 from netsuite.service import (
     CashRefund,
-    CreditMemo
+    CreditMemo,
+    CustomerRefund,
 )
 from netsuite.utils import get_record_by_type, json_serial
 from netsuite.api.sale import get_transaction
@@ -14,6 +15,7 @@ import os
 
 logger = logging.getLogger(__file__)
 logger.setLevel(logging.DEBUG)
+
 
 def client_service_add(item):
     if os.environ.get('netsuite_tba_active', '0') == "1":
@@ -31,12 +33,14 @@ def client_service_add(item):
 def create_cash_refund(data):
     refund = CashRefund(**data)
 
-    logger.debug('CashRefund: \n%s' % json.dumps(serialize_object(refund), indent=4, default=json_serial))
+    logger.debug('CashRefund: \n%s' % json.dumps(
+
+        serialize_object(refund), indent=4, default=json_serial))
 
     response = client_service_add(refund)
 
     logger.info(f'Response: {response}')
-    
+
     r = response.body.writeResponse
     if r.status.isSuccess:
         record_type = 'cashRefund'
@@ -45,21 +49,44 @@ def create_cash_refund(data):
     return False, r
 
 
-def create_credit_memo(data):
-    refund = CreditMemo(**data)
+def create_customer_refund(data):
+    refund = CustomerRefund(**data)
 
-    logger.debug('CreditMemo: \n%s' % json.dumps(serialize_object(refund), indent=4, default=json_serial))
+    logger.info('CustomerRefund: \n%s' % json.dumps(
+        serialize_object(refund), indent=4, default=json_serial))
 
     response = client_service_add(refund)
 
     logger.info(f'Response: {response}')
-    
+
     r = response.body.writeResponse
     if r.status.isSuccess:
-        record_type = 'creditMemo'
+        record_type = 'customerRefund'
         result = get_record_by_type(record_type, r.baseRef.internalId)
         return True, result
     return False, r
+
+
+def create_credit_memo(data):
+    refund = CreditMemo(**data)
+
+    logger.debug('CreditMemo: \n%s' % json.dumps(
+
+        serialize_object(refund), indent=4, default=json_serial))
+
+    response = client_service_add(refund)
+
+    logger.info(f'Response: {response}')
+
+    r = response['body']['writeResponse']
+    if r['status']['isSuccess']:
+        record_type = 'creditMemo'
+        internal_id = r['baseRef']['internalId']
+        result = get_record_by_type(record_type, internal_id)
+        return True, result, internal_id
+    return False, r, None
+
+
 
 
 def get_credit_memo(externalId):

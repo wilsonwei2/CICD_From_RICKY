@@ -84,3 +84,7 @@ InventoryAdjustmentInventoryList = model('ns29:InventoryAdjustmentInventoryList'
 InventoryTransfer = model('ns29:InventoryTransfer')
 ItemSearch = model('ns17:ItemSearch')
 ItemSearchAdvanced = model('ns17:ItemSearchAdvanced')
+CustomerRefund = model('ns23:CustomerRefund')
+CustomerRefundDepositList = model('ns23:CustomerRefundDepositList')
+CustomerRefundApply = model('ns23:CustomerRefundApply')
+CustomerRefundApplyList = model('ns23:CustomerRefundApplyList')

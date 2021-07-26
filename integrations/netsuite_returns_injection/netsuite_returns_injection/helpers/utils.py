@@ -1,7 +1,10 @@
+# pylint: disable=R0904
+
 import os
 import math
 import json
 import logging
+import numbers
 from datetime import datetime, date
 from pytz import timezone
 from pytz.exceptions import UnknownTimeZoneError
@@ -93,10 +96,11 @@ class Utils():
         return Utils._newstore_to_netsuite_locations
 
     @staticmethod
-    def get_nws_to_netsuite_payment():
+    def get_nws_to_netsuite_payment(payment_type):
         if not Utils._newstore_to_netsuite_payments:
             Utils._newstore_to_netsuite_payments = json.loads(
-                Utils._get_param_store().get_param('netsuite/newstore_to_netsuite_payment_items')
+                Utils._get_param_store().get_param(
+                    f'netsuite/newstore_to_netsuite_payment_{payment_type}')
             )
         return Utils._newstore_to_netsuite_payments
 
@@ -242,6 +246,38 @@ class Utils():
 
     @staticmethod
     def require_shipping(item):
-        requires_shipping = Utils.get_extended_attribute(item.get('extended_attributes'), 'requires_shipping')
+        requires_shipping = Utils.get_extended_attribute(
+            item.get('extended_attributes'), 'requires_shipping')
         # If it's requires_shipping is None assume that it needs shipping
         return requires_shipping is None or requires_shipping.lower() == 'true'
+
+    @staticmethod
+    def get_payment_item_id(payment_method, payment_provider, currency, payment_type):
+        payment_item_id = None
+        payment_config = {}
+        if payment_provider:
+            payment_config = Utils.get_nws_to_netsuite_payment(payment_type)[payment_method].get(
+                payment_provider, {})
+        else:
+            payment_config = Utils.get_nws_to_netsuite_payment(payment_type).get(
+                payment_method, {})
+        if isinstance(payment_config, numbers.Number):
+            payment_item_id = payment_config
+        else:
+            payment_item_id = payment_config.get(currency.lower(), '')
+
+        return payment_item_id
+
+    @staticmethod
+    def get_payment_method_internal_id(payment_method, payment_provider, currency, payment_type):
+        payment_item_id = None
+        if payment_method == 'credit_card':
+            payment_item_id = Utils.get_payment_item_id(
+                payment_method, payment_provider, currency, payment_type)
+        elif payment_method == 'gift_card':
+            payment_item_id = Utils.get_nws_to_netsuite_payment(payment_type).get(
+                payment_method, {}).get(currency, '')
+        else:
+            payment_item_id = Utils.get_payment_item_id(
+                payment_method, None, currency, payment_type)
+        return payment_item_id

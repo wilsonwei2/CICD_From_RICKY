@@ -1,10 +1,14 @@
 import re, os
+import logging
+
 from netsuite.client import client, app_info, passport, make_passport
 from netsuite.service import (
     RecordRef,
     SearchPreferences
 )
 from datetime import datetime, date
+logger = logging.getLogger(__file__)
+logger.setLevel(logging.DEBUG)
 
 
 class obj(object):
@@ -41,6 +45,8 @@ def get_record_by_type(type, internal_id):
                 'passport': passport,
             }
         )
+
+    logger.info(f'get_record_by_type Response: {response}')
 
     r = response.body.readResponse
     if r.status.isSuccess:
@@ -87,10 +93,10 @@ def format_error_message(statusDetail):
 # Formats the phone to a valid number to be injected into NetSuite
 # phone: phone to be validated and formated
 # return: phone in the format 555-555-5555 which is acceptable by NetSuite
-# Documentation from NetSuite: 
+# Documentation from NetSuite:
 # Must be entered in the following formats:999-999-9999, 1-999-999-9999, (999) 999-9999, 1(999) 999-9999 or 999-999-9999 ext 9999.
-# Additional info: 
-# Accepts international numbers (e.g. +44 09999 999999) 
+# Additional info:
+# Accepts international numbers (e.g. +44 09999 999999)
 # but returns phone in NetSuite acceptable format (e.g. 999-999-9999 without +44)
 ###
 def get_formated_phone(phone):

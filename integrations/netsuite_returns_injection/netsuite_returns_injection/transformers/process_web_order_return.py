@@ -30,7 +30,7 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
     subsidiary_id = int(Utils.get_netsuite_config()['subsidiary_ca_internal_id']) if not sales_order else sales_order.subsidiary.internalId
     store_tz = await get_store_tz_by_customer_order(customer_order)
     if return_authorization:
-        LOGGER.info('Create CashRefund from ReturnAuthorization')
+        LOGGER.info('Create CashRefund/CreditMemo from ReturnAuthorization')
         cash_refund = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz)
         credit_memo = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz, is_credit_memo=True)
     else:

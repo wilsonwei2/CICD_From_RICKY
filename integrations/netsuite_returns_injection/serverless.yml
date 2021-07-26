@@ -2,6 +2,8 @@ service: frankandoak-netsuite-returns-injection
 
 plugins:
   - serverless-python-requirements
+  - serverless-offline
+
 custom:
   pythonRequirements:
     dockerizePip: false
@@ -24,7 +26,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
-    SQS_QUEUE: !GetAtt InStoreReturnQueue.QueueName
+    SQS_QUEUE: ${self:provider.tenant}-returns-to-netsuite-queue.fifo
     MAX_MESSAGE_QUEUE_SIZE: 25
 
 functions:
