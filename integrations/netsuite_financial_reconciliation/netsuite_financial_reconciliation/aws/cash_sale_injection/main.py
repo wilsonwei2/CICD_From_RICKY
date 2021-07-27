@@ -421,10 +421,15 @@ def create_cash_sale_items(order_event, order):
             item_custom_field_list.append(StringCustomFieldRef(
                 scriptId=script_id, value=tax_rate))
 
+        # In case the items has discounts, we need to adjust the price of the item and
+        # inject some custom fields / the discount item
+        has_item_discount, has_order_discount, has_discount, total_discount = Utils.get_discount_info(
+            item)
+
         cash_sale_item = {
             'item': RecordRef(internalId=netsuite_item_id),
             'price': RecordRef(internalId=util.CUSTOM_PRICE),
-            'rate': item['pricebook_price'],
+            'rate': item['pricebook_price'] - total_discount,
             'location': RecordRef(internalId=location_id),
             'taxCode': RecordRef(internalId=util.get_tax_code_id(subsidiary_id=subsidiary_id)),
             'quantity': 1
@@ -443,18 +448,35 @@ def create_cash_sale_items(order_event, order):
             )
         )
 
+        # Add a custom field for the line and order discount - needed for reporting in Netsuite
+        if has_item_discount:
+            item_custom_field_list.append(
+                StringCustomFieldRef(
+                    scriptId='custcol_fao_line_item_discount',
+                    value=item['item_discounts']
+                )
+            )
+
+        if has_order_discount:
+            item_custom_field_list.append(
+                StringCustomFieldRef(
+                    scriptId='custcol_fao_order_item_discount',
+                    value=item['order_discounts']
+                )
+            )
+
         if item_custom_field_list:
             cash_sale_item['customFieldList'] = CustomFieldList(
                 item_custom_field_list)
 
         cash_sale_items.append(cash_sale_item)
 
-        if util.item_has_discount(item):
+        if has_discount:
             cash_sale_items.append(
                 {
                     'item': RecordRef(internalId=int(NETSUITE_CONFIG['newstore_discount_item_id'])),
                     'price': RecordRef(internalId=util.CUSTOM_PRICE),
-                    'rate': str('-'+str(abs(float(item['item_discounts'])+float(item['order_discounts'])))),
+                    'rate': str('-'+str(total_discount)),
                     'taxCode': RecordRef(internalId=util.get_not_taxable_id(subsidiary_id=subsidiary_id)),
                     'location': RecordRef(internalId=location_id)
                 }

@@ -219,10 +219,6 @@ def get_or_create_customer(order_data):
     return nsac.create_customer(customer)
 
 
-def item_has_discount(item):
-    return float(item['item_discounts']) > 0 or float(item['order_discounts']) > 0
-
-
 def order_has_gift_cards(order):
     for item in order['items']:
         if item['product_id'] in get_giftcard_product_ids_config():
