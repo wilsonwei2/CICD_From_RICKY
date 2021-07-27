@@ -2,204 +2,236 @@
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "VisualEditor0",
       "Effect": "Allow",
       "Action": [
-        "iam:PassRole",
-        "iam:GetRole",
-        "iam:CreateRole",
-        "iam:DeleteRole",
-        "iam:CreatePolicy",
-        "iam:PutRolePolicy",
-        "iam:AttachRolePolicy",
-        "iam:DeleteRolePolicy"
-      ],
-      "Resource": [
-        "arn:aws:iam::*:role/*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cloudformation:Get*",
+        "states:ListStateMachines",
+        "lambda:UpdateEventSourceMapping",
+        "states:ListActivities",
+        "lambda:GetEventSourceMapping",
+        "ecr:GetAuthorizationToken",
+        "lambda:CreateEventSourceMapping",
+        "states:SendTaskSuccess",
+        "states:SendTaskFailure",
+        "lambda:ListEventSourceMappings",
         "cloudformation:List*",
-        "cloudformation:ValidateTemplate"
-      ],
-      "Resource": [
-        "*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "cloudformation:CreateStack",
-        "cloudformation:UpdateStack",
-        "cloudformation:DeleteStack",
+        "lambda:DeleteEventSourceMapping",
+        "states:SendTaskHeartbeat",
+        "cloudformation:ValidateTemplate",
         "cloudformation:Get*",
-        "cloudformation:Describe*",
-        "cloudformation:List*"
+        "apigateway:GET"
       ],
-      "Resource": [
-        "arn:aws:cloudformation:us-east-1:*:stack/*/*"
-      ]
+      "Resource": "*"
     },
     {
+      "Sid": "VisualEditor1",
       "Effect": "Allow",
       "Action": [
-        "logs:CreateLogGroup",
-        "logs:DescribeLogGroups",
-        "logs:DeleteLogGroup",
-        "logs:PutLogEvents",
+        "events:DeleteRule",
+        "events:PutTargets",
+        "events:DescribeRule",
+        "events:PutRule",
+        "events:RemoveTargets"
+      ],
+      "Resource": "arn:aws:events:*:*:rule/*"
+    },
+    {
+      "Sid": "VisualEditor2",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:CreateFunction",
+        "iam:CreateRole",
+        "s3:CreateBucket",
+        "iam:AttachRolePolicy",
+        "iam:PutRolePolicy",
         "logs:CreateLogStream",
-        "logs:DescribeLogStreams"
+        "apigateway:UpdateRestApiPolicy",
+        "transfer:DescribeServer",
+        "cloudformation:UpdateStack",
+        "lambda:DeleteFunction",
+        "apigateway:GET",
+        "s3:DeleteObject",
+        "ecr:BatchCheckLayerAvailability",
+        "states:*",
+        "iam:GetRole",
+        "events:CreateEventBus",
+        "lambda:InvokeFunction",
+        "ecr:GetDownloadUrlForLayer",
+        "iam:DeleteRole",
+        "logs:CreateLogGroup",
+        "ecr:PutImage",
+        "events:DescribeEventBus",
+        "s3:PutObject",
+        "s3:GetObject",
+        "cloudformation:DeleteStack",
+        "ecr:BatchGetImage",
+        "lambda:PublishVersion",
+        "apigateway:POST",
+        "ecr:InitiateLayerUpload",
+        "lambda:CreateAlias",
+        "s3:PutAccelerateConfiguration",
+        "logs:DescribeLogStreams",
+        "s3:ListBucketVersions",
+        "s3:ListBucket",
+        "ecr:UploadLayerPart",
+        "s3:PutEncryptionConfiguration",
+        "apigateway:DELETE",
+        "s3:GetEncryptionConfiguration",
+        "iam:PassRole",
+        "iam:DeleteRolePolicy",
+        "apigateway:PATCH",
+        "ecr:CompleteLayerUpload",
+        "s3:DeleteBucket",
+        "logs:DescribeLogGroups",
+        "apigateway:PUT",
+        "logs:DeleteLogGroup",
+        "lambda:Update*",
+        "logs:PutLogEvents",
+        "iam:CreatePolicy",
+        "lambda:AddPermission",
+        "cloudformation:CreateStack",
+        "events:DeleteEventBus",
+        "lambda:DeleteAlias",
+        "lambda:RemovePermission",
+        "s3:GetBucketLocation",
+        "cloudformation:Get*"
       ],
       "Resource": [
+        "arn:aws:events:*:*:event-bus/*",
+        "arn:aws:ecr:us-east-1:*:repository/devops-build-cicd",
+        "arn:aws:apigateway:*::/apis*",
+        "arn:aws:apigateway:*::/restapis*",
+        "arn:aws:apigateway:*::/apikeys*",
+        "arn:aws:apigateway:*::/usageplans*",
+        "arn:aws:iam::*:role/*",
+        "arn:aws:transfer:*:*:server/*",
+        "arn:aws:lambda:us-east-1:*:function:*",
+        "arn:aws:states:*:395037564093:activity:*",
+        "arn:aws:states:*:395037564093:stateMachine:*",
+        "arn:aws:states:*:395037564093:execution:*:*",
+        "arn:aws:s3:::*newstore-dmz-deploy*",
+        "arn:aws:cloudformation:us-east-1:*:stack/*/*",
         "arn:aws:logs:us-east-1:*:*"
       ]
     },
     {
+      "Sid": "VisualEditor3",
       "Effect": "Allow",
       "Action": [
-        "s3:CreateBucket",
-        "s3:ListBucket",
-        "s3:ListBucketVersions",
-        "s3:GetBucketLocation",
-        "s3:DeleteBucket",
-        "s3:PutAccelerateConfiguration",
-        "s3:PutEncryptionConfiguration",
-        "s3:GetEncryptionConfiguration",
-        "s3:GetObject",
-        "s3:PutObject",
-        "s3:DeleteObject"
+        "cloudformation:List*",
+        "cloudformation:Describe*"
       ],
-      "Resource": [
-        "arn:aws:s3:::*newstore-dmz-deploy*"
-      ]
+      "Resource": "arn:aws:cloudformation:us-east-1:*:stack/*/*"
     },
     {
+      "Sid": "VisualEditor4",
       "Effect": "Allow",
       "Action": [
-        "ssm:Describe*",
-        "ssm:Get*"
+        "ssm:Get*",
+        "ssm:Describe*"
       ],
-      "Resource": [
-        "arn:aws:ssm:*:*:parameter/*"
-      ]
+      "Resource": "arn:aws:ssm:*:*:parameter/*"
     },
     {
+      "Sid": "VisualEditor5",
       "Effect": "Allow",
       "Action": [
-        "lambda:InvokeFunction",
-        "lambda:CreateFunction",
-        "lambda:DeleteFunction",
-        "lambda:CreateAlias",
-        "lambda:DeleteAlias",
-        "lambda:Get*",
         "lambda:List*",
-        "lambda:Update*",
-        "lambda:PublishVersion",
-        "lambda:AddPermission",
-        "lambda:RemovePermission",
-        "lambda:CreateEventSourceMapping"
+        "lambda:Get*"
       ],
-      "Resource": [
-        "arn:aws:lambda:us-east-1:*:function:*"
-      ]
+      "Resource": "arn:aws:lambda:us-east-1:*:function:*"
     },
     {
+      "Sid": "VisualEditor6",
       "Effect": "Allow",
-      "Action": [
-        "apigateway:GET",
-        "apigateway:PUT",
-        "apigateway:PATCH",
-        "apigateway:POST",
-        "apigateway:DELETE",
-        "apigateway:UpdateRestApiPolicy"
-      ],
-      "Resource": [
-        "arn:aws:apigateway:*::/apis*",
-        "arn:aws:apigateway:*::/restapis*",
-        "arn:aws:apigateway:*::/apikeys*",
-        "arn:aws:apigateway:*::/usageplans*"
-      ]
+      "Action": "sqs:*",
+      "Resource": "arn:aws:sqs:*:*:*"
     },
     {
+      "Sid": "VisualEditor7",
       "Effect": "Allow",
-      "Action": "ecr:GetAuthorizationToken",
-      "Resource": "*"
+      "Action": "events:ListRules",
+      "Resource": "arn:aws:events:*:*:rule/*"
     },
     {
-      "Effect": "Allow",
-      "Action": [
-        "ecr:GetDownloadUrlForLayer",
-        "ecr:BatchCheckLayerAvailability",
-        "ecr:BatchGetImage",
-        "ecr:InitiateLayerUpload",
-        "ecr:UploadLayerPart",
-        "ecr:CompleteLayerUpload",
-        "ecr:PutImage"
-      ],
-      "Resource": [
-        "arn:aws:ecr:us-east-1:*:repository/devops-build-cicd"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "sqs:*"
-      ],
-      "Resource": [
-        "arn:aws:sqs:*:*:*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "events:CreateEventBus",
-        "events:DescribeEventBus",
-        "events:DeleteEventBus"
-      ],
-      "Resource": [
-        "arn:aws:events:*:*:event-bus/*"
-      ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "events:ListRules",
-        "events:DescribeRule",
-        "events:PutRule",
-        "events:DeleteRule",
-        "events:PutTargets",
-        "events:RemoveTargets"
-      ],
-      "Resource": [
-        "arn:aws:events:*:*:rule/*"
-      ]
-    },
-    {
+      "Sid": "VisualEditor8",
       "Effect": "Allow",
       "Action": "kinesis:*",
       "Resource": "arn:aws:kinesis:*:*:stream/*"
     },
     {
+      "Sid": "VisualEditor9",
       "Effect": "Allow",
       "Action": "dynamodb:*",
       "Resource": "arn:aws:dynamodb:*:*:table/*"
     },
     {
+      "Sid": "VisualEditor10",
       "Effect": "Allow",
+      "Action": "transfer:CreateServer",
+      "Resource": "arn:aws:transfer:*:*:server/*"
+    },
+    {
       "Action": [
-        "transfer:CreateServer",
-        "transfer:DescribeServer"
+        "apigateway:GET",
+        "apigateway:DELETE",
+        "apigateway:POST",
+        "apigateway:PATCH"
       ],
-      "Resource": [
-        "arn:aws:transfer:*:*:server/*"
-      ]
+      "Resource": "arn:aws:apigateway:us-east-1::/apis/*/stages*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": [
+        "apigateway:GET",
+        "apigateway:DELETE",
+        "apigateway:POST",
+        "apigateway:PATCH"
+      ],
+      "Resource": "arn:aws:apigateway:us-east-1::/domainnames*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": "cloudfront:UpdateDistribution",
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": "route53:ListHostedZones",
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": "acm:ListCertificates",
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": [
+        "route53:ChangeResourceRecordSets",
+        "route53:GetHostedZone",
+        "route53:ListResourceRecordSets"
+      ],
+      "Resource": "arn:aws:route53:::hostedzone/*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "arn:aws:iam::*:role/aws-service-role/ops.apigateway.amazonaws.com/AWSServiceRoleForAPIGateway",
+      "Effect": "Allow"
     },
     {
       "Effect": "Allow",
-      "Action": "states:CreateStateMachine",
-      "Resource": "arn:aws:states:*:*:stateMachine:*"
+      "Action": [
+        "states:ListStateMachines",
+        "states:ListActivities",
+        "states:CreateStateMachine",
+        "states:CreateActivity",
+        "states:TagResource"
+      ],
+      "Resource": [
+        "arn:aws:states:*:*:*"
+      ]
     }
   ]
 }
