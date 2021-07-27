@@ -13,6 +13,7 @@ pom-common = {path = "./../../shared/pom_common"}
 aiohttp="3.0.1"
 requests="v2.20.1"
 redis="3.0.1"
+boto3="*"
 
 
 [requires]

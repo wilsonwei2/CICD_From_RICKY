@@ -3,6 +3,7 @@ service: frankandoak-shopify-gift-card
 plugins:
   - serverless-python-requirements
   - serverless-pseudo-parameters
+  - serverless-offline
 custom:
   pythonRequirements:
     dockerizePip: false

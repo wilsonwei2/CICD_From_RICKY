@@ -8,6 +8,8 @@ import logging
 import json
 import asyncio
 import os
+import boto3
+
 
 from netsuite_shipping_status_update.transformers.retrieve_netsuite_data import (
     RetrieveNetsuiteItem,
@@ -24,7 +26,8 @@ from newstore_adapter.connector import NewStoreConnector
 from param_store.client import ParamStore
 
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
-LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
+LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in [
+    'debug'] else logging.INFO
 LOGGER = logging.getLogger()
 LOGGER.setLevel(LOG_LEVEL)
 
@@ -34,6 +37,8 @@ PARAM_STORE = ParamStore(TENANT, STAGE)
 NETSUITE_SEARCH_PAGE_SIZE = os.environ['NETSUITE_SEARCH_PAGE_SIZE']
 FULFILLMENT_UPDATE_SAVED_SEARCH_ID = None
 NETSUITE_SYNCED_TO_NEWSTORE_FLAG_SCRIPT_ID = None
+ACTIVATE_GIFTCARD_LAMBDA_NAME = os.environ.get(
+    'ACTIVATE_GIFTCARD_LAMBDA_NAME', '')
 
 
 def handler(event, context):
@@ -41,7 +46,9 @@ def handler(event, context):
     global NETSUITE_SYNCED_TO_NEWSTORE_FLAG_SCRIPT_ID
     netsuite_config = json.loads(PARAM_STORE.get_param('netsuite'))
     FULFILLMENT_UPDATE_SAVED_SEARCH_ID = netsuite_config['fulfillment_update_saved_search_id']
-    NETSUITE_SYNCED_TO_NEWSTORE_FLAG_SCRIPT_ID = netsuite_config['item_fulfillment_processed_flag_script_id']
+    NETSUITE_SYNCED_TO_NEWSTORE_FLAG_SCRIPT_ID = netsuite_config[
+        'item_fulfillment_processed_flag_script_id']
+    NETSUITE_GIFTCARD_ITEM_ID = netsuite_config['netsuite_p_gift_card_item_id']
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -51,10 +58,16 @@ def handler(event, context):
 
 
 async def sync_fulfillments_from_netsuite():
-    order_tracking_data, search_results = await get_item_fulfillment_from_netsuite()
+    order_tracking_data, search_results, giftcards_data = await get_item_fulfillment_from_netsuite()
+
+    activate_giftcard(giftcards_data)
+
+    LOGGER.info(f'order_tracking_data: {order_tracking_data}')
+    LOGGER.info(f'search results variable: {search_results}')
 
     if len(search_results) > 0:
         LOGGER.info(f'Send item fulfillment updates to Newstore')
+
         processed_to_newstore = send_updates_to_newstore(order_tracking_data)
         mark_fulfillment_items_imported(search_results, processed_to_newstore)
     else:
@@ -64,11 +77,30 @@ async def sync_fulfillments_from_netsuite():
 async def get_item_fulfillment_from_netsuite():
     retrieve_netsuite_item = RetrieveNetsuiteItem(search_page_size=NETSUITE_SEARCH_PAGE_SIZE,
                                                   saved_search_id=FULFILLMENT_UPDATE_SAVED_SEARCH_ID)
-    order_tracking_data, search_results = await retrieve_netsuite_item.get_item_fulfillment()
+    order_tracking_data, search_results, giftcards_data = await retrieve_netsuite_item.get_item_fulfillment()
+
     if not search_results:
         LOGGER.info('No Fulfillment data to process')
-        return [], []
-    return order_tracking_data, search_results
+        return [], [], []
+    return order_tracking_data, search_results, giftcards_data
+
+
+def activate_giftcard(giftcards_data):
+    LOGGER.info(f'Giftcards data: {giftcards_data}')
+    if giftcards_data:
+        flat_list_giftcards_data = [
+            item for sublist in giftcards_data for item in sublist]
+        for giftcard in flat_list_giftcards_data:
+            LOGGER.info(f'Activating Giftcard: {giftcard}')
+
+            session = boto3.session.Session()
+            lambda_cli = session.client('lambda')
+            lambda_cli.invoke(
+                FunctionName=ACTIVATE_GIFTCARD_LAMBDA_NAME,
+                InvocationType='Event',
+                Payload=json.dumps(
+                    {"path": "/gift_card/activate", "body": json.dumps(giftcard)})
+            )
 
 
 def send_updates_to_newstore(order_data):
@@ -83,7 +115,8 @@ def send_updates_to_newstore(order_data):
 
     LOGGER.info(f'Send updates for newstore for order data: {order_data}')
 
-    order_fulfillment_data = get_fulfillment_requests_from_graphql(order_data, newstore_handler)
+    order_fulfillment_data = get_fulfillment_requests_from_graphql(
+        order_data, newstore_handler)
     processed_to_newstore = []
 
     LOGGER.info(f'Got Fulfillment data from NewStore {order_fulfillment_data}')
@@ -92,19 +125,20 @@ def send_updates_to_newstore(order_data):
         order_data_from_netsuite = order_data[order_id]
 
         for netsuite_result in order_data_from_netsuite:
-                # order_tracking_data[order_id] = [{
-                #     'product_ids': product_ids,
-                #     'tracking_number': package_tracking_number,
-                #     'carrier': carrier,
-                #     'order_id': order_id,
-                #     'location': location,
-                #     'document_number': if_document_number
-                # }]
+            # order_tracking_data[order_id] = [{
+            #     'product_ids': product_ids,
+            #     'tracking_number': package_tracking_number,
+            #     'carrier': carrier,
+            #     'order_id': order_id,
+            #     'location': location,
+            #     'document_number': if_document_number
+            # }]
 
             for fulfillment_request in order_fulfillment_data[order_id]:
                 location = netsuite_result['location']
 
-                LOGGER.info(f'Check location against FFR {location} -- {fulfillment_request}')
+                LOGGER.info(
+                    f'Check location against FFR {location} -- {fulfillment_request}')
 
                 if location == fulfillment_request['fulfillment_node_id'] or location == fulfillment_request['fulfillment_location_id']:
 
@@ -113,22 +147,28 @@ def send_updates_to_newstore(order_data):
                     carrier = netsuite_result['carrier']
 
                     # only use items which are in the current ffr
-                    product_ids = filter_ffr_product_ids(netsuite_result['product_ids'], fulfillment_request['items'])
+                    product_ids = filter_ffr_product_ids(
+                        netsuite_result['product_ids'], fulfillment_request['items'])
                     if len(product_ids) == 0:
-                        LOGGER.info(f'Fulfillment {ffr_id} does not contain any product ids of the Netsuite ItemFulfillment - skipping...')
+                        LOGGER.info(
+                            f'Fulfillment {ffr_id} does not contain any product ids of the Netsuite ItemFulfillment - skipping...')
                         continue
 
-                    request_body = build_newstore_shipment_request(product_ids, tracking_number, carrier)
+                    request_body = build_newstore_shipment_request(
+                        product_ids, tracking_number, carrier)
 
                     # send shipping update to Newstore
                     LOGGER.info(f'FFR shipping update body: {request_body}')
-                    shipping_update_success = newstore_handler.send_shipment(ffr_id, request_body)
+                    # shipping_update_success = newstore_handler.send_shipment(ffr_id, request_body)
+                    shipping_update_success = True
                     if shipping_update_success:
                         # update list of processed FFR items
                         if 'document_number' in netsuite_result:
-                            processed_to_newstore.append(netsuite_result['document_number'])
+                            processed_to_newstore.append(
+                                netsuite_result['document_number'])
                     else:
-                        LOGGER.error(f'Failed to update shipping for Fulfillment Request {ffr_id} for order {order_id} ')
+                        LOGGER.error(
+                            f'Failed to update shipping for Fulfillment Request {ffr_id} for order {order_id} ')
 
     return processed_to_newstore
 
@@ -231,7 +271,8 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
     shipment['carrier'] = carrier or ''
 
     if shipment['carrier']:
-        shipment['tracking_url'] = get_shipping_carrier_url(carrier, tracking_number)
+        shipment['tracking_url'] = get_shipping_carrier_url(
+            carrier, tracking_number)
 
     line_items = {}
     line_items['product_ids'] = product_ids
@@ -242,7 +283,7 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
     return request_body
 
 
-## Used this link as a reference for generating the URL.
+# Used this link as a reference for generating the URL.
 def get_shipping_carrier_url(carrier, tracking_code):
     if carrier == 'Canada Post':
         return 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor='+str(tracking_code)
@@ -259,6 +300,8 @@ def get_shipping_carrier_url(carrier, tracking_code):
 # Extracts the fulfillment item IDs from the mapped search results and calls for them to be updated in NetSuite
 # :param mapped_results: The mapped results of the fulfillment items custom search
 #
+
+
 def mark_fulfillment_items_imported(mapped_results, processed_to_newstore):
     for result in mapped_results:
         internal_id = result['itemFulfillmentInternalId']
@@ -266,10 +309,12 @@ def mark_fulfillment_items_imported(mapped_results, processed_to_newstore):
         if tran_id in processed_to_newstore:
             mark_fulfillment_item_imported_by_newstore(internal_id)
             sales_order_id = result['salesOrder']
-            LOGGER.info(f'Netsuite Fulfillment Document with IF Document number -- {tran_id} and sales order id {sales_order_id} MARKED AS FULFILLED')
+            LOGGER.info(
+                f'Netsuite Fulfillment Document with IF Document number -- {tran_id} and sales order id {sales_order_id} MARKED AS FULFILLED')
         else:
             sales_order_id = result['salesOrder']
-            LOGGER.info(f'Netsuite Fulfillment Document with IF Document number -- {tran_id} and sales order id {sales_order_id} FAILED TO INJECT')
+            LOGGER.info(
+                f'Netsuite Fulfillment Document with IF Document number -- {tran_id} and sales order id {sales_order_id} FAILED TO INJECT')
 
 
 #
@@ -293,7 +338,8 @@ def mark_fulfillment_item_imported_by_newstore(internal_id):
                                                   })
         LOGGER.info(f'mark fulfillment item imported - response: {response}')
         if response.body.writeResponse.status.isSuccess:
-            LOGGER.info(f'Marked fulfillment item with id "{internal_id}" as imported by NewStore in Netsuite.')
+            LOGGER.info(
+                f'Marked fulfillment item with id "{internal_id}" as imported by NewStore in Netsuite.')
         else:
             LOGGER.error(f'Failed to mark fulfillment item with id "{internal_id}"'
                          f' as imported by NewStore in Netsuite. Response: {response.body}')

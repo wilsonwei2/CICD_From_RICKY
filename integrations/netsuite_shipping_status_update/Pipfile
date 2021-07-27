@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+ptvsd = "*"
 
 [packages]
 param_store = {path = "./../../shared/3.6/param_store"}
@@ -11,7 +12,8 @@ lambda-utils = {path = "./../../shared/lambda_utils"}
 newstore_adapter = {path = "./../../shared/newstore_adapter"}
 netsuite = {path = "./../../shared/python_netsuite"}
 aiohttp = ">=2.3.1"
-aiobotocore = ">=0.10.2"
+boto3 = "*"
+
 
 [requires]
 python_version = "3.7"

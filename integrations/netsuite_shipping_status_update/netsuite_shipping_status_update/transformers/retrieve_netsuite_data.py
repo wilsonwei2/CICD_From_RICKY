@@ -2,6 +2,7 @@ import logging
 import os
 import time
 import json
+import uuid
 
 import netsuite.netsuite_environment_loader  # pylint: disable=W0611
 from netsuite.service import (
@@ -16,9 +17,12 @@ from netsuite.service import (
 from netsuite.client import client as netsuite_client, make_passport
 from netsuite.utils import search_records_using
 from param_store.client import ParamStore
+from netsuite.api.mapping import NetSuiteMapping
+
 
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
-LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
+LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in [
+    'debug'] else logging.INFO
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
 
@@ -26,6 +30,7 @@ NEWSTORE_TO_NETSUITE_LOCATIONS_CONFIG = None
 TENANT = os.environ['TENANT']
 STAGE = os.environ['STAGE']
 PARAM_STORE = ParamStore(TENANT, STAGE)
+
 
 class RetrieveNetsuiteItem():
     def __init__(self, search_page_size, saved_search_id):
@@ -39,7 +44,8 @@ class RetrieveNetsuiteItem():
     #
     async def get_item_fulfillment(self):
         try:
-            LOGGER.info(f'Start get_item_fulfillment - savedSearchId - {self.saved_search_id}')
+            LOGGER.info(
+                f'Start get_item_fulfillment - savedSearchId - {self.saved_search_id}')
 
             search_preferences = SearchPreferences(
                 bodyFieldsOnly=True,
@@ -49,19 +55,21 @@ class RetrieveNetsuiteItem():
 
             search_result = run_until_success(
                 lambda: netsuite_client.service.search(
-                    searchRecord=TransactionSearchAdvanced(savedSearchScriptId=self.saved_search_id),
+                    searchRecord=TransactionSearchAdvanced(
+                        savedSearchScriptId=self.saved_search_id),
                     _soapheaders={
                         'searchPreferences': search_preferences,
                         'tokenPassport': make_passport()
                     }),
                 function_description="Page 1 search function")
 
-            order_tracking_data, search_results = await self.main_data_mapping(search_result)
+            order_tracking_data, search_results, giftcards_data = await self.main_data_mapping(search_result)
 
-            return order_tracking_data, search_results
+            return order_tracking_data, search_results, giftcards_data
 
-        except Exception as e: # pylint: disable=broad-except
-            LOGGER.error(f"Error during the search of fulfillment item: {str(e)}", exc_info=True)
+        except Exception as e:  # pylint: disable=broad-except
+            LOGGER.error(
+                f"Error during the search of fulfillment item: {str(e)}", exc_info=True)
 
         return None
 
@@ -71,7 +79,7 @@ class RetrieveNetsuiteItem():
     async def main_data_mapping(self, search_result):
         if search_result.body.searchResult.totalRecords == 0:
             LOGGER.info('There are no results to process.')
-            return [], []
+            return [], [], []
 
         items = search_result.body.searchResult.searchRowList.searchRow
 
@@ -79,16 +87,19 @@ class RetrieveNetsuiteItem():
 
         data_to_update, list_internal_id = await self.map_fulfillment_data(items)
 
-        LOGGER.info(f'1) Got data to update {data_to_update} and list of internal ids {list_internal_id}')
+        LOGGER.info(
+            f'1) Got data to update {data_to_update} and list of internal ids {list_internal_id}')
 
         if not data_to_update:
-            return [], []
+            return [], [], []
 
-        mapping_internal_id_sales_order, shipping_data_list, external_id_list_newstore, product_ids_list = await self.retrieve_transaction_information(
+        mapping_internal_id_sales_order, shipping_data_list, external_id_list_newstore, product_ids_list, currency, customer_email = await self.retrieve_transaction_information(
             list_internal_id)
 
-        LOGGER.info(f'Got the following info about the Sales Order: {mapping_internal_id_sales_order}; Shipping data: {shipping_data_list}')
-        LOGGER.info(f'External ids: {external_id_list_newstore}; Product ids: {product_ids_list}')
+        LOGGER.info(
+            f'Got the following info about the Sales Order: {mapping_internal_id_sales_order}; Shipping data: {shipping_data_list}')
+        LOGGER.info(
+            f'External ids: {external_id_list_newstore}; Product ids: {product_ids_list}')
 
         data_to_update = await self.add_sales_reference(data_to_update, mapping_internal_id_sales_order,
                                                         product_ids_list,
@@ -101,16 +112,18 @@ class RetrieveNetsuiteItem():
         LOGGER.info(f'3) Got data to update {data_to_update}')
 
         order_tracking_data = None
-        order_tracking_data, data_to_update = await self.add_items_to_fulfill(data_to_update)
+        giftcards_data = None
+        order_tracking_data, data_to_update, giftcards_data = await self.add_items_to_fulfill(data_to_update, currency, customer_email)
 
-        return order_tracking_data, data_to_update
+        return order_tracking_data, data_to_update, giftcards_data
 
     #
     # Fetch the ItemFulfillment from NetSuite and get only the fulfilled items
-    # Also updates the shipping information
+    # Also updates the shipping information and handles giftcards activation
     #
-    async def add_items_to_fulfill(self, data_to_update):
+    async def add_items_to_fulfill(self, data_to_update, currency, customer_email):
         order_tracking_data = {}
+        giftcards_data = []
         for item in data_to_update:
             transaction_search = TransactionSearchBasic(
                 internalIdNumber=SearchLongField(
@@ -124,18 +137,23 @@ class RetrieveNetsuiteItem():
             )
 
             result = run_until_success(
-                lambda: search_records_using(transaction_search, self.search_page_size),
+                lambda: search_records_using(
+                    transaction_search, self.search_page_size),
                 function_description='basic transaction search')
             search_result = result.body.searchResult
 
             if not search_result.status.isSuccess or not search_result.recordList:
-                LOGGER.error(f'add_items_to_fulfill - error during the search: {search_result}')
+                LOGGER.error(
+                    f'add_items_to_fulfill - error during the search: {search_result}')
                 return {}
 
             item_fulfillment = search_result.recordList.record[0]
 
-            LOGGER.info(f'Got ItemFulfillment from Netsuite {item_fulfillment}')
+            LOGGER.info(
+                f'Got ItemFulfillment from Netsuite {item_fulfillment}')
 
+            giftcards_data.append(
+                self.extract_giftcard_data(item_fulfillment, currency, customer_email))
             items_fulfilled_id = [item['item']['internalId'] for item in item_fulfillment['itemList']['item'] for x in
                                   range(0, int(item['quantity']))]
             item['itemFulfillmentItems'] = items_fulfilled_id
@@ -148,7 +166,8 @@ class RetrieveNetsuiteItem():
             carrier = ''
             order_id = item['externalIdNewstore']
             package_tracking_number = None
-            product_ids = get_product_ids_from_item_fulfillment(item_fulfillment)
+            product_ids = get_product_ids_from_item_fulfillment(
+                item_fulfillment)
 
             if item_fulfillment['packageList'] and item_fulfillment['packageList']['package']:
                 packages = item_fulfillment['packageList']['package']
@@ -180,10 +199,12 @@ class RetrieveNetsuiteItem():
             item['shippingData'] = shipping_data
 
             LOGGER.info(f'add_items_to_fulfill - Product Ids: {product_ids}')
-            LOGGER.info(f'External ID of order -- {order_id}, Carrier = {carrier} and Tracking - {package_tracking_number}')
+            LOGGER.info(
+                f'External ID of order -- {order_id}, Carrier = {carrier} and Tracking - {package_tracking_number}')
 
             if package_tracking_number is None:
-                LOGGER.info(f'add_items_to_fulfill - no package tracking number found - skip order {order_id}.')
+                LOGGER.info(
+                    f'add_items_to_fulfill - no package tracking number found - skip order {order_id}.')
                 continue
 
             if order_id in order_tracking_data:
@@ -194,15 +215,15 @@ class RetrieveNetsuiteItem():
 
                 location = get_location_from_item_fulfillment(item_fulfillment)
 
-                ## Checking if the data exists already.
+                # Checking if the data exists already.
                 for item in order_tracking_data[order_id]:
-                    ## If the document_number is the same -- we append the product ids
-                    ## To the same IF Document number from the saved search.
+                    # If the document_number is the same -- we append the product ids
+                    # To the same IF Document number from the saved search.
 
                     if item['document_number'] == if_document_number:
                         item['product_ids'].extend(product_ids)
-                        ## Since the other details are the same except the id,
-                        ## We will be moving to next step.
+                        # Since the other details are the same except the id,
+                        # We will be moving to next step.
                         continue
 
                 item = {
@@ -232,15 +253,44 @@ class RetrieveNetsuiteItem():
                     'document_number': if_document_number
                 }
 
-                LOGGER.info(f'Add Order to Order Tracking data: {order_id} ==> {item}')
+                LOGGER.info(
+                    f'Add Order to Order Tracking data: {order_id} ==> {item}')
 
                 order_tracking_data[order_id] = [item]
 
-        return order_tracking_data, data_to_update
+        return order_tracking_data, data_to_update, giftcards_data
 
+    def extract_giftcard_data(self, item_fulfillment, currency, customer_email):
+        giftcard_activation_data = []
+        for items in item_fulfillment['itemList']['item']:
+            result = dict(map(lambda item: (
+                item['scriptId'], item['value']), items['customFieldList']['customField']))
+            if 'custcol_nws_gcnumber' in result:
+                giftcard_activation_data.append(
+                    {
+                        'card_number': result['custcol_nws_gcnumber'],
+                        'amount':
+                        {
+                            'value': result['custcol_fao_retailprice'],
+                            'currency': currency
+                        },
+                        'customer':
+                        {
+                            'id': item_fulfillment['internalId'],
+                            'email': customer_email,
+                            'name': item_fulfillment['shippingAddress']['addressee'],
+                            'greeting_name': item_fulfillment['shippingAddress']['addressee']
+                        },
+                        'metadata': {
+                            'original_operation': 'activation'
+                        },
+                        'idempotence_key': str(uuid.uuid4())}
+                )
+        return giftcard_activation_data
     #
     # - Add the external id Newstore based on the createdFrom information
     #
+
     async def add_external_id_newstore(self, data_to_update, external_id_list_newstore):
         for data in data_to_update:
             internal_id = data['createdFrom']
@@ -304,7 +354,8 @@ class RetrieveNetsuiteItem():
     async def retrieve_transaction_information(self, list_internal_id):
         try:
             transaction_type = '_salesOrder'
-            id_references = [RecordRef(internalId=id) for id in list_internal_id]
+            id_references = [RecordRef(internalId=id)
+                             for id in list_internal_id]
             transaction_search = TransactionSearchBasic(
                 type=SearchEnumMultiSelectField(
                     searchValue=[transaction_type],
@@ -318,7 +369,8 @@ class RetrieveNetsuiteItem():
             )
 
             result = run_until_success(
-                lambda: search_records_using(transaction_search, self.search_page_size),
+                lambda: search_records_using(
+                    transaction_search, self.search_page_size),
                 function_description='retrieval of transaction information')
             r = result.body.searchResult
 
@@ -328,8 +380,11 @@ class RetrieveNetsuiteItem():
             product_ids_list = {}
 
             if not r.status.isSuccess or not r.recordList:
-                LOGGER.error(f'retrieve_transaction_information - error during the search: {r}')
+                LOGGER.error(
+                    f'retrieve_transaction_information - error during the search: {r}')
                 return {}
+            LOGGER.info(
+                f'Sales Transaction retrieved: {r.recordList}')
 
             for record_item in r.recordList.record:
                 shipping_method_name = None
@@ -340,6 +395,9 @@ class RetrieveNetsuiteItem():
                 tran_id = record_item['tranId']
                 mapping_internal_id_sales_order[internal_id_value] = tran_id
                 item_list = record_item['itemList']['item']
+                currency = NetSuiteMapping().get_currency_code(
+                    record_item['currency']['internalId'])
+                customer_email = record_item['email']
                 shipping_method = record_item['shipMethod']
                 if shipping_method is not None:
                     shipping_method_name = shipping_method['name']
@@ -354,14 +412,16 @@ class RetrieveNetsuiteItem():
                     "linkedTrackingNumbers": linked_tracking_numbers
                 }
                 shipping_data_list[internal_id_value] = shipping_data
-                product_id_list = [item['item']['internalId'] for item in item_list]
+                product_id_list = [item['item']['internalId']
+                                   for item in item_list]
                 product_ids_list[internal_id_value] = product_id_list
                 external_id_list_newstore[internal_id_value] = external_id_newstore
 
-            return mapping_internal_id_sales_order, shipping_data_list, external_id_list_newstore, product_ids_list
+            return mapping_internal_id_sales_order, shipping_data_list, external_id_list_newstore, product_ids_list, currency, customer_email
 
         except Exception as e:  # pylint: disable=broad-except
-            LOGGER.error(f'retrieve_transaction_information - error: {e}', exc_info=True)
+            LOGGER.error(
+                f'retrieve_transaction_information - error: {e}', exc_info=True)
             return None
 
 
@@ -375,7 +435,8 @@ def run_until_success(function_to_run, function_description='method', max_tries=
             success = True
             break
         except Exception as e:  # pylint: disable=broad-except
-            LOGGER.warning(f'Failed running {function_description}. Error: {str(e)}', exc_info=True)
+            LOGGER.warning(
+                f'Failed running {function_description}. Error: {str(e)}', exc_info=True)
             last_exception = e
             time.sleep(seconds_between_runs)
 
@@ -399,6 +460,8 @@ def get_product_ids_from_item_fulfillment(item_fulfillment):
 # Gets the carrier name from a custom field. F&O uses a module called
 # ShipHawk in the warehouse, and they set the below custom field as carrier.
 #
+
+
 def get_carrier_from_custom_field_list(custom_field_list):
     for custom_field in custom_field_list:
         script_id = custom_field['scriptId']
@@ -415,7 +478,8 @@ def get_location_from_item_fulfillment(item_fulfillment):
     for item in items:
         if 'location' in item:
             location_id = item['location']['internalId']
-            location = get_newstore_location_from_netsuite_internal_id(location_id)
+            location = get_newstore_location_from_netsuite_internal_id(
+                location_id)
 
     return location
 
