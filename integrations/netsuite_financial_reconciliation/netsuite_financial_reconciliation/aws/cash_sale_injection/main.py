@@ -34,9 +34,7 @@ NETSUITE_CONFIG = util.get_netsuite_config()
 NEWSTORE_TO_NETSUITE_LOCATIONS = util.get_newstore_to_netsuite_locations_config()
 NEWSTORE_TO_NETSUITE_CHANNEL = util.get_newstore_to_netsuite_channel_config()
 NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS = util.get_newstore_to_netsuite_payment_items_config()
-# TODO check if we need the below feature for the integration pylint: disable=fixme
-# util.get_newstore_to_netsuite_payment_account_config()
-NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT = {}
+NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT = util.get_newstore_to_netsuite_payment_account_config()
 
 
 def handler(event, context):  # pylint: disable=W0613
@@ -200,8 +198,9 @@ def get_customer_netsuite_internal_id(order):
     netsuite_customer_internal_id = upsert_netsuite_customer(customer)
     return RecordRef(internalId=netsuite_customer_internal_id)
 
-
 # extracts transactions from order data (GraphQL API response)
+
+
 def get_capture_transactions(order):
     transactions = []
     for transaction in order['paymentAccount']['transactions']['nodes']:
@@ -306,6 +305,8 @@ def get_payment_method(order):
     in case of split payments, When ‘Adyen’ is involved -  always map to Adyen (internal ID:13)
     Cash & Gift card - map to Cash (internal ID: 1)
     """
+    LOGGER.info(f"Transactions {transactions}")
+
     for transaction in transactions:
         payment_method = transaction['instrument']['paymentMethod'].lower()
         if payment_method == 'credit_card':
@@ -566,9 +567,9 @@ async def process_events(message):
     cash_sale['itemList'] = CashSaleItemList(
         create_cash_sale_item_list(order_payload, order))
     # TODO Enable again once we know if payment items can be used pylint: disable=fixme
-    # if order['paymentAccount'] is not None:
-    #    payment_method_id = get_payment_method(order)
-    #    cash_sale['paymentMethod'] = RecordRef(internalId=payment_method_id)
+    if order['paymentAccount'] is not None:
+        payment_method_id = get_payment_method(order)
+        cash_sale['paymentMethod'] = RecordRef(internalId=payment_method_id)
     LOGGER.info('Going to send cash sale')
 
     LOGGER.info(f'Sending cash sale to NetSuite: {cash_sale}')

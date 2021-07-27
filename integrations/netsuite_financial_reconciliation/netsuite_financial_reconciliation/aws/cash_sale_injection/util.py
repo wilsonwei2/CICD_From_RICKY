@@ -73,7 +73,7 @@ def get_newstore_to_netsuite_payment_account_config():
     global NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT_CONFIG  # pylint: disable=W0603
     if not NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT_CONFIG:
         NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT_CONFIG = json.loads(
-            get_param_store().get_param('netsuite/newstore_to_netsuite_payment_account'))
+            get_param_store().get_param('netsuite/newstore_to_netsuite_payment_methods'))
     return NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT_CONFIG
 
 def get_giftcard_product_ids_config():
