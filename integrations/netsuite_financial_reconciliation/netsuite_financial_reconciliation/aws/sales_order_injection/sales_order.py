@@ -4,7 +4,7 @@ import numbers
 import re
 import pytz
 
-from netsuite.api.customer import lookup_customer_id_by_name_and_email, update_customer, create_customer
+from netsuite.api.customer import lookup_customer_id_by_email, update_customer, create_customer
 from netsuite.api.sale import create_salesorder
 from netsuite.service import (
     SalesOrderItem,
@@ -141,7 +141,7 @@ def get_customer_internal_id(order_event, order_data, consumer):
                 }
 
     # If customer is found we update it, but only if it is the same subsidiary
-    netsuite_customer_internal_id = lookup_customer_id_by_name_and_email(netsuite_customer)
+    netsuite_customer_internal_id = lookup_customer_id_by_email(netsuite_customer)
     if netsuite_customer_internal_id:
         LOGGER.info('Customer exists, updating the customer.')
         netsuite_customer['internalId'] = netsuite_customer_internal_id

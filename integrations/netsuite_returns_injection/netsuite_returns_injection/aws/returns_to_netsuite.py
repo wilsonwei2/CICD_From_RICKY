@@ -365,7 +365,7 @@ def get_or_create_customer(order_data):
         customer['addressbookList'] = customer_addr_book_list
 
     # If customer is found we update it, but only if it is the same subsidiary
-    netsuite_customer_internal_id = nsac.lookup_customer_id_by_name_and_email(
+    netsuite_customer_internal_id = nsac.lookup_customer_id_by_email(
         customer)
     if netsuite_customer_internal_id:
         LOGGER.info('Customer exists, we will update it')

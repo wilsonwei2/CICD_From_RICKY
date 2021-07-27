@@ -8,7 +8,7 @@ import pytz
 
 # Runs startup processes (expecting to be 'unused')
 import netsuite.netsuite_environment_loader  # pylint: disable=W0611
-from netsuite.api.customer import create_customer, lookup_customer_id_by_name_and_email
+from netsuite.api.customer import create_customer, lookup_customer_id_by_email
 from netsuite.api.sale import create_cashsale
 from netsuite.api.item import get_product_by_name
 from netsuite.service import (
@@ -184,7 +184,7 @@ def get_customer_info(order):
 
 
 def upsert_netsuite_customer(customer):
-    netsuite_customer_internal_id = lookup_customer_id_by_name_and_email(
+    netsuite_customer_internal_id = lookup_customer_id_by_email(
         customer)
     if netsuite_customer_internal_id:
         return netsuite_customer_internal_id

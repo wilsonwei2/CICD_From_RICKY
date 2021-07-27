@@ -89,7 +89,7 @@ async def get_or_create_customer(cash_refund):
     customer = cash_refund['entity']
 
     if isinstance(customer, Mapping):
-        internal_id = ns_c.lookup_customer_id_by_name_and_email(customer)
+        internal_id = ns_c.lookup_customer_id_by_email(customer)
     else:
         internal_id = customer['internalId']
 
