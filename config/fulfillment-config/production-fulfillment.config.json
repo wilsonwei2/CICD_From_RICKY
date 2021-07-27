@@ -15,31 +15,17 @@
             "shipping_type": "traditional_carrier",
             "use_as_customer_facing_cost": true
         },
-        "NextDayAirEarlyAM": {
-          "return_provider_rate": "",
-          "service_level": "NEXT_DAY_AIR_EARLYAM",
-          "shipping_carrier_name": "UPS",
-          "shipping_type": "same_day_delivery",
-          "use_as_customer_facing_cost": true
-      },
-      "NextDayAirSaver": {
-          "return_provider_rate": "",
-          "service_level": "NEXT_DAY_AIR_SAVER",
-          "shipping_carrier_name": "UPS",
-          "shipping_type": "same_day_delivery",
-          "use_as_customer_facing_cost": true
-      },
-      "NextDayAir": {
-          "return_provider_rate": "",
-          "service_level": "NEXT_DAY_AIR",
-          "shipping_carrier_name": "UPS",
-          "shipping_type": "same_day_delivery",
-          "use_as_customer_facing_cost": true
-      },
       "Expedited": {
           "return_provider_rate": "",
           "service_level": "EXPEDITED",
           "shipping_carrier_name": "UPS",
+          "shipping_type": "traditional_carrier",
+          "use_as_customer_facing_cost": true
+      },
+      "Express": {
+          "return_provider_rate": "",
+          "service_level": "EXPRESS",
+          "shipping_carrier_name": "USP",
           "shipping_type": "traditional_carrier",
           "use_as_customer_facing_cost": true
       },
@@ -71,40 +57,26 @@
           "shipping_type": "same_day_delivery",
           "use_as_customer_facing_cost": false
         },
-        "PriorityMailInternational": {
+        "XpresspostUSA": {
             "return_provider_rate": "",
-            "service_level": "PRIORITY_INTER",
-            "shipping_carrier_name": "USPS",
+            "service_level": "EXPRESS_POST_USA",
+            "shipping_carrier_name": "CAPOST",
             "shipping_type": "traditional_carrier",
             "use_as_customer_facing_cost": true
         },
-        "ExpressMailInternational": {
+        "ExpeditedParcelUSA": {
             "return_provider_rate": "",
-            "service_level": "EXPRESS_INTER",
-            "shipping_carrier_name": "USPS",
+            "service_level": "EXPEDITED_PARCEL_USA",
+            "shipping_carrier_name": "CAPOST",
             "shipping_type": "traditional_carrier",
             "use_as_customer_facing_cost": true
         },
-        "Express": {
-              "return_provider_rate": "",
-              "service_level": "EXPRESS",
-              "shipping_carrier_name": "UPS",
-              "shipping_type": "traditional_carrier",
-              "use_as_customer_facing_cost": true
-        },
-        "CustomStandard": {
-          "return_provider_rate": "",
-          "service_level": "Standard",
-          "shipping_carrier_name": "CUSTOM",
-          "shipping_type": "traditional_carrier",
-          "use_as_customer_facing_cost": true
-        },
-        "CustomExpress": {
-          "return_provider_rate": "",
-          "service_level": "Express",
-          "shipping_carrier_name": "CUSTOM",
-          "shipping_type": "traditional_carrier",
-          "use_as_customer_facing_cost": true
+        "TrackedPacketUSA": {
+            "return_provider_rate": "",
+            "service_level": "TRACKED_PACKET_USA",
+            "shipping_carrier_name": "CAPOST",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
         }
       },
       "routes": [
@@ -114,7 +86,1108 @@
                   "CA"
                 ],
                 "zip_codes": [
-                    "*"
+                  "A*",
+                  "B*",
+                  "C*",
+                  "E*",
+                  "G*",
+                  "H*",
+                  "J*"
+                ]
+              },
+              "fulfilled_by": {
+                  "EXPRESS_POST": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Xpresspost"
+                      }
+                  ],
+                  "EXPEDITED_PARCEL": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "ExpeditedParcel"
+                      }
+                  ],
+                  "PRIORITY": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Priority"
+                      }
+                  ],
+                  "STANDARD_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "UPSStandard"
+                      }
+                  ],
+                  "SAVER_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "UPSSaver"
+                      }
+                  ],
+                  "EXPRESS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "UPSStanExpressdard"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Express"
+                      }
+                  ],
+                  "EXPEDITED": [
+                    {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STANST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STWST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "MTLST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VIAST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DIXST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "FOYST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                      "fulfillment_node_id": "TECST",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "TOST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DONST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "RIDST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VANST",
+                        "provider_rate": "Expedited"
+                    }
+                  ]
+              }
+          },
+          {
+            "destination_region": {
+                "countries": [
+                  "CA"
+                ],
+                "zip_codes": [
+                  "L*",
+                  "M*",
+                  "N*",
+                  "P*",
+                  "R*",
+                  "K*"
+                ]
+              },
+              "fulfilled_by": {
+                  "EXPRESS_POST": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Xpresspost"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Xpresspost"
+                      }
+                  ],
+                  "EXPEDITED_PARCEL": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "ExpeditedParcel"
+                      }
+                  ],
+                  "PRIORITY": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Priority"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Priority"
+                      }
+                  ],
+                  "STANDARD_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSStandard"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "UPSStandard"
+                      }
+                  ],
+                  "SAVER_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSSaver"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "UPSSaver"
+                      }
+                  ],
+                  "EXPRESS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Express"
+                      }
+                  ],
+                  "EXPEDITED": [
+                    {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                      "fulfillment_node_id": "TECST",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "TOST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DONST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "RIDST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STANST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STWST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "MTLST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VIAST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DIXST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "FOYST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VANST",
+                        "provider_rate": "Expedited"
+                    }
+                  ]
+              }
+          },
+          {
+            "destination_region": {
+              "countries": [
+                  "CA"
+              ],
+              "zip_codes": [
+                  "S*",
+                  "T*",
+                  "V*",
+                  "X*",
+                  "Y*"
+                ]
+              },
+              "fulfilled_by": {
+                  "EXPRESS_POST": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Xpresspost"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Xpresspost"
+                      }
+                  ],
+                  "EXPEDITED_PARCEL": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "ExpeditedParcel"
+                      }
+                  ],
+                  "PRIORITY": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Priority"
+                      }
+                  ],
+                  "STANDARD_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "UPSStandard"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "UPSStandard"
+                      }
+                  ],
+                  "SAVER_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "UPSSaver"
+                      }
+                  ],
+                  "EXPRESS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Express"
+                      }
+                  ],
+                  "EXPEDITED": [
+                    {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "RIDST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                      "fulfillment_node_id": "TECST",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "TOST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DONST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STANST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STWST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "MTLST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VIAST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DIXST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "FOYST",
+                        "provider_rate": "Expedited"
+                    }
+                  ]
+              }
+          },
+          {
+            "destination_region": {
+              "countries": [
+                  "CA"
+              ],
+              "zip_codes": [
+                  "*"
                 ]
               },
               "fulfilled_by": {
@@ -168,6 +1241,106 @@
                           "provider_rate": "Xpresspost"
                       }
                   ],
+                  "EXPEDITED_PARCEL": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "ExpeditedParcel"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "ExpeditedParcel"
+                      }
+                  ],
+                  "PRIORITY": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Priority"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Priority"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Priority"
+                      }
+                  ],
                   "STANDARD_UPS": [
                       {
                         "fulfillment_node_id": "MTLDC1",
@@ -218,90 +1391,158 @@
                           "provider_rate": "UPSStandard"
                       }
                   ],
-                  "REGULAR_PARCEL": [
-                    {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "RegularParcel"
-                    },
-                    {
-                      "fulfillment_node_id": "TECST",
-                      "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "TOST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "DONST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "STANST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "STWST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "MTLST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "VIAST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "DIXST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "FOYST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "RIDST",
-                        "provider_rate": "RegularParcel"
-                    },
-                    {
-                        "fulfillment_node_id": "VANST",
-                        "provider_rate": "RegularParcel"
-                    }
+                  "SAVER_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSSaver"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "UPSSaver"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "UPSSaver"
+                      }
                   ],
-                  "NEXT_DAY_AIR_EARLYAM": [
-                    {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "NextDayAirEarlyAM"
-                    }
-                  ],
-                  "NEXT_DAY_AIR_SAVER": [
-                    {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "NextDayAirSaver"
-                    }
-                  ],
-                  "NEXT_DAY_AIR": [
-                    {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "NextDayAir"
-                    }
+                  "EXPRESS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
+                          "provider_rate": "Express"
+                      }
                   ],
                   "EXPEDITED": [
                     {
                       "fulfillment_node_id": "MTLDC1",
                       "provider_rate": "Expedited"
-                    }
-                  ],
-                  "Standard": [
+                    },
                     {
                       "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "CustomStandard"
-                    }
-                  ],
-                  "Express": [
+                      "provider_rate": "Expedited"
+                    },
                     {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "CustomExpress"
+                      "fulfillment_node_id": "TECST",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "TOST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DONST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STANST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STWST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "MTLST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VIAST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DIXST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "FOYST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "RIDST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VANST",
+                        "provider_rate": "Expedited"
                     }
                   ]
               }
@@ -316,9 +1557,83 @@
                   ]
               },
               "fulfilled_by": {
+                  "GROUND": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                    }
+                  ],
+                  "3DAYSELECT": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                    }
+                  ],
+                  "EXPRESS_POST_USA": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "XpresspostUSA"
+                    }
+                  ],
+                  "EXPEDITED_PARCEL_USA": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "ExpeditedParcelUSA"
+                    }
+                  ],
+                  "TRACKED_PACKET_USA": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "TrackedPacketUSA1"
+                    }
+                  ],
                   "EXPRESS": [
                       {
                           "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "Express"
+                      },
+                      {
+                        "fulfillment_node_id": "TECST",
+                        "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "TOST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DONST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STANST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "STWST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "MTLST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VIAST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "DIXST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "FOYST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "RIDST",
+                          "provider_rate": "Express"
+                      },
+                      {
+                          "fulfillment_node_id": "VANST",
                           "provider_rate": "Express"
                       }
                   ],
@@ -326,24 +1641,102 @@
                     {
                       "fulfillment_node_id": "MTLDC1",
                       "provider_rate": "UPSSaver"
-                    }
-                  ],
-                  "STANDARD_UPS": [
-                    {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "UPSStandard"
                     },
                     {
-                      "fulfillment_node_id": "MTLST",
-                      "provider_rate": "UPSStandard"
+                      "fulfillment_node_id": "TECST",
+                      "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "TOST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "DONST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "STANST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "STWST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "MTLST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "VIAST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "DIXST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "FOYST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "RIDST",
+                        "provider_rate": "UPSSaver"
+                    },
+                    {
+                        "fulfillment_node_id": "VANST",
+                        "provider_rate": "UPSSaver"
                     }
-                ],
-                "EXPEDITED": [
-                  {
-                    "fulfillment_node_id": "MTLDC1",
-                    "provider_rate": "Expedited"
-                  }
-                ]
+                  ],
+                  "EXPEDITED": [
+                    {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                      "fulfillment_node_id": "TECST",
+                      "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "TOST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DONST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STANST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "STWST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "MTLST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VIAST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "DIXST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "FOYST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "RIDST",
+                        "provider_rate": "Expedited"
+                    },
+                    {
+                        "fulfillment_node_id": "VANST",
+                        "provider_rate": "Expedited"
+                    }
+                  ]
               }
           },
           {
@@ -362,18 +1755,24 @@
                 ]
             },
             "fulfilled_by": {
-                "EXPRESS_INTER": [
-                    {
-                        "fulfillment_node_id": "MTLDC1",
-                        "provider_rate": "ExpressMailInternational"
-                    }
-                ],
-                "PRIORITY_INTER": [
+                "EXPRESS": [
                   {
                       "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "PriorityMailInternational"
+                      "provider_rate": "Express"
                   }
-              ]
+                ],
+                "SAVER_UPS": [
+                  {
+                    "fulfillment_node_id": "MTLDC1",
+                    "provider_rate": "UPSSaver"
+                  }
+                ],
+                "EXPEDITED": [
+                  {
+                    "fulfillment_node_id": "MTLDC1",
+                    "provider_rate": "Expedited"
+                  }
+                ]
             }
         }
       ],
@@ -384,97 +1783,97 @@
           "delivery_time_after_cutoff_hour": "2 - 3 business days",
           "display_name": "Express Delivery",
           "price": 0,
-          "remorse_period": 0,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "STANDARD_UPS": {
           "currency_code": "",
-          "delivery_time": "3 - 5 business days",
+          "delivery_time": "1 - 5 business days",
           "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Standard Delivery UPS",
+          "display_name": "UPS Standard",
           "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "SAVER_UPS": {
           "currency_code": "",
-          "delivery_time": "3 - 5 business days",
-          "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Standard Delivery Saver UPS",
+          "delivery_time": "1 - 4 business days",
+          "delivery_time_after_cutoff_hour": "1 - 4 business days",
+          "display_name": "UPS Saver",
           "price": 0,
-          "remorse_period": 60,
-          "tax_code": "CA"
-        },
-        "NEXT_DAY_AIR_EARLYAM": {
-          "currency_code": "",
-          "delivery_time": "3 - 5 business days",
-          "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Next Day Delivery AIR EARLY AM UPS",
-          "price": 0,
-          "remorse_period": 60,
-          "tax_code": "CA"
-        },
-        "NEXT_DAY_AIR_SAVER": {
-          "currency_code": "",
-          "delivery_time": "3 - 5 business days",
-          "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Next Day Delivery AIR EARLY SAVER UPS",
-          "price": 0,
-          "remorse_period": 60,
-          "tax_code": "CA"
-        },
-        "NEXT_DAY_AIR": {
-          "currency_code": "",
-          "delivery_time": "3 - 5 business days",
-          "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Next Day Delivery AIR UPS",
-          "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "EXPEDITED": {
           "currency_code": "",
           "delivery_time": "3 - 5 business days",
           "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Express Delivery EXPEDITED UPS",
+          "display_name": "UPS Expedited",
           "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "EXPEDITED_PARCEL": {
           "currency_code": "",
-          "delivery_time": "3 - 5 business days",
-          "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Express Delivery EXPEDITED PARCEL CanadaPost",
+          "delivery_time": "1 - 7 business days",
+          "delivery_time_after_cutoff_hour": "1 - 7 business days",
+          "display_name": "CanadaPost Expedited Parcel",
           "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "REGULAR_PARCEL": {
           "currency_code": "",
           "delivery_time": "3 - 5 business days",
           "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Standard Delivery REGULARPARCEL CanadaPost",
+          "display_name": "CanadaPost Regular Parcel",
           "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "PRIORITY": {
           "currency_code": "",
-          "delivery_time": "3 - 5 business days",
-          "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Express Delivery PRIORITY CanadaPost",
+          "delivery_time": "Next Day",
+          "delivery_time_after_cutoff_hour": "Next Day",
+          "display_name": "CanadaPost Priority",
           "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "EXPRESS_POST": {
           "currency_code": "",
           "delivery_time": "3 - 5 business days",
           "delivery_time_after_cutoff_hour": "3 - 5 business days",
-          "display_name": "Express Delivery EXPRESS POST CanadaPost",
+          "display_name": "CanadaPost XPresspost",
           "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
+          "tax_code": "CA"
+        },
+        "EXPRESS_POST_USA": {
+          "currency_code": "",
+          "delivery_time": "1 - 7 business days",
+          "delivery_time_after_cutoff_hour": "1 - 7 business days",
+          "display_name": "CanadaPost XPresspost USA",
+          "price": 0,
+          "remorse_period": 360,
+          "tax_code": "CA"
+        },
+        "EXPEDITED_PARCEL_USA": {
+          "currency_code": "",
+          "delivery_time": "1 - 7 business days",
+          "delivery_time_after_cutoff_hour": "1 - 7 business days",
+          "display_name": "CanadaPost Expedited Parcel USA",
+          "price": 0,
+          "remorse_period": 360,
+          "tax_code": "CA"
+        },
+        "TRACKED_PACKET_USA": {
+          "currency_code": "",
+          "delivery_time": "1 - 7 business days",
+          "delivery_time_after_cutoff_hour": "1 - 7 business days",
+          "display_name": "CanadaPost Tracked Packet USA",
+          "price": 0,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "PRIORITY_INTER": {
@@ -483,7 +1882,7 @@
           "delivery_time_after_cutoff_hour": "3 - 5 business days",
           "display_name": "International Standard Delivery CanadaPost",
           "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
         "EXPRESS_INTER": {
@@ -492,24 +1891,24 @@
           "delivery_time_after_cutoff_hour": "3 - 5 business days",
           "display_name": "International Express Delivery CanadaPost",
           "price": 0,
-          "remorse_period": 60,
+          "remorse_period": 360,
           "tax_code": "CA"
         },
-        "Standard": {
-            "currency_code": "",
-            "delivery_time": "3 - 5 business days",
-            "delivery_time_after_cutoff_hour": "3 - 5 business days",
-            "display_name": "Standard Delivery",
-            "price": 0,
-            "remorse_period": 60,
-            "tax_code": "CA"
-        },
-        "Express": {
+        "GROUND": {
           "currency_code": "",
-          "delivery_time": "1 - 2 business days",
-          "delivery_time_after_cutoff_hour": "1 - 2 business days",
-          "display_name": "Express Delivery",
+          "delivery_time": "2 - 3 business days",
+          "delivery_time_after_cutoff_hour": "2 - 3 business days",
+          "display_name": "Ground Delivery",
           "price": 0,
+          "remorse_period": 360,
+          "tax_code": "CA"
+        },
+        "3DAYSELECT": {
+          "currency_code": "",
+          "delivery_time": "2 - 3 business days",
+          "delivery_time_after_cutoff_hour": "2 - 3 business days",
+          "display_name": "Ground Delivery",
+          "price": 360,
           "remorse_period": 0,
           "tax_code": "CA"
         }
@@ -518,46 +1917,30 @@
           "EXPRESS",
           "STANDARD_UPS",
           "SAVER_UPS",
-          "NEXT_DAY_AIR_EARLYAM",
-          "NEXT_DAY_AIR_SAVER",
-          "NEXT_DAY_AIR",
           "EXPEDITED",
           "EXPEDITED_PARCEL",
           "REGULAR_PARCEL",
           "PRIORITY",
           "EXPRESS_POST",
+          "EXPRESS_POST_USA",
+          "EXPEDITED_PARCEL_USA",
+          "TRACKED_PACKET_USA",
           "PRIORITY_INTER",
           "EXPRESS_INTER",
-          "Standard",
-          "Express"
+          "GROUND",
+          "3DAYSELECT"
       ],
       "provider_rates_priority": {
           "*": {
               "*": {
-                  "Standard": [
-                    "CustomStandard"
-                  ],
-                  "Express": [
-                    "Expedited",
-                    "ExpeditedParcel"
-                  ],
-                  "EXPRESS": [
-                      "Express"
-                  ],
                   "STANDARD_UPS": [
                     "UPSStandard"
                   ],
                   "SAVER_UPS": [
                     "UPSSaver"
                   ],
-                  "NEXT_DAY_AIR_EARLYAM": [
-                    "NextDayAirEarlyAM"
-                  ],
-                  "NEXT_DAY_AIR_SAVER": [
-                    "NextDayAirSaver"
-                  ],
-                  "NEXT_DAY_AIR": [
-                    "NextDayAir"
+                  "EXPRESS": [
+                    "Express"
                   ],
                   "EXPEDITED": [
                     "Expedited"
@@ -574,11 +1957,14 @@
                   "EXPRESS_POST": [
                     "Xpresspost"
                   ],
-                  "PRIORITY_INTER": [
-                    "PriorityMailInternational"
+                  "EXPRESS_POST_USA": [
+                    "XpresspostUSA"
                   ],
-                  "EXPRESS_INTER": [
-                    "ExpressMailInternational"
+                  "EXPEDITED_PARCEL_USA": [
+                    "ExpeditedParcelUSA"
+                  ],
+                  "TRACKED_PACKET_USA": [
+                    "TrackedPacketUSA"
                   ]
               }
           }
