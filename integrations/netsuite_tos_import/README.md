@@ -56,3 +56,4 @@ in NewStore.
     "location_2_id_nom": {"id": 2, ...}
 }
 ```
+

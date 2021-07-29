@@ -29,3 +29,4 @@ in NewStore }
      V
 { Update each ItemFulfillment in NetSuite and mark as processed }
 ```
+

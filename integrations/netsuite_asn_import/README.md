@@ -71,3 +71,4 @@ fire a `inventory_transaction.items_received` event, which is handled in the
 
 ## References
 - [NewStore ASN Reference](https://apidoc.newstore.io/newstore-cloud/newstore.html#/asns-create-asn)
+

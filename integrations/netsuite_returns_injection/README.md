@@ -19,3 +19,4 @@ and injects them into NetSuite as CashRefunds/CreditMemos.
 ## References
 
 - [NewStore Event Stream](https://apidoc.newstore.io/newstore-cloud/hooks_eventstream.html)
+
