@@ -25,15 +25,3 @@ class TestFrankAndOakEventStreamReceiver(unittest.TestCase):
         }
         self.handler(event, None)
         mock_push_message_to_sqs.assert_called_once_with('SQS_RETURN_PROCESSED', {'payload': {'published_at': ''}})
-
-    @patch('netsuite_event_stream_receiver.aws.receive_events.push_message_to_sqs', autospec=True)
-    @patch('netsuite_event_stream_receiver.aws.receive_events.is_historical_order', autospec=True)
-    def test_handler_fulfillment_complete_historical(self, mock_is_historical_order, mock_push_message_to_sqs):
-        future = asyncio.Future()
-        future.set_result(True)
-        mock_is_historical_order.return_value = future
-        event = {
-            "body": "{\"payload\": {\"order_id\": \"order_id\"},\"published_at\": \"\",\"name\": \"fulfillment_request.items_completed\"}"
-        }
-        self.handler(event, None)
-        self.assertFalse(mock_push_message_to_sqs.called)

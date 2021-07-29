@@ -49,11 +49,13 @@ async def process_fulfillment_assignment(message):
     if 'service_level' in fulfillment_request and fulfillment_request['service_level'] == 'IN_STORE_HANDOVER':
         return True
 
-    external_order_id = get_external_order_id(fulfillment_request['order_id'])
-    # TODO - check and remove this if not needed # pylint: disable=fixme
-    if external_order_id.startswith("HIST-"):
-        LOGGER.info("Skipping Historical Order")
+    ns_order = get_external_order(fulfillment_request['order_id'])
+    if ns_order['channel'] == 'magento':
+        LOGGER.info('Skipping Historical Order')
         return True
+
+    external_order_id = ns_order['external_order_id']
+    LOGGER.info(f'External order id is {external_order_id}')
 
     # Get the Netsuite Sales Order
     sales_order = await get_sales_order(external_order_id)
@@ -149,17 +151,8 @@ def _run_dead_letter():
     return False
 
 
-def _get_activity_created_at(activities, key):
-    result = next((item['created_at'] for item in activities if item['name'] == key), None)
-    return result or ''
-
-
-def get_external_order_id(uuid):
-    body = NEWSTORE_HANDLER.get_external_order(uuid, id_type='id')
-    external_order_id = body['external_order_id']
-    LOGGER.info(f'External order id is {external_order_id}')
-
-    return external_order_id
+def get_external_order(uuid):
+    return NEWSTORE_HANDLER.get_external_order(uuid, id_type='id')
 
 
 def get_item_name(item, product_ids_in_fulfillment):

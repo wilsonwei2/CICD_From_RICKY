@@ -66,6 +66,11 @@ async def process_return(message):
     LOGGER.info(f"Message to process: \n {json.dumps(message, indent=4)}")
     ns_return = message['payload']
 
+    # The lambda should not ignore returns to historical orders, it should just ignore historical returns
+    if check_historic_return(ns_return):
+        LOGGER.info('Skipping Historical Return...')
+        return True
+
     # The customer_order endpoint is defined in the `affiliate app` end points
     customer_order_envelope = Utils.get_newstore_conn(
     ).get_customer_order(ns_return['order_id'])
@@ -93,11 +98,6 @@ async def process_return(message):
         raise Exception(
             'Payment Account for order %s not found on NewStore' % ns_return['order_id'])
     LOGGER.info(f'payments_info: \n{json.dumps(payments_info, indent=4)}')
-
-    # The lambda should not ignore returns to historical orders, it should just ignore historical returns
-    if check_historic_return(payments_info, ns_return['id']):
-        LOGGER.info('Skipping Historical Return...')
-        return True
 
     store_tz = await get_store_tz_by_customer_order(customer_order)
     LOGGER.info(f'Timezone: {store_tz}')
@@ -557,29 +557,15 @@ def inject_credit_memo(return_parsed):
     return response
 
 
-def check_historic_return(payments, return_id):
-    for payment in payments['instruments']:
-        for original_payment in payment['original_transactions']:
-            if is_historical_return(original_payment, return_id):
-                return True
-    return False
+def check_historic_return(ns_return):
+    order_returns = Utils.get_newstore_conn().get_returns(ns_return['order_id'])
 
-
-def is_historical_return(original_payment, return_id):
-    if original_payment['reason'] == 'refund' \
-            and original_payment['correlation_id'] == return_id \
-            and original_payment.get('metadata', {}):
-        extended_attributes = original_payment.get(
-            'metadata', {}).get('extended_attributes', [])
-        is_historical = dict(next(
-            (attribute for attribute in extended_attributes if attribute['name'] == 'is_historical'), {}))
-
-        if is_historical.get('value', 'False').lower() in ('1', 'yes', 'true', 1):
-            LOGGER.info(
-                'This is a historical return and will not be processed. Discarding....')
+    for order_return in order_returns:
+        if ns_return['id'] == order_return['return_id'] and order_return['is_historical']:
             return True
 
     return False
+
 
 #
 # Parses the product id from the netsuite item name

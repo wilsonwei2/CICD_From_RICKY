@@ -50,11 +50,11 @@ async def process_fulfillment(message):
 
     customer_order = customer_order_envelope['customer_order']
 
-    order_external_id = customer_order['sales_order_external_id']
-    if order_external_id.startswith('HIST-'):
-        LOGGER.info('Skip fulfillment request because is a Historical Order')
+    if customer_order['channel'] == 'magento':
+        LOGGER.info('Skip fulfillment request because of a Historical Order')
         return True
 
+    order_external_id = customer_order['sales_order_external_id']
     fulfillment_location_id = fulfillment_request.get('fulfillment_location_id')
     if not Utils.is_store(fulfillment_location_id):
         LOGGER.info(f'Fulfillment request for order {order_external_id} has a DC fulfillment location and will be handled in the '
@@ -96,9 +96,8 @@ def create_item_fulfillment(fulfillment_request, sales_order):
 
 
 def update_sales_order(sales_order, fulfillment_request):
-    # TODO - configure the correct value pylint: disable=fixme
     fulfillment_rejected_script_id = os.environ.get('netsuite_fulfillment_rejected_flag_script_id',
-                                                    'custcol_ab_fulfillmentrejected')
+                                                    'custcol_nws_fulfillrejected')
     sales_order_update = nsas.SalesOrder(
         internalId=sales_order.internalId,
         itemList=sales_order.itemList

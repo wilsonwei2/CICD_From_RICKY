@@ -4,8 +4,6 @@ import json
 import asyncio
 import logging
 from lambda_utils.sqs.SqsHandler import SqsHandler
-from netsuite_event_stream_receiver.aws.graphql_query import ORDER_VALIDATION_QUERY
-from netsuite_event_stream_receiver.handlers.newstore_handler import NShandler
 from param_store.client import ParamStore
 
 LOGGER = logging.getLogger(__name__)
@@ -61,7 +59,9 @@ async def process_event(event): #pylint: disable=too-many-branches
 
     if event_type == 'order.opened':
         external_id = payload.get('external_id')
-        if external_id.startswith('HIST'):
+
+        # Ignore historical orders
+        if payload.get('is_historical', False):
             LOGGER.info(f'Ignore Historical order {external_id}')
             return True
 
@@ -83,21 +83,18 @@ async def process_event(event): #pylint: disable=too-many-branches
     elif event_type == 'return.processed':
         queue_name = SQS_RETURN_PROCESSED
     elif event_type == 'fulfillment_request.assigned':
-        # PROD -- ISSUE -- Commenting due to eventstream late response time.
-        # if await is_historical_or_instore(payload):
-        #     return True
+        if event_body.get('payload', {}).get('service_level') == 'IN_STORE_HANDOVER':
+            LOGGER.info('Received a fulfillment_request.assigned message with a service level of '
+                        'IN_STORE_HANDOVER. Will not process.')
+            return True
 
         queue_name = SQS_FULFILLMENT_ASSIGNED
     elif event_type == 'fulfillment_request.items_completed':
-        #PROD -- ISSUE -- Commenting due to eventstream late response time.
-        if await is_historical_order(payload['order_id']):
-            LOGGER.info('Ignoring Fulfillment completed for Historical Order')
-            return True
-
         if event_body.get('payload', {}).get('service_level') == 'IN_STORE_HANDOVER':
             LOGGER.info('Received a fulfillment_request.items_completed message with a service level of '
                         'IN_STORE_HANDOVER. Will not process.')
             return True
+
         queue_name = SQS_FULFILLMENT
     elif event_type == 'refund_request.issued':
         queue_name = SQS_APPEASEMENT_REFUND
@@ -114,52 +111,6 @@ def push_message_to_sqs(queue_name, message):
     sqs_handler = SqsHandler(queue_name=queue_name)
     sqs_handler.push_message(message_group_id=message['payload']['id'], message=json.dumps(message))
     LOGGER.info(f'Message pushed to SQS: {sqs_handler.queue_name}')
-
-
-async def is_historical_or_instore(payload):
-    if await is_historical_order(payload['order_id']):
-        LOGGER.info('Ignoring Fulfillment assignment for Historical Order')
-        return True
-
-    if payload['service_level'] == 'IN_STORE_HANDOVER':
-        LOGGER.info('Ignoring since the event is Instore Handover assignment')
-        return True
-
-
-async def is_historical_order(order_id):
-    param_store = get_param_store()
-
-    global NEWSTORE_HANDLER  # pylint: disable=W0603
-    newstore_creds = json.loads(param_store.get_param('newstore'))
-
-    NEWSTORE_HANDLER = NShandler(
-        host=newstore_creds['host'],
-        username=newstore_creds['username'],
-        password=newstore_creds['password']
-    )
-
-    variables = {
-        'id': order_id,
-        'tenant': TENANT
-    }
-
-    order_data = await NEWSTORE_HANDLER.graphql_req(ORDER_VALIDATION_QUERY, variables)
-
-    if order_data is not None:
-        details = order_data['data']
-        if 'order' in details:
-            if details['order'] is None:
-                return False
-            if 'externalId' in details['order']:
-                external_id = details['order']['externalId']
-                return external_id.startswith('HIST')
-
-        if 'order' in details:
-            if 'isHistorical' in details['order']:
-                is_historical_check = details['order']['isHistorical']
-                return bool(is_historical_check)
-
-    return False
 
 
 def get_param_store():
