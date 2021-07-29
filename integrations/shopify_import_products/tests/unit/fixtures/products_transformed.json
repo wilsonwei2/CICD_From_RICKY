@@ -2,7 +2,35 @@
   "head": {
     "locale": "en-US",
     "shop": "storefront-catalog-en",
-    "is_master": true
+    "is_master": true,
+    "filterable_attributes": [
+      {
+          "name": "fit",
+          "path": "$.extended_attributes[?(@.key == 'final_sale')].value"
+      }
+    ],
+    "searchable_attributes": [
+      {
+          "name": "product_id",
+          "path": "$.product_id",
+          "weight": 10
+      },
+      {
+          "name": "ean13",
+          "path": "$.external_identifiers[?(@.type == 'ean13')].value",
+          "weight": 5
+      },
+      {
+          "name": "title",
+          "path": "$.product_id",
+          "weight": 10
+      },
+      {
+          "name": "description",
+          "path": "$.product_id",
+          "weight": 9
+      }
+    ]
   },
   "items": [
     {

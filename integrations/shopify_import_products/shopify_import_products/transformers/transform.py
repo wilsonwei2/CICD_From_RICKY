@@ -28,7 +28,35 @@ def transform_products(jsonl_data, products_per_file, custom_size_mapping, local
             'head': {
                 'locale': locale_code,
                 'shop': f'storefront-catalog-{catalog}',
-                'is_master': True
+                'is_master': True,
+                'filterable_attributes': [
+                    {
+                        'name': 'fit',
+                        'path': "$.extended_attributes[?(@.key == 'final_sale')].value"
+                    }
+                ],
+                'searchable_attributes': [
+                    {
+                        'name': 'product_id',
+                        'path': '$.product_id',
+                        'weight': 10
+                    },
+                    {
+                        'name': 'ean13',
+                        'path': "$.external_identifiers[?(@.type == 'ean13')].value",
+                        'weight': 5
+                    },
+                    {
+                        'name': 'title',
+                        'path': '$.product_id',
+                        'weight': 10
+                    },
+                    {
+                        'name': 'description',
+                        'path': '$.product_id',
+                        'weight': 9
+                    }
+                ],
             },
             'items': [transform_variant(variant, custom_size_mapping, locale) for variant in variants]
         })
