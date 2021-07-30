@@ -31,8 +31,8 @@ def transform_products(jsonl_data, products_per_file, custom_size_mapping, local
                 'is_master': True,
                 'filterable_attributes': [
                     {
-                        'name': 'fit',
-                        'path': "$.extended_attributes[?(@.key == 'final_sale')].value"
+                        'name': 'final_sale',
+                        'path': "$.extended_attributes[?(@.name == 'final_sale')].value"
                     }
                 ],
                 'searchable_attributes': [
@@ -48,12 +48,12 @@ def transform_products(jsonl_data, products_per_file, custom_size_mapping, local
                     },
                     {
                         'name': 'title',
-                        'path': '$.product_id',
+                        'path': '$.title',
                         'weight': 10
                     },
                     {
                         'name': 'description',
-                        'path': '$.product_id',
+                        'path': '$.description',
                         'weight': 9
                     }
                 ],

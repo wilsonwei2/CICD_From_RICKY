@@ -5,8 +5,8 @@
     "is_master": true,
     "filterable_attributes": [
       {
-          "name": "fit",
-          "path": "$.extended_attributes[?(@.key == 'final_sale')].value"
+          "name": "final_sale",
+          "path": "$.extended_attributes[?(@.name == 'final_sale')].value"
       }
     ],
     "searchable_attributes": [
@@ -22,12 +22,12 @@
       },
       {
           "name": "title",
-          "path": "$.product_id",
+          "path": "$.title",
           "weight": 10
       },
       {
           "name": "description",
-          "path": "$.product_id",
+          "path": "$.description",
           "weight": 9
       }
     ]
