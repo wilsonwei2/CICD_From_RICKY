@@ -57,6 +57,6 @@ def handler(event, context): # pylint: disable=W0613
         event['continue'] = False
         return event
     except Exception as err: # pylint: disable=W0703
-        LOGGER.error(err)
+        LOGGER.exception(err, exc_info=True)
         event['continue'] = False
         return event
