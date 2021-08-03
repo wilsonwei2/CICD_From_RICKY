@@ -76,6 +76,7 @@ def find_records():
             'bucket_name': S3_BUCKET.name,
             'object_key': record.key,
             'currency': currency,
+            'type': type,
         }
 
         LOGGER.debug(f'found {json.dumps(sales_file)}')
@@ -96,6 +97,7 @@ def find_records():
                 'bucket_name': sales_file['bucket_name'],
                 'object_key': retail_obj_key,
                 'currency': currency,
+                'type': 'RET',
             }
             records_to_process.append(retail_file) # first retail prices
             records_to_process.append(sales_file) # then sales prices
@@ -113,6 +115,9 @@ def process_records(records):
         s3_key = record['object_key']
 
         currency = record['currency']
+        type = record['type']
+
+        is_sale = type == 'SAL'
 
         ## This is the key step that converts the imported file
         # into our format and gives the price books back.
@@ -120,14 +125,14 @@ def process_records(records):
         LOGGER.info(f'processing {s3_key}')
         with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') \
                 as csvfile:
-            price_book = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-en')
+            price_book = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-en', is_sale)
 
         # also import CAD prices to storefront-catalog-fr
         price_book_catalog_fr = None
         if currency == 'CAD':
             with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') \
                     as csvfile:
-                price_book_catalog_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr') if currency == 'CAD' else None
+                price_book_catalog_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr', is_sale) if currency == 'CAD' else None
 
         now = datetime.utcnow()
 

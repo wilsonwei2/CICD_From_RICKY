@@ -26,7 +26,7 @@ class _FixDictReader(csv.DictReader):
                 raise
             raise StopIteration
 
-def csv_to_pricebooks(csvfile, currency='USD', catalog='storefront-catalog-en'):
+def csv_to_pricebooks(csvfile, currency, catalog, is_sale):
     reader = _FixDictReader(csvfile)
 
     pricebook_name = 'default' if currency == 'CAD' else f'{currency.lower()}-prices'
@@ -43,9 +43,15 @@ def csv_to_pricebooks(csvfile, currency='USD', catalog='storefront-catalog-en'):
     for line_no, item in enumerate(reader, start=1):
         try:
             product_id = item['ProductSKU']
+            price_value = float(item['Price'])
+
+            # skip 0 prices for sale prices
+            if price_value == 0 and is_sale:
+                continue
+
             price_book['items'].append({
                 'product_id': product_id,
-                'value': float(item['Price'])
+                'value': price_value
             })
         except Exception:
             LOGGER.error(f'error proceessing line {line_no}')

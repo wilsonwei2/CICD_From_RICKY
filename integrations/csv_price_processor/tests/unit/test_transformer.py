@@ -5,7 +5,7 @@ def test_unit():
 
 def load_csv_file_to_pricebooks():
     with open(f'data/test_price_data_csv.csv') as csvfile:
-        price_books = csv_to_pricebooks(csvfile, 'CAD')
+        price_books = csv_to_pricebooks(csvfile, 'CAD', 'storefront-catalog-en', False)
         return price_books
 
 def test_transformer_response():
