@@ -75,7 +75,7 @@
 
                     {% if shipping_address != None %}
                       <div class="shipping-address">
-                        <strong> [[[#information_address.billing_address]]]: </strong>
+                        <strong> [[[#information_address.shipping_address]]]: </strong>
                         <p> {{ shipping_address.name }}</p>
                         <p> {{ shipping_address.address_line_1 }}  {{ shipping_address.address_line_2 }} </p>
                         <p> {{ shipping_address.city }}{{'' if shipping_address.state == None or shipping_address.state == '' else ','}}
