@@ -17,6 +17,7 @@ import re
 
 from urllib.parse import unquote
 from datetime import datetime
+from botocore.exceptions import ClientError
 
 
 ## Introduced namespaces ..
@@ -31,6 +32,7 @@ S3_PREFIX = os.environ['S3_PREFIX']
 CHUNK_SIZE = int(os.environ['CHUNK_SIZE'])
 SECS_BETWEEN_CHUNKS = os.environ['SECS_BETWEEN_CHUNKS']
 STATE_MACHINE_ARN = os.environ['STATE_MACHINE_ARN']
+SOURCE_PREFIX = os.environ['SOURCE_PREFIX']
 
 LOGGER = logging.getLogger()
 
@@ -43,55 +45,62 @@ def iter_chunks(arr, size):
 
 
 def handler(event, context):
-    records_to_process = find_records(event['Records'])
+    records_to_process = find_records()
     process_records(records_to_process)
 
-def find_records(records):
+def find_records():
     """
     Find records to process. There needs to exist a RET and a SAL pricebook.
     """
     records_to_process = []
 
-    for record in records:
-        assert record['eventName'].startswith('ObjectCreated:')
-        splitted_key = record['s3']['object']['key'].split('/')
+    for record in S3_BUCKET.objects.filter(Prefix=SOURCE_PREFIX):
+        splitted_key = record.key.split('/')
         file_name = splitted_key[-1]
         obj_path = '/'.join(splitted_key[:-1])
 
+        # check the file pattern
         matcher = re.search(r'^([a-zA-Z0-9]*)_([A-Z]{3})_([A-Z]{3})_(\d{14})\.csv$', file_name)
         if not matcher:
             LOGGER.error(f'invalid file name: {file_name} - skipping')
             continue
         prefix, currency, type, timestamp = matcher.groups()
 
-        record_dict = {
-            'bucket_name': record['s3']['bucket']['name'],
-            'object_key': record['s3']['object']['key'],
+        # skip all files that are not SAL (Sales)
+        if type != 'SAL':
+            LOGGER.info(f'skipping file: {file_name} - not sales prices')
+            continue
+
+        # We found a sales file
+        sales_file = {
+            'bucket_name': S3_BUCKET.name,
+            'object_key': record.key,
             'currency': currency,
         }
 
-        LOGGER.debug(f'found {json.dumps(record_dict)}')
+        LOGGER.debug(f'found {json.dumps(sales_file)}')
 
-        alternate_type = 'RET' if type == 'SAL' else 'SAL'
-        alternate_obj_key = f'{obj_path}/{prefix}_{currency}_{alternate_type}_{timestamp}.csv'
-        found_alternate = False
+        # check for a matching RET (retail) file
+        retail_obj_key = f'{obj_path}/{prefix}_{currency}_RET_{timestamp}.csv'
+        found_retail = False
         try:
-            alternate_obj = S3.Bucket(record_dict['bucket_name']).Object(alternate_obj_key) # pylint: disable=no-member
-            alternate_obj.get()
-            found_alternate = True
-        except botocore.exceptions.ClientError:
+            retail_obj = S3.Bucket(sales_file['bucket_name']).Object(retail_obj_key) # pylint: disable=no-member
+            retail_obj.get()
+            found_retail = True
+        except ClientError:
             pass
 
-        if found_alternate:
-            alternate_record_dict = {
-                'bucket_name': record_dict['bucket_name'],
-                'object_key': alternate_obj_key,
+        if found_retail:
+            # both SAL and RET are found - ready to process
+            retail_file = {
+                'bucket_name': sales_file['bucket_name'],
+                'object_key': retail_obj_key,
                 'currency': currency,
             }
-            records_to_process.append(record_dict if type == 'RET' else alternate_record_dict)
-            records_to_process.append(record_dict if type == 'SAL' else alternate_record_dict)
+            records_to_process.append(retail_file) # first retail prices
+            records_to_process.append(sales_file) # then sales prices
 
-    LOGGER.info(records_to_process)
+    LOGGER.info(f'records to process: {records_to_process}')
     return records_to_process
 
 def process_records(records):
@@ -137,8 +146,11 @@ def process_records(records):
         }
 
         # Move to archive
-        S3.Object(s3_bucket_name, 'archive/' + s3_key).copy_from(CopySource=copy_source) # pylint: disable=no-member
-        s3_Object.delete()
+        try:
+            S3.Object(s3_bucket_name, 'archive/' + s3_key).copy_from(CopySource=copy_source) # pylint: disable=no-member
+            s3_Object.delete()
+        except ClientError:
+            pass
 
         # Start import step function
         input = json.dumps({
