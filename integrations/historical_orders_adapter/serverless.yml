@@ -1,0 +1,51 @@
+service: frankandoak-historical-orders-adapter
+
+plugins:
+  - serverless-python-requirements
+  - serverless-pseudo-parameters
+  - serverless-offline
+
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  individually: false
+  include:
+    - ./**
+  exclude:
+    - historical_orders_adapter/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  # profile: ${self:provider.tenant}-${self:provider.stage}
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  environment:
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
+    NEWSTORE_CONNECTOR_TENANT: ${self:provider.tenant}.${self:provider.stage}
+    REGION: ${self:provider.region}
+
+functions:
+  historical_orders_adapter:
+    name: ${self:provider.tenant}-historical-orders-adapter
+    handler: historical_orders_adapter.lambdas.handler.handle
+    events:
+      - http:
+          path: financial_instruments
+          method: post
+      - http:
+          path: financial_instruments/{financial_instrument_id}/_capture
+          method: post
+      - http:
+          path: financial_instruments/{financial_instrument_id}/_refund
+          method: post
+      - http:
+          path: financial_instruments/{financial_instrument_id}/_revoke
+          method: post

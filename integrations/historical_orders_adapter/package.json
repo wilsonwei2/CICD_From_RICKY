@@ -1,0 +1,10 @@
+{
+  "name": "historical_orders_adapter",
+  "version": "1.0.0",
+  "description": "Historical import integration",
+  "devDependencies": {
+    "serverless-offline": "^6.9.0",
+    "serverless-pseudo-parameters": "^2.6.0",
+    "serverless-python-requirements": "^5.1.1"
+  }
+}
