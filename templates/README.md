@@ -97,6 +97,18 @@ $ newstore-templates update-all en_US fr_CA
 
 To skip translation the  `--skip-translation` option can be used.
 
+### `download-templates` - Download all templates
+
+```
+$ newstore-templates download-templates [options] <locale>
+```
+
+Download all templates for a locale and store it as `.j2` files.
+
+```
+$ newstore-templates download-templates en_US
+```
+
 ### `sample-data` - Output sample data for the given template
 
 ```

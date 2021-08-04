@@ -4,7 +4,7 @@ import { Command } from 'commander';
 import packageJson from './package.json';
 import {
   interactive, accesstoken,
-  list, template, updateTemplate, sampleData, sampleDocumentation, preview,
+  list, template, updateTemplate, sampleData, sampleDocumentation, preview, downloadTemplates,
   listStyles, updateStyle,
   updateAll,
 } from './commands';
@@ -42,6 +42,11 @@ const main = async () => {
     .command('template <name> <locale>')
     .description('Get a template')
     .action(template) as Command);
+
+  commonOptions(program
+    .command('download-templates <locale>')
+    .description('Download all templates')
+    .action(downloadTemplates) as Command);
 
   commonOptions(program
     .command('update-template <name> <locale> <file>')

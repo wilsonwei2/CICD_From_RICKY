@@ -1,6 +1,7 @@
 import accesstoken from './accesstoken';
 import list from './list';
 import template from './template';
+import downloadTemplates from './downloadTemplates';
 import updateTemplate from './updateTemplate';
 import sampleData from './sampleData';
 import sampleDocumentation from './sampleDocumentation';
@@ -15,6 +16,7 @@ export {
   accesstoken,
   list,
   template,
+  downloadTemplates,
   updateTemplate,
   sampleData,
   sampleDocumentation,

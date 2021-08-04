@@ -25,7 +25,9 @@ const getEntityList = async (entityName: string): Promise<string[]> => {
 };
 
 const getEntity = async (uriPart: string): Promise<string> => {
-  const response = await axios.get<string>(`${TEMPLATE_API}${uriPart}`);
+  const response = await axios.get<string>(`${TEMPLATE_API}${uriPart}`, {
+    transformRequest: (data) => data,
+  });
   return response.data;
 };
 
