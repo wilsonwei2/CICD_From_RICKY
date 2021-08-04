@@ -38,6 +38,8 @@ START_BULK_OPERATIONS = '''
                                             }
                                             inventoryItem {
                                                 id
+                                                harmonizedSystemCode
+                                                countryCodeOfOrigin
                                             }
                                             selectedOptions {
                                                 name

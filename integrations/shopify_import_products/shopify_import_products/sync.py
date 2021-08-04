@@ -61,7 +61,12 @@ def run(env_variables):
 
     except Exception as error: # pylint: disable=W0703
         LOGGER.error(f'Error while importing products: {str(error)}', exc_info=True)
-        update_event_trigger(events_handler, 'rate(10 minutes)')
+        # If there are too many requests already, start the next day
+        if '429' in str(error):
+            update_dynamodb(dynamodb, 'COMPLETED')
+            update_event_trigger(events_handler, os.environ['cron_expression_for_next_day'])
+        else:
+            update_event_trigger(events_handler, 'rate(10 minutes)')
 
 
 def import_products(text, env_variables, is_full=False, locale=None):

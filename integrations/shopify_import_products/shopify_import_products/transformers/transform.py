@@ -130,7 +130,9 @@ def transform_variant(variant, custom_size_mapping, locale=None):
         'material': '',
         'google_category': 'none',
         'categories': variant_categories(tags),
-        'manufacturer': ''
+        'manufacturer': '',
+        'country_of_origin': transform_country_of_origin(variant),
+        'product_hts_number': transform_hts_number(variant)
     }
 
     if locale:
@@ -165,6 +167,26 @@ def transform_weight_unit(unit):
         return 'kg'
 
     return 'lb'
+
+
+def transform_country_of_origin(variant):
+    country_of_origin = ''
+    inventory_item = variant.get('inventoryItem')
+
+    if inventory_item and 'countryCodeOfOrigin' in inventory_item:
+        country_of_origin = inventory_item['countryCodeOfOrigin'] or ''
+
+    return country_of_origin
+
+
+def transform_hts_number(variant):
+    hts_number = ''
+    inventory_item = variant.get('inventoryItem')
+
+    if inventory_item and 'harmonizedSystemCode' in inventory_item:
+        hts_number = inventory_item['harmonizedSystemCode'] or ''
+
+    return hts_number
 
 
 def transform_images(master):
