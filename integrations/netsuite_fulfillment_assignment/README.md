@@ -45,3 +45,4 @@ considered finished and no additional record is injected.
 ## References
 - [NewStore Event Stream](https://apidoc.newstore.io/newstore-cloud/hooks_eventstream.html)
 
+

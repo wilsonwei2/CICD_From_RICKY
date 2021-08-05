@@ -67,3 +67,4 @@ First, a **POST** (Shopify makes this a POST, but no changes are made) to `admin
 From this, we're most concerned with the `"total_cart_discount_amount"` which gives us the prorated discount per line item. From there, we can map the value into the corresponding `item_order_discount_info`'s `price_adjustment` as long as the quanity is `1`. If it's greater than `1`, we must split it across that many line items, ensuring that there are no fractional cents as a result.
 
 For example, if had a discount of 177.46 and quanity of 4, we'd have two line items with a cost of 44.36 and two with a cost of 44.37, summing to the original 177.46.
+

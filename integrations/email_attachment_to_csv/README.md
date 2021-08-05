@@ -30,3 +30,4 @@ The `S3*ProcessedPrefix` parameters in the `serverless.aml` will need to be
 configured in accordance with the lambdas designated to handle the next steps in
 the processing flow: `csv_price_processor` and `netsuite_availability_import`.
 
+

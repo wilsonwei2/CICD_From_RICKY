@@ -3,6 +3,8 @@ service: frankandoak-netsuite-appeasement-refund-injection
 plugins:
   - serverless-python-requirements
   - serverless-pseudo-parameters
+  - serverless-offline
+
 custom:
   pythonRequirements:
     dockerizePip: false
@@ -23,9 +25,9 @@ provider:
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
   role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
   environment:
-    NEWSTORE_STAGE: ${self:provider.stage}
-    TENANT_NAME: ${self:provider.tenant}
-    SQS_QUEUE: !GetAtt AppeasementRefundQueue.QueueName
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
+    SQS_QUEUE: ${self:provider.tenant}-appeasement-to-netsuite-queue.fifo
     MAX_MESSAGE_QUEUE_SIZE: 25
 
 functions:

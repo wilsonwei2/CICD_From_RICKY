@@ -78,10 +78,13 @@ async def process_event(event): #pylint: disable=too-many-branches
             queue_name = SQS_CASH_SALE
     elif event_type == 'inventory_transaction.asn_created':
         queue_name = SQS_TRANSFER_ORDER_QUEUE
+
     elif event_type == 'inventory_transaction.items_received':
         queue_name = SQS_INVENTORY_TRANSFER
+
     elif event_type == 'return.processed':
         queue_name = SQS_RETURN_PROCESSED
+
     elif event_type == 'fulfillment_request.assigned':
         if event_body.get('payload', {}).get('service_level') == 'IN_STORE_HANDOVER':
             LOGGER.info('Received a fulfillment_request.assigned message with a service level of '
@@ -98,12 +101,12 @@ async def process_event(event): #pylint: disable=too-many-branches
         queue_name = SQS_FULFILLMENT
     elif event_type == 'refund_request.issued':
         queue_name = SQS_APPEASEMENT_REFUND
+
     else:
         LOGGER.warning(f'Received an unsupported event type: {event_type}')
         return True
 
     push_message_to_sqs(queue_name, message)
-
     return True
 
 

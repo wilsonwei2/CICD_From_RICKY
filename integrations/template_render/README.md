@@ -49,3 +49,4 @@
 -(OPTIONAL) NEWSTORE_TENANT = Name of tenant, default -> aninebing (production)
 -(OPTIONAL) NEWSTORE_STAGE = Letter designating stage, default -> p (production)
 -(OPTIONAL) CLOUDFORMATION_STACK_NAME = Name of stack to be modified, default -> aninebing-p-template-render (production)
+
