@@ -75,6 +75,9 @@
     "greeting": "Cordialement,",
     "customer_service": "L'équipe de service aux membres Frank And Oak"
   },
+  "consumer_capture_email_subject": {
+    "subject": "Your Frank And Oak purchase receipt is enclosed"
+  },
   "return_receipt_email": {
     "title": "Commande retournée",
     "header": "Certains items dans votre commande ont été retournés.",

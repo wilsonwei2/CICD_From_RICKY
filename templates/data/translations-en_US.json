@@ -75,6 +75,9 @@
     "greeting": "Sincerely,",
     "customer_service": "Frank And Oak Member Services"
   },
+  "consumer_capture_email_subject": {
+    "subject": "Your Frank And Oak purchase receipt is enclosed"
+  },
   "return_receipt_email": {
     "title": "Order item returned",
     "header": "Item(s) in your order have been returned.",
