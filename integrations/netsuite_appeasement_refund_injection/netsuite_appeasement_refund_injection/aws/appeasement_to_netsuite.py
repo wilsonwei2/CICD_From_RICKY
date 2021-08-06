@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2015, 2016, 2017 NewStore, Inc. All rights reserved.
-from netsuite_appeasement_refund_injection.helpers.utils import LOGGER
-from netsuite_appeasement_refund_injection.helpers.utils import Utils
-import netsuite_appeasement_refund_injection.helpers.sqs_consumer as sqs_consumer
-import netsuite_appeasement_refund_injection.transformers.process_appeasement as pa
-from zeep.helpers import serialize_object
-from netsuite.service import RecordRef
-import netsuite.api.customer as ns_c
-import netsuite.api.refund as ns_r
-import netsuite.api.sale as ns_s
-import netsuite.netsuite_environment_loader  # pylint: disable=W0611
 import os
 import json
 import asyncio
 from collections.abc import Mapping
+import netsuite.netsuite_environment_loader  # pylint: disable=W0611
+import netsuite.api.customer as ns_c
+import netsuite.api.refund as ns_r
+import netsuite.api.sale as ns_s
+from netsuite.service import RecordRef
+from zeep.helpers import serialize_object
+import netsuite_appeasement_refund_injection.helpers.sqs_consumer as sqs_consumer
+from netsuite_appeasement_refund_injection.helpers.utils import LOGGER
+from netsuite_appeasement_refund_injection.helpers.utils import Utils
+import netsuite_appeasement_refund_injection.transformers.process_appeasement as pa
+
+SQS_QUEUE = os.environ['SQS_QUEUE']
 
 # Runs startup processes
 os.environ['TENANT_NAME'] = os.environ['TENANT']
 os.environ['NEWSTORE_STAGE'] = os.environ['STAGE']
-
-
-SQS_QUEUE = os.environ['SQS_QUEUE']
 
 
 def handler(_event, context):
@@ -33,7 +32,6 @@ def handler(_event, context):
     loop.run_until_complete(task)
     loop.stop()
     loop.close()
-
 
 async def process_appeasement(message):
     LOGGER.info(f"Message to process: \n {json.dumps(message, indent=4)}")

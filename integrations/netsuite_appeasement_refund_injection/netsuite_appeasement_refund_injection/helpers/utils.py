@@ -14,8 +14,8 @@ LOG_LEVEL = getattr(logging, LOG_LEVEL_SET, None)
 if not isinstance(LOG_LEVEL, int):
     LOG_LEVEL = getattr(logging, 'INFO', None)
 LOGGER.setLevel(LOG_LEVEL)
-TENANT = os.environ.get('TENANT_NAME')
-STAGE = os.environ.get('NEWSTORE_STAGE')
+TENANT = os.environ.get('TENANT')
+STAGE = os.environ.get('STAGE')
 
 
 class Utils():
