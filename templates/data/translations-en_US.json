@@ -88,5 +88,19 @@
     "text5": "The amount will be reflected on your next credit card statement, according to the billing cycle.",
     "greeting": "Sincerely,",
     "customer_service": "Frank And Oak Member Services"
+  },
+  "order_cancelled_email": {
+    "title": "Order Cancellation",
+    "header": "The cancellation of your order is confirmed.",
+    "text1": "The following items have been cancelled from your order #",
+    "text2": ". Please see below for details.",
+    "greeting": "Sincerely,",
+    "customer_service": "Frank And Oak Member Services",
+    "order_summary": "Order Summary",
+    "quantity": "Quantity:"
+  },
+  "order_cancelled_email_subject": {
+    "subject1": "Your order",
+    "subject2": "has been partially or fully cancelled"
   }
 }

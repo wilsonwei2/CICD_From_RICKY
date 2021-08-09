@@ -1,29 +1,29 @@
 {% extends 'email_base' %}
 
-{% block title %}Order Cancellation{% endblock %}
+{% block title %}[[[title]]]{% endblock %}
 
-{% block header %}The cancellation of your order is confirmed.{% endblock %}
+{% block header %}[[[header]]]{% endblock %}
 
 {% block body %}
 	<table class="email-body" cellpadding="0" cellspacing="0" border="0" align="center">
 		<tr>
 			<td>
-				<p style="padding-left:30px;">The following items have been cancelled from your order #{{ external_order_id | default(order_id) }}. Please see below for details.</p>
-				<p class="signature" style="padding-left:60px;">Sincerely,</p>
-				<p class="signature" style="padding-left:60px;">Frank And Oak Customer Service</p>
+				<p style="padding-left:30px;">[[[text1]]]{{ external_order_id | default(order_id) }}[[[text2]]]</p>
+				<p class="signature" style="padding-left:60px;">[[[greeting]]]</p>
+				<p class="signature" style="padding-left:60px;">[[[customer_service]]]</p>
 			</td>
 		</tr>
 	</table>
 	<div class="item_list">
 		<div class="item_list_header">
-			<p>Order Summary</p>
+			<p>[[[order_summary]]]</p>
 	    </div>
 	    {% for item in items %}
 	        <div class="item_list_item">
 	            <div class="item_list_info">
                     <div class="item_list_id">
                         <p>{{ item.name }}&ensp;
-                            <span style="font-size:.1in;display:inline-block">(Quantity: {{ item.quantity }})</span>
+                            <span style="font-size:.1in;display:inline-block">([[[quantity]]] {{ item.quantity }})</span>
                         </p>
                     </div>
                 </div>

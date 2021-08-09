@@ -76,7 +76,7 @@
     "customer_service": "L'équipe de service aux membres Frank And Oak"
   },
   "consumer_capture_email_subject": {
-    "subject": "Your Frank And Oak purchase receipt is enclosed"
+    "subject": "Votre reçu d'achat Frank And Oak"
   },
   "return_receipt_email": {
     "title": "Commande retournée",
@@ -88,5 +88,19 @@
     "text5": "Le montant sera reflété sur votre prochain relevé de carte de crédit, selon le cycle de facturation.",
     "greeting": "Cordialement,",
     "customer_service": "L'équipe de service aux membres Frank And Oak"
+  },
+  "order_cancelled_email": {
+    "title": "Commande annulée",
+    "header": "L'annulation de votre commande est confirmée.",
+    "text1": "Les articles suivants ont été annulés de votre commande #",
+    "text2": ". Veuillez voir ci-dessous pour plus de détails.",
+    "greeting": "Cordialement,",
+    "customer_service": "L'équipe de service aux membres Frank And Oak",
+    "order_summary": "Sommaire de votre commande",
+    "quantity": "Quantité:"
+  },
+  "order_cancelled_email_subject": {
+    "subject1": "Votre Commande",
+    "subject2": "a été partiellement ou totalement annulée"
   }
 }
