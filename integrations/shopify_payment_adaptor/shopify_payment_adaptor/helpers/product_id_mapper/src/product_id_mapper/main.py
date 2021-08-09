@@ -18,6 +18,7 @@ def _map_product_ext_identifiers(external_identifiers: list):
             return_dict[identifier['type']] = identifier['value']
     return return_dict
 
+
 class ProductIdMapper():
     """
     fetch identifiers for products.
@@ -39,10 +40,10 @@ class ProductIdMapper():
         :return: the json parsed response
         """
         value = quote(value, safe='')
-        url = f'https://{self.host}/api/v1/shops/{shop}/products/{key}={value}'
+        url = f'https://{self.host}/api/v1/shops/{shop}/products'
+        params = {}
+        params[key] = value
         if locale:
-            if not params:
-                params = {}
             params['locale'] = locale
 
         response = requests.get(url, params=params)
@@ -56,6 +57,7 @@ class ProductIdMapper():
     def get_map(self, key, value):
         product_mapped = {}
         id_map = self.find(key, value)
+
         if id_map:
             external_identifiers = id_map.get('external_identifiers', [])
             product_mapped = _map_product_ext_identifiers(external_identifiers)

@@ -58,11 +58,11 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
         amount_info = body.get('arguments')
         customer_order = await NS_HANDLER.get_customer_order(order_id)
         customer_order = customer_order.get('customer_order', {})
-        shopify_handler = utils.get_shopify_handler(body['currency'])
+        shopify_handler = utils.get_shopify_handler(
+            amount_info.get('currency'))
         canceled_items = _get_cancelled_items(customer_order)
         is_not_return = False
         is_exchanged = False
-        amount_info = body.get('arguments')
 
         notes = await _get_order_notes(order_id=order_id)
         LOGGER.info(f"Order note: {asdict(notes)}")

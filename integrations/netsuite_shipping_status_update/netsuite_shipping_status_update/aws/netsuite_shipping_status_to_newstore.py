@@ -166,7 +166,6 @@ def send_updates_to_newstore(order_data):
                     LOGGER.info(f'FFR shipping update body: {request_body}')
                     shipping_update_success = newstore_handler.send_shipment(
                         ffr_id, request_body)
-                    shipping_update_success = True
                     if shipping_update_success:
                         # update list of processed FFR items
                         if 'document_number' in netsuite_result:
