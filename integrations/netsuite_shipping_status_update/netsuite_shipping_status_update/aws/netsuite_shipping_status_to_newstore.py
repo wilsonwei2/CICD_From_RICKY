@@ -134,6 +134,11 @@ def send_updates_to_newstore(order_data):
             #     'document_number': if_document_number
             # }]
 
+            is_order_existing = order_id in order_fulfillment_data
+            if not is_order_existing:
+                LOGGER.info(
+                    f'Order {order_id} doesnt exist in Netsuite - Skipping')
+                continue
             for fulfillment_request in order_fulfillment_data[order_id]:
                 location = netsuite_result['location']
 
@@ -159,7 +164,8 @@ def send_updates_to_newstore(order_data):
 
                     # send shipping update to Newstore
                     LOGGER.info(f'FFR shipping update body: {request_body}')
-                    # shipping_update_success = newstore_handler.send_shipment(ffr_id, request_body)
+                    shipping_update_success = newstore_handler.send_shipment(
+                        ffr_id, request_body)
                     shipping_update_success = True
                     if shipping_update_success:
                         # update list of processed FFR items
