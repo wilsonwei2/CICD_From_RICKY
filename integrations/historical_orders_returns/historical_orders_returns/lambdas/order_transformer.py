@@ -15,6 +15,27 @@ class OrderTransformer():
     def format_date(self, date):
         return date.replace(" ", "")
 
+    def get_order_total(self):
+        items = self.order["items"]
+        order_total = 0
+
+        for item in items:
+            original_price = float(item["Lineitem compare at price"]) if "Lineitem compare at price" in item else 0
+            price = float(item["Lineitem price"])
+            quantity = int(float(item["Lineitem quantity"]))
+            unit_price = float("{:.2f}".format((original_price if original_price > price else price) / quantity))
+            unit_discount = 0
+
+            for _ in range(quantity):
+                if original_price > price:
+                    discount = original_price - price
+                    unit_discount = float("{:.2f}".format(discount / quantity))
+
+                adjusted_item_price = unit_price - unit_discount
+                order_total = order_total + adjusted_item_price
+
+        return order_total
+
     def transform_order_address(self, prefix):
         return {
             "first_name": self.order["details"][f"{prefix} First Name"] or "",
@@ -42,12 +63,14 @@ class OrderTransformer():
         items = self.order["items"]
         ns_items = []
         item_index = 0
+        order_discount = float(self.order["details"].get("Discount Amount", "0"))
 
         for item in items:
             original_price = float(item["Lineitem compare at price"]) if "Lineitem compare at price" in item else 0
             price = float(item["Lineitem price"])
             quantity = int(float(item["Lineitem quantity"]))
             unit_price = float("{:.2f}".format((original_price if original_price > price else price) / quantity))
+            unit_discount = 0
 
             for _ in range(quantity):
                 ns_item = {
@@ -70,6 +93,20 @@ class OrderTransformer():
                         "type": "fixed",
                         "original_value": unit_discount,
                         "price_adjustment": unit_discount
+                    }]
+
+                if order_discount > 0:
+                    order_discount_code = self.order.get("Discount Code", "ORDER DISCOUNT")
+                    adjusted_item_price = unit_price - unit_discount
+                    order_total = self.get_order_total()
+                    order_unit_discount = round(adjusted_item_price / order_total * order_discount, 2)
+                    ns_item["price"]["item_order_discount_info"] = [{
+                        "discount_ref": order_discount_code,
+                        "description": order_discount_code,
+                        "coupon_code": order_discount_code,
+                        "type": "fixed",
+                        "original_value": order_discount,
+                        "price_adjustment": order_unit_discount
                     }]
 
 

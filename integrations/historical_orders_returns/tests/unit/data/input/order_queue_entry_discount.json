@@ -1,0 +1,199 @@
+{
+  "external_id": "1101689774",
+  "shop": "storefront-catalog-en",
+  "store_id": "MTLST",
+  "channel_type": "store",
+  "channel_name": "magento",
+  "placed_at": "2020-08-11T15:01:40+00:00",
+  "currency": "CAD",
+  "customer_name": "Juan Pepito",
+  "customer_email": "transfer1@foak.ws",
+  "shop_locale": "en-US",
+  "customer_language": "en",
+  "external_customer_id": "2",
+  "is_fulfilled": true,
+  "is_historical": true,
+  "notification_blacklist": [
+    "invoice_created",
+    "refund_note_created",
+    "order_pending",
+    "shipment_cancelled",
+    "shipment_dispatched",
+    "shipment_delayed",
+    "order_cancelled",
+    "in_store.ready_for_pick_up"
+  ],
+  "price_method": "tax_excluded",
+  "shipping_address": {
+    "first_name": "Juan",
+    "last_name": "Pepito",
+    "address_line_1": "1301 St-Joseph Est",
+    "city": "Montreak",
+    "state": "QC",
+    "zip_code": "H2J1M1",
+    "country": "CA"
+  },
+  "billing_address": {
+    "first_name": "Juan",
+    "last_name": "Pepito",
+    "address_line_1": "1301 St-Joseph Est",
+    "city": "Montreak",
+    "state": "QC",
+    "zip_code": "H2J1M1",
+    "country": "CA"
+  },
+  "payments": [
+    {
+      "processor": "adyen_historical",
+      "correlation_ref": "correlation_ref",
+      "type": "captured",
+      "amount": 110.69,
+      "method": "historical_payment",
+      "processed_at": "2020-08-11T11:03:16+00:00"
+    }
+  ],
+  "shipments": [
+    {
+      "items": [
+        {
+          "external_item_id": "1120544-445-M",
+          "product_id": "1120544-445-M",
+          "price": {
+            "item_price": 34.5,
+            "item_list_price": 34.5,
+            "item_tax_lines": [
+              {
+                "amount": 1.25,
+                "rate": 0.05,
+                "name": "CAN - QC (GST)",
+                "country_code": "CA"
+              },
+              {
+                "amount": 2.49,
+                "rate": 0.09975,
+                "name": "CAN - QC (QST)",
+                "country_code": "CA"
+              }
+            ],
+            "item_discount_info": [
+              {
+                "discount_ref": "DISCOUNT",
+                "description": "DISCOUNT",
+                "coupon_code": "DISCOUNT",
+                "type": "fixed",
+                "original_value": 9.51,
+                "price_adjustment": 9.51
+              }
+            ],
+            "item_order_discount_info": [
+              {
+                "discount_ref": "ORDER DISCOUNT",
+                "description": "ORDER DISCOUNT",
+                "coupon_code": "ORDER DISCOUNT",
+                "type": "fixed",
+                "original_value": 10,
+                "price_adjustment": 2.38
+              }
+            ]
+          }
+        },
+        {
+          "external_item_id": "1110352-2GT-M",
+          "product_id": "1110352-2GT-M",
+          "price": {
+            "item_price": 59.5,
+            "item_list_price": 59.5,
+            "item_tax_lines": [
+              {
+                "amount": 2.0,
+                "rate": 0.05,
+                "name": "CAN - QC (GST)",
+                "country_code": "CA"
+              },
+              {
+                "amount": 3.99,
+                "rate": 0.09975,
+                "name": "CAN - QC (QST)",
+                "country_code": "CA"
+              }
+            ],
+            "item_discount_info": [
+              {
+                "discount_ref": "DISCOUNT",
+                "description": "DISCOUNT",
+                "coupon_code": "DISCOUNT",
+                "type": "fixed",
+                "original_value": 19.51,
+                "price_adjustment": 19.51
+              }
+            ],
+            "item_order_discount_info": [
+              {
+                "discount_ref": "ORDER DISCOUNT",
+                "description": "ORDER DISCOUNT",
+                "coupon_code": "ORDER DISCOUNT",
+                "type": "fixed",
+                "original_value": 10,
+                "price_adjustment": 3.81
+              }
+            ]
+          }
+        },
+        {
+          "external_item_id": "1110425-4BO-M",
+          "product_id": "1110425-4BO-M",
+          "price": {
+            "item_price": 59.5,
+            "item_list_price": 59.5,
+            "item_tax_lines": [
+              {
+                "amount": 2.0,
+                "rate": 0.05,
+                "name": "CAN - QC (GST)",
+                "country_code": "CA"
+              },
+              {
+                "amount": 3.99,
+                "rate": 0.09975,
+                "name": "CAN - QC (QST)",
+                "country_code": "CA"
+              }
+            ],
+            "item_discount_info": [
+              {
+                "discount_ref": "DISCOUNT",
+                "description": "DISCOUNT",
+                "coupon_code": "DISCOUNT",
+                "type": "fixed",
+                "original_value": 19.51,
+                "price_adjustment": 19.51
+              }
+            ],
+            "item_order_discount_info": [
+              {
+                "discount_ref": "ORDER DISCOUNT",
+                "description": "ORDER DISCOUNT",
+                "coupon_code": "ORDER DISCOUNT",
+                "type": "fixed",
+                "original_value": 10,
+                "price_adjustment": 3.81
+              }
+            ]
+          }
+        }
+      ],
+      "historical_shipping_option": {
+        "price": 0.0,
+        "tax": 0,
+        "service_level_identifier": "IN_STORE_HANDOVER",
+        "shipping_type": "in_store_handover",
+        "store_id": "MTLST",
+        "display_name": "In Store",
+        "fulfillment_node_id": "MTLST",
+        "shipping_carrier": "historical_carrier",
+        "zip_code": "H2J1M1",
+        "country_code": "CA"
+      }
+    }
+  ]
+}
