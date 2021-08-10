@@ -91,7 +91,6 @@ class TestAppeasementRefund(unittest.TestCase):
             'internalId': '1000',
             'entity': {'internalId': '10'}
         }
-
         result = TestAppeasementRefund._loop_wrap(PROCESS_APPEASEMENT.transform_in_store_order_refund(cash_sale, event_refund, customer_order, payments_info, store_tz))
         result = serialize_object(result)
 

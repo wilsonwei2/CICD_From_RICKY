@@ -34,11 +34,13 @@ async def transform_online_order_refund(consumer, event_refund, customer_order, 
     countries = Utils.get_countries()
 
     LOGGER.info('Map shipping address')
-    shipping_address = build_shipping_address(customer_order['shipping_address'], countries)
+    shipping_address = build_shipping_address(
+        customer_order['shipping_address'], countries)
 
     LOGGER.info('Map billing address')
     if customer_order.get('billing_address'):
-        billing_address = build_billing_address(customer_order['billing_address'], countries)
+        billing_address = build_billing_address(
+            customer_order['billing_address'], countries)
     else:
         billing_address = None
 
@@ -46,19 +48,24 @@ async def transform_online_order_refund(consumer, event_refund, customer_order, 
     address = customer_order['billing_address'] or customer_order['shipping_address']
     country_code = Utils.get_one_of_these_fields(params=address,
                                                  fields=['country', 'country_code'])
-    currency_id = Utils.get_currency_from_country_code(country_code=country_code)
+
+    currency_id = Utils.get_currency_from_country_code(
+        country_code=country_code)
 
     LOGGER.info('Map customer')
-    customer = map_customer_information(subsidiary_id, consumer, customer_order, billing_address, shipping_address)
+    customer = map_customer_information(
+        subsidiary_id, consumer, customer_order, billing_address, shipping_address)
 
     LOGGER.info('Map cash refund custom fields')
     cash_refund_custom_fields = map_cash_refund_custom_fields(customer_order)
 
     LOGGER.info('Map cash refund')
-    cash_refund = map_cash_refund(subsidiary_id, event_refund, location_id, cash_refund_custom_fields, store_tz)
+    cash_refund = map_cash_refund(
+        subsidiary_id, event_refund, location_id, cash_refund_custom_fields, store_tz)
 
     LOGGER.info('Map cash refund items')
-    cash_refund_item = map_cash_refund_item(event_refund, subsidiary_id, location_id)
+    cash_refund_item = map_cash_refund_item(
+        event_refund, subsidiary_id, location_id)
 
     LOGGER.info('Map payment items')
     payment_items, _ = await map_payment_items(payment_instrument_list=payments_info['instruments'],
@@ -67,7 +74,8 @@ async def transform_online_order_refund(consumer, event_refund, customer_order, 
                                                subsidiary_id=subsidiary_id,
                                                location_id=location_id)
 
-    cash_refund['itemList'] = CashRefundItemList(cash_refund_item + payment_items)
+    cash_refund['itemList'] = CashRefundItemList(
+        cash_refund_item + payment_items)
     cash_refund['entity'] = customer
     cash_refund['currency'] = RecordRef(internalId=currency_id)
 
@@ -83,10 +91,12 @@ async def transform_in_store_order_refund(cash_sale, event_refund, customer_orde
     cash_refund_custom_fields = map_cash_refund_custom_fields(customer_order)
 
     LOGGER.info('Map cash refund')
-    cash_refund = map_cash_refund(subsidiary_id, event_refund, location_id, cash_refund_custom_fields, store_tz)
+    cash_refund = map_cash_refund(
+        subsidiary_id, event_refund, location_id, cash_refund_custom_fields, store_tz)
 
     LOGGER.info('Map cash refund items')
-    cash_refund_item = map_cash_refund_item(event_refund, subsidiary_id, location_id)
+    cash_refund_item = map_cash_refund_item(
+        event_refund, subsidiary_id, location_id)
 
     LOGGER.info('Map payment items')
     payment_items, _ = await map_payment_items(payment_instrument_list=payments_info['instruments'],
@@ -100,7 +110,8 @@ async def transform_in_store_order_refund(cash_sale, event_refund, customer_orde
         currencyList=get_currency_list()
     )
     cash_refund['createdFrom'] = RecordRef(internalId=cash_sale['internalId'])
-    cash_refund['itemList'] = CashRefundItemList(cash_refund_item + payment_items)
+    cash_refund['itemList'] = CashRefundItemList(
+        cash_refund_item + payment_items)
 
     return cash_refund
 
@@ -108,16 +119,16 @@ async def transform_in_store_order_refund(cash_sale, event_refund, customer_orde
 def get_currency_list():
     return CustomerCurrencyList([
         CustomerCurrency(
-            currency=RecordRef(internalId=int(Utils.get_netsuite_config()['currency_usd_internal_id']))
+            currency=RecordRef(internalId=int(
+                Utils.get_netsuite_config()['currency_usd_internal_id']))
         ),
         CustomerCurrency(
-            currency=RecordRef(internalId=int(Utils.get_netsuite_config()['currency_gbp_internal_id']))
+            currency=RecordRef(internalId=int(
+                Utils.get_netsuite_config()['currency_cad_internal_id']))
         ),
         CustomerCurrency(
-            currency=RecordRef(internalId=int(Utils.get_netsuite_config()['currency_cad_internal_id']))
-        ),
-        CustomerCurrency(
-            currency=RecordRef(internalId=int(Utils.get_netsuite_config()['currency_eur_internal_id']))
+            currency=RecordRef(internalId=int(
+                Utils.get_netsuite_config()['currency_eur_internal_id']))
         )
     ])
 
@@ -125,7 +136,8 @@ def get_currency_list():
 def map_cash_refund(subsidiary_id, event_refund, location_id, cash_refund_custom_fields, store_tz):
     tran_date = Utils.format_datestring_for_netsuite(event_refund['requested_at'],
                                                      store_tz)
-    cash_refund_custom_form_id = int(NETSUITE_CONFIG['cash_return_custom_form_internal_id'])
+    cash_refund_custom_form_id = int(
+        NETSUITE_CONFIG['cash_return_custom_form_internal_id'])
 
     partner_id = int(NETSUITE_CONFIG['newstore_partner_internal_id'])
 
@@ -149,20 +161,24 @@ def map_cash_refund(subsidiary_id, event_refund, location_id, cash_refund_custom
 def map_cash_refund_item(event_refund, subsidiary_id, location_id):
     return [CashRefundItem(
         item=RecordRef(
-            internalId=int(NETSUITE_CONFIG['appeasement_refund_item_internal_id'])
+            internalId=int(
+                NETSUITE_CONFIG['appeasement_refund_item_internal_id'])
         ),
         price=RecordRef(internalId=-1),
         rate=str(event_refund['amount']),
-        taxCode=RecordRef(internalId=Utils.get_not_taxable_id(subsidiary_id=subsidiary_id)),
+        taxCode=RecordRef(internalId=Utils.get_not_taxable_id(
+            subsidiary_id=subsidiary_id)),
         location=RecordRef(internalId=location_id)
     )]
 
 
 def map_cash_refund_custom_fields(customer_order):
-    shopify_internal_id = get_extended_attribute(customer_order['extended_attributes'], 'order_id')
+    shopify_internal_id = get_extended_attribute(
+        customer_order['extended_attributes'], 'order_id')
 
-    channel_type = 'mobile' if 'mobile' in customer_order['channel_type'] else customer_order['channel_type']
-    #if customer_order['channel_type'] in NEWSTORE_TO_NETSUITE_CHANNEL:
+    channel_type = 'mobile' if 'mobile' in customer_order[
+        'channel_type'] else customer_order['channel_type']
+    # if customer_order['channel_type'] in NEWSTORE_TO_NETSUITE_CHANNEL:
     #    if customer_order['channel_type'] == 'web':
     #        order_type_internal_id = NETSUITE_CONFIG['ecom_order_type_internal_id']
     #    else:
@@ -180,15 +196,15 @@ def map_cash_refund_custom_fields(customer_order):
         StringCustomFieldRef(
             scriptId='custbodyaccumula_ecomid',
             value=customer_order['sales_order_external_id']
-        )#,
-        #SelectCustomFieldRef(
+        )  # ,
+        # SelectCustomFieldRef(
         #    scriptId='cseg_ab_sellingloc',
         #    value=ListOrRecordRef(internalId=selling_location_id)
-        #),
-        #SelectCustomFieldRef(
+        # ),
+        # SelectCustomFieldRef(
         #    scriptId='custbody_ab_order_type',
         #    value=ListOrRecordRef(internalId=order_type_internal_id)
-        #)
+        # )
     ]
 
     if channel_type == 'store':
@@ -221,10 +237,12 @@ def map_location(customer_order):
 
 
 def get_subsidiary_id(store_id):
-    subsidiary_id = NEWSTORE_TO_NETSUITE_LOCATIONS.get(store_id, {}).get('subsidiary_id')
+    subsidiary_id = NEWSTORE_TO_NETSUITE_LOCATIONS.get(
+        store_id, {}).get('subsidiary_id')
 
     if not subsidiary_id:
-        raise ValueError(f"Unable to find subsidiary for NewStore location '{store_id}'.")
+        raise ValueError(
+            f"Unable to find subsidiary for NewStore location '{store_id}'.")
     return subsidiary_id
 
 
@@ -235,11 +253,13 @@ def map_customer_information(subsidiary_id, consumer, customer_order, billing_ad
         customer_custom_field_list = [
             SelectCustomFieldRef(
                 scriptId='custentity_nws_profilesource',
-                value=ListOrRecordRef(internalId=str(NEWSTORE_TO_NETSUITE_CHANNEL['web']))
+                value=ListOrRecordRef(internalId=str(
+                    NEWSTORE_TO_NETSUITE_CHANNEL['web']))
             ),
             SelectCustomFieldRef(
                 scriptId='custentity_nws_storecreatedby',
-                value=ListOrRecordRef(internalId=NETSUITE_CONFIG['shopify_location_id'])
+                value=ListOrRecordRef(
+                    internalId=NETSUITE_CONFIG['shopify_location_id'])
             )
         ]
     elif consumer:
@@ -248,7 +268,8 @@ def map_customer_information(subsidiary_id, consumer, customer_order, billing_ad
             customer_custom_field_list.append(
                 SelectCustomFieldRef(
                     scriptId='custentity_nws_profilesource',
-                    value=ListOrRecordRef(internalId=NEWSTORE_TO_NETSUITE_CHANNEL['store'])
+                    value=ListOrRecordRef(
+                        internalId=NEWSTORE_TO_NETSUITE_CHANNEL['store'])
                 )
             )
             if store_id in NEWSTORE_TO_NETSUITE_LOCATIONS:
@@ -260,7 +281,8 @@ def map_customer_information(subsidiary_id, consumer, customer_order, billing_ad
                     )
                 )
             else:
-                LOGGER.error(f'Store id where the consumer was created {store_id} isn\'t mapped to NetSuite')
+                LOGGER.error(
+                    f'Store id where the consumer was created {store_id} isn\'t mapped to NetSuite')
 
     netsuite_customer = {
         "first_name": consumer.get('first_name', '-'),
@@ -315,7 +337,8 @@ def build_netsuite_customer(netsuite_customer, subsidiary_id, shipping_address=N
             'replaceAll': True,
             'addressbook': address_book
         }
-        customer['addressbookList'] = CustomerAddressbookList(**address_book_list)
+        customer['addressbookList'] = CustomerAddressbookList(
+            **address_book_list)
     return customer
 
 
@@ -336,16 +359,19 @@ async def _get_refund_transactions(payment_instrument_list, ns_return, store_tz)
     refund_transactions = []
     for instrument in payment_instrument_list:
         for original_transaction in instrument['original_transactions']:
-            date_string = Utils.get_one_of_these_fields(ns_return, ['returned_at', 'requested_at'])
+            date_string = Utils.get_one_of_these_fields(
+                ns_return, ['returned_at', 'requested_at'])
             returned_at = Utils.format_datestring_for_netsuite(date_string=date_string,
                                                                time_zone=store_tz)
             if original_transaction['created_at']:
                 transaction_created_at = Utils.format_datestring_for_netsuite(date_string=original_transaction['created_at'],
                                                                               time_zone=store_tz)
-                diff_seconds = (transaction_created_at - returned_at).total_seconds()
+                diff_seconds = (transaction_created_at -
+                                returned_at).total_seconds()
                 LOGGER.info(f"Issue refund diff_seconds: {diff_seconds}")
             else:
-                LOGGER.warning(f'original_transaction {original_transaction["transaction_id"]} does not have created_at datetime')
+                LOGGER.warning(
+                    f'original_transaction {original_transaction["transaction_id"]} does not have created_at datetime')
                 diff_seconds = 1000
 
             # If transacion is refund or issue (store_credit) and is part of the return being processed
@@ -367,7 +393,8 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
     for refund_transaction in refund_transactions:
         payment_method = refund_transaction['payment_method']
         payment_provider = refund_transaction['payment_provider']
-        LOGGER.info(f"transform_order - payment_method {payment_method} - payment_provider {payment_provider}")
+        LOGGER.info(
+            f"transform_order - payment_method {payment_method} - payment_provider {payment_provider}")
 
         if payment_method == 'credit_card':
             if 'shopify' in payment_provider:
@@ -376,16 +403,19 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
                 payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[payment_method]['adyen']
         elif payment_method == 'gift_card':
             currency = payment_instrument_list[0]['currency'].lower()
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(payment_method, {}).get(currency, '')
+            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(
+                payment_method, {}).get(currency, '')
         else:
-            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(payment_method, '')
+            payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(
+                payment_method, '')
 
         if payment_item_id:
             if location_id is not None:
                 location_ref = RecordRef(internalId=location_id)
             else:
                 return_location_id = ns_return['return_location_id']
-                item_location_id = Utils.get_netsuite_store_internal_id(return_location_id, True)
+                item_location_id = Utils.get_netsuite_store_internal_id(
+                    return_location_id, True)
                 location_ref = RecordRef(internalId=item_location_id)
 
             amount = _get_amount(refund_transaction)
@@ -400,10 +430,12 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
             if payment_method == 'gift_card':
                 gc_code = _get_gc_code(refund_transaction)
                 payment_item['customFieldList'] = CustomFieldList([
-                    StringCustomFieldRef(scriptId='custcol_nws_gcnumber', value=gc_code)
+                    StringCustomFieldRef(
+                        scriptId='custcol_nws_gcnumber', value=gc_code)
                 ])
             payment_items.append(CashRefundItem(**payment_item))
-            LOGGER.info(f'Payment Item for payment method {payment_method} added to items.')
+            LOGGER.info(
+                f'Payment Item for payment method {payment_method} added to items.')
         else:
             err_msg = f'Payment Item for payment method {payment_method} not mapped.'
             # If payment was not mapped it should trow error so that we know about it
@@ -447,13 +479,16 @@ def build_billing_address(address, countries):
 
 
 def build_address(address, countries, is_default_shipping=False, is_default_billing=False):
-    country_code = Utils.get_one_of_these_fields(address, ['country', 'country_code'])
-    addr1 = Utils.get_one_of_these_fields(address, ['address_line1', 'address_line_1'])
-    addr2 = Utils.get_one_of_these_fields(address, ['address_line2', 'address_line_2'])
+    country_code = Utils.get_one_of_these_fields(
+        address, ['country', 'country_code'])
+    addr1 = Utils.get_one_of_these_fields(
+        address, ['address_line1', 'address_line_1'])
+    addr2 = Utils.get_one_of_these_fields(
+        address, ['address_line2', 'address_line_2'])
     addressee = ' '.join(filter(None, [address.get('first_name', '-'),
                                        address.get('second_name', ''),
                                        address.get('last_name', '')
-                                      ]))
+                                       ]))
     built_address = {
         'defaultShipping': is_default_shipping,
         'defaultBilling': is_default_billing,
@@ -488,7 +523,8 @@ def get_phone_from_object(object_with_phone):
 def get_formated_phone(phone):
     regex = r'^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$'
     regex_international = r'^\+?(?:[0-9] ?){6,14}[0-9]$'
-    phone = phone if re.match(regex, phone) or re.match(regex_international, phone) else '5555555555'
+    phone = phone if re.match(regex, phone) or re.match(
+        regex_international, phone) else '5555555555'
     if re.match(regex, phone):
         phone = re.sub(regex, r'\1-\2-\3', phone)
     return phone

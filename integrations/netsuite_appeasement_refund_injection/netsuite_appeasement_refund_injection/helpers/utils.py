@@ -83,7 +83,7 @@ class Utils():
     def get_dc_timezone_mapping_config():
         if not Utils._dc_timezone_mapping:
             Utils._dc_timezone_mapping = json.loads(
-                Utils._get_param_store().get_param('netsuite/dc_timezone_mapping').split(',')
+                Utils._get_param_store().get_param('netsuite/dc_timezone_mapping')
             )
         return Utils._dc_timezone_mapping
 
@@ -128,6 +128,8 @@ class Utils():
 
     @staticmethod
     def is_endless_aisle(order_payload):
+        if order_payload.get('channel_type', '') == 'web':
+            return True
         return order_payload.get('channel_type', '') == 'store' and \
             order_payload['shipment_details'][0]['shipping_option']['shipping_type'] == 'traditional_carrier'
 

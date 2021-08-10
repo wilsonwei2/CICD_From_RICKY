@@ -302,25 +302,6 @@
                     {
                         "currency": {
                             "name": null,
-                            "internalId": 2,
-                            "externalId": null,
-                            "type": null
-                        },
-                        "balance": null,
-                        "consolBalance": null,
-                        "depositBalance": null,
-                        "consolDepositBalance": null,
-                        "overdueBalance": null,
-                        "consolOverdueBalance": null,
-                        "unbilledOrders": null,
-                        "consolUnbilledOrders": null,
-                        "overrideCurrencyFormat": null,
-                        "displaySymbol": null,
-                        "symbolPlacement": null
-                    },
-                    {
-                        "currency": {
-                            "name": null,
                             "internalId": 3,
                             "externalId": null,
                             "type": null
@@ -341,25 +322,6 @@
                         "currency": {
                             "name": null,
                             "internalId": 4,
-                            "externalId": null,
-                            "type": null
-                        },
-                        "balance": null,
-                        "consolBalance": null,
-                        "depositBalance": null,
-                        "consolDepositBalance": null,
-                        "overdueBalance": null,
-                        "consolOverdueBalance": null,
-                        "unbilledOrders": null,
-                        "consolUnbilledOrders": null,
-                        "overrideCurrencyFormat": null,
-                        "displaySymbol": null,
-                        "symbolPlacement": null
-                    },
-                    {
-                        "currency": {
-                            "name": null,
-                            "internalId": 5,
                             "externalId": null,
                             "type": null
                         },
