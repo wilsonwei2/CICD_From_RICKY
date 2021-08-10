@@ -28,8 +28,8 @@ functions:
   availability_import_csv_to_import:
     name: ${self:custom.tenant}-cii-inventory-csv-to-import
     handler: netsuite_availability_import.aws.lambda_csv_to_import.handler
-    timeout: 45
-    memorySize: 128
+    timeout: 300
+    memorySize: 256
     environment:
       REGION: ${self:provider.region}
       CFR_TABLE: ${self:resources.Resources.CFRTable.Properties.TableName}
