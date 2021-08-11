@@ -64,8 +64,10 @@ def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=N
 
     map_items(order, order_name, ns_order)
 
-    if 'shipping_offer_token' in ns_order['shipments'][0]['shipping_option'] or not has_shipment(order):
+    if 'shipping_offer_token' in ns_order['shipments'][0]['shipping_option']:
         del ns_order['shipping_address']
+    elif not has_shipment(order):
+        ns_order['shipping_address'] = ns_order['billing_address']
 
     return ns_order
 

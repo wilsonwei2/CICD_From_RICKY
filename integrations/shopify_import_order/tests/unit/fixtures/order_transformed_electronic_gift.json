@@ -22,6 +22,17 @@
         "address_line_2": "",
         "phone": "555-555-BILL"
     },
+    "shipping_address": {
+      "first_name": "Bob",
+      "last_name": "Biller",
+      "country": "US",
+      "zip_code": "K2P0B0",
+      "city": "Billtown",
+      "state": "KY",
+      "address_line_1": "123 Billing Street",
+      "address_line_2": "",
+      "phone": "555-555-BILL"
+  },
     "shipments": [
         {
             "items": [
