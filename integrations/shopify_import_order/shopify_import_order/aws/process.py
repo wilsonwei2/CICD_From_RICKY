@@ -208,7 +208,7 @@ def _update_note_on_order(shopify_handler=None, order=None, message=None, order_
     ## Checking if there are any existing notes.
     shopify_order = json.loads(order)
     order_id = shopify_order.get('id', '')
-    # LOGGER.info('Updating Note and Tag for shopify order id {order_id}'.format(order_id))
+    LOGGER.info(f'Updating Note and Tag for shopify order id {order_id}')
     existing_note = shopify_order.get('note_attributes', [])
 
     for index, note in enumerate(existing_note):
@@ -220,19 +220,21 @@ def _update_note_on_order(shopify_handler=None, order=None, message=None, order_
             'value': message
         }
     )
+
     newstore_tag = 'newstore_created' if order_processed else 'newstore_failed'
-    # Checking if we have any existing tags.
     existing_tags = [tag.strip() for tag in shopify_order.get('tags', '').split(',')]
-    for index, tag in enumerate(existing_tags):
+
+    for tag in existing_tags:
         if tag in ['newstore_created', 'newstore_failed']:
-            tag = existing_tags.pop(index)
-    existing_tags.append(newstore_tag)
+            LOGGER.info(f'Removeing tag: {tag}')
+            LOGGER.debug(shopify_handler.order_tags_remove(order_id, [tag]))
+    LOGGER.info(f'Adding tag: {newstore_tag}')
+    LOGGER.debug(shopify_handler.order_tags_add(order_id, [newstore_tag]))
 
     json_object = {
         'order': {
             'id': order_id,
-            'note_attributes': existing_note,
-            'tags': ','.join(existing_tags)
+            'note_attributes': existing_note
         }
     }
 

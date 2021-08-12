@@ -32,6 +32,7 @@ class ShopifyConnector:
             'Authorization': 'Basic {auth_base64}'.format(auth_base64=base64.b64encode(auth_string.encode()).decode('utf-8'))
         }
         self.shop = shop
+        self.graphql_url = f'https://{shop}.{host}/api/2021-04/graphql.json'
         if not url:
             self.url = 'https://{shop}.{host}'.format(
                 shop=shop, host=host)
@@ -252,6 +253,46 @@ class ShopifyConnector:
         if 'errors' in body:
             raise Exception(body['errors'])
         return body
+
+    def order_tags_add(self, order_id, tags=[]):
+        query = '''
+        mutation tagsAdd($id: ID!, $tags: [String!]!) {
+            tagsAdd(id: $id, tags: $tags) {
+                node {
+                    id
+                }
+                userErrors {
+                    field
+                    message
+                }
+            }
+        }
+        '''
+
+        return self.__graphql_post__(query, {
+            'id': f'gid://shopify/Order/{order_id}',
+            'tags': tags
+        })
+
+    def order_tags_remove(self, order_id, tags=[]):
+        query = '''
+        mutation tagsRemove($id: ID!, $tags: [String!]!) {
+            tagsRemove(id: $id, tags: $tags) {
+                node {
+                    id
+                }
+                userErrors {
+                    field
+                    message
+                }
+            }
+        }
+        '''
+
+        return self.__graphql_post__(query, {
+            'id': f'gid://shopify/Order/{order_id}',
+            'tags': tags
+        })
 
     def refund_data(self, order):
         '''Used for order level discount proration'''
@@ -612,3 +653,17 @@ class ShopifyConnector:
             raise Exception(response.text)
         LOGGER.info(response.json())
         return response.json().get('webhooks')
+
+    def __graphql_post__(self, query, variables={}):
+        response = requests.post(self.graphql_url, headers=self.auth_header, json={
+            'query': query,
+            'variables': variables
+        })
+
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as error:
+            LOGGER.exception(error)
+            raise error
+
+        return response.json()
