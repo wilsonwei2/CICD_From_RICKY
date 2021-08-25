@@ -311,8 +311,9 @@ def get_payment_method(order):
         payment_method = transaction['instrument']['paymentMethod'].lower()
         if payment_method == 'credit_card':
             provider = transaction['instrument']['paymentProvider'].lower()
+            currency = transaction['currency'].lower()
             payment_account_id = NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT['credit_card'].get(
-                provider, '')
+                provider, {}).get(currency, '')
             break
         elif payment_method == 'cash':
             payment_account_id = NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT.get(
