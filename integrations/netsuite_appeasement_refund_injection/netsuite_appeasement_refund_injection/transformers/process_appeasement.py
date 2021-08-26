@@ -16,6 +16,8 @@ from netsuite.service import (
     CustomerAddressbookList
 )
 from newstore_adapter.utils import get_extended_attribute
+from pom_common.netsuite import TaxManager
+
 from netsuite_appeasement_refund_injection.helpers.utils import Utils
 from netsuite_appeasement_refund_injection.helpers.utils import LOGGER
 
@@ -64,8 +66,7 @@ async def transform_online_order_refund(consumer, event_refund, customer_order, 
         subsidiary_id, event_refund, location_id, cash_refund_custom_fields, store_tz)
 
     LOGGER.info('Map cash refund items')
-    cash_refund_item = map_cash_refund_item(
-        event_refund, subsidiary_id, location_id)
+    cash_refund_item = map_cash_refund_item(event_refund, event_refund['currency'], location_id)
 
     LOGGER.info('Map payment items')
     payment_items, _ = await map_payment_items(payment_instrument_list=payments_info['instruments'],
@@ -95,8 +96,7 @@ async def transform_in_store_order_refund(cash_sale, event_refund, customer_orde
         subsidiary_id, event_refund, location_id, cash_refund_custom_fields, store_tz)
 
     LOGGER.info('Map cash refund items')
-    cash_refund_item = map_cash_refund_item(
-        event_refund, subsidiary_id, location_id)
+    cash_refund_item = map_cash_refund_item(event_refund, event_refund['currency'], location_id)
 
     LOGGER.info('Map payment items')
     payment_items, _ = await map_payment_items(payment_instrument_list=payments_info['instruments'],
@@ -158,7 +158,7 @@ def map_cash_refund(subsidiary_id, event_refund, location_id, cash_refund_custom
     return cash_refund
 
 
-def map_cash_refund_item(event_refund, subsidiary_id, location_id):
+def map_cash_refund_item(event_refund, currency, location_id):
     return [CashRefundItem(
         item=RecordRef(
             internalId=int(
@@ -166,8 +166,7 @@ def map_cash_refund_item(event_refund, subsidiary_id, location_id):
         ),
         price=RecordRef(internalId=-1),
         rate=str(event_refund['amount']),
-        taxCode=RecordRef(internalId=Utils.get_not_taxable_id(
-            subsidiary_id=subsidiary_id)),
+        taxCode=RecordRef(internalId=TaxManager.get_appeasement_item_tax_code_id(currency)),
         location=RecordRef(internalId=location_id)
     )]
 
@@ -390,11 +389,12 @@ async def _get_refund_transactions(payment_instrument_list, ns_return, store_tz)
 
 async def _get_payment_items(refund_transactions, payment_instrument_list, subsidiary_id, ns_return, location_id=None):
     payment_items = []
+    currency = ns_return['currency']
+
     for refund_transaction in refund_transactions:
         payment_method = refund_transaction['payment_method']
         payment_provider = refund_transaction['payment_provider']
-        LOGGER.info(
-            f"transform_order - payment_method {payment_method} - payment_provider {payment_provider}")
+        LOGGER.info(f"transform_order - payment_method {payment_method} - payment_provider {payment_provider} - subsidiary {subsidiary_id}")
 
         if payment_method == 'credit_card':
             if 'shopify' in payment_provider:
@@ -402,9 +402,9 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
             else:
                 payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[payment_method]['adyen']
         elif payment_method == 'gift_card':
-            currency = payment_instrument_list[0]['currency'].lower()
+            payment_currency = payment_instrument_list[0]['currency'].lower()
             payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(
-                payment_method, {}).get(currency, '')
+                payment_method, {}).get(payment_currency, '')
         else:
             payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(
                 payment_method, '')
@@ -422,9 +422,10 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
             payment_item = {
                 'item': RecordRef(internalId=payment_item_id),
                 'amount': amount,
-                'taxCode': RecordRef(internalId=Utils.get_not_taxable_id(subsidiary_id=subsidiary_id)),
+                'taxCode': RecordRef(internalId=TaxManager.get_appeasement_payment_item_tax_code_id(currency)),
                 'location': location_ref
             }
+
             LOGGER.info(f'Payment item: {payment_item}')
 
             if payment_method == 'gift_card':

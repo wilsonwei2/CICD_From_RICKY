@@ -4,10 +4,9 @@
       "order_id": "fb398ea3-59db-4b2b-9445-522c05a237c1",
       "returned_at": "2018-02-21T12:17:43.640Z",
       "total_refund_amount": 68,
-      "total_refund_excl_tax": 68,
       "total_refund_tax": 0,
       "return_fee": 0,
-      "currency": "GBP",
+      "currency": "CAD",
       "return_location_id": "001",
       "items": [
           {

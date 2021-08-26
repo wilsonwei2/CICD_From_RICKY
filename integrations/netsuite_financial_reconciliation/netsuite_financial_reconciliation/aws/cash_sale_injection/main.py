@@ -8,7 +8,7 @@ import pytz
 
 # Runs startup processes (expecting to be 'unused')
 import netsuite.netsuite_environment_loader  # pylint: disable=W0611
-from netsuite.api.customer import create_customer, lookup_customer_id_by_email
+from netsuite.api.customer import create_customer, update_customer, lookup_customer_id_by_email
 from netsuite.api.sale import create_cashsale
 from netsuite.api.item import get_product_by_name
 from netsuite.service import (
@@ -17,6 +17,7 @@ from netsuite.service import (
     CashSaleItemList, StringCustomFieldRef, CustomFieldList, SelectCustomFieldRef, ListOrRecordRef, Address
 )
 from newstore_adapter.connector import NewStoreConnector
+from pom_common.netsuite import TaxManager
 
 import json
 from . import sqs_consumer
@@ -180,6 +181,11 @@ def get_customer_info(order):
                 'currencyList': util.get_currency_list(),
             }
 
+    # Set the tax item if if required
+    tax_item_id = TaxManager.get_customer_tax_item_id(order['currency'])
+    if tax_item_id != -1:
+        customer['taxItem'] = RecordRef(internalId=tax_item_id)
+
     return customer
 
 
@@ -187,6 +193,9 @@ def upsert_netsuite_customer(customer):
     netsuite_customer_internal_id = lookup_customer_id_by_email(
         customer)
     if netsuite_customer_internal_id:
+        LOGGER.info('Customer exists, updating the customer.')
+        customer['internalId'] = netsuite_customer_internal_id
+        update_customer(customer)
         return netsuite_customer_internal_id
 
     LOGGER.info('Create new Customer.')
@@ -236,7 +245,6 @@ def create_payment_items(order):
 
     # when channel_type==store then channel represents the store_id
     store_id = order['channel']
-    subsidiary_id = util.get_subsidiary_id(store_id)
     location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
 
     if payments_info:
@@ -285,13 +293,11 @@ def create_payment_items(order):
                 'item': RecordRef(internalId=payment_item_id),
                 'location': RecordRef(internalId=location_id),
                 'amount': abs(capture_amount),
-                'taxCode': RecordRef(internalId=util.get_not_taxable_id(subsidiary_id=subsidiary_id))
+                'taxCode': RecordRef(internalId=TaxManager.get_order_payment_item_tax_code_id(currency))
             })
         LOGGER.info('payment item id from paramstore for the transaction')
         LOGGER.info(payment_item_id)
     return payment_items
-
-# TODO Check if payment methods are used - this seems to be introduced just for ML pylint: disable=fixme
 
 
 def get_payment_method(order):
@@ -396,8 +402,10 @@ def create_cash_sale_items(order_event, order):
 
     # when channel_type==store then channel represents the store_id
     store_id = order['channel']
-    subsidiary_id = util.get_subsidiary_id(store_id)
-    location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
+    # subsidiary_id = util.get_subsidiary_id(store_id)
+    currency = order_event['currency']
+    netsuite_location = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]
+    location_id = netsuite_location['id']
 
     # items = get_order_items(order)  # extract items from GraphQL API response
     items = order_event['items']
@@ -430,9 +438,9 @@ def create_cash_sale_items(order_event, order):
         cash_sale_item = {
             'item': RecordRef(internalId=netsuite_item_id),
             'price': RecordRef(internalId=util.CUSTOM_PRICE),
-            'rate': item['pricebook_price'] - total_discount,
+            'rate': item['pricebook_price'],
             'location': RecordRef(internalId=location_id),
-            'taxCode': RecordRef(internalId=util.get_tax_code_id(subsidiary_id=subsidiary_id)),
+            'taxCode': RecordRef(internalId=TaxManager.get_order_item_tax_code_id(currency)),
             'quantity': 1
         }
 
@@ -478,12 +486,14 @@ def create_cash_sale_items(order_event, order):
                     'item': RecordRef(internalId=int(NETSUITE_CONFIG['newstore_discount_item_id'])),
                     'price': RecordRef(internalId=util.CUSTOM_PRICE),
                     'rate': str('-'+str(total_discount)),
-                    'taxCode': RecordRef(internalId=util.get_not_taxable_id(subsidiary_id=subsidiary_id)),
+                    'taxCode': RecordRef(internalId=TaxManager.get_discount_item_tax_code_id(currency)),
                     'location': RecordRef(internalId=location_id)
                 }
             )
 
     cash_sale_items += create_payment_items(order)
+
+    cash_sale_items += [TaxManager.get_tax_offset_line_item(order_event['currency'])]
 
     return cash_sale_items
 
@@ -589,7 +599,6 @@ async def process_events(message):
     cash_sale['entity'] = get_customer_netsuite_internal_id(order)
     cash_sale['itemList'] = CashSaleItemList(
         create_cash_sale_item_list(order_payload, order))
-    # TODO Enable again once we know if payment items can be used pylint: disable=fixme
     if order['paymentAccount'] is not None:
         payment_method_id = get_payment_method(order)
         cash_sale['paymentMethod'] = RecordRef(internalId=payment_method_id)

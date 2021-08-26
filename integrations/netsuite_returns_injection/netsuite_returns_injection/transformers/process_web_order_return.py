@@ -9,6 +9,7 @@ from netsuite.service import (
     CustomerCurrency,
     CustomerCurrencyList
 )
+from pom_common.netsuite import TaxManager
 from netsuite_returns_injection.transformers.return_transformer import (
     map_payment_items,
     map_cash_refund_items,
@@ -79,7 +80,8 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
         'credit_memo': credit_memo,
         'credit_memo_items': cash_refund_items,
         'cash_refund_payment_items': cash_refund_payment_items,
-        'credit_memo_payment_items': credit_memo_payment_items
+        'credit_memo_payment_items': credit_memo_payment_items,
+        'tax_offset_item': TaxManager.get_tax_offset_line_item(ns_return['currency'])
     }
 
 

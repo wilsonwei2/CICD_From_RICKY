@@ -162,8 +162,9 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
     cash_refund = return_parsed['cash_refund']
     payment_items = return_parsed['payment_items']
     cash_refund_items = return_parsed['cash_refund_items']
+    tax_offset_item = return_parsed['tax_offset_item']
     cash_refund['itemList'] = CashRefundItemList(
-        cash_refund_items + payment_items)
+        cash_refund_items + payment_items + [tax_offset_item])
     result, refund = create_cash_refund(cash_refund)
     if result:
         return result
@@ -406,7 +407,7 @@ async def get_return_authorization(return_authorizations, returned_product_ids):
     return return_authorization
 
 #
-# Sends the store return as CashRefund  and CreditMemo to Netsuite.
+# Sends the store return as CashRefund and CreditMemo to Netsuite.
 # F&O wants that both objects are created.
 #
 
@@ -483,7 +484,8 @@ def inject_cash_refund(return_parsed):
     cash_refund = return_parsed['cash_refund']
     cash_refund_items = return_parsed['cash_refund_items']
     payment_items = return_parsed['cash_refund_payment_items']
-    cash_refund_items_list = cash_refund_items + payment_items
+    tax_offset_item = return_parsed['tax_offset_item']
+    cash_refund_items_list = cash_refund_items + payment_items + [tax_offset_item]
     cash_refund['itemList'] = CashRefundItemList(cash_refund_items_list)
     result, response = create_cash_refund(cash_refund)
 
@@ -536,7 +538,8 @@ def inject_credit_memo(return_parsed):
     credit_memo = return_parsed['credit_memo']
     credit_memo_items = return_parsed['credit_memo_items']
     payment_items = return_parsed['credit_memo_payment_items']
-    credit_memo_items_list = credit_memo_items + payment_items
+    tax_offset_item = return_parsed['tax_offset_item']
+    credit_memo_items_list = credit_memo_items + payment_items + [tax_offset_item]
     credit_memo['itemList'] = CreditMemoItemList(credit_memo_items_list)
     result, response, internal_id = create_credit_memo(credit_memo)
     credit_memo_trans_id = response['tranId']

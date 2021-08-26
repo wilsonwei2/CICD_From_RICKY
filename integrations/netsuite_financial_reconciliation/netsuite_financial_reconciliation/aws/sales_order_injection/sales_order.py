@@ -20,6 +20,7 @@ from netsuite.service import (
     Address
 )
 from netsuite.utils import search_records_using
+from pom_common.netsuite import TaxManager
 
 from . import params
 from .util import get_formatted_phone, require_shipping
@@ -30,9 +31,7 @@ LOGGER.setLevel(logging.INFO)
 
 # Gets the customer internal id. If the customer is not created yet, a new customer is created
 # in Netsuite. Otherwise, it is updated.
-
-
-def get_customer_internal_id(order_event, order_data, consumer):
+def get_customer_internal_id(order_event, order_data, consumer):  # pylint: disable=too-many-statements
     store_id = order_data['channel']
     subsidiary_id = get_subsidiary_id_for_web()
 
@@ -55,7 +54,7 @@ def get_customer_internal_id(order_event, order_data, consumer):
             SelectCustomFieldRef(
                 scriptId='custentity_nws_storecreatedby',
                 value=ListOrRecordRef(internalId=params.get_netsuite_config()[
-                                      'shopify_location_id'])
+                    'shopify_location_id'])
             )
         ]
 
@@ -146,6 +145,11 @@ def get_customer_internal_id(order_event, order_data, consumer):
                     'currencyList': params.get_currency_list()
                 }
 
+    # Set the tax item id if required
+    tax_item_id = TaxManager.get_customer_tax_item_id(order_data['currency'])
+    if tax_item_id != -1:
+        netsuite_customer['taxItem'] = RecordRef(internalId=tax_item_id)
+
     # If customer is found we update it, but only if it is the same subsidiary
     netsuite_customer_internal_id = lookup_customer_id_by_email(
         netsuite_customer)
@@ -171,7 +175,7 @@ def get_payment_transactions(order_data):
 
 def get_payment_items(order_event, order_data, location):
     LOGGER.info('Mapping payment items')
-    subsidiary_id = get_subsidiary_id_for_web()
+    # subsidiary_id = get_subsidiary_id_for_web()
 
     payment_items = []
     if order_data['paymentAccount'] is None:
@@ -224,7 +228,7 @@ def get_payment_items(order_event, order_data, location):
             payment_item = {
                 'item': params.RecordRef(internalId=payment_item_id),
                 'amount': abs(capture_amount),
-                'taxCode': params.RecordRef(internalId=params.get_not_taxable_id(subsidiary_id=subsidiary_id)),
+                'taxCode': params.RecordRef(internalId=TaxManager.get_order_payment_item_tax_code_id(currency)),
                 'location': location
             }
 
@@ -254,9 +258,10 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
     tran_date = tran_date.astimezone(pytz.timezone(
         params.get_netsuite_config().get('NETSUITE_DATE_TIMEZONE', 'US/Eastern')))
 
-    currency_id = params.get_currency_id(currency_code=order_event['currency'])
+    currency = order_event['currency']
+    currency_id = params.get_currency_id(currency_code=currency)
     partner_id = int(params.get_netsuite_config()[
-                     'newstore_partner_internal_id'])
+        'newstore_partner_internal_id'])
 
     # Get Subsidiary id based on the store or DC
     store_id = order_event['channel']
@@ -264,8 +269,8 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
 
     if order_event['channel_type'] == 'web':
         location_id = params.get_netsuite_config()['shopify_location_id']
-        selling_location_id = params.get_netsuite_config()[
-            'shopify_selling_location_id']
+        selling_location_id = params.get_netsuite_config().get(
+            'shopify_selling_location_id', {}).get(currency.lower(), '')
         department_id = params.get_netsuite_config()['web_department_id']
 
     elif store_id in params.get_newstore_to_netsuite_locations_config():
@@ -292,6 +297,7 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
         'location': params.RecordRef(internalId=location_id),
         'shipMethod': params.RecordRef(internalId=shipping_method_id),
         'shippingCost': order_event['shipping_total'],
+        'shippingTaxCode': params.RecordRef(internalId=TaxManager.get_shipping_tax_code_id(currency)),
         'class': params.RecordRef(internalId=selling_location_id),
         'department': params.RecordRef(internalId=department_id),
         'customFieldList': CustomFieldList([
@@ -412,16 +418,17 @@ def get_product_by_name(name):
         f'Product not Found in NetSuite. {name}')
 
 
-def get_sales_order_items(order_event):
+def get_sales_order_items(order_event): # pylint: disable=too-many-locals
     store_id = order_event['channel']
-    subsidiary_id = get_subsidiary_id_for_web()
+    # subsidiary_id = get_subsidiary_id_for_web()
+    currency = order_event['currency']
 
     if order_event['channel_type'] == 'web':
         location_id = params.get_netsuite_config()['shopify_location_id']
     elif store_id in params.get_newstore_to_netsuite_locations_config():
         locations = params.get_newstore_to_netsuite_locations_config()
         location_id = locations.get(store_id)['id']
-        subsidiary_id = get_subsidiary_id_for_store(store_id)
+        # subsidiary_id = get_subsidiary_id_for_store(store_id)
 
     sales_order_items = []
 
@@ -458,9 +465,9 @@ def get_sales_order_items(order_event):
         sales_order_item = {
             'item': RecordRef(internalId=netsuite_item_id),
             'price': params.RecordRef(internalId=params.CUSTOM_PRICE),
-            'rate': str(item['pricebook_price'] - total_discount),
-            'location': params.RecordRef(internalId=location_id),
-            'taxCode': params.RecordRef(internalId=params.get_tax_code_id(subsidiary_id=subsidiary_id)),
+            'rate': str(item['pricebook_price']),
+            # 'location': params.RecordRef(internalId=location_id),
+            'taxCode': params.RecordRef(internalId=TaxManager.get_order_item_tax_code_id(currency)),
             'quantity': 1
         }
 
@@ -481,7 +488,7 @@ def get_sales_order_items(order_event):
                     'item': params.RecordRef(internalId=int(params.get_netsuite_config()['international_duty_id'])),
                     'price': params.RecordRef(internalId=params.CUSTOM_PRICE),
                     'rate': duties,
-                    'taxCode': params.RecordRef(internalId=params.get_not_taxable_id(subsidiary_id=subsidiary_id))
+                    'taxCode': params.RecordRef(internalId=TaxManager.get_duty_item_tax_code_id(currency))
                 }
                 sales_order_items.append(item_duty_charge)
 
@@ -527,7 +534,7 @@ def get_sales_order_items(order_event):
                     'item': RecordRef(internalId=int(params.get_netsuite_config()['newstore_discount_item_id'])),
                     'price': params.RecordRef(internalId=params.CUSTOM_PRICE),
                     'rate': str('-'+str(total_discount)),
-                    'taxCode': params.RecordRef(internalId=params.get_not_taxable_id(subsidiary_id=subsidiary_id)),
+                    'taxCode': params.RecordRef(internalId=TaxManager.get_discount_item_tax_code_id(currency)),
                     'location': RecordRef(internalId=location_id)
                 }
             )
@@ -614,6 +621,7 @@ def inject_sales_order(order_event, order_data, consumer):
     sales_order_items = get_sales_order_items(order_event)
     sales_order_items += get_payment_items(order_event,
                                            order_data, netsuite_sales_order['location'])
+    sales_order_items += [TaxManager.get_tax_offset_line_item(order_event['currency'])]
     for item in sales_order_items:
         netsuite_sales_order_items.append(SalesOrderItem(**item))
     netsuite_sales_order['itemList'] = SalesOrderItemList(

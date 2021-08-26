@@ -44,8 +44,8 @@ class TestAppeasementRefund(unittest.TestCase):
 
     def setUp(self):
         self.variables = {
-            'TENANT_NAME': 'frankandoak',
-            'NEWSTORE_STAGE': 'x',
+            'TENANT': 'frankandoak',
+            'STAGE': 'x',
             'netsuite_account_id': '100000',
             'netsuite_application_id': 'NOT_SET',
             'netsuite_email': 'NOT_SET',
@@ -71,6 +71,18 @@ class TestAppeasementRefund(unittest.TestCase):
         netsuite_config_mock = patch('netsuite_appeasement_refund_injection.helpers.utils.Utils.get_netsuite_config')
         self.patched_netsuite_config_mock = netsuite_config_mock.start()
         self.patched_netsuite_config_mock.return_value = MOCK_NETSUITE_CONFIG
+
+        patcher_param_store = patch('param_store.client.ParamStore')
+        self.patched_param_store = patcher_param_store.start()
+        self.patched_param_store.return_value = {}
+
+        patcher_get_tax_code_id = patch('pom_common.netsuite.tax_manager.TaxManager.get_appeasement_item_tax_code_id')
+        self.patched_tax_manager_get_tax_code_id = patcher_get_tax_code_id.start()
+        self.patched_tax_manager_get_tax_code_id.return_value = '-8'
+
+        patcher_get_payment_tax_code_id = patch('pom_common.netsuite.tax_manager.TaxManager.get_appeasement_payment_item_tax_code_id')
+        self.patched_tax_manager_get_payment_tax_code_id = patcher_get_payment_tax_code_id.start()
+        self.patched_tax_manager_get_payment_tax_code_id.return_value = '-8'
 
         constants.setup_patches(self)
 
@@ -114,7 +126,7 @@ class TestAppeasementRefund(unittest.TestCase):
         event_refund = TestAppeasementRefund._load_json_file('event_refund.json')['event']['payload']
         expected_result = TestAppeasementRefund._load_json_file('cash_refund_items_mapped.json')
 
-        result = PROCESS_APPEASEMENT.map_cash_refund_item(event_refund, 1, 5)
+        result = PROCESS_APPEASEMENT.map_cash_refund_item(event_refund, 'USD', 5)
         result = serialize_object(result)
 
         TestAppeasementRefund._assert_json(self, result, expected_result)

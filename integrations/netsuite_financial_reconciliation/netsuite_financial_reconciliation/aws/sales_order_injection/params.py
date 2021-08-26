@@ -103,19 +103,3 @@ def get_newstore_to_netsuite_shipping_methods_config():
     NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG = json.loads(
         get_param_store().get_param('netsuite/newstore_to_netsuite_shipping_methods'))
     return NEWSTORE_TO_NETSUITE_SHIPPING_METHODS_CONFIG
-
-
-def get_not_taxable_id(subsidiary_id):
-    if int(subsidiary_id) == int(get_netsuite_config().get('subsidiary_us_internal_id')):
-        return get_netsuite_config()['not_taxable_us']
-    if int(subsidiary_id) == int(get_netsuite_config().get('subsidiary_ca_internal_id')):
-        return get_netsuite_config()['not_taxable_ca']
-    raise ValueError(f"Provided subsidary ID, {subsidiary_id}, not mapped")
-
-
-def get_tax_code_id(subsidiary_id):
-    if int(subsidiary_id) == int(get_netsuite_config().get('subsidiary_us_internal_id')):
-        return get_netsuite_config()['tax_override_us']
-    if int(subsidiary_id) == int(get_netsuite_config().get('subsidiary_ca_internal_id')):
-        return get_netsuite_config()['tax_override_ca']
-    raise ValueError(f"Provided subsidary ID, {subsidiary_id}, not mapped")

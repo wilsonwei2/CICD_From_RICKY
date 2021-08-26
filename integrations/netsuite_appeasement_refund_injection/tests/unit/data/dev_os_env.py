@@ -10,8 +10,10 @@ values = {
     "subsidiary_us_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/search/searchresults.nl?searchid=77&whence=
     "subsidiary_uk_internal_id": "3",
     "not_taxable_us": "-8",
+    "not_taxable_ca": "-8",
     "not_taxable_uk": "8",
     "tax_override_us": "8496",
+    "tax_override_ca": "8496",
     "tax_override_uk": "8497",
     "currency_usd_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/multicurrency/currencylist.nl?whence=
     "currency_gbp_internal_id": "2",
@@ -54,9 +56,12 @@ netsuite = {
     "credit_memo_custom_form_internal_id": "132",  # https://4674622-sb1.app.netsuite.com/app/accounting/transactions/rtnauth.nl?cf=132
     "subsidiary_us_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/search/searchresults.nl?searchid=77&whence=
     "subsidiary_uk_internal_id": "3",
+    "use_netsuite_avatax": False,
     "not_taxable_us": "-8",
+    "not_taxable_ca": "-8",
     "not_taxable_uk": "8",
     "tax_override_us": "8496",
+    "tax_override_ca": "8496",
     "tax_override_uk": "8497",
     "currency_usd_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/multicurrency/currencylist.nl?whence=
     "currency_gbp_internal_id": "2",
@@ -81,7 +86,7 @@ netsuite = {
         "USC": "101",
         "USB": "102",
         "EUC": "107",
-        "EUB": "108" 
+        "EUB": "108"
     },
     "subsidiary_ca_internal_id": "2",
     "newstore_partner_internal_id": "2964",

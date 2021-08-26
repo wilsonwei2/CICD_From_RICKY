@@ -1,24 +1,24 @@
 [
     {
         "item": {
-            "externalId": null, 
-            "type": null, 
-            "name": "35162 : 35162WhiRegLG Russian River", 
+            "externalId": null,
+            "type": null,
+            "name": "35162 : 35162WhiRegLG Russian River",
             "internalId": "64"
-        }, 
+        },
         "price": {
-            "externalId": null, 
-            "type": null, 
-            "name": "Custom", 
+            "externalId": null,
+            "type": null,
+            "name": "Custom",
             "internalId": "-1"
-        }, 
+        },
         "taxCode": {
-            "externalId": null, 
-            "type": null, 
-            "name": null, 
-            "internalId": "-8"
-        }, 
-        "rate": "68.00", 
+            "externalId": null,
+            "type": null,
+            "name": null,
+            "internalId": "8496"
+        },
+        "rate": "68.00",
         "quantity": 1.0,
         "customFieldList": {
             "customField": [
@@ -35,27 +35,27 @@
             "name": null,
             "internalId": 5
         }
-    }, 
+    },
     {
         "item": {
-            "externalId": null, 
-            "type": null, 
-            "name": "35162 : 35162WhiRegME Russian River", 
+            "externalId": null,
+            "type": null,
+            "name": "35162 : 35162WhiRegME Russian River",
             "internalId": "60"
-        }, 
+        },
         "price": {
-            "externalId": null, 
-            "type": null, 
-            "name": "Custom", 
+            "externalId": null,
+            "type": null,
+            "name": "Custom",
             "internalId": "-1"
-        }, 
+        },
         "taxCode": {
-            "externalId": null, 
-            "type": null, 
-            "name": null, 
-            "internalId": "-8"
-        }, 
-        "rate": "68.00", 
+            "externalId": null,
+            "type": null,
+            "name": null,
+            "internalId": "8496"
+        },
+        "rate": "68.00",
         "quantity": 1.0,
         "customFieldList": {
             "customField": [
@@ -72,27 +72,27 @@
             "name": null,
             "internalId": 5
         }
-    }, 
+    },
     {
         "item": {
-            "externalId": null, 
-            "type": null, 
-            "name": "35162 : 35162WhiRegME Russian River", 
+            "externalId": null,
+            "type": null,
+            "name": "35162 : 35162WhiRegME Russian River",
             "internalId": "60"
-        }, 
+        },
         "price": {
-            "externalId": null, 
-            "type": null, 
-            "name": "Custom", 
+            "externalId": null,
+            "type": null,
+            "name": "Custom",
             "internalId": "-1"
-        }, 
+        },
         "taxCode": {
-            "externalId": null, 
-            "type": null, 
-            "name": null, 
-            "internalId": "-8"
-        }, 
-        "rate": "68.00", 
+            "externalId": null,
+            "type": null,
+            "name": null,
+            "internalId": "8496"
+        },
+        "rate": "68.00",
         "quantity": 1.0,
         "customFieldList": {
             "customField": [
@@ -109,27 +109,27 @@
             "name": null,
             "internalId": 5
         }
-    }, 
+    },
     {
         "item": {
-            "externalId": null, 
-            "type": null, 
-            "name": "35162 : 35162WhiRegSM Russian River", 
+            "externalId": null,
+            "type": null,
+            "name": "35162 : 35162WhiRegSM Russian River",
             "internalId": "56"
-        }, 
+        },
         "price": {
-            "externalId": null, 
-            "type": null, 
-            "name": "Custom", 
+            "externalId": null,
+            "type": null,
+            "name": "Custom",
             "internalId": "-1"
-        }, 
+        },
         "taxCode": {
-            "externalId": null, 
-            "type": null, 
-            "name": null, 
-            "internalId": "-8"
-        }, 
-        "rate": "68.00", 
+            "externalId": null,
+            "type": null,
+            "name": null,
+            "internalId": "8496"
+        },
+        "rate": "68.00",
         "quantity": 1.0,
         "customFieldList": {
             "customField": [
@@ -146,27 +146,27 @@
             "name": null,
             "internalId": 5
         }
-    }, 
+    },
     {
         "item": {
-            "externalId": null, 
-            "type": null, 
-            "name": "35162 : 35162WhiRegXL Russian River", 
+            "externalId": null,
+            "type": null,
+            "name": "35162 : 35162WhiRegXL Russian River",
             "internalId": "68"
-        }, 
+        },
         "price": {
-            "externalId": null, 
-            "type": null, 
-            "name": "Custom", 
+            "externalId": null,
+            "type": null,
+            "name": "Custom",
             "internalId": "-1"
-        }, 
+        },
         "taxCode": {
-            "externalId": null, 
-            "type": null, 
-            "name": null, 
-            "internalId": "-8"
-        }, 
-        "rate": "58.00", 
+            "externalId": null,
+            "type": null,
+            "name": null,
+            "internalId": "8496"
+        },
+        "rate": "58.00",
         "quantity": 1.0,
         "customFieldList": {
             "customField": [

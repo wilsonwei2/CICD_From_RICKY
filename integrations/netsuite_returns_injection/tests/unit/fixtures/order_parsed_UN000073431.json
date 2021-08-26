@@ -52,7 +52,7 @@
             "amount": 88,
             "taxCode": {
                 "name": null,
-                "internalId": "-8",
+                "internalId": "8496",
                 "externalId": null,
                 "type": null
             },
@@ -125,7 +125,7 @@
             "amount": 78,
             "taxCode": {
                 "name": null,
-                "internalId": "-8",
+                "internalId": "8496",
                 "externalId": null,
                 "type": null
             },
@@ -176,7 +176,7 @@
                 "type": null,
                 "externalId": null,
                 "name": null,
-                "internalId": "-8"
+                "internalId": "8496"
             },
             "price": {
                 "type": null,
@@ -213,7 +213,7 @@
                 "type": null,
                 "externalId": null,
                 "name": null,
-                "internalId": "-8"
+                "internalId": "8496"
             },
             "price": {
                 "type": null,
@@ -245,5 +245,20 @@
                 "internalId": 5
             }
         }
-    ]
+    ],
+    "tax_offset_item": {
+      "item": {
+        "externalId": null,
+        "type": null,
+        "name": null,
+        "internalId": "91312"
+      },
+      "taxCode": {
+        "externalId": null,
+        "type": null,
+        "name": null,
+        "internalId": "8496"
+      },
+      "amount": 100
+    }
 }

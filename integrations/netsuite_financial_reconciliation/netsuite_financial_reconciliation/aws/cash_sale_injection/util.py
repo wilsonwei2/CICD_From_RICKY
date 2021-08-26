@@ -263,22 +263,6 @@ def get_currency_id(currency_code):
     return currency_map.get(str(currency_code))
 
 
-def get_tax_code_id(subsidiary_id):
-    if int(subsidiary_id) == int(get_netsuite_config().get('subsidiary_us_internal_id')):
-        return get_netsuite_config()['tax_override_us']
-    if int(subsidiary_id) == int(get_netsuite_config().get('subsidiary_ca_internal_id')):
-        return get_netsuite_config()['tax_override_ca']
-    raise ValueError(f"Provided subsidary ID, {subsidiary_id}, not mapped")
-
-
-def get_not_taxable_id(subsidiary_id):
-    if int(subsidiary_id) == int(get_netsuite_config().get('subsidiary_us_internal_id')):
-        return get_netsuite_config()['not_taxable_us']
-    if int(subsidiary_id) == int(get_netsuite_config().get('subsidiary_ca_internal_id')):
-        return get_netsuite_config()['not_taxable_ca']
-    raise ValueError(f"Provided subsidary ID, {subsidiary_id}, not mapped")
-
-
 def get_countries():
     countries = {}
     filename = os.path.join(os.path.dirname(__file__), 'iso_country_codes.csv')

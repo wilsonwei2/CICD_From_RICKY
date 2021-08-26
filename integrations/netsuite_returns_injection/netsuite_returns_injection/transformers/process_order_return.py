@@ -1,5 +1,6 @@
 import logging
 from netsuite.service import RecordRef, CustomFieldList
+from pom_common.netsuite import TaxManager
 from netsuite_returns_injection.transformers.return_transformer import (
     map_payment_items,
     map_cash_refund_items,
@@ -50,7 +51,8 @@ async def transform_order(cash_sale, ns_return, payments_info, customer_order=No
         'customer': customer,
         'cash_refund': cash_refund,
         'cash_refund_items': cash_refund_items,
-        'payment_items': payment_items
+        'payment_items': payment_items,
+        'tax_offset_item': TaxManager.get_tax_offset_line_item(ns_return['currency'])
     }
 
 

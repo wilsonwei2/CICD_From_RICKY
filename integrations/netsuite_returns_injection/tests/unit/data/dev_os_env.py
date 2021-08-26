@@ -10,8 +10,10 @@ values = {
     "subsidiary_us_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/search/searchresults.nl?searchid=77&whence=
     "subsidiary_uk_internal_id": "3",
     "not_taxable_us": "-8",
+    "not_taxable_ca": "-8",
     "not_taxable_uk": "8",
     "tax_override_us": "8496",
+    "tax_override_ca": "8496",
     "tax_override_uk": "8497",
     "currency_usd_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/multicurrency/currencylist.nl?whence=
     "currency_gbp_internal_id": "2",
@@ -55,9 +57,14 @@ netsuite = {
     "subsidiary_us_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/search/searchresults.nl?searchid=77&whence=
     "subsidiary_uk_internal_id": "3",
     "not_taxable_us": "-8",
+    "not_taxable_ca": "-8",
     "not_taxable_uk": "8",
     "tax_override_us": "8496",
+    "tax_override_ca": "8496",
     "tax_override_uk": "8497",
+    "customer_tax_item_usd": "91293",
+    "customer_tax_item_cad": "91301",
+    "tax_offset_item_internal_id": "91312",
     "currency_usd_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/multicurrency/currencylist.nl?whence=
     "currency_gbp_internal_id": "2",
     "currency_cad_internal_id": "3",

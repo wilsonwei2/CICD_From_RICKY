@@ -148,27 +148,6 @@ class Utils():
         return mapping.get('id') if is_sellable else mapping.get('id_damage')
 
     @staticmethod
-    def get_netsuite_tax_override(nws_value):
-        mapping = Utils._get_netsuite_store_mapping(nws_value)
-        return mapping.get('tax_override')
-
-    @staticmethod
-    def get_tax_code_id(subsidiary_id):
-        if int(subsidiary_id) == int(Utils.get_netsuite_config().get('subsidiary_us_internal_id')):
-            return Utils.get_netsuite_config()['tax_override_us']
-        if int(subsidiary_id) == int(Utils.get_netsuite_config().get('subsidiary_ca_internal_id')):
-            return Utils.get_netsuite_config()['tax_override_ca']
-        raise ValueError(f"Provided subsidary ID, {subsidiary_id}, not mapped")
-
-    @staticmethod
-    def get_not_taxable_id(subsidiary_id):
-        if int(subsidiary_id) == int(Utils.get_netsuite_config().get('subsidiary_us_internal_id')):
-            return Utils.get_netsuite_config()['not_taxable_us']
-        if int(subsidiary_id) == int(Utils.get_netsuite_config().get('subsidiary_ca_internal_id')):
-            return Utils.get_netsuite_config()['not_taxable_ca']
-        raise ValueError(f"Provided subsidary ID, {subsidiary_id}, not mapped")
-
-    @staticmethod
     def is_endless_aisle(order_payload):
         return order_payload.get('channel_type', '') == 'store' and \
             order_payload['shipment_details'][0]['shipping_option']['shipping_type'] == 'traditional_carrier'

@@ -78,6 +78,10 @@ class TestInStoreReturnProcessing(unittest.TestCase):
         self.patched_netsuite_config_mock = netsuite_config_mock.start()
         self.patched_netsuite_config_mock.return_value = MOCK_NETSUITE_CONFIG
 
+        netsuite_taxmgr_config_mock = patch('pom_common.netsuite.tax_manager.TaxManager._get_netsuite_config')
+        self.patched_netsuite_taxmgr_config_mock = netsuite_taxmgr_config_mock.start()
+        self.patched_netsuite_taxmgr_config_mock.return_value = MOCK_NETSUITE_CONFIG
+
         constants.setup_patches(self)
 
         from netsuite_returns_injection.transformers import process_order_return

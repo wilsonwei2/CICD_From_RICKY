@@ -52,7 +52,7 @@
             "amount": -68,
             "taxCode": {
                 "name": null,
-                "internalId": "-8",
+                "internalId": "8496",
                 "externalId": null,
                 "type": null
             },
@@ -115,7 +115,7 @@
                 "externalId": null,
                 "type": null,
                 "name": null,
-                "internalId": "-8"
+                "internalId": "8496"
             },
             "rate": "68.0",
             "quantity": 1.0,
@@ -135,5 +135,20 @@
                 "internalId": 5
             }
         }
-    ]
+    ],
+    "tax_offset_item": {
+      "item": {
+        "externalId": null,
+        "type": null,
+        "name": null,
+        "internalId": "91312"
+      },
+      "taxCode": {
+        "externalId": null,
+        "type": null,
+        "name": null,
+        "internalId": "8496"
+      },
+      "amount": 100
+    }
 }

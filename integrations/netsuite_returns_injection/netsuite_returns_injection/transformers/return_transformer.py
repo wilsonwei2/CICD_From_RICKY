@@ -11,6 +11,8 @@ from netsuite.service import (
     BooleanCustomFieldRef
 )
 
+from pom_common.netsuite import TaxManager
+
 NETSUITE_CONFIG = Utils.get_netsuite_config()
 LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
@@ -32,12 +34,13 @@ async def map_payment_items(payment_instrument_list, ns_return, store_tz, subsid
 
 async def _get_payment_items(refund_transactions, payment_instrument_list, subsidiary_id, ns_return, location_id=None, is_credit_memo=False):  # pylint: disable=too-many-arguments
     payment_items = []
+
     for refund_transaction in refund_transactions:
         payment_method = refund_transaction['payment_method']
         payment_provider = refund_transaction['payment_provider']
         currency = payment_instrument_list[0]['currency'].lower()
         LOGGER.info(
-            f'transform_order - payment_method {payment_method} - payment_provider {payment_provider}')
+            f'transform_order - payment_method {payment_method} - payment_provider {payment_provider} - subsidiary {subsidiary_id}')
 
         payment_item_id = Utils.get_payment_method_internal_id(
             payment_method, payment_provider, currency, 'items')
@@ -55,7 +58,7 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
             payment_item = {
                 'item': RecordRef(internalId=payment_item_id),
                 'amount': amount,
-                'taxCode': RecordRef(internalId=Utils.get_not_taxable_id(subsidiary_id=subsidiary_id)),
+                'taxCode': RecordRef(internalId=TaxManager.get_refund_payment_item_tax_code_id(currency)),
                 'location': location_ref
             }
             LOGGER.info(f'Payment item: {payment_item}')
@@ -137,7 +140,8 @@ async def _get_refund_transactions(payment_instrument_list, ns_return, store_tz)
     return refund_transactions
 
 
-async def map_cash_refund_items(customer_order, ns_return, subsidiary_id, location_id=None):
+async def map_cash_refund_items(customer_order, ns_return, _, location_id=None):
+    currency = ns_return['currency']
     cash_refund_items = []
     returned_order_line_ids = [item['id'] for item in ns_return['items']]
     sellable = [item['product_id']
@@ -164,7 +168,7 @@ async def map_cash_refund_items(customer_order, ns_return, subsidiary_id, locati
             ),
             'price': RecordRef(internalId=-1),
             'rate': str(item['price_catalog']),
-            'taxCode': RecordRef(internalId=Utils.get_not_taxable_id(subsidiary_id=subsidiary_id))
+            'taxCode': RecordRef(internalId=TaxManager.get_refund_item_tax_code_id(currency))
         }
 
         if location_id is not None:
@@ -187,11 +191,9 @@ async def map_cash_refund_items(customer_order, ns_return, subsidiary_id, locati
 
         if item['price_tax'] > 0:
             tax_rate = calcule_tax(item['price_catalog'], item['price_tax'])
-            cash_refund_item['taxCode'] = RecordRef(
-                internalId=Utils.get_tax_code_id(subsidiary_id=subsidiary_id))
             item_custom_field_list.append(
                 StringCustomFieldRef(
-                    scriptId='custcol_taxrateoverride',
+                    scriptId='custcol_nws_override_taxcode',
                     value=tax_rate
                 )
             )
@@ -217,7 +219,7 @@ async def map_cash_refund_items(customer_order, ns_return, subsidiary_id, locati
                 'price': RecordRef(internalId=-1),
                 'rate': str('-' + str(abs(item['discounts'][0]['price_adjustment']))),
                 'location': RecordRef(internalId=get_discount_location(ns_return, location_id)),
-                'taxCode': RecordRef(internalId=Utils.get_not_taxable_id(subsidiary_id=subsidiary_id))
+                'taxCode': RecordRef(internalId=TaxManager.get_refund_discount_item_tax_code_id(currency))
             }
 
             if location_id is not None:

@@ -52,7 +52,7 @@
             "amount": -22.28,
             "taxCode": {
                 "name": null,
-                "internalId": "-8",
+                "internalId": "8496",
                 "externalId": null,
                 "type": null
             },
@@ -117,7 +117,7 @@
             "amount": -49.34,
             "taxCode": {
                 "name": null,
-                "internalId": "-8",
+                "internalId": "8496",
                 "externalId": null,
                 "type": null
             },
@@ -193,7 +193,7 @@
                     {
                         "value": 6.3864,
                         "internalId": null,
-                        "scriptId": "custcol_taxrateoverride"
+                        "scriptId": "custcol_nws_override_taxcode"
                     }
                 ]
             },
@@ -208,7 +208,7 @@
         {
             "taxCode": {
                 "name": null,
-                "internalId": "-8",
+                "internalId": "8496",
                 "externalId": null,
                 "type": null
             },
@@ -232,5 +232,20 @@
                 "type": null
             }
         }
-    ]
+    ],
+    "tax_offset_item": {
+      "item": {
+        "externalId": null,
+        "type": null,
+        "name": null,
+        "internalId": "91312"
+      },
+      "taxCode": {
+        "externalId": null,
+        "type": null,
+        "name": null,
+        "internalId": "8496"
+      },
+      "amount": 100
+    }
 }
