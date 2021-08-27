@@ -58,7 +58,7 @@ resources:
         ContentBasedDeduplication: True
         RedrivePolicy:
           deadLetterTargetArn: !GetAtt FulfillmentAssignmentDeadLetterQueue.Arn
-          maxReceiveCount: 3
+          maxReceiveCount: 5
     FulfillmentAssignmentDeadLetterQueue:
       Type: AWS::SQS::Queue
       Properties:

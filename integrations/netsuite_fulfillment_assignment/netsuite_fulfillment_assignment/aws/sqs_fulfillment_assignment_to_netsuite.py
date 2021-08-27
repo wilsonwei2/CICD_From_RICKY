@@ -60,17 +60,20 @@ async def process_fulfillment_assignment(message):
     # Get the Netsuite Sales Order
     sales_order = await get_sales_order(external_order_id)
 
-    # Update the fulfillment locations for each item of the fulfillment request
-    update_sales_order(sales_order, fulfillment_request)
+    if sales_order:
+        # Update the fulfillment locations for each item of the fulfillment request
+        update_sales_order(sales_order, fulfillment_request)
 
-    # Acknowledge the fulfillment request since it was send to Netsuite
-    if not NEWSTORE_HANDLER.send_acknowledgement(fulfillment_request['id']):
-        LOGGER.critical('Fulfillment request was not acknowledged.')
-        return
+        # Acknowledge the fulfillment request since it was send to Netsuite
+        if not NEWSTORE_HANDLER.send_acknowledgement(fulfillment_request['id']):
+            LOGGER.critical('Fulfillment request was not acknowledged.')
+            return
 
-    LOGGER.info('Fulfillment request acknowledged.')
+        LOGGER.info('Fulfillment request acknowledged.')
 
-    return True
+        return True
+
+    return False
 
 # Updates the fulfillment location for each item in NetSuite
 def update_sales_order(sales_order, fulfillment_request):
@@ -90,10 +93,12 @@ def update_sales_order(sales_order, fulfillment_request):
     update_items = []
     ship_method_id = service_level.get(shipping_service_level)
 
+    product_mapping = Utils.get_product_mappping()
+
     if shipping_service_level in service_level:
         for item in sales_order_update.itemList.item:
             # To ensure that only the product IDs present in the fulfillment have their locations updated
-            item_name = get_item_name(item, product_ids_in_fulfillment)
+            item_name = get_item_name(item, product_ids_in_fulfillment, product_mapping)
             if item_name in product_ids_in_fulfillment:
                 # Remove fields we don't need for line reference so they are not
                 # updated to identical values (also avoids permissions errors)
@@ -126,7 +131,7 @@ def update_sales_order(sales_order, fulfillment_request):
 async def get_sales_order(order_id):
     sales_order = nsas.get_sales_order(order_id)
     if not sales_order:
-        raise Exception('SalesOrder not found on NetSuite for order %s.' % (order_id))
+        LOGGER.error(f'SalesOrder not found on NetSuite for order {order_id}.')
     return sales_order
 
 
@@ -155,10 +160,15 @@ def get_external_order(uuid):
     return NEWSTORE_HANDLER.get_external_order(uuid, id_type='id')
 
 
-def get_item_name(item, product_ids_in_fulfillment):
+def get_item_name(item, product_ids_in_fulfillment, product_mapping):
     item_name = item.item.name
     for possible_item_id in item.item.name.split(' '):
+
+        if possible_item_id in product_mapping:
+            possible_item_id = product_mapping[possible_item_id]
+
         if possible_item_id in product_ids_in_fulfillment:
             item_name = possible_item_id
             break
+
     return item_name
