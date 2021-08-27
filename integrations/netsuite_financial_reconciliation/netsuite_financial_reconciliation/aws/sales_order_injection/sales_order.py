@@ -471,6 +471,11 @@ def get_sales_order_items(order_event): # pylint: disable=too-many-locals
             'quantity': 1
         }
 
+        # Set the location only for an Endless Aisle Order, but only for the items with INSTORE_HANDOVER
+        # The location_id is already the one of the store
+        if item.get('shipping_service_level', None) == 'IN_STORE_HANDOVER':
+            sales_order_item['location'] = params.RecordRef(internalId=location_id)
+
         if item['status'] == 'canceled':
             item_custom_field_list.append(
                 StringCustomFieldRef(
