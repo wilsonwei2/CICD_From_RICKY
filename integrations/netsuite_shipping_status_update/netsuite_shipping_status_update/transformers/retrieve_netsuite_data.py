@@ -269,7 +269,7 @@ class RetrieveNetsuiteItem():
         for items in item_fulfillment['itemList']['item']:
             result = dict(map(lambda item: (
                 item['scriptId'], item['value']), items['customFieldList']['customField']))
-            if 'custcol_nws_gcnumber' in result:
+            if 'custcol_nws_gcnumber' in result and 'custcol_fao_retailprice' in result:
                 giftcard_activation_data.append(
                     {
                         'card_number': result['custcol_nws_gcnumber'],
