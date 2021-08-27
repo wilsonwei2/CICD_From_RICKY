@@ -65,6 +65,7 @@ def test_csv_to_dynamodb(monkeypatch):
     order = table.get_item(Key={'order_id': '1101689774', 'status': 'new'})['Item']
     order_payload = json.loads(order["payload"])
     assert order_payload["details"]["Name"] == "1101689774"
+    assert float(order_payload["payment"]["Transaction Amount"]) == 120.69
 
     # check if file has been archived
     archived_files = s3_client.list_objects_v2(Bucket="testbucket", Prefix="archive/")
