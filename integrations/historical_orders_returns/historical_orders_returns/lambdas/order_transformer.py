@@ -50,7 +50,7 @@ class OrderTransformer():
 
     def transform_payments(self):
         return [{
-            "processor": "adyen_historical",
+            "processor": "payment_historical",
             "correlation_ref": "correlation_ref",
             "type": "captured",
             "amount": float(self.order["payment"]["Transaction Amount"]),

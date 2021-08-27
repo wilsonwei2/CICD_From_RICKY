@@ -44,7 +44,7 @@
   },
   "payments": [
     {
-      "processor": "adyen_historical",
+      "processor": "payment_historical",
       "correlation_ref": "correlation_ref",
       "type": "captured",
       "amount": 110.69,
