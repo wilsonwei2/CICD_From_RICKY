@@ -93,7 +93,7 @@ class RetrieveNetsuiteItem():
         if not data_to_update:
             return [], [], []
 
-        mapping_internal_id_sales_order, shipping_data_list, external_id_list_newstore, product_ids_list, currency, customer_email = await self.retrieve_transaction_information(
+        mapping_internal_id_sales_order, shipping_data_list, external_id_list_newstore, product_ids_list, currency, customer_email, sales_orders_product_prices = await self.retrieve_transaction_information(
             list_internal_id)
 
         LOGGER.info(
@@ -115,8 +115,50 @@ class RetrieveNetsuiteItem():
         giftcards_data = None
         order_tracking_data, data_to_update, giftcards_data = await self.add_items_to_fulfill(data_to_update, currency, customer_email)
 
+        self.add_prices_to_giftcards(sales_orders_product_prices, giftcards_data)
+
         return order_tracking_data, data_to_update, giftcards_data
 
+    def add_prices_to_giftcards(self, sales_orders_product_prices, giftcards_data):
+
+        LOGGER.info(f'SalesOrders products prices {sales_orders_product_prices}')
+        LOGGER.info(f'GiftCard data {giftcards_data}')
+        if len(giftcards_data) == 0:
+            return
+        params = json.loads(PARAM_STORE.get_param('netsuite'))
+        netsuite_p_id = params['netsuite_p_gift_card_item_id']
+        netsuite_e_id = params['netsuite_e_gift_card_item_id']
+
+        #ie:
+        # (salesRefId - > )"22322410":[
+            #[
+            # (produt_id ->)"91250",
+            # "150.00"
+            #],
+            #[
+            # "91250",
+            # "75.00"
+            #],
+            #[
+            # "91251",
+            # "None"
+            #]
+        #]
+
+        for giftcard_data in giftcards_data:
+            for giftcard in giftcard_data:
+                if len(giftcard_data):
+                    for sales_order_id in sales_orders_product_prices:
+                        if sales_order_id == giftcard['sales_order_ref']:
+                            products_prices = sales_orders_product_prices[sales_order_id]
+                            for product_price in products_prices:
+                                if product_price[0] == netsuite_p_id or product_price[0] == netsuite_e_id:
+                                    giftcard['activation_data']['amount']['value'] = product_price[1]
+                                    products_prices.remove(product_price) #We remove it so that it's not used again
+                                    break
+                            break
+
+        LOGGER.info(f'Giftcard activation data after setting prices {giftcards_data}')
     #
     # Fetch the ItemFulfillment from NetSuite and get only the fulfilled items
     # Also updates the shipping information and handles giftcards activation
@@ -267,28 +309,34 @@ class RetrieveNetsuiteItem():
     def extract_giftcard_data(self, item_fulfillment, currency, customer_email):
         giftcard_activation_data = []
         for items in item_fulfillment['itemList']['item']:
+            LOGGER.info(f'Test item_fulfillment {item_fulfillment} ')
+
             result = dict(map(lambda item: (
                 item['scriptId'], item['value']), items['customFieldList']['customField']))
-            if 'custcol_nws_gcnumber' in result and 'custcol_fao_retailprice' in result:
+            if 'custcol_nws_gcnumber' in result:
                 giftcard_activation_data.append(
                     {
-                        'card_number': result['custcol_nws_gcnumber'],
-                        'amount':
+                        'sales_order_ref': item_fulfillment['createdFrom']['internalId'],
+                        'activation_data':
                         {
-                            'value': result['custcol_fao_retailprice'],
-                            'currency': currency
-                        },
-                        'customer':
-                        {
-                            'id': item_fulfillment['internalId'],
-                            'email': customer_email,
-                            'name': item_fulfillment['shippingAddress']['addressee'],
-                            'greeting_name': item_fulfillment['shippingAddress']['addressee']
-                        },
-                        'metadata': {
-                            'original_operation': 'activation'
-                        },
-                        'idempotence_key': str(uuid.uuid4())}
+                            'card_number': result['custcol_nws_gcnumber'],
+                            'amount':
+                            {
+                                'value': '', #this is added later on
+                                'currency': currency
+                            },
+                            'customer':
+                            {
+                                'id': item_fulfillment['internalId'],
+                                'email': customer_email,
+                                'name': item_fulfillment['shippingAddress']['addressee'],
+                                'greeting_name': item_fulfillment['shippingAddress']['addressee']
+                            },
+                            'metadata': {
+                                'original_operation': 'activation'
+                            },
+                            'idempotence_key': str(uuid.uuid4())}
+                    }
                 )
         return giftcard_activation_data
     #
@@ -382,7 +430,7 @@ class RetrieveNetsuiteItem():
             shipping_data_list = {}
             external_id_list_newstore = {}
             product_ids_list = {}
-
+            sales_orders_product_prices = {}
             if not r.status.isSuccess or not r.recordList:
                 LOGGER.error(
                     f'retrieve_transaction_information - error during the search: {r}')
@@ -421,7 +469,11 @@ class RetrieveNetsuiteItem():
                 product_ids_list[internal_id_value] = product_id_list
                 external_id_list_newstore[internal_id_value] = external_id_newstore
 
-            return mapping_internal_id_sales_order, shipping_data_list, external_id_list_newstore, product_ids_list, currency, customer_email
+                product_prices_list = [[item['item']['internalId'],item['rate']]
+                                    for item in item_list]
+                sales_orders_product_prices[internal_id_value] = product_prices_list
+
+            return mapping_internal_id_sales_order, shipping_data_list, external_id_list_newstore, product_ids_list, currency, customer_email, sales_orders_product_prices
 
         except Exception as e:  # pylint: disable=broad-except
             LOGGER.error(

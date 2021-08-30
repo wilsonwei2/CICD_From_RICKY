@@ -48,7 +48,7 @@ def handler(event, context):
     FULFILLMENT_UPDATE_SAVED_SEARCH_ID = netsuite_config['fulfillment_update_saved_search_id']
     NETSUITE_SYNCED_TO_NEWSTORE_FLAG_SCRIPT_ID = netsuite_config[
         'item_fulfillment_processed_flag_script_id']
-    NETSUITE_GIFTCARD_ITEM_ID = netsuite_config['netsuite_p_gift_card_item_id']
+    #NETSUITE_GIFTCARD_ITEM_ID = netsuite_config['netsuite_p_gift_card_item_id']
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -92,6 +92,7 @@ def activate_giftcard(giftcards_data):
             item for sublist in giftcards_data for item in sublist]
         for giftcard in flat_list_giftcards_data:
             LOGGER.info(f'Activating Giftcard: {giftcard}')
+            giftcard_activation_data = giftcard['activation_data']
 
             session = boto3.session.Session()
             lambda_cli = session.client('lambda')
@@ -99,7 +100,7 @@ def activate_giftcard(giftcards_data):
                 FunctionName=ACTIVATE_GIFTCARD_LAMBDA_NAME,
                 InvocationType='Event',
                 Payload=json.dumps(
-                    {"path": "/gift_card/activate", "body": json.dumps(giftcard)})
+                    {"path": "/gift_card/activate", "body": json.dumps(giftcard_activation_data)})
             )
 
 
@@ -222,6 +223,7 @@ def get_fulfillment_requests_from_graphql(order_data, newstore_handler):
     }
 
     graphql_response = newstore_handler.graphql_api_call(data)
+    LOGGER.info(f"GraphQL response {graphql_response}")
     orders = graphql_response['data']['orders']['nodes']
 
     order_fulfillment_data = {}
