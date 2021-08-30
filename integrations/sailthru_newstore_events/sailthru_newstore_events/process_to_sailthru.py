@@ -45,6 +45,10 @@ def _process_event(data: dict, event_name: str, context):
     to_process_countries = os.environ.get('TO_PROCESS_COUNTRIES')
     if to_process_countries and _get_country_code(ns_order) not in to_process_countries:
         return f'Order {data["order_id"]} not in list of countries to process, ignoring...'
+
+    if ns_order['channel'] == 'magento':
+        return f'Skipping Historical Order {data["order_id"]}'
+
     LOGGER.info(f'NewStore order: {json.dumps(ns_order)}')
     if 'fulfillment' in event_name:
         _filter_sc_items(data, ns_handler)
