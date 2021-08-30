@@ -1,0 +1,217 @@
+{
+  "external_id": "1101284387",
+  "shop": "storefront-catalog-en",
+  "store_id": "",
+  "channel_type": "web",
+  "channel_name": "magento",
+  "placed_at": "2019-09-28T16:41:36+00:00",
+  "currency": "CAD",
+  "customer_name": "Test",
+  "customer_email": "test@yahoo.ca",
+  "shop_locale": "en-US",
+  "customer_language": "en",
+  "external_customer_id": "5199178",
+  "is_fulfilled": true,
+  "is_historical": true,
+  "notification_blacklist": ["invoice_created", "refund_note_created", "order_pending", "shipment_cancelled", "shipment_dispatched", "shipment_delayed", "order_cancelled", "in_store.ready_for_pick_up"],
+  "price_method": "tax_excluded",
+  "shipping_address": {
+    "first_name": "Test",
+    "last_name": "Pierrot-Collette",
+    "address_line_1": "5870",
+    "city": "Montreal",
+    "state": "QC",
+    "zip_code": "H1Y 3A5",
+    "country": "CA"
+  },
+  "billing_address": {
+    "first_name": "Test",
+    "last_name": "Pierrot-Collette",
+    "address_line_1": "5870",
+    "city": "Montreal",
+    "state": "QC",
+    "zip_code": "H1Y 3A5",
+    "country": "CA"
+  },
+  "payments": [{
+    "processor": "payment_historical",
+    "correlation_ref": "correlation_ref",
+    "type": "captured",
+    "amount": 446.62,
+    "method": "historical_payment",
+    "processed_at": "2019-10-29T19:51:25+00:00"
+  }],
+  "shipments": [{
+    "items": [{
+      "external_item_id": "2130079-5FH-M",
+      "product_id": "2130079-5FH-M",
+      "price": {
+        "item_price": 89.5,
+        "item_list_price": 89.5,
+        "item_tax_lines": [{
+          "amount": 3.8,
+          "rate": 0.05,
+          "name": "CAN - QC (GST)",
+          "country_code": "CA"
+        }, {
+          "amount": 7.59,
+          "rate": 0.09975,
+          "name": "CAN - QC (QST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "WELCOME777362",
+          "description": "WELCOME777362",
+          "coupon_code": "WELCOME777362",
+          "type": "fixed",
+          "original_value": 68.55,
+          "price_adjustment": 13.43
+        }]
+      }
+    }, {
+      "external_item_id": "2210205-4CV-29",
+      "product_id": "2210205-4CV-29",
+      "price": {
+        "item_price": 89.5,
+        "item_list_price": 89.5,
+        "item_tax_lines": [{
+          "amount": 3.8,
+          "rate": 0.05,
+          "name": "CAN - QC (GST)",
+          "country_code": "CA"
+        }, {
+          "amount": 7.59,
+          "rate": 0.09975,
+          "name": "CAN - QC (QST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "WELCOME777362",
+          "description": "WELCOME777362",
+          "coupon_code": "WELCOME777362",
+          "type": "fixed",
+          "original_value": 68.55,
+          "price_adjustment": 13.43
+        }]
+      }
+    }, {
+      "external_item_id": "2210205-4CV-30",
+      "product_id": "2210205-4CV-30",
+      "price": {
+        "item_price": 89.5,
+        "item_list_price": 89.5,
+        "item_tax_lines": [{
+          "amount": 3.81,
+          "rate": 0.05,
+          "name": "CAN - QC (GST)",
+          "country_code": "CA"
+        }, {
+          "amount": 7.59,
+          "rate": 0.09975,
+          "name": "CAN - QC (QST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "WELCOME777362",
+          "description": "WELCOME777362",
+          "coupon_code": "WELCOME777362",
+          "type": "fixed",
+          "original_value": 68.55,
+          "price_adjustment": 13.43
+        }]
+      }
+    }, {
+      "external_item_id": "2120205-5CL-M",
+      "product_id": "2120205-5CL-M",
+      "price": {
+        "item_price": 49.5,
+        "item_list_price": 49.5,
+        "item_tax_lines": [{
+          "amount": 2.1,
+          "rate": 0.05,
+          "name": "CAN - QC (GST)",
+          "country_code": "CA"
+        }, {
+          "amount": 4.2,
+          "rate": 0.09975,
+          "name": "CAN - QC (QST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "WELCOME777362",
+          "description": "WELCOME777362",
+          "coupon_code": "WELCOME777362",
+          "type": "fixed",
+          "original_value": 68.55,
+          "price_adjustment": 7.42
+        }]
+      }
+    }, {
+      "external_item_id": "2120138-330-M",
+      "product_id": "2120138-330-M",
+      "price": {
+        "item_price": 39.5,
+        "item_list_price": 39.5,
+        "item_tax_lines": [{
+          "amount": 1.68,
+          "rate": 0.05,
+          "name": "CAN - QC (GST)",
+          "country_code": "CA"
+        }, {
+          "amount": 3.34,
+          "rate": 0.09975,
+          "name": "CAN - QC (QST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "WELCOME777362",
+          "description": "WELCOME777362",
+          "coupon_code": "WELCOME777362",
+          "type": "fixed",
+          "original_value": 68.55,
+          "price_adjustment": 5.92
+        }]
+      }
+    }, {
+      "external_item_id": "2510251-002-M",
+      "product_id": "2510251-002-M",
+      "price": {
+        "item_price": 99.5,
+        "item_list_price": 99.5,
+        "item_tax_lines": [{
+          "amount": 4.23,
+          "rate": 0.05,
+          "name": "CAN - QC (GST)",
+          "country_code": "CA"
+        }, {
+          "amount": 8.44,
+          "rate": 0.09975,
+          "name": "CAN - QC (QST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "WELCOME777362",
+          "description": "WELCOME777362",
+          "coupon_code": "WELCOME777362",
+          "type": "fixed",
+          "original_value": 68.55,
+          "price_adjustment": 14.92
+        }]
+      }
+    }],
+    "historical_shipping_option": {
+      "price": 0.0,
+      "tax": 0.0,
+      "service_level_identifier": "traditional_carrier",
+      "shipping_type": "traditional_carrier",
+      "display_name": "Standard delivery",
+      "fulfillment_node_id": "MTLDC1",
+      "shipping_carrier": "traditional_carrier",
+      "zip_code": "H1Y 3A5",
+      "country_code": "CA",
+      "routing_strategy": {
+        "strategy": "default"
+      }
+    }
+  }]
+}

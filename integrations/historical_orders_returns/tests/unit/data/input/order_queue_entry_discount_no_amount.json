@@ -1,0 +1,145 @@
+{
+  "external_id": "1101284390",
+  "shop": "storefront-catalog-en",
+  "store_id": "",
+  "channel_type": "web",
+  "channel_name": "magento",
+  "placed_at": "2019-09-28T16:43:52+00:00",
+  "currency": "CAD",
+  "customer_name": "Test Test",
+  "customer_email": "test@gmail.com",
+  "shop_locale": "en-US",
+  "customer_language": "en",
+  "external_customer_id": "1118911",
+  "is_fulfilled": true,
+  "is_historical": true,
+  "notification_blacklist": ["invoice_created", "refund_note_created", "order_pending", "shipment_cancelled", "shipment_dispatched", "shipment_delayed", "order_cancelled", "in_store.ready_for_pick_up"],
+  "price_method": "tax_excluded",
+  "shipping_address": {
+    "first_name": "Test",
+    "last_name": "Test",
+    "address_line_1": "1238 Dundas St E",
+    "city": "Toronto",
+    "state": "ON",
+    "zip_code": "M4M 0C6",
+    "country": "CA"
+  },
+  "billing_address": {
+    "first_name": "Test",
+    "last_name": "Test",
+    "address_line_1": "1238 Dundas St E",
+    "city": "Toronto",
+    "state": "ON",
+    "zip_code": "M4M 0C6",
+    "country": "CA"
+  },
+  "payments": [{
+    "processor": "payment_historical",
+    "correlation_ref": "correlation_ref",
+    "type": "captured",
+    "amount": 257.41,
+    "method": "historical_payment",
+    "processed_at": "2019-10-03T00:33:58+00:00"
+  }],
+  "shipments": [{
+    "items": [{
+      "external_item_id": "1130157-2EK-M",
+      "product_id": "1130157-2EK-M",
+      "price": {
+        "item_price": 89.5,
+        "item_list_price": 89.5,
+        "item_tax_lines": [{
+          "amount": 9.89,
+          "rate": 0.13,
+          "name": "CAN - ON (HST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "SEPTEMBER15",
+          "description": "SEPTEMBER15",
+          "coupon_code": "SEPTEMBER15",
+          "type": "fixed",
+          "original_value": 40.2,
+          "price_adjustment": 13.43
+        }]
+      }
+    }, {
+      "external_item_id": "1120435-138-M",
+      "product_id": "1120435-138-M",
+      "price": {
+        "item_price": 69.5,
+        "item_list_price": 69.5,
+        "item_tax_lines": [{
+          "amount": 7.68,
+          "rate": 0.13,
+          "name": "CAN - ON (HST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "SEPTEMBER15",
+          "description": "SEPTEMBER15",
+          "coupon_code": "SEPTEMBER15",
+          "type": "fixed",
+          "original_value": 40.2,
+          "price_adjustment": 10.43
+        }]
+      }
+    }, {
+      "external_item_id": "1120521-009-M",
+      "product_id": "1120521-009-M",
+      "price": {
+        "item_price": 69.5,
+        "item_list_price": 69.5,
+        "item_tax_lines": [{
+          "amount": 7.68,
+          "rate": 0.13,
+          "name": "CAN - ON (HST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "SEPTEMBER15",
+          "description": "SEPTEMBER15",
+          "coupon_code": "SEPTEMBER15",
+          "type": "fixed",
+          "original_value": 40.2,
+          "price_adjustment": 10.43
+        }]
+      }
+    }, {
+      "external_item_id": "1930011-218-32",
+      "product_id": "1930011-218-32",
+      "price": {
+        "item_price": 39.5,
+        "item_list_price": 39.5,
+        "item_tax_lines": [{
+          "amount": 4.36,
+          "rate": 0.13,
+          "name": "CAN - ON (HST)",
+          "country_code": "CA"
+        }],
+        "item_order_discount_info": [{
+          "discount_ref": "SEPTEMBER15",
+          "description": "SEPTEMBER15",
+          "coupon_code": "SEPTEMBER15",
+          "type": "fixed",
+          "original_value": 40.2,
+          "price_adjustment": 5.91
+        }]
+      }
+    }],
+    "historical_shipping_option": {
+      "price": 0.0,
+      "tax": 0.0,
+      "service_level_identifier": "traditional_carrier",
+      "shipping_type": "traditional_carrier",
+      "display_name": "Standard delivery",
+      "fulfillment_node_id": "MTLDC1",
+      "shipping_carrier": "traditional_carrier",
+      "zip_code": "M4M 0C6",
+      "country_code": "CA",
+      "routing_strategy": {
+        "strategy": "default"
+      }
+    }
+  }]
+}

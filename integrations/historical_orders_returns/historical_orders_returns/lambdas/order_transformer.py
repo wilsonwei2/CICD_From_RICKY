@@ -10,6 +10,7 @@ class OrderTransformer():
     def __init__(self):
         self.order = None
         self.taxation = None
+        self.order_total_gross = 0
 
 
     def format_date(self, date):
@@ -35,6 +36,99 @@ class OrderTransformer():
                 order_total = order_total + adjusted_item_price
 
         return order_total
+
+    def calculate_order_discount(self):
+        payment_amount = float(self.order["payment"]["Transaction Amount"])
+        order_total_net = self.get_order_total()
+
+        items = self.order["items"]
+        tax_total = 0
+
+        for item in items: # pylint: disable=too-many-nested-blocks
+            quantity = int(float(item["Lineitem quantity"]))
+
+            for _ in range(quantity):
+                for i in itertools.count(start=1):
+                    # go through all numbered tax lines in the item, break loop if max was reached
+                    if f"Tax {i} Price" not in item:
+                        break
+
+                    tax_price = float(item[f"Tax {i} Price"]) / quantity
+                    tax_total = tax_total + tax_price
+
+        order_total_gross = order_total_net + tax_total
+
+        return round(order_total_gross - payment_amount, 2)
+
+    def fix_order_discount(self, order_discount, ns_items):
+        calculated_order_discount = 0
+        last_item = None
+        for ns_item in ns_items:
+            item_order_discount = ns_item["price"]["item_order_discount_info"][0]["price_adjustment"]
+            calculated_order_discount = calculated_order_discount + item_order_discount
+            last_item = ns_item
+
+        if order_discount > calculated_order_discount:
+            gap = order_discount - calculated_order_discount
+            item_order_discount = round(item_order_discount + gap, 2)
+            last_item["price"]["item_order_discount_info"][0]["price_adjustment"] = item_order_discount
+            self.order_total_gross = self.order_total_gross - gap
+        else:
+            if calculated_order_discount > order_discount:
+                gap = calculated_order_discount - order_discount
+                item_order_discount = round(item_order_discount - gap, 2)
+                last_item["price"]["item_order_discount_info"][0]["price_adjustment"] = item_order_discount
+                self.order_total_gross = self.order_total_gross + gap
+
+    def add_tax_cent_price_adjustment(self, value, ns_item, adj_type):
+        adjustment = {
+            "discount_ref": "Calculation Adjustment",
+            "description": "Calculation Adjustment",
+            "coupon_code": "Calculation Adjustment",
+            "type": "fixed",
+            "original_value": value,
+            "price_adjustment": value
+        }
+
+        ns_item["price"][adj_type] = [adjustment]
+
+    # There might be a tax calculation issue in the export by some cents (usually one cent)
+    # and we need to adjust this to import the order
+    def fix_tax_cent_calculation(self, ns_order):
+        payment_amount = float(self.order["payment"]["Transaction Amount"])
+        first_item = ns_order["shipments"][0]["items"][0]
+        order_total_gross = round(self.order_total_gross, 2)
+
+        if payment_amount > order_total_gross: # pylint: disable=too-many-nested-blocks
+            gap = round(payment_amount - order_total_gross, 2)
+            if gap <= 0.05:
+                # we cannot adjust the value using an adjustment, we need to adjust the price
+                tax_lines = first_item["price"]["item_tax_lines"]
+                if len(tax_lines) > 0:
+                    tax_line = tax_lines[0]
+                    if tax_line["amount"] >= gap:
+                        tax_line["amount"] = round(tax_line["amount"] + gap, 2)
+        else:
+            if order_total_gross > payment_amount:
+                gap = round(order_total_gross - payment_amount, 2)
+                if gap <= 0.05:
+                    # add an item discount if possible
+                    if len(first_item["price"].get("item_discount_info", [])) == 0:
+                        self.add_tax_cent_price_adjustment(gap, first_item, "item_discount_info")
+                    else:
+                        # add an order discount if possible
+                        if len(first_item["price"].get("item_order_discount_info", [])) == 0:
+                            self.add_tax_cent_price_adjustment(gap, first_item, "item_order_discount_info")
+                        else:
+                            if gap <= 0.05:
+                                # we cannot adjust the value using an adjustment, we need to adjust the price
+                                tax_lines = first_item["price"]["item_tax_lines"]
+                                if len(tax_lines) > 0:
+                                    tax_line = tax_lines[0]
+                                    if tax_line["amount"] >= gap:
+                                        tax_line["amount"] = round(tax_line["amount"] - gap)
+
+
 
     def transform_order_address(self, prefix):
         return {
@@ -63,7 +157,15 @@ class OrderTransformer():
         items = self.order["items"]
         ns_items = []
         item_index = 0
-        order_discount = float(self.order["details"].get("Discount Amount", "0"))
+        discount_type = self.order["details"].get("Discount Type", None)
+        order_discount = 0
+        if discount_type == "amount":
+            order_discount = float(self.order["details"].get("Discount Amount", 0))
+            if order_discount == 0.0:
+                order_discount = self.calculate_order_discount()
+        else:
+            if discount_type == "percent":
+                order_discount = self.calculate_order_discount()
 
         for item in items:
             original_price = float(item["Lineitem compare at price"]) if "Lineitem compare at price" in item else 0
@@ -83,6 +185,8 @@ class OrderTransformer():
                     }
                 }
 
+                self.order_total_gross = self.order_total_gross + unit_price
+
                 if original_price > price:
                     discount = original_price - price
                     unit_discount = float("{:.2f}".format(discount / quantity))
@@ -94,9 +198,10 @@ class OrderTransformer():
                         "original_value": unit_discount,
                         "price_adjustment": unit_discount
                     }]
+                    self.order_total_gross = self.order_total_gross - unit_discount
 
                 if order_discount > 0:
-                    order_discount_code = self.order.get("Discount Code", "ORDER DISCOUNT")
+                    order_discount_code = self.order["details"].get("Discount Code", "ORDER DISCOUNT")
                     adjusted_item_price = unit_price - unit_discount
                     order_total = self.get_order_total()
                     order_unit_discount = round(adjusted_item_price / order_total * order_discount, 2)
@@ -108,10 +213,14 @@ class OrderTransformer():
                         "original_value": order_discount,
                         "price_adjustment": order_unit_discount
                     }]
+                    self.order_total_gross = self.order_total_gross - order_unit_discount
 
 
                 ns_items.append(ns_item)
                 item_index += 1
+
+        if order_discount > 0:
+            self.fix_order_discount(order_discount, ns_items)
 
         return ns_items
 
@@ -133,6 +242,7 @@ class OrderTransformer():
                 "name": item[f"Tax {i} Title"],
                 "country_code": self.order["details"]["Billing Country Code"] or ""
             })
+            self.order_total_gross = self.order_total_gross + float("{:.2f}".format(tax_price / quantity))
 
         return tax_lines
 
@@ -151,6 +261,8 @@ class OrderTransformer():
             "zip_code": self.order["details"]["Shipping Zip"] or "",
             "country_code": self.order["details"]["Shipping Country Code"] or ""
         }
+        self.order_total_gross = self.order_total_gross + shipping_option["price"]
+        self.order_total_gross = self.order_total_gross + shipping_option["tax"]
 
         if is_store_order:
             shipping_option["store_id"] = self.order["details"]["Billing Company"]
@@ -209,5 +321,7 @@ class OrderTransformer():
             "payments": self.transform_payments(),
             "shipments": shipments
         }
+
+        self.fix_tax_cent_calculation(ns_order)
 
         return ns_order

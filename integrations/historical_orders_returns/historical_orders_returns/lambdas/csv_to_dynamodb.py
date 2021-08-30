@@ -21,7 +21,7 @@ RETURNS_TABLE = DYNAMODB.Table(RETURNS_TABLE_NAME)
 
 
 def process_orders_csv_file(s3_bucket_name, s3_file_key):
-    try:
+    try: # pylint: disable=too-many-nested-blocks
         obj = S3.Object(s3_bucket_name, s3_file_key)
         data = get_csv_data(obj)
 
@@ -31,7 +31,8 @@ def process_orders_csv_file(s3_bucket_name, s3_file_key):
         for i, row in enumerate(data):
             # if row has new order id, send order to Dynamodb and create new object
             if i > 0 and current_order_id and row["Name"] != current_order_id:
-                add_order_to_dynamodb(order_obj, current_order_id)
+                if not is_closed_location(order_obj):
+                    add_order_to_dynamodb(order_obj, current_order_id)
                 order_obj = get_new_order_obj()
 
             current_order_id = row["Name"]
@@ -50,7 +51,7 @@ def process_orders_csv_file(s3_bucket_name, s3_file_key):
                 order_obj["shipping"] = row
 
         # send last order to DynamoDB after last row was processed
-        if order_obj:
+        if order_obj and not is_closed_location(order_obj):
             add_order_to_dynamodb(order_obj, current_order_id)
 
         move_to_archive(obj, s3_bucket_name, s3_file_key)
@@ -84,6 +85,11 @@ def get_new_order_obj():
         "shipping": {},
         "payment": {}
     }
+
+
+def is_closed_location(order_obj):
+    return order_obj["details"].get("Store Code", "") in ["BRUST", "LAVST", "MPOST", "EDMST", "QUEST", "VMOST", "LIMST", "SHEST", "OTTST"]
+
 
 def get_csv_data(s3_object):
     csvdata = s3_object.get()['Body'].read().decode('utf-8')

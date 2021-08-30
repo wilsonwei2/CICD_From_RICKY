@@ -74,9 +74,9 @@
                       ],
                       "item_order_discount_info": [
                           {
-                              "discount_ref": "ORDER DISCOUNT",
-                              "description": "ORDER DISCOUNT",
-                              "coupon_code": "ORDER DISCOUNT",
+                              "discount_ref": "SPOFFER30",
+                              "description": "SPOFFER30",
+                              "coupon_code": "SPOFFER30",
                               "type": "fixed",
                               "original_value": 30,
                               "price_adjustment": 30

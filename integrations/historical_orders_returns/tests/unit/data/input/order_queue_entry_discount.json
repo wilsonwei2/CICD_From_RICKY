@@ -87,9 +87,9 @@
             ],
             "item_order_discount_info": [
               {
-                "discount_ref": "ORDER DISCOUNT",
-                "description": "ORDER DISCOUNT",
-                "coupon_code": "ORDER DISCOUNT",
+                "discount_ref": "SPOFFER10",
+                "description": "SPOFFER10",
+                "coupon_code": "SPOFFER10",
                 "type": "fixed",
                 "original_value": 10,
                 "price_adjustment": 2.38
@@ -129,9 +129,9 @@
             ],
             "item_order_discount_info": [
               {
-                "discount_ref": "ORDER DISCOUNT",
-                "description": "ORDER DISCOUNT",
-                "coupon_code": "ORDER DISCOUNT",
+                "discount_ref": "SPOFFER10",
+                "description": "SPOFFER10",
+                "coupon_code": "SPOFFER10",
                 "type": "fixed",
                 "original_value": 10,
                 "price_adjustment": 3.81
@@ -171,9 +171,9 @@
             ],
             "item_order_discount_info": [
               {
-                "discount_ref": "ORDER DISCOUNT",
-                "description": "ORDER DISCOUNT",
-                "coupon_code": "ORDER DISCOUNT",
+                "discount_ref": "SPOFFER10",
+                "description": "SPOFFER10",
+                "coupon_code": "SPOFFER10",
                 "type": "fixed",
                 "original_value": 10,
                 "price_adjustment": 3.81
