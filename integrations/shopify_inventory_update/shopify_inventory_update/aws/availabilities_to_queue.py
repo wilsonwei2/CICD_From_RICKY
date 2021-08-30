@@ -10,6 +10,7 @@ import zipfile
 import aiohttp
 
 from param_store.client import ParamStore
+from pom_common.shopify import ShopManager
 from newstore_adapter.connector import NewStoreConnector
 from shopify_inventory_update.handlers.lambda_handler import start_lambda_function
 from shopify_inventory_update.handlers.shopify_handler import ShopifyConnector, RateLimiter
@@ -37,6 +38,7 @@ PARAM_STORE = None
 
 TENANT = os.environ['TENANT'] or 'frankandoak'
 STAGE = os.environ['STAGE'] or 'x'
+REGION = os.environ['REGION'] or 'us-east-1'
 
 
 def handler(event, context):
@@ -67,7 +69,9 @@ async def initialize_locations_maps(session):
         LOCATIONS_MAP = {}
 
         locations_map_info = json.loads(PARAM_STORE.get_param('shopify/locations_map_info'))
-        shopify_config = json.loads(PARAM_STORE.get_param('shopify'))
+
+        shop_manager = ShopManager(TENANT, STAGE, REGION)
+        shopify_config = shop_manager.get_shop_config(shop_manager.get_shop_ids()[0])
 
         shopify_connector = ShopifyConnector(
             shopify_config['username'],
