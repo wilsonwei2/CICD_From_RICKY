@@ -462,6 +462,20 @@ def _get_shipping_option(order, shipping_offer_token):
                 'price': float(shipping_lines[0]['price']),
                 'tax': _get_shipping_taxes(shipping_lines[0])
             }
+
+            if len(_get_non_null_field(shipping_lines[0], 'discount_allocations', [])) > 0:
+                shipping_discount = shipping_lines[0]['discount_allocations'][0]
+                shipping_discount_info = {
+                    'discount_ref': 'Shipping Discount',
+                    'type': 'fixed',
+                    'original_value': float(shipping_lines[0]['price']),
+                    'price_adjustment': float(shipping_discount['amount']),
+                }
+
+                _add_shipping_discount_code(order, shipping_discount_info)
+
+                shipping_option['discount_info'] = [shipping_discount_info]
+
     else:
         service_level_identifier = shopify_helper.get_shipment_service_level() # Get default
         LOGGER.warning(f"Order doesn't have shipping lines, utilizing default shipping {service_level_identifier}.")
@@ -481,3 +495,10 @@ def _get_shipping_taxes(shipping_line):
     for tax in shipping_line['tax_lines']:
         shipping_taxes_total += float(tax.get('price', '0.0'))
     return round(shipping_taxes_total, 2)
+
+
+def _add_shipping_discount_code(order, shipping_discount_info):
+    if len(_get_non_null_field(order, 'discount_codes', [])) > 0:
+        for discount_code in order['discount_codes']:
+            if _get_non_null_field(discount_code, 'type', '') == 'shipping':
+                shipping_discount_info['coupon_code'] = discount_code['code']
