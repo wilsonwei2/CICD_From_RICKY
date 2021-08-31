@@ -2,6 +2,7 @@ import logging
 import asyncio
 import json
 import os
+
 import aiohttp
 import base64
 
@@ -85,3 +86,51 @@ class ShopifyConn:
                 response.raise_for_status()
                 LOGGER.info(f'Response: {json.dumps(response_body)}')
                 return response_body.get('inventory_levels')
+
+    async def get_inventory_item_id(self, sku):
+        LOGGER.info(f'Getting inventory item id for {sku}')
+
+        url_inventory = f'{self.url}api/graphql.json'
+
+        query = '''
+        {
+            products(first: 1, query:"sku:''' + sku + '''") {
+                edges {
+                node {
+                    variants(first: 100)
+                    {
+                    edges {
+                        node {
+                        sku
+                        inventoryItem {
+                            id
+                        }
+                        }
+                    }
+                    }
+                }
+                }
+            }
+        }
+        '''
+
+        async with aiohttp.ClientSession() as session:
+            async with await session.post(url=url_inventory, headers=self.auth_header, json={'query': query}) as response:
+                response_body = await response.json()
+
+                if response.status == 429:
+                    LOGGER.warning('Shopify shop api limit reached')
+                    return await asyncio.ensure_future(self.get_inventory_item_id(sku))
+
+                response.raise_for_status()
+                LOGGER.info(f'Response: {json.dumps(response_body)}')
+
+                try:
+                    variants = response_body['data']['products']['edges'][0]['node']['variants']['edges']
+
+                    for variant in variants:
+                        if variant['node']['sku'] == sku:
+                            return variant['node']['inventoryItem']['id'].split('/')[-1]
+                except Exception as e:
+                    LOGGER.error('Failed to get inventory item id')
+                    raise e

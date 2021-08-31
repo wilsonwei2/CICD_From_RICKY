@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2015, 2016, 2017 NewStore, Inc. All rights reserved.
 import logging
-import boto3
 import os
 import json
 import asyncio
 import shopify_fulfillment.helpers.sqs_consumer as sqs_consumer
 from shopify_fulfillment.helpers.utils import Utils
 from shopify_adapter.connector import ShopifyConnector
-from boto3.dynamodb.conditions import Key
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 SQS_QUEUE = os.environ['SQS_QUEUE']
-TABLE_NAME = boto3.resource('dynamodb').Table('shopify_netsuite_id_import_validation')
 DC_LOCATION_ID_MAP = Utils.get_shopify_dc_location_id_map()
 
 
@@ -83,12 +80,11 @@ async def process_fulfillment(message):
             ['None of the items are stocked at the new location.', 'All line items must be stocked at the same location.']:
         for items in fulfillment_event['items']:
             product_id = items.get('product_id')
-            response_inv = TABLE_NAME.query(IndexName='netsuite_id-index',
-                                            KeyConditionExpression=Key('netsuite_id').eq(product_id))
-            inv_item_id = response_inv['Items'][0]['inventory_item_id']
-            LOGGER.info(f'inv item id is {inv_item_id}')
-            inventory_levels = await Utils.get_shopify_conn().get_inventory_level(inv_item_id,
-                                                                                  shopify_dc_location_id)
+            inv_item_id = await Utils.get_shopify_conn().get_inventory_item_id(product_id)
+
+            LOGGER.info(f'inventory item id: {inv_item_id}')
+            inventory_levels = await Utils.get_shopify_conn().get_inventory_level(inv_item_id, shopify_dc_location_id)
+
             if not inventory_levels:
                 LOGGER.info(f"There's no inventory level for inventory item {inv_item_id} " \
                             f"on location {shopify_dc_location_id}, create it with ATP 0.")
