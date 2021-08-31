@@ -477,7 +477,7 @@ def _get_shipping_option(order, shipping_offer_token):
                 shipping_option['discount_info'] = [shipping_discount_info]
 
     else:
-        service_level_identifier = shopify_helper.get_shipment_service_level() # Get default
+        service_level_identifier = shopify_helper.get_shipment_service_level('default', 'default', shipping_country_code) # Get default
         LOGGER.warning(f"Order doesn't have shipping lines, utilizing default shipping {service_level_identifier}.")
 
         shipping_option = {
