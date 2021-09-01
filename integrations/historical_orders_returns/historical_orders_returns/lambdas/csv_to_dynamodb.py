@@ -88,7 +88,7 @@ def get_new_order_obj():
 
 
 def is_closed_location(order_obj):
-    return order_obj["details"].get("Store Code", "") in ["BRUST", "LAVST", "MPOST", "EDMST", "QUEST", "VMOST", "LIMST", "SHEST", "OTTST"]
+    return order_obj["details"].get("Store Code", "") in ["BRUST", "LAVST", "MPOST", "EDMST", "QUEST", "VMOST", "LIMST", "SHEST", "OTTST", "METST", "CALST"] # pylint: disable=line-too-long
 
 
 def get_csv_data(s3_object):
