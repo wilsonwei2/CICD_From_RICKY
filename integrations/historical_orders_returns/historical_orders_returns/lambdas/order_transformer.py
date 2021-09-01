@@ -23,7 +23,7 @@ class OrderTransformer():
         if self.order.get("payment", None) and self.order["payment"].get("Transaction Amount", None):
             payment_amount = payment_amount + float(self.order["payment"]["Transaction Amount"])
 
-        return payment_amount
+        return round(payment_amount, 2)
 
 
     def get_order_total(self):

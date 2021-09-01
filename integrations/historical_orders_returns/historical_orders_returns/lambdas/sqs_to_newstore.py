@@ -35,28 +35,29 @@ def handler(_, context):
         context=context
     )
 
-    messages = QUEUE.receive_messages(
-        MaxNumberOfMessages=10,
-        WaitTimeSeconds=0
-    )
+    for _ in range(50): # pylint: disable=too-many-nested-blocks
+        messages = QUEUE.receive_messages(
+            MaxNumberOfMessages=10,
+            WaitTimeSeconds=0
+        )
 
-    for message in messages:
-        try:
-            body = json.loads(message.body)
-            LOGGER.info(f'Processing Message: {message.message_id}')
+        for message in messages:
+            try:
+                body = json.loads(message.body)
+                LOGGER.info(f'Processing Message: {message.message_id}')
 
-            newstore_response = None
-            if TYPE == 'order':
-                newstore_response = import_order_to_newstore(body, ns_handler)
-            if TYPE == 'return':
-                newstore_response = import_return_to_newstore(body['order_id'], body['return'], ns_handler)
+                newstore_response = None
+                if TYPE == 'order':
+                    newstore_response = import_order_to_newstore(body, ns_handler)
+                if TYPE == 'return':
+                    newstore_response = import_return_to_newstore(body['order_id'], body['return'], ns_handler)
 
-            if newstore_response:
-                LOGGER.info('Deleting message from queue...')
-                message.delete()
+                if newstore_response:
+                    LOGGER.info('Deleting message from queue...')
+                    message.delete()
 
-        except Exception as e: # pylint: disable=broad-except
-            LOGGER.exception(e)
+            except Exception as e: # pylint: disable=broad-except
+                LOGGER.exception(e)
 
 
     return {
