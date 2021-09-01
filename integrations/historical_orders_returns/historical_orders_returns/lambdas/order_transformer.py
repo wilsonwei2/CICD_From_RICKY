@@ -16,6 +16,16 @@ class OrderTransformer():
     def format_date(self, date):
         return date.replace(" ", "")
 
+    def get_payment_amount(self):
+        payment_amount = 0
+        if self.order.get("giftcard_payment", None) and self.order["giftcard_payment"].get("Transaction Amount", None):
+            payment_amount = payment_amount + float(self.order["giftcard_payment"]["Transaction Amount"])
+        if self.order.get("payment", None) and self.order["payment"].get("Transaction Amount", None):
+            payment_amount = payment_amount + float(self.order["payment"]["Transaction Amount"])
+
+        return payment_amount
+
+
     def get_order_total(self):
         items = self.order["items"]
         order_total = 0
@@ -38,7 +48,7 @@ class OrderTransformer():
         return order_total
 
     def calculate_order_discount(self):
-        payment_amount = float(self.order["payment"]["Transaction Amount"])
+        payment_amount = self.get_payment_amount()
         order_total_net = self.get_order_total()
 
         items = self.order["items"]
@@ -95,7 +105,7 @@ class OrderTransformer():
     # There might be a tax calculation issue in the export by some cents (usually one cent)
     # and we need to adjust this to import the order
     def fix_tax_cent_calculation(self, ns_order):
-        payment_amount = float(self.order["payment"]["Transaction Amount"])
+        payment_amount = self.get_payment_amount()
         first_item = ns_order["shipments"][0]["items"][0]
         order_total_gross = round(self.order_total_gross, 2)
 
@@ -120,13 +130,12 @@ class OrderTransformer():
                         if len(first_item["price"].get("item_order_discount_info", [])) == 0:
                             self.add_tax_cent_price_adjustment(gap, first_item, "item_order_discount_info")
                         else:
-                            if gap <= 0.05:
-                                # we cannot adjust the value using an adjustment, we need to adjust the price
-                                tax_lines = first_item["price"]["item_tax_lines"]
-                                if len(tax_lines) > 0:
-                                    tax_line = tax_lines[0]
-                                    if tax_line["amount"] >= gap:
-                                        tax_line["amount"] = round(tax_line["amount"] - gap)
+                            # we cannot adjust the value using an adjustment, we need to adjust the price
+                            tax_lines = first_item["price"]["item_tax_lines"]
+                            if len(tax_lines) > 0:
+                                tax_line = tax_lines[0]
+                                if tax_line["amount"] >= gap:
+                                    tax_line["amount"] = round(tax_line["amount"] - gap, 2)
 
 
 
@@ -143,13 +152,22 @@ class OrderTransformer():
 
 
     def transform_payments(self):
+        payment_amount = self.get_payment_amount()
+        processed_at = None
+
+        if self.order.get("giftcard_payment", None) and self.order["giftcard_payment"].get("Transaction Processed At", None):
+            processed_at = self.order["giftcard_payment"]["Transaction Processed At"]
+        if self.order.get("payment", None) and self.order["payment"].get("Transaction Processed At", None):
+            processed_at = self.order["payment"]["Transaction Processed At"]
+
+
         return [{
             "processor": "payment_historical",
             "correlation_ref": "correlation_ref",
             "type": "captured",
-            "amount": float(self.order["payment"]["Transaction Amount"]),
+            "amount": payment_amount,
             "method": "historical_payment",
-            "processed_at": self.format_date(self.order["payment"]["Transaction Processed At"])
+            "processed_at": self.format_date(processed_at)
         }]
 
 

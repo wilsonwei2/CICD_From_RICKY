@@ -47,6 +47,8 @@ def process_orders_csv_file(s3_bucket_name, s3_file_key):
                 order_obj["items"].append(row)
             elif "Transaction Kind" in row and row["Transaction Kind"] == "capture": # payment
                 order_obj["payment"] = row
+            elif "Transaction Kind" in row and row["Transaction Kind"] == "sale" and row["Transaction Gateway"] == "Legacy Gift Card": # giftcard
+                order_obj["giftcard_payment"] = row
             elif "Shipping Line Price" in row: # shipping
                 order_obj["shipping"] = row
 

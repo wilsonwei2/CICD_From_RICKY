@@ -444,3 +444,163 @@ def test_order_dynamodb_to_sqs_tax_cent_adjustment_2(monkeypatch):
     ns_order = json.load(output_file)
 
     assert json.loads(response["Messages"][0]["Body"]) == ns_order
+
+@mock_sqs
+@mock_dynamodb2
+def test_order_dynamodb_to_sqs_tax_cent_adjustment_3(monkeypatch):
+    # mock environment & functions
+    monkeypatch.setenv("LOG_LEVEL", "INFO")
+    monkeypatch.setenv("REGION", "us-east-1")
+    monkeypatch.setenv("TENANT", "frankandoak")
+    monkeypatch.setenv("STAGE", "x")
+    monkeypatch.setenv("ORDERS_TABLE_NAME", "testtable")
+    monkeypatch.setenv("ORDERS_QUEUE_NAME", "testqueue.fifo")
+    monkeypatch.setenv("RETURNS_TABLE_NAME", "testtable")
+    monkeypatch.setenv("RETURNS_QUEUE_NAME", "testqueue.fifo")
+
+    # create dynamodb
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.create_table(
+        TableName="testtable",
+        KeySchema=[
+            {'AttributeName': 'order_id', 'KeyType': 'HASH'}
+        ],
+        AttributeDefinitions=[
+            {'AttributeName': 'order_id', 'AttributeType': 'S'}
+        ])
+
+    # create table entry
+    input_file = open("data/input/order_table_entry_tax_issue-3.json", "r")
+    item = json.load(input_file)
+    table.put_item(Item=item)
+
+    # create queue
+    sqs = boto3.client("sqs", "us-east-1")
+    queue = sqs.create_queue(QueueName="testqueue.fifo", Attributes={"FifoQueue": "true"})
+
+    from historical_orders_returns.lambdas.dynamodb_to_sqs import handler_orders
+    result = handler_orders(None, None)
+
+    # assert successful function execution
+    assert result["success"]
+
+    # assert dynamodb update status
+    res = table.scan()
+    assert len(res["Items"]) == 1
+    assert res["Items"][0]["status"] == "extracted"
+
+    # assert message in queue
+    response = sqs.receive_message(QueueUrl=queue["QueueUrl"])
+    assert len(response["Messages"]) == 1
+
+    output_file = open("data/input/order_queue_entry_tax_issue-3.json", "r")
+    ns_order = json.load(output_file)
+
+    assert json.loads(response["Messages"][0]["Body"]) == ns_order
+
+@mock_sqs
+@mock_dynamodb2
+def test_order_dynamodb_to_sqs_gc_payment(monkeypatch):
+    # mock environment & functions
+    monkeypatch.setenv("LOG_LEVEL", "INFO")
+    monkeypatch.setenv("REGION", "us-east-1")
+    monkeypatch.setenv("TENANT", "frankandoak")
+    monkeypatch.setenv("STAGE", "x")
+    monkeypatch.setenv("ORDERS_TABLE_NAME", "testtable")
+    monkeypatch.setenv("ORDERS_QUEUE_NAME", "testqueue.fifo")
+    monkeypatch.setenv("RETURNS_TABLE_NAME", "testtable")
+    monkeypatch.setenv("RETURNS_QUEUE_NAME", "testqueue.fifo")
+
+    # create dynamodb
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.create_table(
+        TableName="testtable",
+        KeySchema=[
+            {'AttributeName': 'order_id', 'KeyType': 'HASH'}
+        ],
+        AttributeDefinitions=[
+            {'AttributeName': 'order_id', 'AttributeType': 'S'}
+        ])
+
+    # create table entry
+    input_file = open("data/input/order_table_entry_gc_payment.json", "r")
+    item = json.load(input_file)
+    table.put_item(Item=item)
+
+    # create queue
+    sqs = boto3.client("sqs", "us-east-1")
+    queue = sqs.create_queue(QueueName="testqueue.fifo", Attributes={"FifoQueue": "true"})
+
+    from historical_orders_returns.lambdas.dynamodb_to_sqs import handler_orders
+    result = handler_orders(None, None)
+
+    # assert successful function execution
+    assert result["success"]
+
+    # assert dynamodb update status
+    res = table.scan()
+    assert len(res["Items"]) == 1
+    assert res["Items"][0]["status"] == "extracted"
+
+    # assert message in queue
+    response = sqs.receive_message(QueueUrl=queue["QueueUrl"])
+    assert len(response["Messages"]) == 1
+
+    output_file = open("data/input/order_queue_entry_gc_payment.json", "r")
+    ns_order = json.load(output_file)
+
+    assert json.loads(response["Messages"][0]["Body"]) == ns_order
+
+
+@mock_sqs
+@mock_dynamodb2
+def test_order_dynamodb_to_sqs_mixed_payment(monkeypatch):
+    # mock environment & functions
+    monkeypatch.setenv("LOG_LEVEL", "INFO")
+    monkeypatch.setenv("REGION", "us-east-1")
+    monkeypatch.setenv("TENANT", "frankandoak")
+    monkeypatch.setenv("STAGE", "x")
+    monkeypatch.setenv("ORDERS_TABLE_NAME", "testtable")
+    monkeypatch.setenv("ORDERS_QUEUE_NAME", "testqueue.fifo")
+    monkeypatch.setenv("RETURNS_TABLE_NAME", "testtable")
+    monkeypatch.setenv("RETURNS_QUEUE_NAME", "testqueue.fifo")
+
+    # create dynamodb
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.create_table(
+        TableName="testtable",
+        KeySchema=[
+            {'AttributeName': 'order_id', 'KeyType': 'HASH'}
+        ],
+        AttributeDefinitions=[
+            {'AttributeName': 'order_id', 'AttributeType': 'S'}
+        ])
+
+    # create table entry
+    input_file = open("data/input/order_table_entry_mixed_payment.json", "r")
+    item = json.load(input_file)
+    table.put_item(Item=item)
+
+    # create queue
+    sqs = boto3.client("sqs", "us-east-1")
+    queue = sqs.create_queue(QueueName="testqueue.fifo", Attributes={"FifoQueue": "true"})
+
+    from historical_orders_returns.lambdas.dynamodb_to_sqs import handler_orders
+    result = handler_orders(None, None)
+
+    # assert successful function execution
+    assert result["success"]
+
+    # assert dynamodb update status
+    res = table.scan()
+    assert len(res["Items"]) == 1
+    assert res["Items"][0]["status"] == "extracted"
+
+    # assert message in queue
+    response = sqs.receive_message(QueueUrl=queue["QueueUrl"])
+    assert len(response["Messages"]) == 1
+
+    output_file = open("data/input/order_queue_entry_mixed_payment.json", "r")
+    ns_order = json.load(output_file)
+
+    assert json.loads(response["Messages"][0]["Body"]) == ns_order
