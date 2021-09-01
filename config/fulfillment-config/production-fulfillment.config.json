@@ -1783,7 +1783,7 @@
           "delivery_time_after_cutoff_hour": "2 - 3 business days",
           "display_name": "Express Delivery",
           "price": 0,
-          "remorse_period": 0,
+          "remorse_period": 1800,
           "tax_code": "CA"
         },
         "STANDARD_UPS": {
@@ -1801,7 +1801,7 @@
           "delivery_time_after_cutoff_hour": "1 - 4 business days",
           "display_name": "UPS Saver",
           "price": 0,
-          "remorse_period": 0,
+          "remorse_period": 1800,
           "tax_code": "CA"
         },
         "EXPEDITED": {
@@ -1846,7 +1846,7 @@
           "delivery_time_after_cutoff_hour": "3 - 5 business days",
           "display_name": "CanadaPost XPresspost",
           "price": 0,
-          "remorse_period": 0,
+          "remorse_period": 1800,
           "tax_code": "CA"
         },
         "EXPRESS_POST_USA": {
@@ -1855,7 +1855,7 @@
           "delivery_time_after_cutoff_hour": "1 - 7 business days",
           "display_name": "CanadaPost XPresspost USA",
           "price": 0,
-          "remorse_period": 0,
+          "remorse_period": 1800,
           "tax_code": "CA"
         },
         "EXPEDITED_PARCEL_USA": {
@@ -1908,8 +1908,8 @@
           "delivery_time": "2 - 3 business days",
           "delivery_time_after_cutoff_hour": "2 - 3 business days",
           "display_name": "Ground Delivery",
-          "price": 1800,
-          "remorse_period": 0,
+          "price": 0,
+          "remorse_period": 1800,
           "tax_code": "CA"
         }
       },
