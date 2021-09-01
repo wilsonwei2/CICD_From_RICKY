@@ -39,7 +39,7 @@ def process_reject(mapped_data, ns_handler):
 
         try:
             response = ns_handler.send_item_rejection(
-                reason="cannot_fulfill",
+                reason="no_inventory",
                 ff_id=fulfillment_uuid,
                 items_json=[product_id])
         except Exception as ex:  # pylint: disable=broad-except
