@@ -599,9 +599,9 @@ async def process_events(message):
     cash_sale['entity'] = get_customer_netsuite_internal_id(order)
     cash_sale['itemList'] = CashSaleItemList(
         create_cash_sale_item_list(order_payload, order))
-    if order['paymentAccount'] is not None:
-        payment_method_id = get_payment_method(order)
-        cash_sale['paymentMethod'] = RecordRef(internalId=payment_method_id)
+    # if order['paymentAccount'] is not None:
+    #    payment_method_id = get_payment_method(order)
+    #    cash_sale['paymentMethod'] = RecordRef(internalId=payment_method_id)
     LOGGER.info('Going to send cash sale')
 
     LOGGER.info(f'Sending cash sale to NetSuite: {cash_sale}')
