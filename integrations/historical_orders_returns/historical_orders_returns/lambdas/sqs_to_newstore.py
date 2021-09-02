@@ -36,7 +36,8 @@ def handler(_, context):
     )
 
     for count in range(50): # pylint: disable=too-many-nested-blocks
-        messages = QUEUE.receive_messages(
+        queue = SQS.get_queue_by_name(QueueName=os.environ['QUEUE_NAME'])
+        messages = queue.receive_messages(
             MaxNumberOfMessages=10,
             WaitTimeSeconds=0
         )
