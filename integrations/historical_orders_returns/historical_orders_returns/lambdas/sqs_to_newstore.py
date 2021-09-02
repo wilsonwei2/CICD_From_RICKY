@@ -35,11 +35,15 @@ def handler(_, context):
         context=context
     )
 
-    for _ in range(50): # pylint: disable=too-many-nested-blocks
+    for count in range(50): # pylint: disable=too-many-nested-blocks
         messages = QUEUE.receive_messages(
             MaxNumberOfMessages=10,
             WaitTimeSeconds=0
         )
+
+        LOGGER.info(f'Received next 10 messages from queue... iteration {count}')
+        if len(messages) == 0:
+            break
 
         for message in messages:
             try:
