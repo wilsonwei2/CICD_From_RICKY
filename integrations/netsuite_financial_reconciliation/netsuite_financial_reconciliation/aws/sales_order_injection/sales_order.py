@@ -545,6 +545,48 @@ def get_sales_order_items(order_event): # pylint: disable=too-many-locals
             )
     return sales_order_items
 
+# Gets a potential shipping discount item from the order
+def get_shipping_discount_item(order_event):
+    sales_order_items = []
+
+    # Unfortunately, there is no way to get the shipping data from the event or via
+    # GraphQL, so needs a manual ugly check
+    discount_total = order_event['discount_total']
+    if discount_total > 0:
+        store_id = order_event['channel']
+        currency = order_event['currency']
+
+        if order_event['channel_type'] == 'web':
+            location_id = params.get_netsuite_config()['shopify_location_id']
+        elif store_id in params.get_newstore_to_netsuite_locations_config():
+            locations = params.get_newstore_to_netsuite_locations_config()
+            location_id = locations.get(store_id)['id']
+
+        # Calculate the item total + shipping we inject into Netsuite
+        discount_total_items = 0
+
+        order_items = order_event['items']
+        for item in order_items:
+            _, _, has_discount, total_discount = Utils.get_discount_info(item)
+
+            if has_discount:
+                discount_total_items = discount_total_items + round(total_discount, 2)
+
+        # if the order discount total is greater than the discount for the items, there must be
+        # a shipping discount
+        if discount_total > discount_total_items:
+            shipping_discount = round(discount_total - discount_total_items, 2)
+            sales_order_items.append(
+                {
+                    'item': RecordRef(internalId=int(params.get_netsuite_config()['newstore_discount_item_id'])),
+                    'price': params.RecordRef(internalId=params.CUSTOM_PRICE),
+                    'rate': str('-'+str(shipping_discount)),
+                    'taxCode': params.RecordRef(internalId=TaxManager.get_discount_item_tax_code_id(currency)),
+                    'location': RecordRef(internalId=location_id)
+                }
+            )
+
+    return sales_order_items
 
 def get_subsidiary_id_for_web():
     return params.get_netsuite_config()['subsidiary_ca_internal_id']
@@ -624,6 +666,7 @@ def inject_sales_order(order_event, order_data, consumer):
 
     netsuite_sales_order_items = []
     sales_order_items = get_sales_order_items(order_event)
+    sales_order_items += get_shipping_discount_item(order_event)
     sales_order_items += get_payment_items(order_event,
                                            order_data, netsuite_sales_order['location'])
     sales_order_items += [TaxManager.get_tax_offset_line_item(order_event['currency'])]
