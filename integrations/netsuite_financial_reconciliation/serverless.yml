@@ -58,7 +58,7 @@ resources:
       Properties:
         FifoQueue: True
         ContentBasedDeduplication: True
-        VisibilityTimeout: 60
+        VisibilityTimeout: 300
         QueueName: ${self:provider.tenant}-cash-sale-to-netsuite-queue.fifo
         RedrivePolicy:
           maxReceiveCount: 5
@@ -75,7 +75,7 @@ resources:
       Properties:
         FifoQueue: True
         ContentBasedDeduplication: True
-        VisibilityTimeout: 60
+        VisibilityTimeout: 300
         QueueName: ${self:provider.tenant}-sales-order-to-netsuite-queue.fifo
         RedrivePolicy:
           maxReceiveCount: 5
