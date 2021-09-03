@@ -3,6 +3,7 @@ import json
 import logging
 from param_store.client import ParamStore
 from newstore_adapter.connector import NewStoreConnector
+from pom_common.shopify import ShopManager
 from shopify_fulfillment.helpers.shopify_handler import ShopifyConn
 
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
@@ -11,11 +12,12 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
 TENANT = os.environ.get('TENANT')
 STAGE = os.environ.get('STAGE')
+REGION = os.environ.get('REGION', 'us-east-1')
 
 
 class Utils():
     _param_store = None
-    _shopify_conn = None
+    _shopify_conns = {}
     _newstore_conn = None
 
     @staticmethod
@@ -29,15 +31,28 @@ class Utils():
         return Utils._newstore_conn
 
     @staticmethod
-    def get_shopify_conn():
-        if not Utils._shopify_conn:
-            shopify_config = Utils.get_shopify_config()
-            Utils._shopify_conn = ShopifyConn(
-                shopify_config['username'],
-                shopify_config['password'],
-                shopify_config['shop']
-            )
-        return Utils._shopify_conn
+    def get_shopify_conns():
+        if len(Utils._shopify_conns) == 0:
+            shop_manager = ShopManager(TENANT, STAGE, REGION)
+
+            for shop_id in shop_manager.get_shop_ids():
+                shopify_config = shop_manager.get_shop_config(shop_id)
+                currency = shopify_config['currency']
+
+                Utils._shopify_conns[currency] = ShopifyConn(
+                    shopify_config['username'],
+                    shopify_config['password'],
+                    shopify_config['shop']
+                )
+
+        return Utils._shopify_conns.values()
+
+    @staticmethod
+    def get_shopify_conn(currency):
+        if len(Utils._shopify_conns) == 0:
+            Utils.get_shopify_conns()
+
+        return Utils._shopify_conns[currency]
 
     @staticmethod
     def get_param_store():
@@ -45,10 +60,6 @@ class Utils():
             Utils._param_store = ParamStore(tenant=TENANT,
                                             stage=STAGE)
         return Utils._param_store
-
-    @staticmethod
-    def get_shopify_config():
-        return json.loads(Utils.get_param_store().get_param('shopify'))
 
     @staticmethod
     def get_shopify_dc_location_id_map():
