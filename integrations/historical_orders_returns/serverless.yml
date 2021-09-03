@@ -48,6 +48,7 @@ functions:
   split_csv_orders:
     handler: historical_orders_returns.lambdas.split_csv_files.handler
     timeout: 600
+    memorySize: 1024
     environment:
       S3_OUTPUT_LOCATION: "historical_orders/splitted/"
       CSV_ROW_LIMIT: 100
@@ -63,6 +64,7 @@ functions:
   split_csv_returns:
     handler: historical_orders_returns.lambdas.split_csv_files.handler
     timeout: 600
+    memorySize: 1024
     environment:
       S3_OUTPUT_LOCATION: "historical_returns/splitted/"
       CSV_ROW_LIMIT: 100
@@ -77,6 +79,7 @@ functions:
   order_csv_to_dynamodb:
     handler: historical_orders_returns.lambdas.csv_to_dynamodb.handler
     timeout: 600
+    memorySize: 1024
     environment:
       TYPE: order
     events:
@@ -90,6 +93,7 @@ functions:
   return_csv_to_dynamodb:
     handler: historical_orders_returns.lambdas.csv_to_dynamodb.handler
     timeout: 600
+    memorySize: 1024
     environment:
       TYPE: return
     events:
@@ -103,6 +107,7 @@ functions:
   order_dynamodb_to_sqs:
     handler: historical_orders_returns.lambdas.dynamodb_to_sqs.handler_orders
     timeout: 600
+    memorySize: 256
     environment:
       QUEUE_NAME: fao_sqs_historical_or_orders-${opt:stage, self:provider.stage}.fifo
     events:
@@ -112,6 +117,7 @@ functions:
   return_dynamodb_to_sqs:
     handler: historical_orders_returns.lambdas.dynamodb_to_sqs.handler_returns
     timeout: 600
+    memorySize: 256
     environment:
       QUEUE_NAME: fao_sqs_historical_or_returns-${opt:stage, self:provider.stage}.fifo
     events:
@@ -121,6 +127,7 @@ functions:
   order_sqs_to_newstore:
     handler: historical_orders_returns.lambdas.sqs_to_newstore.handler
     timeout: 600
+    memorySize: 256
     environment:
       QUEUE_NAME: fao_sqs_historical_or_orders-${opt:stage, self:provider.stage}.fifo
       TYPE: order
@@ -131,6 +138,7 @@ functions:
   return_sqs_to_newstore:
     handler: historical_orders_returns.lambdas.sqs_to_newstore.handler
     timeout: 600
+    memorySize: 256
     environment:
       QUEUE_NAME: fao_sqs_historical_or_returns-${opt:stage, self:provider.stage}.fifo
       TYPE: return
