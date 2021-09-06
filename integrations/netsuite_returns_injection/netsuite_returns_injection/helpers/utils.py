@@ -31,6 +31,7 @@ class Utils():
     _netsuite_config = {}
     _newstore_to_netsuite_locations = {}
     _newstore_to_netsuite_payments = {}
+    _newstore_to_netsuite_payment_methods = {} # pylint: disable=invalid-name
     _newstore_giftcard_ids = ''
     _dc_timezone_mapping = {}
     _newstore_to_netsuite_channels = {}
@@ -97,6 +98,15 @@ class Utils():
 
     @staticmethod
     def get_nws_to_netsuite_payment(payment_type):
+        if payment_type == 'methods':
+            if not Utils._newstore_to_netsuite_payment_methods:
+                Utils._newstore_to_netsuite_payment_methods = json.loads(
+                    Utils._get_param_store().get_param(
+                        f'netsuite/newstore_to_netsuite_payment_{payment_type}')
+                )
+            return Utils._newstore_to_netsuite_payment_methods
+
+        # payment type is 'items'
         if not Utils._newstore_to_netsuite_payments:
             Utils._newstore_to_netsuite_payments = json.loads(
                 Utils._get_param_store().get_param(
