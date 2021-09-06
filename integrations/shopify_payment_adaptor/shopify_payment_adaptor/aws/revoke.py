@@ -40,7 +40,7 @@ async def _push_revoke_to_shopify(body, financial_instrument_id):
         transaction = next((x for x in body.get(
             'transactions', []) if x.get('reason') in ['authorization', 'capture']), None)
         assert transaction, 'Transaction for revoke not found'
-        shopify_handler = get_shopify_handler(body['currency'])
+        shopify_handler = get_shopify_handler(amount_info.get('currency'))
         LOGGER.info(transaction)
 
         if transaction and (is_capture_credit_card(transaction['payment_method'])):
@@ -54,7 +54,7 @@ async def _push_revoke_to_shopify(body, financial_instrument_id):
                 if check_transaction_captured(transactions):
                     LOGGER.info(
                         'Revoke of captured transaction should proceed to refund.')
-                    response = await _push_captured_revoke_to_shopify(handler, body, financial_instrument_id, shopify_order_id, transactions)
+                    response = await _push_captured_revoke_to_shopify(shopify_handler, body, financial_instrument_id, shopify_order_id, transactions)
 
                     if response['statusCode'] == 200:
                         LOGGER.info(f'Trying to cancel order with ID: ${shopify_order_id}')
@@ -92,7 +92,7 @@ async def _push_revoke_to_shopify(body, financial_instrument_id):
             if check_transaction_captured(shopify_transactions):
                 LOGGER.info(
                     'Revoke of captured transaction should proceed to refund.')
-                response = await _push_captured_revoke_to_shopify(handler,
+                response = await _push_captured_revoke_to_shopify(shopify_handler,
                                                                   body,
                                                                   financial_instrument_id,
                                                                   shopify_order_id,
@@ -127,7 +127,7 @@ async def _push_revoke_to_shopify(body, financial_instrument_id):
                     'Customer not found, creating it at shopify')
                 customer = await shopify_handler.create_customer(customer_email, customer_name)
             LOGGER.info(customer)
-            gift_card_response = await gift_cards.activate_card(amount_info.get('amount'), amount_info.get('currency'), customer.get('customers', [{}])[0].get('id'))
+            gift_card_response = await activate_card(amount_info.get('amount'), amount_info.get('currency'), customer.get('customers', [{}])[0].get('id'))
             body['metadata']['number'] = gift_card_response.get(
                 'gift_card', {}).get('id')
             transactions.append({
@@ -305,7 +305,7 @@ async def _push_captured_revoke_to_shopify(shopify_handler, body, financial_inst
                 order_name = customer_order.get('consumer', {}).get('name')
                 customer = await shopify_handler.create_customer(customer_email, order_name)
             LOGGER.info(f'Customer: ${customer}')
-            gift_card_response = await gift_cards.activate_card(amount_info.get('amount'), amount_info.get('currency'), customer.get('customers', [{}])[0].get('id'))
+            gift_card_response = await activate_card(amount_info.get('amount'), amount_info.get('currency'), customer.get('customers', [{}])[0].get('id'))
             body['metadata']['number'] = gift_card_response.get(
                 'gift_card', {}).get('id')
             transactions.append({
