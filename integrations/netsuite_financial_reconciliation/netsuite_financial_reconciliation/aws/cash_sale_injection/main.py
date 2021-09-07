@@ -252,7 +252,6 @@ def create_payment_items(order):
     else:
         transactions = get_capture_transactions(order)
 
-    transactions = get_capture_transactions(order)
     LOGGER.info('Transactions from capture order')
     LOGGER.info(json.dumps(transactions))
     for transaction in transactions:
