@@ -285,7 +285,8 @@ async def _push_captured_revoke_to_shopify(shopify_handler, body, financial_inst
                     'Process instrument that is refunded on Shopify already...')
                 transactions.append({
                     'transaction_id': str(uuid4()),
-                    'refund_amount': -float(amount_info.get('amount')),
+                    'capture_amount': -float(amount_info.get('amount')),
+                    'refund_amount': 0,
                     'instrument_id': financial_instrument_id,
                     'reason': 'revoke',
                     'payment_method': transaction['payment_method'],
@@ -305,7 +306,8 @@ async def _push_captured_revoke_to_shopify(shopify_handler, body, financial_inst
                 'gift_card', {}).get('id')
             transactions.append({
                 'transaction_id': str(uuid4()),
-                'refund_amount': -float(gift_card_response['gift_card']['balance']),
+                'capture_amount': -float(gift_card_response['gift_card']['balance']),
+                'refund_amount': 0,
                 'instrument_id': financial_instrument_id,
                 'reason': 'revoke',
                 'payment_method': transaction['payment_method'],
@@ -317,7 +319,8 @@ async def _push_captured_revoke_to_shopify(shopify_handler, body, financial_inst
             LOGGER.info('Process instrument that is pre-refunded already...')
             transactions.append({
                 'transaction_id': str(uuid4()),
-                'refund_amount': -float(amount_info.get('amount')),
+                'capture_amount': -float(amount_info.get('amount')),
+                'refund_amount': 0,
                 'instrument_id': financial_instrument_id,
                 'reason': 'revoke',
                 'payment_method': transaction['payment_method'],
