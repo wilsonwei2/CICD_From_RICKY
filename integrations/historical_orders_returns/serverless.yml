@@ -51,7 +51,7 @@ functions:
     memorySize: 1024
     environment:
       S3_OUTPUT_LOCATION: "historical_orders/splitted/"
-      CSV_ROW_LIMIT: 100
+      CSV_ROW_LIMIT: 500
       CHECK_ROW_NAME: Name
     events:
       - s3:
@@ -106,8 +106,8 @@ functions:
           existing: true
   order_dynamodb_to_sqs:
     handler: historical_orders_returns.lambdas.dynamodb_to_sqs.handler_orders
-    timeout: 600
-    memorySize: 256
+    timeout: 900
+    memorySize: 1024
     environment:
       QUEUE_NAME: fao_sqs_historical_or_orders-${opt:stage, self:provider.stage}.fifo
     events:
@@ -116,8 +116,8 @@ functions:
           rate: rate(10 minutes)
   return_dynamodb_to_sqs:
     handler: historical_orders_returns.lambdas.dynamodb_to_sqs.handler_returns
-    timeout: 600
-    memorySize: 256
+    timeout: 900
+    memorySize: 1024
     environment:
       QUEUE_NAME: fao_sqs_historical_or_returns-${opt:stage, self:provider.stage}.fifo
     events:

@@ -26,11 +26,27 @@ RETURNS_QUEUE = SQS.get_queue_by_name(QueueName=RETURNS_QUEUE_NAME)
 # get order entries from dynamodb where status = new
 def get_dynamodb_orders():
     LOGGER.info("Getting orders from DynamoDB...")
-    res = ORDERS_TABLE.scan(FilterExpression=Key('status').eq('new'))
-    if not res or "Items" not in res:
-        LOGGER.error(f"Failed to query orders in DynamoDB table.")
-        return []
-    return res["Items"]
+
+    results = []
+    last_evaluated_key = None
+
+    while True:
+        if last_evaluated_key:
+            response = ORDERS_TABLE.scan(
+                FilterExpression=Key('status').eq('new'),
+                ExclusiveStartKey=last_evaluated_key
+            )
+        else:
+            response = ORDERS_TABLE.scan(FilterExpression=Key('status').eq('new'))
+
+        last_evaluated_key = response.get('LastEvaluatedKey')
+
+        results.extend(response['Items'])
+
+        if not last_evaluated_key or len(results) > 500:
+            break
+
+    return results
 
 
 # get return entries from dynamodb where status = new
