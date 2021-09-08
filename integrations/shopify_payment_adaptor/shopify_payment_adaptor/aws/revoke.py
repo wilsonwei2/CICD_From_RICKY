@@ -268,10 +268,12 @@ async def _push_captured_revoke_to_shopify(shopify_handler, body, financial_inst
                     }
 
                 if response:
+                    customer = await assert_and_get_or_create_customer_from_shopify(customer_order, shopify_handler)
+                    gift_card_response = await activate_card(amount_info.get('amount'), amount_info.get('currency'), customer.get('customers', [{}])[0].get('id'))
                     for transaction_shopify in response['refund']['transactions']:
                         transactions.append({
                             'transaction_id': str(uuid4()),
-                            'refund_amount': -float(amount_info.get('amount')),
+                            'refund_amount': -float(gift_card_response['gift_card']['balance']),
                             'instrument_id': financial_instrument_id,
                             'reason': 'revoke',
                             'payment_method': transaction['payment_method'],
@@ -291,19 +293,12 @@ async def _push_captured_revoke_to_shopify(shopify_handler, body, financial_inst
                     'metadata': body['metadata']
                 })
 
+
         elif is_capture_gift_card(transaction['payment_method']) and metadata.get('order_id'):
             LOGGER.info(
-                'Creating a refund of a credit card for a associate created order...')
+                'Creating a refund of a gift cards for a associate created order...')
 
-            assert customer_order.get('consumer', {}).get(
-                'email'), 'Could not find email to refund gift card to..'
-            customer_email = customer_order.get('consumer', {})['email']
-            customer = await shopify_handler.search_customer_by_email(customer_email)
-            if len(customer.get('customers', [])) < 1:
-                LOGGER.info(
-                    'Customer not found, creating it at shopify')
-                order_name = customer_order.get('consumer', {}).get('name')
-                customer = await shopify_handler.create_customer(customer_email, order_name)
+            customer = await assert_and_get_or_create_customer_from_shopify(customer_order, shopify_handler)
             LOGGER.info(f'Customer: ${customer}')
             gift_card_response = await activate_card(amount_info.get('amount'), amount_info.get('currency'), customer.get('customers', [{}])[0].get('id'))
             body['metadata']['number'] = gift_card_response.get(
@@ -358,6 +353,17 @@ async def _push_captured_revoke_to_shopify(shopify_handler, body, financial_inst
             })
         }
 
+
+async def assert_and_get_or_create_customer_from_shopify(customer_order, shopify_handler):
+    assert customer_order.get('consumer', {}).get('email'), 'Could not find email to refund gift card to..'
+    customer_email = customer_order.get('consumer', {})['email']
+    customer = await shopify_handler.search_customer_by_email(customer_email)
+    if len(customer.get('customers', [])) < 1:
+        LOGGER.info(
+            'Customer not found, creating it at shopify')
+        order_name = customer_order.get('consumer', {}).get('name')
+        customer = await shopify_handler.create_customer(customer_email, order_name)
+    return customer
 
 async def create_refund(shopify_handler, shopify_order_id, customer_order, payment_method, amount_info):
     json_to_calculate_refund = parse_info_to_calculate_refund(customer_order)
