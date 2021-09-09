@@ -165,146 +165,146 @@ class RetrieveNetsuiteItem():
     #
     async def add_items_to_fulfill(self, data_to_update, currency, customer_email):
 
-            order_tracking_data = {}
-            giftcards_data = []
-            for item in data_to_update:
-                try:
-                    transaction_search = TransactionSearchBasic(
-                        internalIdNumber=SearchLongField(
-                            searchValue=int(item['itemFulfillmentInternalId']),
-                            operator='equalTo'
-                        ),
-                        type=SearchEnumMultiSelectField(
-                            searchValue=['_itemFulfillment'],
-                            operator='anyOf'
-                        )
+        order_tracking_data = {}
+        giftcards_data = []
+        for item in data_to_update:
+            try:
+                transaction_search = TransactionSearchBasic(
+                    internalIdNumber=SearchLongField(
+                        searchValue=int(item['itemFulfillmentInternalId']),
+                        operator='equalTo'
+                    ),
+                    type=SearchEnumMultiSelectField(
+                        searchValue=['_itemFulfillment'],
+                        operator='anyOf'
                     )
+                )
 
-                    result = run_until_success(
-                        lambda: search_records_using(
-                            transaction_search, self.search_page_size),
-                        function_description='basic transaction search')
-                    search_result = result.body.searchResult
+                result = run_until_success(
+                    lambda: search_records_using(
+                        transaction_search, self.search_page_size),
+                    function_description='basic transaction search')
+                search_result = result.body.searchResult
 
-                    if not search_result.status.isSuccess or not search_result.recordList:
-                        LOGGER.error(
-                            f'add_items_to_fulfill - error during the search: {search_result}')
-                        return {}
+                if not search_result.status.isSuccess or not search_result.recordList:
+                    LOGGER.error(
+                        f'add_items_to_fulfill - error during the search: {search_result}')
+                    return {}
 
-                    item_fulfillment = search_result.recordList.record[0]
+                item_fulfillment = search_result.recordList.record[0]
 
+                LOGGER.info(
+                    f'Got ItemFulfillment from Netsuite {item_fulfillment}')
+
+                giftcards_data.append(
+                    self.extract_giftcard_data(item_fulfillment, currency, customer_email))
+                items_fulfilled_id = [item['item']['internalId'] for item in item_fulfillment['itemList']['item'] for x in
+                                      range(0, int(item['quantity']))]
+                item['itemFulfillmentItems'] = items_fulfilled_id
+
+                # Update shipping information
+                shipping_method_name = None
+                shipping_method_id = None
+                shipping_method = item_fulfillment['shipMethod']
+
+                carrier = ''
+                order_id = item['externalIdNewstore']
+                package_tracking_number = None
+                product_ids = get_product_ids_from_item_fulfillment(
+                    item_fulfillment)
+
+                if item_fulfillment['packageList'] and item_fulfillment['packageList']['package']:
+                    packages = item_fulfillment['packageList']['package']
+                    for package in packages:
+                        package_tracking_number = package['packageTrackingNumber']
+
+                if 'customFieldList' in item_fulfillment and 'customField' in item_fulfillment['customFieldList']:
+                    custom_field_list = item_fulfillment['customFieldList']['customField']
+                    carrier = get_carrier_from_custom_field_list(custom_field_list)
+
+                if shipping_method is not None:
+                    shipping_method_name = shipping_method['name']
+                    shipping_method_id = shipping_method['internalId']
+
+                tracking_numbers = None
+                if item_fulfillment['packageList'] and item_fulfillment['packageList']['package']:
+                    tracking_numbers = ', '.join(list(set(
+                        [item['packageTrackingNumber'] for item in item_fulfillment['packageList']['package'] if
+                        item['packageTrackingNumber']])))
+
+                shipping_data = {
+                    'shipping_method_name': shipping_method_name,
+                    'shipping_method_id': shipping_method_id,
+                    'trackingNumbers': tracking_numbers if tracking_numbers else item['shippingData']['linkedTrackingNumbers'],
+                    'linkedTrackingNumbers': tracking_numbers if tracking_numbers else item['shippingData'][
+                        'linkedTrackingNumbers']
+                }
+
+                item['shippingData'] = shipping_data
+
+                LOGGER.info(f'add_items_to_fulfill - Product Ids: {product_ids}')
+                LOGGER.info(
+                    f'External ID of order -- {order_id}, Carrier = {carrier} and Tracking - {package_tracking_number}')
+
+                if package_tracking_number is None:
                     LOGGER.info(
-                        f'Got ItemFulfillment from Netsuite {item_fulfillment}')
+                        f'add_items_to_fulfill - no package tracking number found - skip order {order_id}.')
+                    continue
 
-                    giftcards_data.append(
-                        self.extract_giftcard_data(item_fulfillment, currency, customer_email))
-                    items_fulfilled_id = [item['item']['internalId'] for item in item_fulfillment['itemList']['item'] for x in
-                                        range(0, int(item['quantity']))]
-                    item['itemFulfillmentItems'] = items_fulfilled_id
+                if order_id in order_tracking_data:
+                    if_document_number = ''
 
-                    # Update shipping information
-                    shipping_method_name = None
-                    shipping_method_id = None
-                    shipping_method = item_fulfillment['shipMethod']
+                    if 'tranId' in item_fulfillment:
+                        if_document_number = item_fulfillment['tranId']
 
-                    carrier = ''
-                    order_id = item['externalIdNewstore']
-                    package_tracking_number = None
-                    product_ids = get_product_ids_from_item_fulfillment(
-                        item_fulfillment)
+                    location = get_location_from_item_fulfillment(item_fulfillment)
 
-                    if item_fulfillment['packageList'] and item_fulfillment['packageList']['package']:
-                        packages = item_fulfillment['packageList']['package']
-                        for package in packages:
-                            package_tracking_number = package['packageTrackingNumber']
+                    # Checking if the data exists already.
+                    for item in order_tracking_data[order_id]:
+                        # If the document_number is the same -- we append the product ids
+                        # To the same IF Document number from the saved search.
 
-                    if 'customFieldList' in item_fulfillment and 'customField' in item_fulfillment['customFieldList']:
-                        custom_field_list = item_fulfillment['customFieldList']['customField']
-                        carrier = get_carrier_from_custom_field_list(custom_field_list)
+                        if item['document_number'] == if_document_number:
+                            item['product_ids'].extend(product_ids)
+                            # Since the other details are the same except the id,
+                            # We will be moving to next step.
+                            continue
 
-                    if shipping_method is not None:
-                        shipping_method_name = shipping_method['name']
-                        shipping_method_id = shipping_method['internalId']
-
-                    tracking_numbers = None
-                    if item_fulfillment['packageList'] and item_fulfillment['packageList']['package']:
-                        tracking_numbers = ', '.join(list(set(
-                            [item['packageTrackingNumber'] for item in item_fulfillment['packageList']['package'] if
-                            item['packageTrackingNumber']])))
-
-                    shipping_data = {
-                        'shipping_method_name': shipping_method_name,
-                        'shipping_method_id': shipping_method_id,
-                        'trackingNumbers': tracking_numbers if tracking_numbers else item['shippingData']['linkedTrackingNumbers'],
-                        'linkedTrackingNumbers': tracking_numbers if tracking_numbers else item['shippingData'][
-                            'linkedTrackingNumbers']
+                    item = {
+                        'product_ids': product_ids,
+                        'tracking_number': package_tracking_number,
+                        'carrier': carrier,
+                        'order_id': order_id,
+                        'location': location,
+                        'document_number': if_document_number
                     }
 
-                    item['shippingData'] = shipping_data
+                    order_tracking_data[order_id].append(item)
 
-                    LOGGER.info(f'add_items_to_fulfill - Product Ids: {product_ids}')
+                else:
+                    if_document_number = ''
+                    if 'tranId' in item_fulfillment:
+                        if_document_number = item_fulfillment['tranId']
+
+                    location = get_location_from_item_fulfillment(item_fulfillment)
+
+                    item = {
+                        'product_ids': product_ids,
+                        'tracking_number': package_tracking_number,
+                        'carrier': carrier,
+                        'order_id': order_id,
+                        'location': location,
+                        'document_number': if_document_number
+                    }
+
                     LOGGER.info(
-                        f'External ID of order -- {order_id}, Carrier = {carrier} and Tracking - {package_tracking_number}')
+                        f'Add Order to Order Tracking data: {order_id} ==> {item}')
 
-                    if package_tracking_number is None:
-                        LOGGER.info(
-                            f'add_items_to_fulfill - no package tracking number found - skip order {order_id}.')
-                        continue
+                    order_tracking_data[order_id] = [item]
+            except Exception as e: # pylint: disable=broad-except
+                LOGGER.info(f'Error processing item to add to fulfillment {e} ')
 
-                    if order_id in order_tracking_data:
-                        if_document_number = ''
-
-                        if 'tranId' in item_fulfillment:
-                            if_document_number = item_fulfillment['tranId']
-
-                        location = get_location_from_item_fulfillment(item_fulfillment)
-
-                        # Checking if the data exists already.
-                        for item in order_tracking_data[order_id]:
-                            # If the document_number is the same -- we append the product ids
-                            # To the same IF Document number from the saved search.
-
-                            if item['document_number'] == if_document_number:
-                                item['product_ids'].extend(product_ids)
-                                # Since the other details are the same except the id,
-                                # We will be moving to next step.
-                                continue
-
-                        item = {
-                            'product_ids': product_ids,
-                            'tracking_number': package_tracking_number,
-                            'carrier': carrier,
-                            'order_id': order_id,
-                            'location': location,
-                            'document_number': if_document_number
-                        }
-
-                        order_tracking_data[order_id].append(item)
-
-                    else:
-                        if_document_number = ''
-                        if 'tranId' in item_fulfillment:
-                            if_document_number = item_fulfillment['tranId']
-
-                        location = get_location_from_item_fulfillment(item_fulfillment)
-
-                        item = {
-                            'product_ids': product_ids,
-                            'tracking_number': package_tracking_number,
-                            'carrier': carrier,
-                            'order_id': order_id,
-                            'location': location,
-                            'document_number': if_document_number
-                        }
-
-                        LOGGER.info(
-                            f'Add Order to Order Tracking data: {order_id} ==> {item}')
-
-                        order_tracking_data[order_id] = [item]
-                except Exception as e: # pylint: disable=broad-except
-                    LOGGER.info(f'Error processing item to add to fulfillment {e} ')
-
-            return order_tracking_data, data_to_update, giftcards_data
+        return order_tracking_data, data_to_update, giftcards_data
 
     def extract_giftcard_data(self, item_fulfillment, currency, customer_email):
         giftcard_activation_data = []

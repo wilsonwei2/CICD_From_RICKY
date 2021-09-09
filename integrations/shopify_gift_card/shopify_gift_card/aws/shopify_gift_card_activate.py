@@ -15,7 +15,7 @@ LOGGER.setLevel(logging.DEBUG)
 # For use with API Gateway
 
 def handler(event, _): # pylint: disable=R0911
-    LOGGER.debug(json.dumps(event, indent=2))
+    LOGGER.info(json.dumps(event, indent=2))
 
     is_issue = event['path'].endswith('/issue')
     LOGGER.info(f'Is issue: {is_issue}')
@@ -62,7 +62,7 @@ def handler(event, _): # pylint: disable=R0911
 
 
 def activate(is_issue: bool, amount: dict, card_number: str = None, idempotence_key: str = None, correlation_id: str = None, **_):
-    LOGGER.info('Activate')
+    LOGGER.info(f'Activate {card_number}')
     if correlation_id and not is_issue:
         raise TypeError(
             "activate() got an unexpected keyword argument 'correlation_id'")
@@ -76,12 +76,16 @@ def activate(is_issue: bool, amount: dict, card_number: str = None, idempotence_
     if card_number.startswith('shopify-giftcard-v1-'):
         card_number = card_number[20:]
 
+    currency = amount['currency'].upper()
+
     shop_manager = ShopManager(TENANT, STAGE, REGION)
     shopify_config = next(
         filter(
-            lambda cnf: cnf['currency'] == amount['currency'], [shop_manager.get_shop_config(shop_id) for shop_id in shop_manager.get_shop_ids()]),
+            lambda cnf: cnf['currency'] == currency, [shop_manager.get_shop_config(shop_id) for shop_id in shop_manager.get_shop_ids()]),
         None
     )
+
+    LOGGER.info(f'Got Shopify Config {shopify_config["shop"]} to activate gift card for currency {amount["currency"]}')
 
     loop = asyncio.get_event_loop()
     cards = loop.run_until_complete(_get_card(card_number, shopify_config))
