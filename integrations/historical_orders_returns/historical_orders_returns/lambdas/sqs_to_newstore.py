@@ -37,7 +37,7 @@ def handler(_, context):
 
     messages = QUEUE.receive_messages(
         MaxNumberOfMessages=10,
-        WaitTimeSeconds=0
+        WaitTimeSeconds=5
     )
 
     for message in messages:
