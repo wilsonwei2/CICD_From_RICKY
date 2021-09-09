@@ -25,7 +25,7 @@
       "Express": {
           "return_provider_rate": "",
           "service_level": "EXPRESS",
-          "shipping_carrier_name": "USP",
+          "shipping_carrier_name": "UPS",
           "shipping_type": "traditional_carrier",
           "use_as_customer_facing_cost": true
       },
