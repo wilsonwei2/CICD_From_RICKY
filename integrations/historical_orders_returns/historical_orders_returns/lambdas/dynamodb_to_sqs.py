@@ -52,11 +52,28 @@ def get_dynamodb_orders():
 # get return entries from dynamodb where status = new
 def get_dynamodb_returns():
     LOGGER.info("Getting returns from DynamoDB...")
-    res = RETURNS_TABLE.scan(FilterExpression=Key('status').eq('new'))
-    if not res or "Items" not in res:
-        LOGGER.error(f"Failed to query returns in DynamoDB table.")
-        return []
-    return res["Items"]
+
+    results = []
+    last_evaluated_key = None
+
+    while True:
+        if last_evaluated_key:
+            response = RETURNS_TABLE.scan(
+                FilterExpression=Key('status').eq('new'),
+                ExclusiveStartKey=last_evaluated_key
+            )
+        else:
+            response = RETURNS_TABLE.scan(FilterExpression=Key('status').eq('new'))
+
+        last_evaluated_key = response.get('LastEvaluatedKey')
+
+        results.extend(response['Items'])
+
+        if not last_evaluated_key or len(results) > 500:
+            break
+
+    return results
+
 
 # update order status in dynamodb
 def update_dynamodb_order_status(order_id, update_status):
@@ -93,15 +110,15 @@ def send_order_to_sqs(ns_order):
     LOGGER.info(f"Sending order {ns_order['external_id']} to queue...")
 
     payload = json.dumps(ns_order)
-    return ORDERS_QUEUE.send_message(MessageBody=payload, MessageGroupId=ORDERS_QUEUE.url, MessageDeduplicationId=str(hash(payload)))
+    return ORDERS_QUEUE.send_message(MessageBody=payload, MessageGroupId=ns_order['external_id'], MessageDeduplicationId=str(hash(payload)))
 
 
 # sending return to queue
 def send_return_to_sqs(ns_return):
-    # LOGGER.info(f"Sending return {ns_return['external_id']} to queue...")
+    LOGGER.info(f"Sending return to queue...")
 
     payload = json.dumps(ns_return)
-    return RETURNS_QUEUE.send_message(MessageBody=payload, MessageGroupId=RETURNS_QUEUE.url, MessageDeduplicationId=str(hash(payload)))
+    return RETURNS_QUEUE.send_message(MessageBody=payload, MessageGroupId=str(hash(payload)), MessageDeduplicationId=str(hash(payload)))
 
 
 def handler_orders(*_):
