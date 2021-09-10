@@ -2,6 +2,7 @@ import os
 import json
 import logging
 import asyncio
+from datetime import datetime
 from lambda_utils.sqs.SqsHandler import SqsHandler
 from .handlers.s3_handler import S3Handler
 
@@ -87,12 +88,29 @@ async def _save_event(event: dict) -> bool:
                 'IN_STORE' in event['payload']['service_level']:
             LOGGER.info('In store fulfillment, ignoring...')
             return True
+
+        if is_historical_fulfillment(event['payload']):
+            LOGGER.info('Received historical order...ignored')
+            return True
+
         await _drop_to_queue(
             event, SqsHandler(os.environ['SAILTHRU_QUEUE']))
         return True
     except Exception: # pylint: disable=broad-except
         LOGGER.exception('Something went wrong sending message to queue')
         return False
+
+
+def is_historical_fulfillment(payload):
+    items = payload.get('items', [])
+    if len(items) > 0:
+        item = items[0]
+        if item.get('shipped_at'):
+            shipped_at = datetime.fromisoformat(item['shipped_at'][0:19])
+            live_date = datetime.fromisoformat('2021-09-14T00:00:00')
+            return shipped_at < live_date
+
+    return False
 
 
 async def _drop_to_queue(event, sqs_handler):

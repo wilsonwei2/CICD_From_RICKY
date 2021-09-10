@@ -47,6 +47,9 @@ def handler(_, context):
 
             newstore_response = None
             if TYPE == 'order':
+                # Temp Fix for the correlation_ref
+                order_id = body['external_id']
+                body['payments'][0]['correlation_ref'] = order_id
                 newstore_response = import_order_to_newstore(body, ns_handler)
             if TYPE == 'return':
                 newstore_response = import_return_to_newstore(body['order_id'], body['return'], ns_handler)

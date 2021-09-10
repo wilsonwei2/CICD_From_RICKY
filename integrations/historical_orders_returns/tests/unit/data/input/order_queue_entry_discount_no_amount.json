@@ -35,7 +35,7 @@
   },
   "payments": [{
     "processor": "payment_historical",
-    "correlation_ref": "correlation_ref",
+    "correlation_ref": "1101284390",
     "type": "captured",
     "amount": 257.41,
     "method": "historical_payment",

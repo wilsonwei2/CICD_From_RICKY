@@ -3,6 +3,7 @@ import os
 import json
 import asyncio
 import logging
+from datetime import datetime
 from lambda_utils.sqs.SqsHandler import SqsHandler
 from param_store.client import ParamStore
 
@@ -41,7 +42,7 @@ def handler(event, _):
     }
 
 
-async def process_event(event): #pylint: disable=too-many-branches
+async def process_event(event): #pylint: disable=too-many-branches, too-many-return-statements
     event_body = json.loads(event.get('body', {}))
     if not event_body:
         LOGGER.info('Empty event received')
@@ -83,6 +84,10 @@ async def process_event(event): #pylint: disable=too-many-branches
         queue_name = SQS_INVENTORY_TRANSFER
 
     elif event_type == 'return.processed':
+        if is_historical_return(payload):
+            LOGGER.info('Received historical return...ignored')
+            return True
+
         queue_name = SQS_RETURN_PROCESSED
 
     elif event_type == 'fulfillment_request.assigned':
@@ -98,6 +103,10 @@ async def process_event(event): #pylint: disable=too-many-branches
                         'IN_STORE_HANDOVER. Will not process.')
             return True
 
+        if is_historical_fulfillment(payload):
+            LOGGER.info('Received historical order...ignored')
+            return True
+
         queue_name = SQS_FULFILLMENT
     elif event_type == 'refund_request.issued':
         queue_name = SQS_APPEASEMENT_REFUND
@@ -109,6 +118,25 @@ async def process_event(event): #pylint: disable=too-many-branches
     push_message_to_sqs(queue_name, message)
     return True
 
+
+def is_historical_fulfillment(payload):
+    items = payload.get('items', [])
+    if len(items) > 0:
+        item = items[0]
+        if item.get('shipped_at'):
+            shipped_at = datetime.fromisoformat(item['shipped_at'][0:19])
+            live_date = datetime.fromisoformat('2021-09-14T00:00:00')
+            return shipped_at < live_date
+
+    return False
+
+def is_historical_return(payload):
+    if payload.get('returned_at'):
+        returned_at = datetime.fromisoformat(payload['returned_at'][0:19])
+        process_until_date = datetime.fromisoformat('2021-09-10T00:00:00')
+        return returned_at < process_until_date
+
+    return False
 
 def push_message_to_sqs(queue_name, message):
     sqs_handler = SqsHandler(queue_name=queue_name)

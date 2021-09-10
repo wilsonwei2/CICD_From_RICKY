@@ -111,7 +111,7 @@ class OrderTransformer():
 
         if payment_amount > order_total_gross: # pylint: disable=too-many-nested-blocks
             gap = round(payment_amount - order_total_gross, 2)
-            if gap <= 0.05:
+            if gap <= 0.5:
                 # we cannot adjust the value using an adjustment, we need to adjust the price
                 tax_lines = first_item["price"]["item_tax_lines"]
                 if len(tax_lines) > 0:
@@ -121,7 +121,7 @@ class OrderTransformer():
         else:
             if order_total_gross > payment_amount:
                 gap = round(order_total_gross - payment_amount, 2)
-                if gap <= 0.05:
+                if gap <= 0.5:
                     # add an item discount if possible
                     if len(first_item["price"].get("item_discount_info", [])) == 0:
                         self.add_tax_cent_price_adjustment(gap, first_item, "item_discount_info")
@@ -163,7 +163,7 @@ class OrderTransformer():
 
         return [{
             "processor": "payment_historical",
-            "correlation_ref": "correlation_ref",
+            "correlation_ref": self.order["details"]["Name"],
             "type": "captured",
             "amount": payment_amount,
             "method": "historical_payment",

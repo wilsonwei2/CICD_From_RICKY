@@ -3,6 +3,7 @@ import os
 import json
 import asyncio
 import logging
+from datetime import datetime
 from lambda_utils.sqs.SqsHandler import SqsHandler
 
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
@@ -16,8 +17,6 @@ def handler(event, _):
     '''
     Receives AWS events and send it to the SQS queue
     '''
-    LOGGER.debug(f'Event received: {json.dumps(event, indent=4)}')
-
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(process_event(event))
@@ -35,6 +34,8 @@ async def process_event(event):
         LOGGER.info("Empty event received")
         return True
 
+    LOGGER.info(f'Event received: {event_body}')
+
     order = event_body['payload']
     order['published_at'] = event_body['published_at']
     event_type = event_body['name']
@@ -48,6 +49,11 @@ async def process_event(event):
             LOGGER.info('Received a fulfillment_request.items_completed message with a service level of'
                         ' IN_STORE_HANDOVER. Will not process.')
             return True
+
+        if is_historical_fulfillment(order):
+            LOGGER.info('Received historical order...ignored')
+            return True
+
         queue_list = [SQS_SHOPIFY_FULFILLMENT]
     else:
         LOGGER.warning(f'Received an unsupported event type: {event_type}')
@@ -59,3 +65,14 @@ async def process_event(event):
         LOGGER.debug(f'Message pushed to SQS: {sqs_handler.queue_name}')
 
     return True
+
+def is_historical_fulfillment(payload):
+    items = payload.get('items', [])
+    if len(items) > 0:
+        item = items[0]
+        if item.get('shipped_at'):
+            shipped_at = datetime.fromisoformat(item['shipped_at'][0:19])
+            live_date = datetime.fromisoformat('2021-09-14T00:00:00')
+            return shipped_at < live_date
+
+    return False
