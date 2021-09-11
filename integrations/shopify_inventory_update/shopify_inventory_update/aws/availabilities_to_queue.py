@@ -240,6 +240,8 @@ async def _process_variants_to_queue(variants):
     shopify_inventory_item_list = []
     counter = 0
 
+    LOGGER.debug(f'Export items count to push: {export_count}')
+
     for variant in variants:
         atp = int(variant['atp'])
         shopify_inventory_ids = {}

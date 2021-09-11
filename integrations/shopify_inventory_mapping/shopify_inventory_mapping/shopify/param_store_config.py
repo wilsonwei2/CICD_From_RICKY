@@ -20,5 +20,5 @@ class ParamStoreConfig:
     def get_shopify_config(self):
         if not self.shopify_config:
             shop_manager = ShopManager(self.tenant, self.stage, self.region)
-            self.shopify_config = shop_manager.get_shop_config('frankandoak-shopify-dev-usa')
+            self.shopify_config = shop_manager.get_shop_config(shop_manager.get_shop_ids()[1])
         return self.shopify_config
