@@ -1,0 +1,19 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+newstore-adapter = {path = "./../../shared/newstore_adapter"}
+shopify-adapter = {path = "./../../shared/shopify_adapter"}
+pom-common = {path = "./../../shared/pom_common"}
+lambda-utils = {path = "./../../shared/lambda_utils"}
+param-store = {path = "./../../shared/3.6/param_store"}
+requests = "*"
+boto3 = "*"
+jsonschema = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"

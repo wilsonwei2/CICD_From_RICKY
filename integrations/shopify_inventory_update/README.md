@@ -4,10 +4,13 @@ This stack is responsible for getting inventory information from NewStore and up
 
 # Setup
 
-Create an entry in AWS Systems Manager Params Store - `/frankandoak/[stage]/shopify/locations_map_info`:
+Create an entry in AWS Systems Manager Params Store - `/frankandoak/[stage]/shopify/dc_location_id_map`:
 
     {
-      "61470441628": "STANST",
+      "DIXST": {
+		    "cad": "61464969372",
+		    "usd": "62202544304"
+	    },
       [...]
     }
 

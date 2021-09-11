@@ -21,6 +21,7 @@ provider:
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
   dynamo_table_name: ${self:provider.tenant}-availability-job-save-state
+  dynamo_mapping_table_name: ${self:provider.tenant}-product-inventory-mapping
   role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
   environment:
     STAGE: ${self:provider.stage}
@@ -34,7 +35,7 @@ functions:
   create_inventory_export_job:
     name: ${self:provider.tenant}-create-inventory-export-job
     handler: shopify_inventory_update.aws.create_availability_export_job.handler
-    timeout: 900
+    timeout: 600
     memorysize: 128
     events:
       - schedule:
@@ -57,7 +58,7 @@ functions:
     name: ${self:provider.tenant}-availabilities-to-queue
     handler: shopify_inventory_update.aws.availabilities_to_queue.handler
     timeout: 900
-    memorysize: 2048
+    memorysize: 1024
     events:
       - schedule:
           rate: rate(1 hour)
@@ -77,10 +78,11 @@ functions:
     name: ${self:provider.tenant}-inventory-push-to-shopify
     handler: shopify_inventory_update.aws.push_to_shopify.handler
     timeout: 900
-    memorysize: 128
+    memorysize: 256
+    # reservedConcurrency: 1    // if this can be used disable BLOCK_CONCURRENT_EXECUTION
     events:
       - schedule:
-          rate: rate(1 hour)
+          rate: rate(5 minutes)
           enable: true
           name: shopify_availability_export_worker
     environment:
@@ -90,6 +92,8 @@ functions:
       REGION: ${self:provider.region}
       LOG_LEVEL: info
       TRIGGER_NAME: shopify_availability_export_worker
+      BLOCK_CONCURRENT_EXECUTION: True
+      DYNAMODB_TABLE_NAME: ${self:provider.dynamo_table_name}
 
 resources:
   Resources:
@@ -99,7 +103,7 @@ resources:
           VisibilityTimeout: 60
           QueueName: ${self:provider.tenant}-shopify-availability-item
           RedrivePolicy:
-            maxReceiveCount: 5
+            maxReceiveCount: 3
             deadLetterTargetArn: !GetAtt shopifyAvailabilityItemDeadLetterQueue.Arn
     shopifyAvailabilityItemDeadLetterQueue:
         Type: AWS::SQS::Queue
