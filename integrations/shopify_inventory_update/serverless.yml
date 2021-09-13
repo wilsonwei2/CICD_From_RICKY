@@ -58,7 +58,7 @@ functions:
     name: ${self:provider.tenant}-availabilities-to-queue
     handler: shopify_inventory_update.aws.availabilities_to_queue.handler
     timeout: 900
-    memorysize: 1024
+    memorysize: 2048
     events:
       - schedule:
           rate: rate(1 hour)

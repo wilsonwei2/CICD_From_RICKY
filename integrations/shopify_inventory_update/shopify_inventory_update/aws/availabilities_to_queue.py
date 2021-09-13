@@ -16,7 +16,8 @@ from shopify_inventory_update.handlers.events_handler import EventsHandler
 from shopify_inventory_update.handlers.s3_handler import S3Handler
 from shopify_inventory_update.handlers.dynamodb_handler import (
     update_item,
-    get_item
+    get_item,
+    get_all
 )
 
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
@@ -32,6 +33,8 @@ JOB_STATE_KEY = 'current_job_state'
 LAST_UPDATED_KEY = 'last_updated_at'
 
 PARAM_STORE = None
+MAPPING_ENTRIES = None
+
 
 TENANT = os.environ['TENANT'] or 'frankandoak'
 STAGE = os.environ['STAGE'] or 'x'
@@ -231,21 +234,25 @@ async def _process_variants_to_queue(variants):
     LOGGER.info('Processing %i variants from the currently exported job. ',
                 (len(variants)))
 
+    global MAPPING_ENTRIES
+    MAPPING_ENTRIES = get_all(table_name=DYNAMODB_MAPPING_TABLE_NAME)
+
     sqs_handler = SqsHandler(queue_name=os.environ["SQS_NAME"])
     locations_map = json.loads(PARAM_STORE.get_param('shopify/dc_location_id_map'))
 
-    LOGGER.info('Processing variants from the json')
-    LOGGER.debug(variants)
     export_count = len(variants)
     shopify_inventory_item_list = []
     counter = 0
+
+    LOGGER.info('Processing variants from the json')
+    if export_count < 1000:
+        LOGGER.debug(variants)
 
     LOGGER.debug(f'Export items count to push: {export_count}')
 
     for variant in variants:
         atp = int(variant['atp'])
         shopify_inventory_ids = {}
-        shopify_inventory_id = None
         current_location_ids = None
         fulfillment_node_id = variant.get('fulfillment_node_id', None)
 
@@ -255,20 +262,19 @@ async def _process_variants_to_queue(variants):
                 identifiers = external_identifier['identifiers']
 
                 if 'shopify_inventory_item_id' in identifiers:
-                    shopify_inventory_id = identifiers['shopify_inventory_item_id']
-                    shopify_inventory_ids['cad'] = shopify_inventory_id
-
-        shopify_inventory_id_usd = _get_inventory_item_id(variant.get('product_id'))
-        if shopify_inventory_id_usd:
-            shopify_inventory_ids['usd'] = shopify_inventory_id_usd
-
-        if fulfillment_node_id in locations_map:
-            current_location_ids = locations_map[fulfillment_node_id]
+                    shopify_inventory_ids['cad'] = identifiers['shopify_inventory_item_id']
 
         if not shopify_inventory_ids.get('cad'):
             product_id = variant.get('product_id')
             LOGGER.debug(f'Shopify inventory ID for CAD not present for "{product_id}", skipping variant')
             continue
+
+        shopify_inventory_id_usd = _get_usd_inventory_item_id(variant.get('product_id'))
+        if shopify_inventory_id_usd:
+            shopify_inventory_ids['usd'] = shopify_inventory_id_usd
+
+        if fulfillment_node_id in locations_map:
+            current_location_ids = locations_map[fulfillment_node_id]
 
         if current_location_ids is None:
             product_id = variant.get('product_id')
@@ -322,12 +328,14 @@ async def _get_file(url):
             LOGGER.info("Responding with data from zip file")
             return response_data
 
-def _get_inventory_item_id(product_sku):
-    mapping_entry = get_item(table_name=DYNAMODB_MAPPING_TABLE_NAME, item={
-        'product_sku': product_sku
-    })
+def _get_usd_inventory_item_id(product_sku):
+    global MAPPING_ENTRIES
+
+    mapping_entry = next(filter(lambda item: item['product_sku'] == product_sku, MAPPING_ENTRIES), None)
 
     if mapping_entry is None:
+        LOGGER.debug('No mapping entry found for usd.')
         return None
 
+    LOGGER.debug(f'Mapping entry found for usd: {mapping_entry}')
     return mapping_entry['shopify_inventory_item_id']
