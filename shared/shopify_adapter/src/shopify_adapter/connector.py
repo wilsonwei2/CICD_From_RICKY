@@ -139,6 +139,16 @@ class ShopifyConnector:
         orders = []
         next_page = ''
         while True:
+            if next_page:
+                next_page_parts = next_page.split('?')
+                endpoint = next_page_parts[0]
+                data = {}
+
+                if len(next_page_parts) > 1:
+                    for next_page_param in next_page_parts[1].split('&'):
+                        next_page_param_parts = next_page_param.split('=')
+                        data[next_page_param_parts[0]] = next_page_param_parts[1]
+
             endpoint = next_page if next_page else endpoint
             response = requests.get(
                 url=endpoint, headers=self.auth_header, params=data)

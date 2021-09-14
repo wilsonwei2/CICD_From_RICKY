@@ -11,7 +11,7 @@ Create an entry in AWS Systems Manager Params Store - `/frankandoak/[stage]/shop
       "shared_secret": "***"
     }
 
-Create an entry in AWS Systems Manager Params Store - `/frankandoak/x/shopify/service_level`
+Create an entry in AWS Systems Manager Params Store - `/frankandoak/x/shopify/service_level`:
 
     {
       "default": "...",
