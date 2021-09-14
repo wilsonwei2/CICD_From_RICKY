@@ -537,9 +537,8 @@ def prepare_customer_refund_payload(credit_memo_result, initialized_record, paym
 def inject_credit_memo(return_parsed):
     credit_memo = return_parsed['credit_memo']
     credit_memo_items = return_parsed['credit_memo_items']
-    payment_items = return_parsed['credit_memo_payment_items']
     tax_offset_item = return_parsed['tax_offset_item']
-    credit_memo_items_list = credit_memo_items + payment_items + [tax_offset_item]
+    credit_memo_items_list = credit_memo_items + [tax_offset_item]
     credit_memo['itemList'] = CreditMemoItemList(credit_memo_items_list)
     result, response, internal_id = create_credit_memo(credit_memo)
     credit_memo_trans_id = response['tranId']
