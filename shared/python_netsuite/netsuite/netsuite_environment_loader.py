@@ -7,7 +7,6 @@ from param_store.client import ParamStore
 def get_netsuite_config():
     return json.loads(PARAM_STORE.get_param('netsuite'))
 
-
 def get_creds_config():
     return json.loads(PARAM_STORE.get_param('netsuite_creds'))
 
