@@ -210,21 +210,30 @@ def get_customer_netsuite_internal_id(order):
 # extracts transactions from order data (GraphQL API response)
 
 
-def get_capture_transactions(order):
+def get_capture_transactions_fallback_authorize(order):
     transactions = []
     for transaction in order['paymentAccount']['transactions']['nodes']:
         if transaction['transactionType'] == 'capture':
             transactions.append(transaction)
+    if len(transactions) == 0:
+        for transaction in order['paymentAccount']['transactions']['nodes']:
+            if transaction['transactionType'] == 'authorize':
+                transactions.append(transaction)
     return transactions
 
 
 # extracts transactions from order data (REST API response)
-def get_capture_transactions_rest(payments_info):
+def get_capture_transactions_rest_fallback_authorize(payments_info):
     transactions = []
     for instrument in payments_info['instruments']:
         for original_transaction in instrument['original_transactions']:
             if original_transaction['reason'] == 'capture':
                 transactions.append(original_transaction)
+    if len(transactions) == 0:
+        for instrument in payments_info['instruments']:
+            for original_transaction in instrument['original_transactions']:
+                if original_transaction['reason'] == 'authorize':
+                    transactions.append(original_transaction)
     return transactions
 
 
@@ -248,9 +257,10 @@ def create_payment_items(order):
     location_id = NEWSTORE_TO_NETSUITE_LOCATIONS[store_id]['id']
 
     if payments_info:
-        transactions = get_capture_transactions_rest(payments_info)
+        transactions = get_capture_transactions_rest_fallback_authorize(payments_info)
     else:
-        transactions = get_capture_transactions(order)
+        transactions = get_capture_transactions_fallback_authorize(order)
+
 
     LOGGER.info('Transactions from capture order')
     LOGGER.info(json.dumps(transactions))
@@ -300,7 +310,7 @@ def create_payment_items(order):
 
 
 def get_payment_method(order):
-    transactions = get_capture_transactions(order)
+    transactions = get_capture_transactions_fallback_authorize(order)
     payment_account_id = None
     # 1-adyen, cash, giftcard
     # 2-cash, giftcard, adyen
