@@ -59,6 +59,7 @@ functions:
     handler: shopify_inventory_update.aws.availabilities_to_queue.handler
     timeout: 900
     memorysize: 2048
+    # reservedConcurrency: 1    // if this can be used disable BLOCK_CONCURRENT_EXECUTION
     events:
       - schedule:
           rate: rate(1 hour)
@@ -74,6 +75,7 @@ functions:
       FORCE_CHECKING_FOR_JOB: True
       DYNAMODB_TABLE_NAME: ${self:provider.dynamo_table_name}
       S3_BUCKET_NAME: ${self:provider.deploymentBucket}
+      BLOCK_CONCURRENT_EXECUTION: True
   inventory_push_to_shopify:
     name: ${self:provider.tenant}-inventory-push-to-shopify
     handler: shopify_inventory_update.aws.push_to_shopify.handler

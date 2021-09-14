@@ -20,6 +20,7 @@ LOGGER.setLevel(LOG_LEVEL)
 TENANT = os.environ['TENANT'] or 'frankandoak'
 LAST_UPDATED_KEY = 'last_updated_at'
 DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
+CONCURRENT_EXECUTION_BLOCKED_KEY = 'push_to_queue_concurrent_execution_blocked'
 
 def handler(event, context):
     """
@@ -31,6 +32,9 @@ def handler(event, context):
     Returns:
         string -- Result string of process
     """
+    if _is_blocked():
+        return 'Push to queue is running, creating the job is blocked.'
+
     LOGGER.debug('Event : %s', json.dumps(event))
     is_full = False
 
@@ -126,3 +130,17 @@ def save_last_updated_to_dynamo_db(last_updated_at):
     }
 
     update_item(table_name=DYNAMODB_TABLE_NAME, schema=schema)
+
+
+def _is_blocked():
+    response = get_item(table_name=DYNAMODB_TABLE_NAME, item={
+        'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
+    })
+
+    if response is None:
+        return False
+
+    if 'blocked' in response:
+        return response['blocked'] == 'True'
+
+    return False

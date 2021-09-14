@@ -14,6 +14,7 @@ from newstore_adapter.connector import NewStoreConnector
 from shopify_inventory_update.handlers.sqs_handler import SqsHandler
 from shopify_inventory_update.handlers.events_handler import EventsHandler
 from shopify_inventory_update.handlers.s3_handler import S3Handler
+from shopify_inventory_update.handlers.lambda_handler import stop_before_timeout
 from shopify_inventory_update.handlers.dynamodb_handler import (
     update_item,
     get_item,
@@ -30,10 +31,15 @@ MAP_FILE_VARIANTS_SKU = 'sku_to_variant_id_map_dict.json'
 DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
 DYNAMODB_MAPPING_TABLE_NAME = 'frankandoak-product-inventory-mapping'
 JOB_STATE_KEY = 'current_job_state'
+LAST_VARIANT_KEY = 'last_variant'
 LAST_UPDATED_KEY = 'last_updated_at'
+
+BLOCK_CONCURRENT_EXECUTION = bool(os.environ.get('BLOCK_CONCURRENT_EXECUTION', 'False'))
+CONCURRENT_EXECUTION_BLOCKED_KEY = 'push_to_queue_concurrent_execution_blocked'
 
 PARAM_STORE = None
 MAPPING_ENTRIES = None
+STOP_BEFORE_TIMEOUT = 60000
 
 
 TENANT = os.environ['TENANT'] or 'frankandoak'
@@ -50,15 +56,27 @@ def handler(event, context):
     Returns:
         string -- Result string of process
     """
+    if BLOCK_CONCURRENT_EXECUTION:
+        if _is_blocked():
+            return 'Execution blocked'
+        else:
+            _set_blocked_state(True)
+
     global PARAM_STORE
     if not PARAM_STORE:
         PARAM_STORE = ParamStore(TENANT, STAGE)
 
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    result = loop.run_until_complete(_save_to_queue_availabilities(context, event))
-    loop.stop()
-    loop.close()
+    result = None
+
+    try:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(_save_to_queue_availabilities(context, event))
+        loop.stop()
+        loop.close()
+    finally:
+        _set_blocked_state(False)
+
     return result
 
 
@@ -68,6 +86,40 @@ def get_availability_job_id():
     }
     response = get_item(table_name=DYNAMODB_TABLE_NAME, item=key)
     return response
+
+
+def get_last_variant():
+    key = {
+        'identifier': str(LAST_VARIANT_KEY)
+    }
+
+    response = get_item(table_name=DYNAMODB_TABLE_NAME, item=key)
+
+    if response and 'last_variant' in response:
+        return response['last_variant']
+
+    return ''
+
+
+def save_last_variant(product_sku):
+    key = {
+        'identifier': str(LAST_VARIANT_KEY)
+    }
+
+    expression_attribute_values = {
+        ':value': str(product_sku)
+    }
+
+    update_expression = "set last_variant=:value"
+
+    schema = {
+        'Key': key,
+        'UpdateExpression': str(update_expression),
+        'ExpressionAttributeValues': expression_attribute_values
+    }
+
+    update_item(table_name=DYNAMODB_TABLE_NAME, schema=schema)
+
 
 def save_last_updated_to_dynamo_db(last_updated_at):
     key = {
@@ -181,12 +233,17 @@ async def wait_job_and_process_variants(context, event):
         link = str(export_job['link'])
         last_updated_at = str(export_job['last_updated_at'])
         variants = await read_variants_from_export_file(link, last_updated_at)
-        await _process_variants_to_queue(variants)
-        await events_handler.update_trigger(
-            os.environ.get('TRIGGER_NAME', WORKER_TRIGGER_DEFAULT_NAME), "rate(1 hour)", True)
-        save_state_in_dynamodb(event['availability_export_id'], 'finished', 'yes')
-        LOGGER.info('Getting export job id...')
-        return {'result': 'All variants exported to the queue'}
+
+        if await _process_variants_to_queue(variants, context):
+            await events_handler.update_trigger(
+                os.environ.get('TRIGGER_NAME', WORKER_TRIGGER_DEFAULT_NAME), "rate(1 hour)", True)
+            save_last_variant('')
+            save_state_in_dynamodb(event['availability_export_id'], 'finished', 'yes')
+            LOGGER.info('Getting export job id...')
+            return {'result': 'All variants exported to the queue'}
+        else:
+            LOGGER.info('Not all variants exported before timeout')
+            return {'result': 'Not all variants exported before timeout'}
 
 
 ## Location where all the operations happen.
@@ -222,7 +279,7 @@ async def read_variants_from_export_file(file_url, last_updated_at):
     return variants
 
 
-async def _process_variants_to_queue(variants):
+async def _process_variants_to_queue(variants, context):
     """Puts the variants into a message and drops it to a queue
 
     Arguments:
@@ -240,6 +297,7 @@ async def _process_variants_to_queue(variants):
     sqs_handler = SqsHandler(queue_name=os.environ["SQS_NAME"])
     locations_map = json.loads(PARAM_STORE.get_param('shopify/dc_location_id_map'))
 
+    result = True
     export_count = len(variants)
     shopify_inventory_item_list = []
     counter = 0
@@ -250,7 +308,22 @@ async def _process_variants_to_queue(variants):
 
     LOGGER.debug(f'Export items count to push: {export_count}')
 
+    previous_product_id = None
+    last_product_id = get_last_variant()
+
     for variant in variants:
+        if stop_before_timeout(context, STOP_BEFORE_TIMEOUT, LOGGER):
+            save_last_variant(previous_product_id)
+            result = False
+            break
+
+        if last_product_id != '':
+            if variant.get('product_id') == last_product_id:
+                last_product_id = ''
+            continue
+
+        previous_product_id = variant.get('product_id')
+
         atp = int(variant['atp'])
         shopify_inventory_ids = {}
         current_location_ids = None
@@ -302,6 +375,7 @@ async def _process_variants_to_queue(variants):
 
     LOGGER.debug(f'Export items count: {export_count}')
     LOGGER.debug(f'Pushed items count: {pushed_count}')
+    return result
 
 
 async def _drop_to_queue(sqs_handler, message_availability):
@@ -328,6 +402,7 @@ async def _get_file(url):
             LOGGER.info("Responding with data from zip file")
             return response_data
 
+
 def _get_usd_inventory_item_id(product_sku):
     global MAPPING_ENTRIES
 
@@ -339,3 +414,29 @@ def _get_usd_inventory_item_id(product_sku):
 
     LOGGER.debug(f'Mapping entry found for usd: {mapping_entry}')
     return mapping_entry['shopify_inventory_item_id']
+
+
+def _set_blocked_state(blocked):
+    update_item(table_name=DYNAMODB_TABLE_NAME, schema={
+        'Key': {
+            'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
+        },
+        'UpdateExpression': 'set blocked=:value',
+        'ExpressionAttributeValues': {
+            ':value': str(blocked)
+        }
+    })
+
+
+def _is_blocked():
+    response = get_item(table_name=DYNAMODB_TABLE_NAME, item={
+        'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
+    })
+
+    if response is None:
+        return False
+
+    if 'blocked' in response:
+        return response['blocked'] == 'True'
+
+    return False

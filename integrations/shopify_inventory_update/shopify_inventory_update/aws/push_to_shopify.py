@@ -7,6 +7,7 @@ import asyncio
 
 from shopify_inventory_update.handlers.shopify_handler import ShopifyConnector
 from shopify_inventory_update.handlers.sqs_handler import SqsHandler
+from shopify_inventory_update.handlers.lambda_handler import stop_before_timeout
 from shopify_inventory_update.handlers.dynamodb_handler import (
     get_item,
     update_item
@@ -90,14 +91,14 @@ async def _sync_inventory(loop, context):
     LOGGER.info('%s available in the queue...', str(message_count))
 
     while message_count > 0:
-        if _stop_before_timeout(context):
+        if stop_before_timeout(context, STOP_BEFORE_TIMEOUT, LOGGER):
             return 'Stopping before timeout'
 
         messages = await sqs_handler.get_message()
         if messages.get('Messages'):
 
             for message in messages['Messages']:
-                if _stop_before_timeout(context):
+                if stop_before_timeout(context, STOP_BEFORE_TIMEOUT, LOGGER):
                     return 'Stopping before timeout'
 
                 receipt_handle = message['ReceiptHandle']
@@ -227,13 +228,4 @@ def _is_blocked():
     if 'blocked' in response:
         return response['blocked'] == 'True'
 
-    return False
-
-
-def _stop_before_timeout(context):
-    remaining_time = context.get_remaining_time_in_millis()
-    LOGGER.debug(f'{remaining_time}ms remaining before timeout')
-    if remaining_time <= STOP_BEFORE_TIMEOUT:
-        LOGGER.info(f'Only {remaining_time}ms remaining before timeout, stopping')
-        return True
     return False
