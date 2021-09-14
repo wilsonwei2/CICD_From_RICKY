@@ -483,9 +483,8 @@ def inject_customer_refund(customer_refund_payload, initialized_record):
 def inject_cash_refund(return_parsed):
     cash_refund = return_parsed['cash_refund']
     cash_refund_items = return_parsed['cash_refund_items']
-    payment_items = return_parsed['cash_refund_payment_items']
     tax_offset_item = return_parsed['tax_offset_item']
-    cash_refund_items_list = cash_refund_items + payment_items + [tax_offset_item]
+    cash_refund_items_list = cash_refund_items  + [tax_offset_item]
     cash_refund['itemList'] = CashRefundItemList(cash_refund_items_list)
     result, response = create_cash_refund(cash_refund)
 
