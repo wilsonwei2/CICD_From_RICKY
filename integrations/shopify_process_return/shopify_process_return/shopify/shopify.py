@@ -43,6 +43,7 @@ class ShopifyConnector:
         params allows to pass a filter of the fields that should be available in the response
         """
         endpoint = '{url}/orders.json'.format(url=self.url)
+        next_page = None
 
         data = {
             'updated_at_min': starts_at,
@@ -58,7 +59,17 @@ class ShopifyConnector:
 
         orders = []
 
-        while True:
+        while True: # pylint: disable=R1702
+            if next_page:
+                next_page_parts = next_page.split('?')
+                endpoint = next_page_parts[0]
+                data = {}
+
+                if len(next_page_parts) > 1:
+                    for next_page_param in next_page_parts[1].split('&'):
+                        next_page_param_parts = next_page_param.split('=')
+                        data[next_page_param_parts[0]] = next_page_param_parts[1]
+
             response = requests.get(url=endpoint, headers=self.auth_header, params=data)
             response.raise_for_status()
             body = response.json()
@@ -69,9 +80,9 @@ class ShopifyConnector:
             if len(body['orders']) > 0:
                 orders += body['orders']
 
-            endpoint = self._get_next_link(response.headers)
+            next_page = self._get_next_link(response.headers)
 
-            if not endpoint:
+            if not next_page:
                 break
 
         return orders
