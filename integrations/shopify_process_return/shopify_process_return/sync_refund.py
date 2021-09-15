@@ -36,8 +36,8 @@ def handler(event, context): # pylint: disable=unused-argument
     for the_handler in shopify_handlers: # pylint: disable=too-many-nested-blocks
         channel = the_handler['config']['channel']
         LOGGER.info(f'Processing refunds for channel {channel}')
-        the_handler = the_handler['handler']
         shop_id = the_handler['shop_id']
+        the_handler = the_handler['handler']
         last_shopify_refunds = the_handler.get_orders(
             starts_at=start_date.strftime('%Y-%m-%dT%H:%M:00Z'),
             ends_at=end_date.strftime('%Y-%m-%dT%H:%M:00Z'),
