@@ -4,8 +4,8 @@ from newstore_adapter.connector import NewStoreConnector
 from pom_common.shopify import ShopManager
 
 NS_HANDLER = None
-SF_HANDLER = None
-SHOPIFY_CONFIG = {}
+SF_HANDLERS = {}
+SHOPIFY_CONFIGS = {}
 NEWSTORE_CONFIG = None
 
 TENANT = os.environ.get('TENANT', 'frankandoak')
@@ -30,22 +30,22 @@ def get_shop_id(shop_name):
     return None
 
 def get_shopify_config(shop_id):
-    global SHOPIFY_CONFIG # pylint: disable=global-statement
-    if not SHOPIFY_CONFIG:
+    global SHOPIFY_CONFIGS # pylint: disable=global-statement
+    if not shop_id in SHOPIFY_CONFIGS:
         shop_manager = ShopManager(TENANT, STAGE, REGION)
-        SHOPIFY_CONFIG = shop_manager.get_shop_config(shop_id)
-    return SHOPIFY_CONFIG
+        SHOPIFY_CONFIGS[shop_id] = shop_manager.get_shop_config(shop_id)
+    return SHOPIFY_CONFIGS[shop_id]
 
 def get_shopify_handler(shop_id):
-    global SF_HANDLER # pylint: disable=global-statement
-    if not SF_HANDLER:
+    global SF_HANDLERS # pylint: disable=global-statement
+    if not shop_id in SF_HANDLERS:
         shopify_config = get_shopify_config(shop_id)
-        SF_HANDLER = ShopifyConnector(
+        SF_HANDLERS[shop_id] = ShopifyConnector(
             api_key=shopify_config['username'],
             password=shopify_config['password'],
             shop=shopify_config['shop']
         )
-    return SF_HANDLER
+    return SF_HANDLERS[shop_id]
 
 def _create_shopify_handlers(configs):
     """Take an list of configs in the following format and return a list of
