@@ -26,6 +26,7 @@ provider:
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
     SQS_QUEUE: ${self:provider.tenant}-returns-to-netsuite-queue.fifo
     MAX_MESSAGE_QUEUE_SIZE: 25
 

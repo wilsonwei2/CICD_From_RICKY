@@ -9,6 +9,7 @@ from datetime import datetime, date
 from pytz import timezone
 from pytz.exceptions import UnknownTimeZoneError
 from param_store.client import ParamStore
+from pom_common.shopify import ShopManager
 from newstore_adapter.connector import NewStoreConnector
 from shopify_adapter.connector import ShopifyConnector
 
@@ -20,13 +21,14 @@ if not isinstance(LOG_LEVEL, int):
 LOGGER.setLevel(LOG_LEVEL)
 TENANT = os.environ.get('TENANT')
 STAGE = os.environ.get('STAGE')
+REGION = os.environ.get('REGION')
 
 
 class Utils():
     _param_store = None
     _newstore_conn = None
     _newstore_config = {}
-    _shopify_conn = None
+    _shopify_conn = {}
     _shopify_config = {}
     _netsuite_config = {}
     _newstore_to_netsuite_locations = {}
@@ -51,15 +53,20 @@ class Utils():
         return Utils._newstore_conn
 
     @staticmethod
-    def get_shopify_conn():
-        if not Utils._shopify_conn:
-            shopify_config = Utils._get_shopify_config()
-            Utils._shopify_conn = ShopifyConnector(
-                api_key=shopify_config['username'],
-                password=shopify_config['password'],
-                shop=shopify_config['shop']
-            )
-        return Utils._shopify_conn
+    def get_shopify_conn(currency):
+        if not currency in Utils._shopify_conn:
+            shop_manager = ShopManager(TENANT, STAGE, REGION)
+
+            for shop_id in shop_manager.get_shop_ids():
+                shopify_config = shop_manager.get_shop_config(shop_id)
+
+                Utils._shopify_conn[shopify_config['currency']] = ShopifyConnector(
+                    shopify_config['username'],
+                    shopify_config['password'],
+                    shopify_config['shop']
+                )
+
+        return Utils._shopify_conn[currency]
 
     @staticmethod
     def _get_param_store():
@@ -74,13 +81,6 @@ class Utils():
             Utils._newstore_config = json.loads(
                 Utils._get_param_store().get_param('newstore'))
         return Utils._newstore_config
-
-    @staticmethod
-    def _get_shopify_config():
-        if not Utils._shopify_config:
-            Utils._shopify_config = json.loads(
-                Utils._get_param_store().get_param('shopify'))
-        return Utils._shopify_config
 
     @staticmethod
     def get_netsuite_config():

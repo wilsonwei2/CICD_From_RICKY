@@ -117,8 +117,10 @@ async def process_return(message):
 async def _update_payments_info_if_needed(customer_order, payments_info):
     if customer_order['channel_type'] != 'web':
         return payments_info
+
+    currency = customer_order['currency_code'].upper()
     updated_payments_info = verify_and_update_missing_payment_info(
-        Utils.get_shopify_conn(), payments_info, customer_order)
+        Utils.get_shopify_conn(currency), payments_info, customer_order)
     return updated_payments_info
 
 
