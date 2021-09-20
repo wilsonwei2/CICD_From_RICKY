@@ -59,7 +59,7 @@ query MyQuery($externalId: String!) {
 
 
     def transform_return(self, return_item):
-        gql_order = self.get_order(return_item["order_id"])
+        gql_order = self.get_order(return_item["order_increment_id"])
 
         return_request = {
             "is_historical": True,
