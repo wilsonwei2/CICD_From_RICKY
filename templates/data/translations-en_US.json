@@ -6,7 +6,8 @@
       "date": "Date",
       "purchase": "Purchase",
       "receipt": "Receipt",
-      "order": "Order"
+      "order": "Order",
+      "ticket": "Ticket"
     },
     "information_address": {
       "billing_address": "Billing Address",
@@ -17,7 +18,8 @@
         "description": "Description",
         "item_id": "Item ID",
         "quantity": "Quantity",
-        "amount": "Amount"
+        "amount": "Amount",
+        "price": "Price"
       },
       "item": {
         "size": "Size",
@@ -55,7 +57,14 @@
     }
   },
   "sales_receipt": {
-    "title": "Receipt"
+    "title": "Receipt",
+    "payment_info": {
+      "payments": "Payments",
+      "credit_card": "Credit&nbsp;Card",
+      "card_no": "Card#",
+      "change": "Change"
+    },
+    "thank_you": "Thank you"
   },
   "exchange_receipt": {
     "title": "Exchange Receipt"

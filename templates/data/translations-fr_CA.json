@@ -6,7 +6,8 @@
       "date": "Date",
       "purchase": "Sommaire de la commande",
       "receipt": "Reçu",
-      "order": "Commande"
+      "order": "Commande",
+      "ticket": "Ticket"
     },
     "information_address": {
       "billing_address": "Adresse de facturation",
@@ -17,7 +18,8 @@
         "description": "Article",
         "item_id": "SKU",
         "quantity": "Quantié",
-        "amount": "Prix"
+        "amount": "Prix",
+        "price": "Prix"
       },
       "item": {
         "size": "Grandeur",
@@ -55,7 +57,14 @@
     }
   },
   "sales_receipt": {
-    "title": "Reçu"
+    "title": "Reçu",
+    "payment_info": {
+      "payments": "Paiements",
+      "credit_card": "Carte&nbsp;de&nbsp;crédit",
+      "card_no": "Carte#",
+      "change": "Changer"
+    },
+    "thank_you": "Merci"
   },
   "exchange_receipt": {
     "title": "Reçu d'échange"

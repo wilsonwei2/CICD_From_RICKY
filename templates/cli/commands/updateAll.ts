@@ -41,7 +41,7 @@ const fromFiles = (glob: string, type: FileType) => from(globby(glob)).pipe(
 );
 
 const addLocales = (locales: string[]) => switchMap((file: FileData) => from(locales).pipe(
-  map((locale) => ({ locale, ...file })),
+  map((locale) => ({ ...file, locale })),
 ));
 
 const doTranslations = (skipTranslation: boolean) => concatMap((file: FileData) => (
