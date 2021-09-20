@@ -110,6 +110,8 @@ def process_records(records):
     Reads the data from the CSV File and transforms into Newstore Pricebook
     Format and triggers the step function required to start the import jobs.
     """
+    last_index = 0
+
     for record in records:
         s3_bucket_name = record['bucket_name']
         s3_key = record['object_key']
@@ -123,16 +125,13 @@ def process_records(records):
         # into our format and gives the price books back.
         s3_Object = S3.Bucket(s3_bucket_name).Object(s3_key) # pylint: disable=no-member
         LOGGER.info(f'processing {s3_key}')
-        with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') \
-                as csvfile:
+        with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') as csvfile:
             price_book = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-en', is_sale)
 
-        # also import CAD prices to storefront-catalog-fr
-        price_book_catalog_fr = None
+        price_book_fr = None
         if currency == 'CAD':
-            with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') \
-                    as csvfile:
-                price_book_catalog_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr', is_sale) if currency == 'CAD' else None
+            with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') as csvfile:
+                price_book_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr', is_sale)
 
         now = datetime.utcnow()
 
@@ -141,9 +140,9 @@ def process_records(records):
         LOGGER.info(f'S3_PREFIX is {S3_PREFIX}')
         LOGGER.info(f'obj_prefx is {obj_prefix}')
 
-        no_of_chunks = generate_chunks(price_book, obj_prefix)
-        if price_book_catalog_fr:
-            generate_chunks(price_book_catalog_fr, obj_prefix, no_of_chunks)
+        last_index = generate_chunks(price_book, obj_prefix, last_index)
+        if price_book_fr != None:
+            last_index = generate_chunks(price_book_fr, obj_prefix, last_index)
 
         copy_source = {
             'Bucket': s3_bucket_name,
@@ -168,17 +167,16 @@ def process_records(records):
         })
         STEP_FUNCTION_CLIENT.start_execution(stateMachineArn=STATE_MACHINE_ARN, input=input)
 
-def generate_chunks(price_book, obj_prefix, add_idx = 0):
-    chunks = 0
-    for i, chunk in enumerate(iter_chunks(price_book['items'], CHUNK_SIZE), start=1):
+def generate_chunks(price_book, obj_prefix, current_index):
+    idx = current_index
+    for chunk in iter_chunks(price_book['items'], CHUNK_SIZE):
+        idx = idx + 1
         out = {'head': price_book['head'], 'items': chunk}
         jsonbytes = json.dumps(out).encode('utf-8')
-
-        idx = add_idx + i
-
         key = f'{obj_prefix}-{idx:03}.zip'
+
         LOGGER.info(f'key is {obj_prefix}')
-        LOGGER.debug(f'Zipping chunk {i}')
+        LOGGER.debug(f'Zipping chunk {idx}')
         data = io.BytesIO()
         outzip = zf.ZipFile(data, 'w', zf.ZIP_DEFLATED)
         outzip.writestr('prices.json', jsonbytes)
@@ -189,6 +187,4 @@ def generate_chunks(price_book, obj_prefix, add_idx = 0):
         LOGGER.info(f'Zipped and uploaded {s3obj}')
         LOGGER.debug(json.dumps(out, indent=2))
 
-        chunks = chunks + 1
-
-    return chunks
+    return idx
