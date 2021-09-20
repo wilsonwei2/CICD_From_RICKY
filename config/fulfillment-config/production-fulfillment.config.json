@@ -1591,150 +1591,12 @@
                       {
                           "fulfillment_node_id": "MTLDC1",
                           "provider_rate": "Express"
-                      },
-                      {
-                        "fulfillment_node_id": "TECST",
-                        "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "TOST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "DONST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "STANST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "STWST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "MTLST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "VIAST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "DIXST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "FOYST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "RIDST",
-                          "provider_rate": "Express"
-                      },
-                      {
-                          "fulfillment_node_id": "VANST",
-                          "provider_rate": "Express"
                       }
-                  ],
-                  "SAVER_UPS": [
-                    {
-                      "fulfillment_node_id": "MTLDC1",
-                      "provider_rate": "UPSSaver"
-                    },
-                    {
-                      "fulfillment_node_id": "TECST",
-                      "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "TOST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "DONST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "STANST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "STWST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "MTLST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "VIAST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "DIXST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "FOYST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "RIDST",
-                        "provider_rate": "UPSSaver"
-                    },
-                    {
-                        "fulfillment_node_id": "VANST",
-                        "provider_rate": "UPSSaver"
-                    }
                   ],
                   "EXPEDITED": [
                     {
                       "fulfillment_node_id": "MTLDC1",
                       "provider_rate": "Expedited"
-                    },
-                    {
-                      "fulfillment_node_id": "TECST",
-                      "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "TOST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "DONST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "STANST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "STWST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "MTLST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "VIAST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "DIXST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "FOYST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "RIDST",
-                        "provider_rate": "Expedited"
-                    },
-                    {
-                        "fulfillment_node_id": "VANST",
-                        "provider_rate": "Expedited"
                     }
                   ]
               }
@@ -1765,6 +1627,12 @@
                   {
                     "fulfillment_node_id": "MTLDC1",
                     "provider_rate": "UPSSaver"
+                  }
+                ],
+                "STANDARD_UPS": [
+                  {
+                    "fulfillment_node_id": "MTLDC1",
+                    "provider_rate": "UPSStandard"
                   }
                 ],
                 "EXPEDITED": [
