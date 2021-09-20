@@ -108,8 +108,14 @@ class TestFrankandoakImportProductsTransformers(unittest.TestCase):
         products_slices_1, _ = self.transform.transform_products(products_jsonl, 1, self.custom_size_mapping)
         products_slices_2, _ = self.transform.transform_products(products_jsonl, 2, self.custom_size_mapping)
 
-        self.assertEqual(len(products_slices_1), 5)
-        self.assertEqual(len(products_slices_2), 3)
+        self.assertEqual(len(products_slices_1), 7)
+        self.assertEqual(len(products_slices_2), 4)
+
+        cleaned_slices_1 = list(filter(lambda s: len(s['items']) > 0, products_slices_1))
+        cleaned_slices_2 = list(filter(lambda s: len(s['items']) > 0, products_slices_2))
+
+        self.assertEqual(len(cleaned_slices_1), 5)
+        self.assertEqual(len(cleaned_slices_2), 3)
 
         self.assertEqual(len(products_slices_2[0]['items']), 2)
         self.assertEqual(len(products_slices_2[1]['items']), 2)

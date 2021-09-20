@@ -4,6 +4,7 @@ import logging
 LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
 
+ACTIVE_MASTER_GIDS = []
 VARIANT_PRODUCTS = {}
 
 
@@ -14,7 +15,7 @@ def process_transformation(jsonl_data):
 
     for variants in chunk_products(list(VARIANT_PRODUCTS.values()), 1000):
         products_slices.append({
-            'items': [transform_variant(variant) for variant in variants]
+            'items': [transform_variant(variant) for variant in variants if variant.get('__parentId', '') in ACTIVE_MASTER_GIDS]
         })
 
     LOGGER.info(f'Processed {len(products_slices)} product slices...')
@@ -31,6 +32,9 @@ def build_object_cache(json_objects):
     for current_object in json_objects:
         gid = current_object['id']
         object_type = gid.split('/')[-2]
+
+        if object_type == 'Product' and current_object.get('status', '').upper() == 'ACTIVE':
+            ACTIVE_MASTER_GIDS.append(gid)
 
         if object_type == 'ProductVariant':
             sku = current_object.get('sku', None)

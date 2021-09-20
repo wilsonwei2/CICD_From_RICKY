@@ -7,6 +7,7 @@ START_BULK_OPERATIONS = '''
                         edges {
                             node {
                                 id
+                                status
                                 vendor
                                 title
                                 bodyHtml

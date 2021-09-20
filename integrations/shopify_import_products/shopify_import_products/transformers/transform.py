@@ -58,7 +58,7 @@ def transform_products(jsonl_data, products_per_file, custom_size_mapping, local
                     }
                 ],
             },
-            'items': [transform_variant(variant, custom_size_mapping, locale) for variant in variants]
+            'items': [transform_variant(variant, custom_size_mapping, locale) for variant in variants if variant['__parentId'] in MASTER_PRODUCTS]
         })
 
     transformed_categories = {
@@ -85,7 +85,7 @@ def build_object_cache(json_objects):
         gid = current_object['id']
         object_type = gid.split('/')[-2]
 
-        if object_type == 'Product':
+        if object_type == 'Product' and current_object.get('status', '').upper() == 'ACTIVE':
             MASTER_PRODUCTS[gid] = current_object
         elif object_type == 'ProductVariant':
             sku = current_object.get('sku', None)
