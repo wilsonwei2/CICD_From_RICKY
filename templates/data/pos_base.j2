@@ -87,14 +87,18 @@
 {% if self.thank_you_message() %}
 	{% if billing_address.name or shipping_address.name %}
 		{% set footer_height = 3.05 %}
+		{% set footer_height = 0.1 %}
 	{% else %}
 		{% set footer_height = 2.66 %}
+		{% set footer_height = 0.1 %}
 	{% endif %}
 {% else %}
 	{% set footer_height = 2.66 %}
+		{% set footer_height = 0.1 %}
 {% endif %}
 
 {% set receipt_height = 0.3 + header_height + title_height + top_info_height + item_list_height + pricing_info_height + payment_info_height + holiday_return_paragraph_height + return_paragraph_height + footer_height %}
+{% set receipt_height = receipt_height - 4.0 %}
 
 <html>
 	<head>
