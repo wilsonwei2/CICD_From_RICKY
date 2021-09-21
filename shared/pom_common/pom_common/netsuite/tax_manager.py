@@ -157,6 +157,6 @@ class TaxManager():
     def get_tax_offset_line_item(currency):
         return {
             'item': RecordRef(internalId=TaxManager._get_netsuite_config()['tax_offset_item_internal_id']),
-            'amount': 100,
+            'amount': 10000,
             'taxCode': RecordRef(internalId=TaxManager._get_tax_code_id(currency))
         }
