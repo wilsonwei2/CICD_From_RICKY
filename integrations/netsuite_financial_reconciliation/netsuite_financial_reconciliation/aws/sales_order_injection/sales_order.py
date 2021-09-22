@@ -29,6 +29,9 @@ from netsuite_financial_reconciliation.helpers.utils import Utils
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO)
 
+CITY_SUBSTRING_LIMIT = 49
+
+
 # Gets the customer internal id. If the customer is not created yet, a new customer is created
 # in Netsuite. Otherwise, it is updated.
 def get_customer_internal_id(order_event, order_data, consumer):  # pylint: disable=too-many-statements
@@ -327,7 +330,7 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
             'country': Utils.get_countries_map().get(shipping_address['country'], '_unitedStates'),
             'state': shipping_address['state'],
             'zip': shipping_address['zipCode'],
-            'city': shipping_address['city'],
+            'city': shipping_address['city'][0:CITY_SUBSTRING_LIMIT],
             'addr1': shipping_address['addressLine1'],
             'addr2': shipping_address['addressLine2'],
             'addressee': customer_name
@@ -347,7 +350,7 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
             'country': Utils.get_countries_map().get(billing_address['country'], '_unitedStates'),
             'state': billing_address['state'],
             'zip': billing_address['zipCode'],
-            'city': billing_address['city'],
+            'city': billing_address['city'][0:CITY_SUBSTRING_LIMIT],
             'addr1': billing_address['addressLine1'],
             'addr2': billing_address['addressLine2'],
             'addressee': customer_name

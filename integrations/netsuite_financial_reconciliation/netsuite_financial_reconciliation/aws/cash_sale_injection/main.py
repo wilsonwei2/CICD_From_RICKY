@@ -36,6 +36,7 @@ NEWSTORE_TO_NETSUITE_LOCATIONS = util.get_newstore_to_netsuite_locations_config(
 NEWSTORE_TO_NETSUITE_CHANNEL = util.get_newstore_to_netsuite_channel_config()
 NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS = util.get_newstore_to_netsuite_payment_items_config()
 NEWSTORE_TO_NETSUITE_PAYMENT_ACCOUNT = util.get_newstore_to_netsuite_payment_account_config()
+CITY_SUBSTRING_LIMIT = 49
 
 
 def handler(event, context):  # pylint: disable=W0613
@@ -109,7 +110,7 @@ def create_cash_sale(order):
             'country': Utils.get_countries_map().get(shipping_address['country'], '_unitedStates'),
             'state': shipping_address['state'],
             'zip': shipping_address['zipCode'],
-            'city': shipping_address['city'],
+            'city': shipping_address['city'][0:CITY_SUBSTRING_LIMIT],
             'addr1': shipping_address['addressLine1'],
             'addr2': shipping_address['addressLine2'],
         }
