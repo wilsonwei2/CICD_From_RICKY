@@ -1,0 +1,23 @@
+{% extends 'pos_base' %}
+{%- from 'macros' import currency, address, desnake with context -%}
+
+{% block top_info %}
+	<div class="top_info">
+		<p class="order_id"><strong>Ticket: </strong>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
+	</div>
+{% endblock %}
+
+{% block item_list_gift %}
+	<div class="item_list">
+		<div class="item_list_header">
+			<p>Description</p>
+			<p></p>
+		</div>
+		{% for item in flat_items %}
+			<div class="item_list_gift_info">
+				<p>{{ item.product_name }}</p>
+				<p>{% if item.external_identifier and item.external_identifier.sku and item.external_identifier.sku == 'GC-NEWSTORE' %}&nbsp;{% elif item.external_identifier and item.external_identifier.sku %}Item ID: {{item.external_identifier.sku}}{% else %}Item ID: ---{% endif %}</p>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}

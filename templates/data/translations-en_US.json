@@ -54,17 +54,18 @@
       "visit_store": "Visit our store",
       "or": "or",
       "contact": "Contact Us"
-    }
-  },
-  "sales_receipt": {
-    "title": "Receipt",
+    },
     "payment_info": {
       "payments": "Payments",
       "credit_card": "Credit&nbsp;Card",
       "card_no": "Card#",
-      "change": "Change"
+      "change": "Change",
+      "original_payment_method": "Original Payment Method"
     },
     "thank_you": "Thank you"
+  },
+  "sales_receipt": {
+    "title": "Receipt"
   },
   "exchange_receipt": {
     "title": "Exchange Receipt"

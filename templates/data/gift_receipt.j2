@@ -3,21 +3,33 @@
 
 {% block top_info %}
 	<div class="top_info">
-		<p class="order_id"><strong>Ticket: </strong>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
+		<p class="order_id"><strong>[[[#table_header.ticket]]]: </strong>{% if order_details and order_details.order_id %}{{order_details.order_id}}{% else %}{{ order_id | default(order_number) }}{% endif %}</p>
 	</div>
 {% endblock %}
 
 {% block item_list_gift %}
 	<div class="item_list">
 		<div class="item_list_header">
-			<p>Description</p>
+			<p>[[[#contents.header.description]]]</p>
 			<p></p>
 		</div>
 		{% for item in flat_items %}
 			<div class="item_list_gift_info">
 				<p>{{ item.product_name }}</p>
-				<p>{% if item.external_identifier and item.external_identifier.sku and item.external_identifier.sku == 'GC-NEWSTORE' %}&nbsp;{% elif item.external_identifier and item.external_identifier.sku %}Item ID: {{item.external_identifier.sku}}{% else %}Item ID: ---{% endif %}</p>
+				<p>{% if item.external_identifier and item.external_identifier.sku and item.external_identifier.sku == 'GC-NEWSTORE' %}&nbsp;{% elif item.product_id %}[[[#contents.header.item_id]]]: {{item.product_id}}{% elif item.external_identifier and item.external_identifier.sku %}[[[#contents.header.item_id]]]: {{item.external_identifier.sku}}{% else %}[[[#contents.header.item_id]]]: ---{% endif %}</p>
 			</div>
 		{% endfor %}
 	</div>
+{% endblock %}
+
+{% block return_paragraph %}
+	{% if store_phone_number and ('619-450-6303' in store_phone_number or '504-522-1890' in store_phone_number) %}
+		<div class="return_paragraph">
+			<p><strong>ALL SALES FINAL.<br>NO EXCHANGES OR REFUNDS ON ANY PURCHASES​</strong></p>
+		</div>
+	{% else %}
+		<div class="return_paragraph">
+      <p>[[[#return_sentence]]]</p>
+		</div>
+	{% endif %}
 {% endblock %}

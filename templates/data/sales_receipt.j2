@@ -109,7 +109,7 @@
 {% block payment_info %}
 	<div class="payment_info">
 		<div class="payment_info_header">
-			<p>[[[payment_info.payments]]]</p>
+			<p>[[[#payment_info.payments]]]</p>
 		</div>
 		{% for instrument in instruments %}
 			{%- if instrument.payment_method == "adyen" or instrument.payment_method == "credit_card" -%}
@@ -121,19 +121,19 @@
 					</div>
 					{%- else -%}
 					<div class="payment_info_credit_card">
-						<p>[[[payment_info.credit_card]]]</p>
+						<p>[[[#payment_info.credit_card]]]</p>
 						<p>{{ currency(instrument.amount) }}</p>
 					</div>
 					{%- endif -%}
 				{%- else -%}
 				<div class="payment_info_credit_card">
-					<p>[[[payment_info.credit_card]]]</p>
+					<p>[[[#payment_info.credit_card]]]</p>
 					<p>{{ currency(instrument.amount) }}</p>
 				</div>
 				{%- endif -%}
 				{%- if instrument.metadata.instrument_details.last4 -%}
 				<div>
-					<p>[[[payment_info.card_no]]]: {{instrument.metadata.instrument_details.last4}}</p>
+					<p>[[[#payment_info.card_no]]]: {{instrument.metadata.instrument_details.last4}}</p>
 					<p></p>
 				</div>
 				{% endif %}
@@ -168,8 +168,8 @@
 {% block thank_you_message %}
 
 	{% if billing_address and billing_address.name %}
-		<p class="thank_you_message">[[[thank_you]]] {{ billing_address.name }}!</p>
+		<p class="thank_you_message">[[[#thank_you]]] {{ billing_address.name }}!</p>
 	{% elif shipping_address and shipping_address.name %}
-		<p class="thank_you_message">[[[thank_you]]] {{ shipping_address.name }}!</p>
+		<p class="thank_you_message">[[[#thank_you]]] {{ shipping_address.name }}!</p>
 	{% endif %}
 {% endblock %}
