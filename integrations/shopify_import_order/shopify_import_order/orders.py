@@ -13,6 +13,7 @@ LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER.setLevel(LOG_LEVEL)
 SHOPIFY_CHANNEL = 'MTLDC1'
+CITY_SUBSTRING_LIMIT = 49
 
 
 def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=None):
@@ -82,7 +83,7 @@ def get_address(order_address):
         'last_name': _get_non_null_field(order_address, 'last_name', ''),
         'country': _get_non_null_field(order_address, 'country_code', ''),
         'zip_code': _get_non_null_field(order_address, 'zip', ''),
-        'city': _get_non_null_field(order_address, 'city', ''),
+        'city': _get_non_null_field(order_address, 'city', '')[0:CITY_SUBSTRING_LIMIT],
         'state': _get_non_null_field(order_address, 'province_code', ''),
         'address_line_1': _get_non_null_field(order_address, 'address1', ''),
         'address_line_2': _get_non_null_field(order_address, 'address2', ''),
