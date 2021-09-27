@@ -12,11 +12,11 @@ from netsuite.service import (
 from netsuite.client import client, make_passport
 from netsuite_shipping_status_rejected_items.utils import Utils
 
-
 LOG_LEVEL_STR = os.environ.get('LOG_LEVEL', 'INFO')
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_STR.lower() in ['debug'] else logging.INFO
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
+
 
 # Main function to process the rejections
 def process_reject(mapped_data, ns_handler):
@@ -186,13 +186,17 @@ def get_fulfillment_id(order_id, product_id, ns_handler):
 
     for fulfillment_request in order_data['fulfillmentRequests']['nodes']:
         if fulfillment_request['items'] is None:
-            return None
+            continue
 
         # the fulfillment location must be the DC to reject items for
         if fulfillment_request['fulfillmentLocationId'] not in distribution_centres.values():
             continue
 
         for item in fulfillment_request['items']['nodes']:
+            # The fulfillment request has to be in the assigned state to be rejected
+            if item['status'] != 'assigned':
+                continue
+
             if item['productId'] == product_id:
                 return fulfillment_request['id']
 
