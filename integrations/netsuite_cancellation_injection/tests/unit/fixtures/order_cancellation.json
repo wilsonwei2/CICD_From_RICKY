@@ -1,0 +1,27 @@
+{
+    "event_type": "order.cancelled",
+    "payload": {
+        "id": "9f4e8ffc-c79c-5839-b1b7-d65a26e60ef6",
+        "items": [
+            {
+                "id": "cee1511e-b6b8-4414-bf3d-43ab41f20b02",
+                "product_id": "100000",
+                "quantity": 1,
+                "status": "cancelled"
+            },
+            {
+                "id": "81a25bf3-b128-40e8-9eca-02eaa03a52de",
+                "product_id": "100001",
+                "quantity": 1,
+                "status": "cancelled"
+            },
+            {
+                "id": "4c22e765-eca6-412c-8eec-152e033586a5",
+                "product_id": "100002",
+                "quantity": 1,
+                "status": "cancelled"
+            }
+        ],
+        "published_at": "2020-02-19T20:35:16.744Z"
+    }
+}

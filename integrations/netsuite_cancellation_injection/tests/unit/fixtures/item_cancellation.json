@@ -1,0 +1,14 @@
+{
+    "event_type": "order.items_cancelled",
+    "payload": {
+        "id": "9f4e8ffc-c79c-5839-b1b7-d65a26e60ef6",
+        "items": [
+            {
+                "id": "dc333267-856c-421a-ac7a-e08291642d76",
+                "product_id": "10000",
+                "cancellation_reason": "insufficient_stock"
+            }
+        ],
+        "published_at": "2020-02-19T20:23:31.162Z"
+    }
+}

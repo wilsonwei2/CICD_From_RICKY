@@ -17,12 +17,14 @@ SQS_RETURN_PROCESSED = os.environ.get('SQS_RETURN_PROCESSED')
 SQS_FULFILLMENT = os.environ.get('SQS_FULFILLMENT')
 SQS_FULFILLMENT_ASSIGNED = os.environ.get('SQS_FULFILLMENT_ASSIGNED')
 SQS_APPEASEMENT_REFUND = os.environ.get('SQS_APPEASEMENT_REFUND')
+SQS_CANCELLATION = os.environ.get('SQS_CANCELLATION')
 TENANT = os.environ.get('TENANT')
 STAGE = os.environ.get('STAGE')
 NEWSTORE_HANDLER = None
 
 # Setting to define if a POS order should be injected as Sales Order in Netsuite
 HANDLE_POS_ORDER_AS_SALES_ORDER = os.environ.get('HANDLE_POS_ORDER_AS_SALES_ORDER')
+
 
 def handler(event, _):
     ###
@@ -110,7 +112,9 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
         queue_name = SQS_FULFILLMENT
     elif event_type == 'refund_request.issued':
         queue_name = SQS_APPEASEMENT_REFUND
-
+    elif event_type in ('order.cancelled', 'order.items_cancelled'):
+        queue_name = SQS_CANCELLATION
+        message['event_type'] = event_type
     else:
         LOGGER.warning(f'Received an unsupported event type: {event_type}')
         return True
@@ -130,6 +134,7 @@ def is_historical_fulfillment(payload):
 
     return False
 
+
 def is_historical_return(payload):
     if payload.get('returned_at'):
         returned_at = datetime.fromisoformat(payload['returned_at'][0:19])
@@ -137,6 +142,7 @@ def is_historical_return(payload):
         return returned_at < process_until_date
 
     return False
+
 
 def push_message_to_sqs(queue_name, message):
     sqs_handler = SqsHandler(queue_name=queue_name)

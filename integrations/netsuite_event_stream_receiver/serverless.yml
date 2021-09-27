@@ -40,6 +40,7 @@ functions:
       SQS_FULFILLMENT: ${self:provider.tenant}-fulfillment-to-netsuite-queue.fifo
       SQS_FULFILLMENT_ASSIGNED: ${self:provider.tenant}-fulfillment-assigned-to-netsuite-queue.fifo
       SQS_APPEASEMENT_REFUND: ${self:provider.tenant}-appeasement-to-netsuite-queue.fifo
+      SQS_CANCELLATION: ${self:provider.tenant}-cancellation-to-netsuite-queue.fifo
       HANDLE_POS_ORDER_AS_SALES_ORDER: false
     events:
       - http: POST /netsuite_integration/receive_event

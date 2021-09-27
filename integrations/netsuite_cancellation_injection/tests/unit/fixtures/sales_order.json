@@ -1,0 +1,71 @@
+{
+    "itemList": {
+        "item": [
+            {
+                "item": {
+                    "name": "XXX : 10000 Fake Product A",
+                    "internalId": "10000",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 1,
+                "itemIsFulfilled": false,
+                "isClosed": false,
+                "amount": 20.0,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": "0.0",
+                            "internalId": null,
+                            "scriptId": "custcol_fao_line_item_discount"
+                        },
+                        {
+                            "value": "0.0",
+                            "internalId": null,
+                            "scriptId": "custcol_fao_order_item_discount"
+                        }
+                    ]
+                }
+            },
+            {
+                "item": {
+                    "name": "XXX : 10001 Fake Product B",
+                    "internalId": "10001",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 2,
+                "itemIsFulfilled": false,
+                "isClosed": false,
+                "amount": 30.0,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": "0.0",
+                            "internalId": null,
+                            "scriptId": "custcol_fao_line_item_discount"
+                        },
+                        {
+                            "value": "0.0",
+                            "internalId": null,
+                            "scriptId": "custcol_fao_order_item_discount"
+                        }
+                    ]
+                }
+            },
+            {
+                "item": {
+                    "name": "Fake Payment A",
+                    "internalId": "91291",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 3,
+                "itemIsFulfilled": false,
+                "isClosed": false,
+                "amount": 50.0
+            }
+        ]
+    },
+    "internalId": "6642"
+}
