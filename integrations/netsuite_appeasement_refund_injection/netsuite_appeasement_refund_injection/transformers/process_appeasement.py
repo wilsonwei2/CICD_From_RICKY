@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (C) 2015, 2016, 2017 NewStore, Inc. All rights reserved.
 import re
+from collections.abc import Mapping
 from netsuite.service import (
     RecordRef,
     CashRefundItem,
@@ -394,6 +395,7 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
     for refund_transaction in refund_transactions:
         payment_method = refund_transaction['payment_method']
         payment_provider = refund_transaction['payment_provider']
+        payment_currency = payment_instrument_list[0]['currency'].lower()
         LOGGER.info(f"transform_order - payment_method {payment_method} - payment_provider {payment_provider} - subsidiary {subsidiary_id}")
 
         if payment_method == 'credit_card':
@@ -402,7 +404,6 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
             else:
                 payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS[payment_method]['adyen']
         elif payment_method == 'gift_card':
-            payment_currency = payment_instrument_list[0]['currency'].lower()
             payment_item_id = NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS.get(
                 payment_method, {}).get(payment_currency, '')
         else:
@@ -410,6 +411,9 @@ async def _get_payment_items(refund_transactions, payment_instrument_list, subsi
                 payment_method, '')
 
         if payment_item_id:
+            if isinstance(payment_item_id, Mapping):
+                payment_item_id = payment_item_id.get(payment_currency, '')
+
             if location_id is not None:
                 location_ref = RecordRef(internalId=location_id)
             else:
