@@ -141,7 +141,7 @@ async def transform_item_fulfillment(netsuite_item_fulfillment):
         "fulfillment_node_id": destination,
         "from_location": from_location,
         "references": {
-            "shipment_ref": shipment_ref,
+            "shipment_ref": shipment_ref[:255],
             "po_number": transfer_order_name_trimmed,
         },
         "shipment_date": date_shipped,
