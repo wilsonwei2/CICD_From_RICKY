@@ -34,28 +34,28 @@
           "service_level": "EXPEDITED_PARCEL",
           "shipping_carrier_name": "CAPOST",
           "shipping_type": "traditional_carrier",
-          "use_as_customer_facing_cost": false
+          "use_as_customer_facing_cost": true
         },
       "RegularParcel": {
           "return_provider_rate": "",
           "service_level": "REGULAR_PARCEL",
           "shipping_carrier_name": "CAPOST",
           "shipping_type": "traditional_carrier",
-          "use_as_customer_facing_cost": false
+          "use_as_customer_facing_cost": true
         },
       "Priority": {
           "return_provider_rate": "",
           "service_level": "PRIORITY",
           "shipping_carrier_name": "CAPOST",
           "shipping_type": "same_day_delivery",
-          "use_as_customer_facing_cost": false
+          "use_as_customer_facing_cost": true
         },
       "Xpresspost": {
           "return_provider_rate": "",
           "service_level": "EXPRESS_POST",
           "shipping_carrier_name": "CAPOST",
           "shipping_type": "same_day_delivery",
-          "use_as_customer_facing_cost": false
+          "use_as_customer_facing_cost": true
         },
         "XpresspostUSA": {
             "return_provider_rate": "",

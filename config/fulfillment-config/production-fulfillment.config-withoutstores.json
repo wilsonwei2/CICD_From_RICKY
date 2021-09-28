@@ -1,0 +1,428 @@
+{
+  "fulfillment_config": {
+      "provider_rates": {
+        "UPSStandard": {
+            "return_provider_rate": "",
+            "service_level": "STANDARD_UPS",
+            "shipping_carrier_name": "UPS",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+        "UPSSaver": {
+            "return_provider_rate": "",
+            "service_level": "SAVER_UPS",
+            "shipping_carrier_name": "UPS",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+      "Expedited": {
+          "return_provider_rate": "",
+          "service_level": "EXPEDITED",
+          "shipping_carrier_name": "UPS",
+          "shipping_type": "traditional_carrier",
+          "use_as_customer_facing_cost": true
+      },
+      "Express": {
+          "return_provider_rate": "",
+          "service_level": "EXPRESS",
+          "shipping_carrier_name": "UPS",
+          "shipping_type": "traditional_carrier",
+          "use_as_customer_facing_cost": true
+      },
+      "ExpeditedParcel": {
+          "return_provider_rate": "",
+          "service_level": "EXPEDITED_PARCEL",
+          "shipping_carrier_name": "CAPOST",
+          "shipping_type": "traditional_carrier",
+          "use_as_customer_facing_cost": true
+        },
+      "RegularParcel": {
+          "return_provider_rate": "",
+          "service_level": "REGULAR_PARCEL",
+          "shipping_carrier_name": "CAPOST",
+          "shipping_type": "traditional_carrier",
+          "use_as_customer_facing_cost": true
+        },
+      "Priority": {
+          "return_provider_rate": "",
+          "service_level": "PRIORITY",
+          "shipping_carrier_name": "CAPOST",
+          "shipping_type": "same_day_delivery",
+          "use_as_customer_facing_cost": true
+        },
+      "Xpresspost": {
+          "return_provider_rate": "",
+          "service_level": "EXPRESS_POST",
+          "shipping_carrier_name": "CAPOST",
+          "shipping_type": "same_day_delivery",
+          "use_as_customer_facing_cost": true
+        },
+        "XpresspostUSA": {
+            "return_provider_rate": "",
+            "service_level": "EXPRESS_POST_USA",
+            "shipping_carrier_name": "CAPOST",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+        "ExpeditedParcelUSA": {
+            "return_provider_rate": "",
+            "service_level": "EXPEDITED_PARCEL_USA",
+            "shipping_carrier_name": "CAPOST",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+        "TrackedPacketUSA": {
+            "return_provider_rate": "",
+            "service_level": "TRACKED_PACKET_USA",
+            "shipping_carrier_name": "CAPOST",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        }
+      },
+      "routes": [
+          {
+            "destination_region": {
+              "countries": [
+                  "CA"
+              ],
+              "zip_codes": [
+                  "*"
+                ]
+              },
+              "fulfilled_by": {
+                  "EXPRESS_POST": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Xpresspost"
+                      }
+                  ],
+                  "EXPEDITED_PARCEL": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "ExpeditedParcel"
+                      }
+                  ],
+                  "PRIORITY": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Priority"
+                      }
+                  ],
+                  "STANDARD_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSStandard"
+                      }
+                  ],
+                  "SAVER_UPS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSSaver"
+                      }
+                  ],
+                  "EXPRESS": [
+                      {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                      }
+                  ],
+                  "EXPEDITED": [
+                    {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "Expedited"
+                    }
+                  ]
+              }
+          },
+          {
+              "destination_region": {
+                  "countries": [
+                      "US"
+                  ],
+                  "zip_codes": [
+                      "*"
+                  ]
+              },
+              "fulfilled_by": {
+                  "GROUND": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                    }
+                  ],
+                  "3DAYSELECT": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "Express"
+                    }
+                  ],
+                  "EXPRESS_POST_USA": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "XpresspostUSA"
+                    }
+                  ],
+                  "EXPEDITED_PARCEL_USA": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "ExpeditedParcelUSA"
+                    }
+                  ],
+                  "TRACKED_PACKET_USA": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "TrackedPacketUSA1"
+                    }
+                  ],
+                  "EXPRESS": [
+                      {
+                          "fulfillment_node_id": "MTLDC1",
+                          "provider_rate": "Express"
+                      }
+                  ],
+                  "EXPEDITED": [
+                    {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "Expedited"
+                    }
+                  ]
+              }
+          },
+          {
+            "destination_region": {
+                "countries": [
+                  "AR", "AU", "BS", "BB", "BE", "BM", "BR", "VG",
+                  "BG","KY","CL","CO","CR",
+                  "DK","DO","EG","SV","FI","FR","DE","GH","GR","GT",
+                  "HN","HK","IS","IN","ID","IE","IL","IT","JM","JP",
+                  "JO","KE","KW","LU","MY","MT","MX","MA","NL","NZ",
+                  "NO","OM","PA","PE","PL","PT","QA","CY","RU","SG",
+                  "ZA","KR","ES","SE","CH","TT","AE","GB","UY","VE"
+                ],
+                "zip_codes": [
+                    "*"
+                ]
+            },
+            "fulfilled_by": {
+                "EXPRESS": [
+                  {
+                      "fulfillment_node_id": "MTLDC1",
+                      "provider_rate": "Express"
+                  }
+                ],
+                "SAVER_UPS": [
+                  {
+                    "fulfillment_node_id": "MTLDC1",
+                    "provider_rate": "UPSSaver"
+                  }
+                ],
+                "STANDARD_UPS": [
+                  {
+                    "fulfillment_node_id": "MTLDC1",
+                    "provider_rate": "UPSStandard"
+                  }
+                ],
+                "EXPEDITED": [
+                  {
+                    "fulfillment_node_id": "MTLDC1",
+                    "provider_rate": "Expedited"
+                  }
+                ]
+            }
+        }
+      ],
+      "service_levels": {
+        "EXPRESS": {
+          "currency_code": "",
+          "delivery_time": "2 - 3 business days",
+          "delivery_time_after_cutoff_hour": "2 - 3 business days",
+          "display_name": "Express Delivery",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "STANDARD_UPS": {
+          "currency_code": "",
+          "delivery_time": "1 - 5 business days",
+          "delivery_time_after_cutoff_hour": "3 - 5 business days",
+          "display_name": "UPS Standard",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "SAVER_UPS": {
+          "currency_code": "",
+          "delivery_time": "1 - 4 business days",
+          "delivery_time_after_cutoff_hour": "1 - 4 business days",
+          "display_name": "UPS Saver",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "EXPEDITED": {
+          "currency_code": "",
+          "delivery_time": "3 - 5 business days",
+          "delivery_time_after_cutoff_hour": "3 - 5 business days",
+          "display_name": "UPS Expedited",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "EXPEDITED_PARCEL": {
+          "currency_code": "",
+          "delivery_time": "1 - 7 business days",
+          "delivery_time_after_cutoff_hour": "1 - 7 business days",
+          "display_name": "CanadaPost Expedited Parcel",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "REGULAR_PARCEL": {
+          "currency_code": "",
+          "delivery_time": "3 - 5 business days",
+          "delivery_time_after_cutoff_hour": "3 - 5 business days",
+          "display_name": "CanadaPost Regular Parcel",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "PRIORITY": {
+          "currency_code": "",
+          "delivery_time": "Next Day",
+          "delivery_time_after_cutoff_hour": "Next Day",
+          "display_name": "CanadaPost Priority",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "EXPRESS_POST": {
+          "currency_code": "",
+          "delivery_time": "3 - 5 business days",
+          "delivery_time_after_cutoff_hour": "3 - 5 business days",
+          "display_name": "CanadaPost XPresspost",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "EXPRESS_POST_USA": {
+          "currency_code": "",
+          "delivery_time": "1 - 7 business days",
+          "delivery_time_after_cutoff_hour": "1 - 7 business days",
+          "display_name": "CanadaPost XPresspost USA",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "EXPEDITED_PARCEL_USA": {
+          "currency_code": "",
+          "delivery_time": "1 - 7 business days",
+          "delivery_time_after_cutoff_hour": "1 - 7 business days",
+          "display_name": "CanadaPost Expedited Parcel USA",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "TRACKED_PACKET_USA": {
+          "currency_code": "",
+          "delivery_time": "1 - 7 business days",
+          "delivery_time_after_cutoff_hour": "1 - 7 business days",
+          "display_name": "CanadaPost Tracked Packet USA",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "PRIORITY_INTER": {
+          "currency_code": "",
+          "delivery_time": "3 - 5 business days",
+          "delivery_time_after_cutoff_hour": "3 - 5 business days",
+          "display_name": "International Standard Delivery CanadaPost",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "EXPRESS_INTER": {
+          "currency_code": "",
+          "delivery_time": "3 - 5 business days",
+          "delivery_time_after_cutoff_hour": "3 - 5 business days",
+          "display_name": "International Express Delivery CanadaPost",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "GROUND": {
+          "currency_code": "",
+          "delivery_time": "2 - 3 business days",
+          "delivery_time_after_cutoff_hour": "2 - 3 business days",
+          "display_name": "Ground Delivery",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        },
+        "3DAYSELECT": {
+          "currency_code": "",
+          "delivery_time": "2 - 3 business days",
+          "delivery_time_after_cutoff_hour": "2 - 3 business days",
+          "display_name": "Ground Delivery",
+          "price": 0,
+          "remorse_period": 1800,
+          "tax_code": "CA"
+        }
+      },
+      "sl_levels_priority": [
+          "EXPRESS",
+          "STANDARD_UPS",
+          "SAVER_UPS",
+          "EXPEDITED",
+          "EXPEDITED_PARCEL",
+          "REGULAR_PARCEL",
+          "PRIORITY",
+          "EXPRESS_POST",
+          "EXPRESS_POST_USA",
+          "EXPEDITED_PARCEL_USA",
+          "TRACKED_PACKET_USA",
+          "PRIORITY_INTER",
+          "EXPRESS_INTER",
+          "GROUND",
+          "3DAYSELECT"
+      ],
+      "provider_rates_priority": {
+          "*": {
+              "*": {
+                  "STANDARD_UPS": [
+                    "UPSStandard"
+                  ],
+                  "SAVER_UPS": [
+                    "UPSSaver"
+                  ],
+                  "EXPRESS": [
+                    "Express"
+                  ],
+                  "EXPEDITED": [
+                    "Expedited"
+                  ],
+                  "EXPEDITED_PARCEL": [
+                    "ExpeditedParcel"
+                  ],
+                  "REGULAR_PARCEL": [
+                    "RegularParcel"
+                  ],
+                  "PRIORITY": [
+                    "Priority"
+                  ],
+                  "EXPRESS_POST": [
+                    "Xpresspost"
+                  ],
+                  "EXPRESS_POST_USA": [
+                    "XpresspostUSA"
+                  ],
+                  "EXPEDITED_PARCEL_USA": [
+                    "ExpeditedParcelUSA"
+                  ],
+                  "TRACKED_PACKET_USA": [
+                    "TrackedPacketUSA"
+                  ]
+              }
+          }
+      }
+  }
+}
