@@ -112,6 +112,9 @@ def process_records(records):
     """
     last_index = 0
 
+    now = datetime.utcnow()
+    time_stamp = f"{now.strftime('%Y-%m-%d')}/{now.strftime('%H:%M:%S')}"
+
     for record in records:
         s3_bucket_name = record['bucket_name']
         s3_key = record['object_key']
@@ -133,15 +136,12 @@ def process_records(records):
             with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') as csvfile:
                 price_book_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr', is_sale)
 
-        now = datetime.utcnow()
-
-        time_stamp = f"{now.strftime('%Y-%m-%d')}/{now.strftime('%H:%M:%S')}"
         obj_prefix = f"{S3_PREFIX}prices/{'msrp'}/{time_stamp}"
         LOGGER.info(f'S3_PREFIX is {S3_PREFIX}')
         LOGGER.info(f'obj_prefx is {obj_prefix}')
 
         last_index = generate_chunks(price_book, obj_prefix, last_index)
-        if price_book_fr != None:
+        if price_book_fr is not None:
             last_index = generate_chunks(price_book_fr, obj_prefix, last_index)
 
         copy_source = {
@@ -156,16 +156,16 @@ def process_records(records):
         except ClientError:
             pass
 
-        # Start import step function
-        input = json.dumps({
-            'bucket': S3_BUCKET.name,
-            'prefix': obj_prefix,
-            'chunk_prefix': S3_PREFIX,
-            'secs_between_chunks': int(SECS_BETWEEN_CHUNKS),
-            'dest_bucket': S3_BUCKET.name,
-            'dest_prefix': 'import_files/',
-        })
-        STEP_FUNCTION_CLIENT.start_execution(stateMachineArn=STATE_MACHINE_ARN, input=input)
+    # Start import step function
+    state_machine_input = json.dumps({
+        'bucket': S3_BUCKET.name,
+        'prefix': obj_prefix,
+        'chunk_prefix': S3_PREFIX,
+        'secs_between_chunks': int(SECS_BETWEEN_CHUNKS),
+        'dest_bucket': S3_BUCKET.name,
+        'dest_prefix': 'import_files/',
+    })
+    STEP_FUNCTION_CLIENT.start_execution(stateMachineArn=STATE_MACHINE_ARN, input=state_machine_input)
 
 def generate_chunks(price_book, obj_prefix, current_index):
     idx = current_index

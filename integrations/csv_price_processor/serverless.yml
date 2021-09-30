@@ -36,7 +36,7 @@ functions:
       S3_PREFIX: 'import_queue/'
       SOURCE_PREFIX: 'import_CSVs/FAONSPRC_'
       CHUNK_SIZE: '10000'
-      SECS_BETWEEN_CHUNKS: '300'
+      SECS_BETWEEN_CHUNKS: '30'
       STATE_MACHINE_ARN: !Sub 'arn:aws:states:us-east-1:${AWS::AccountId}:stateMachine:stn-state-machine'
       LOG_LEVEL: INFO
     events:
