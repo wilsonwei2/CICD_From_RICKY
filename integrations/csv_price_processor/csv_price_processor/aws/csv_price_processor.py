@@ -46,7 +46,8 @@ def iter_chunks(arr, size):
 
 def handler(event, context):
     records_to_process = find_records()
-    process_records(records_to_process)
+    if len(records_to_process) > 0:
+        process_records(records_to_process)
 
 def find_records():
     """
@@ -114,6 +115,11 @@ def process_records(records):
 
     now = datetime.utcnow()
     time_stamp = f"{now.strftime('%Y-%m-%d')}/{now.strftime('%H:%M:%S')}"
+    obj_prefix = f"{S3_PREFIX}prices/{'msrp'}/{time_stamp}"
+
+    LOGGER.info(f'S3_PREFIX is {S3_PREFIX}')
+    LOGGER.info(f'obj_prefx is {obj_prefix}')
+
 
     for record in records:
         s3_bucket_name = record['bucket_name']
@@ -135,10 +141,6 @@ def process_records(records):
         if currency == 'CAD':
             with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') as csvfile:
                 price_book_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr', is_sale)
-
-        obj_prefix = f"{S3_PREFIX}prices/{'msrp'}/{time_stamp}"
-        LOGGER.info(f'S3_PREFIX is {S3_PREFIX}')
-        LOGGER.info(f'obj_prefx is {obj_prefix}')
 
         last_index = generate_chunks(price_book, obj_prefix, last_index)
         if price_book_fr is not None:
