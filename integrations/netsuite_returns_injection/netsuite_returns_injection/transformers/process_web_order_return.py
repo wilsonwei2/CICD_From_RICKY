@@ -9,6 +9,9 @@ from netsuite.service import (
     CustomerCurrency,
     CustomerCurrencyList
 )
+from netsuite.api.sale import (
+    initialize_record
+)
 from pom_common.netsuite import TaxManager
 from netsuite_returns_injection.transformers.return_transformer import (
     map_payment_items,
@@ -32,8 +35,11 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
     store_tz = await get_store_tz_by_customer_order(customer_order)
     if return_authorization:
         LOGGER.info('Create CashRefund/CreditMemo from ReturnAuthorization')
-        cash_refund = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz)
-        credit_memo = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz, is_credit_memo=True)
+        cash_refund, _ = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz)
+        credit_memo, credit_memo_init_item_list = map_cash_refund(ns_return, sales_order.location.internalId,
+                                                                  sales_order, return_authorization, store_tz, is_credit_memo=True)
+
+
     else:
         LOGGER.info('Create standalone CashRefund')
         if not location_id:
@@ -54,7 +60,8 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
         customer = map_customer_information(customer_order, subsidiary_id)
 
     LOGGER.info('Map cash refund items')
-    cash_refund_items = await map_cash_refund_items(customer_order, ns_return, int(subsidiary_id))
+    cash_refund_items = await map_cash_refund_items(customer_order, ns_return, int(subsidiary_id),
+                                                    credit_memo_init_item_list=credit_memo_init_item_list)
 
     LOGGER.info('Map payment items')
     cash_refund_payment_items, _ = await map_payment_items(payment_instrument_list=payments_info['instruments'],
@@ -113,34 +120,58 @@ def map_customer_information(customer_order, subsidiary_id):
 
 
 def map_cash_refund(ns_return, location_id, sales_order, return_authorization=None, store_tz='America/New_York', is_credit_memo=False): # pylint: disable=too-many-arguments
-    tran_date = Utils.format_datestring_for_netsuite(date_string=ns_return['returned_at'], time_zone=store_tz,
-                                                     cutoff_index=19, format_string='%Y-%m-%dT%H:%M:%S')
-
-    partner_id = int(Utils.get_netsuite_config()['newstore_partner_internal_id'])
+    refund = {}
+    cm_init_item_list_reduced = {}
 
     if is_credit_memo:
-        custom_form_internal_id = int(Utils.get_netsuite_config()['credit_memo_custom_form_internal_id'])
+        initialized_record = initialize_record('creditMemo', 'returnAuthorization', return_authorization.internalId)
+        LOGGER.info(f'Initizalize CreditMemo Response {initialized_record}')
+        refund = {
+            "entity" : RecordRef(internalId=initialized_record['entity']['internalId']),
+            "tranDate" : initialized_record['tranDate'],
+            "createdFrom" : RecordRef(internalId=initialized_record['createdFrom']['internalId']),
+            "account" : RecordRef(internalId=initialized_record['account']['internalId']),
+            "currency":  RecordRef(internalId=initialized_record['currency']['internalId']),
+            'location': RecordRef(internalId=initialized_record['location']['internalId']),
+            'subsidiary': RecordRef(internalId=initialized_record['subsidiary']['internalId']),
+            'partner': RecordRef(internalId=initialized_record['partner']['internalId']),
+            'customForm':  RecordRef(internalId=initialized_record['customForm']['internalId']),
+        }
+        credit_memo_init_item_list = initialized_record['itemList']['item']
+        for item in credit_memo_init_item_list:
+            current_item = {}
+            item_name = item['item']['name']
+            current_item['orderLine'] = item['orderLine']
+            current_item['line'] = item['line']
+            cm_init_item_list_reduced[item_name] = current_item
+
+        LOGGER.info(f"credit_memo_init_item_list {credit_memo_init_item_list}")
+        LOGGER.info(f"cm_init_item_list_reduced {cm_init_item_list_reduced}")
+
     else:
+        tran_date = Utils.format_datestring_for_netsuite(date_string=ns_return['returned_at'], time_zone=store_tz, cutoff_index=19,
+                                                         format_string='%Y-%m-%dT%H:%M:%S')
+
+        partner_id = int(Utils.get_netsuite_config()['newstore_partner_internal_id'])
         custom_form_internal_id = int(Utils.get_netsuite_config()['cash_return_custom_form_internal_id'])
 
+        refund = {
+            'externalId': ns_return['id'],
+            'tranDate': tran_date.date(),
+            'location': RecordRef(internalId=location_id),
+            'customForm': RecordRef(internalId=custom_form_internal_id)
+        }
 
-    cash_refund = {
-        'externalId': ns_return['id'],
-        'tranDate': tran_date.date(),
-        'location': RecordRef(internalId=location_id),
-        'customForm': RecordRef(internalId=custom_form_internal_id)
-    }
+        if partner_id > -1:
+            refund['partner'] = RecordRef(internalId=partner_id)
 
-    if partner_id > -1:
-        cash_refund['partner'] = RecordRef(internalId=partner_id)
+        if sales_order:
+            refund['entity'] = sales_order.entity
 
-    if sales_order:
-        cash_refund['entity'] = sales_order.entity
+        if return_authorization:
+            refund['createdFrom'] = RecordRef(internalId=return_authorization.internalId)
 
-    if return_authorization:
-        cash_refund['createdFrom'] = RecordRef(internalId=return_authorization.internalId)
-
-    return cash_refund
+    return refund, cm_init_item_list_reduced
 
 
 def _get_custom_field(fields, key):

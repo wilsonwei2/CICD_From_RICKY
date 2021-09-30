@@ -41,7 +41,7 @@ functions:
     events:
       - schedule:
           name: ${self:provider.tenant}-returns-to-netsuite-trigger
-          rate: rate(10 minutes)
+          rate: rate(60 minutes)
 
 resources:
   Resources:

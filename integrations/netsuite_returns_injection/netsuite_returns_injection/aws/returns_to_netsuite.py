@@ -43,7 +43,6 @@ SQS_QUEUE = os.environ['SQS_QUEUE']
 TREAT_ALL_ORDERS_AS_HISTORICAL = bool(
     os.environ.get('TREAT_ALL_ORDERS_AS_HISTORICAL', False))
 
-
 def handler(_, context):
     """
     Reads event payloads from an SQS queue. The payload is taken from the order
@@ -445,14 +444,16 @@ def inject_web_return(return_parsed, payments_info):
     credit_memo_result = inject_credit_memo(return_parsed)
     LOGGER.info(f'Credit memo result {credit_memo_result}')
 
+    custbody_fao_returnly_rma_id = _get_custom_field_value(credit_memo_result['customFieldList'], 'custbody_fao_returnly_rma_id')
+    LOGGER.info(f"FAO Returnly RMA ID {custbody_fao_returnly_rma_id}")
+
     initialized_record = initialize_record(
         'customerRefund', 'creditMemo', credit_memo_result['internalId'])
     LOGGER.info(f'Initizalized CreditRefund Response {initialized_record}')
 
     customer_refund_payload = prepare_customer_refund_payload(
         credit_memo_result, initialized_record, payments_info)
-    cash_refund_result = inject_customer_refund(
-        customer_refund_payload, initialized_record)
+    cash_refund_result = inject_customer_refund(customer_refund_payload, initialized_record)
 
     return credit_memo_result and cash_refund_result
 
@@ -518,7 +519,7 @@ def prepare_customer_refund_payload(credit_memo_result, initialized_record, paym
         "arAcct": RecordRef(internalId=initialized_record['arAcct']['internalId']),
         "currencyName": initialized_record['currencyName'],
         "paymentMethod": RecordRef(internalId=Utils.get_payment_item_id(payment_method, payment_provider, currency, 'methods')),
-        "currency":  initialized_record['currency']['internalId'],
+        "currency":  RecordRef(internalId=initialized_record['currency']['internalId']),
         "account": RecordRef(internalId=initialized_record['account']['internalId']),
         "toBePrinted": False,
         "tranId": initialized_record['tranId'],
