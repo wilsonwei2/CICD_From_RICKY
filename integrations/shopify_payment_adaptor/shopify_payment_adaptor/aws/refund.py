@@ -176,15 +176,16 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
                     refund_transactions = refund.get('transactions', [])
                     if refund_transactions:
                         for transaction_shopify in refund['transactions']:
-                            transactions.append({
-                                'transaction_id': str(uuid4()),
-                                'refund_amount': -float(amount_info.get('amount')),
-                                'instrument_id': financial_instrument_id,
-                                'reason': 'refund',
-                                'payment_method': transaction['payment_method'],
-                                'currency': transaction['currency'],
-                                'metadata': body['metadata']
-                            })
+                            if transaction_shopify['gateway'] != 'gift_card':
+                                transactions.append({
+                                    'transaction_id': str(uuid4()),
+                                    'refund_amount': -float(amount_info.get('amount')),
+                                    'instrument_id': financial_instrument_id,
+                                    'reason': 'refund',
+                                    'payment_method': transaction['payment_method'],
+                                    'currency': transaction['currency'],
+                                    'metadata': body['metadata']
+                                })
                     elif 'Returnly' in refund.get('note'):
                         transactions.append({
                             'transaction_id': str(uuid4()),
@@ -219,34 +220,48 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
             shopify_order = await shopify_handler.get_order(
                 shopify_order_id, 'id,line_items,name,total_price,customer,email,refunds')
             LOGGER.debug(json.dumps(shopify_order, indent=4))
-            json_to_calculate_refund = await parse_json_to_calculate_refund(
-                ns_return, shopify_order, customer_order, is_exchanged)
-            LOGGER.info(f'Json to calculate refund on Shopify: ${json.dumps(json_to_calculate_refund, indent=4)}')
+            #json_to_calculate_refund = await parse_json_to_calculate_refund(
+            #    ns_return, shopify_order, customer_order, is_exchanged)
+            #LOGGER.info(f'Json to calculate refund on Shopify: ${json.dumps(json_to_calculate_refund, indent=4)}')
 
-            calculated_refund_json = await shopify_handler.calculate_refund(
-                shopify_order_id, json_to_calculate_refund)
+            #calculated_refund_json = await shopify_handler.calculate_refund(
+            #    shopify_order_id, json_to_calculate_refund)
             ns_return['refunded_amount'] = 0
-            if calculated_refund_json:
-                json_to_create_refund = await parse_json_to_create_refund(
-                    calculated_refund_json, ns_return, shopify_order, json_to_calculate_refund['refund']['refund_line_items'], amount_info)
-                LOGGER.info(f'Json to create refund on Shopify: ${json.dumps(json_to_create_refund, indent=4)}')
+            #if calculated_refund_json:
+            #    json_to_create_refund = await parse_json_to_create_refund(
+            #        calculated_refund_json, ns_return, shopify_order, json_to_calculate_refund['refund']['refund_line_items'], amount_info)
+            #    LOGGER.info(f'Json to create refund on Shopify: ${json.dumps(json_to_create_refund, indent=4)}')
 
-            response = await shopify_handler.create_refund(
-                order_id=shopify_order_id,
-                data=json_to_create_refund
-            )
-            gift_card_response = await gift_cards.activate_card(amount_info.get('amount'), amount_info.get('currency'), shopify_order.get('customer', {})['id'])
-            body['metadata']['number'] = gift_card_response.get(
-                'gift_card', {}).get('id')
-            transactions.append({
-                'transaction_id': str(uuid4()),
-                'refund_amount': -float(gift_card_response['gift_card']['balance']),
-                'instrument_id': financial_instrument_id,
-                'reason': 'refund',
-                'payment_method': transaction['payment_method'],
-                'currency': transaction['currency'],
-                'metadata': body['metadata']
-            })
+            #response = await shopify_handler.create_refund(
+            #    order_id=shopify_order_id,
+            #    data=json_to_create_refund
+            #)
+            #gift_card_response = await gift_cards.activate_card(amount_info.get('amount'), amount_info.get('currency'), shopify_order.get('customer', {})['id'])
+            for refund in shopify_order['refunds']:
+                # In case of exchange in Returnly refund won't have transactions
+                refund_transactions = refund.get('transactions', [])
+                if refund_transactions:
+                    for transaction_shopify in refund['transactions']:
+                        if transaction_shopify['gateway'] == 'gift_card':
+                            transactions.append({
+                                'transaction_id': str(uuid4()),
+                                'refund_amount': -float(amount_info.get('amount')),
+                                'instrument_id': financial_instrument_id,
+                                'reason': 'refund',
+                                'payment_method': transaction['payment_method'],
+                                'currency': transaction['currency'],
+                                'metadata': body['metadata']
+                            })
+                elif 'Returnly' in refund.get('note'):
+                    transactions.append({
+                        'transaction_id': str(uuid4()),
+                        'refund_amount': -0.0,  # When exchange refund is 0
+                        'instrument_id': financial_instrument_id,
+                        'reason': 'refund',
+                        'payment_method': transaction['payment_method'],
+                        'currency': transaction['currency'],
+                        'metadata': {**body['metadata'], 'returnly_exchange': 'True'}
+                })
         elif utils.is_capture_gift_card(transaction['payment_method']) and metadata.get('order_id'):
             LOGGER.info(
                 'Creating a refund of a credit card for a associate created order...')
