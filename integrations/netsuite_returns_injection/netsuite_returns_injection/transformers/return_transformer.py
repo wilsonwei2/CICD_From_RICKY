@@ -140,6 +140,7 @@ async def _get_refund_transactions(payment_instrument_list, ns_return, store_tz)
     return refund_transactions
 
 
+# pylint: disable=too-many-branches
 async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, credit_memo_init_item_list=None):
     currency = ns_return['currency']
     cash_refund_items = []
@@ -150,7 +151,9 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
     for item in customer_order['products']:
         LOGGER.info(f"Processing product {item}")
         credit_memo_init_item = get_cm_init_element(item, credit_memo_init_item_list)
-        if item['status'] != 'returned' or item['sales_order_item_uuid'] not in returned_order_line_ids or not credit_memo_init_item:
+        if item['status'] != 'returned' \
+                or item['sales_order_item_uuid'] not in returned_order_line_ids \
+                or (credit_memo_init_item_list and not credit_memo_init_item):
             LOGGER.info(f"Ignoring product. Status {item['status']}")
             continue
 
@@ -169,11 +172,15 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
                 internalId=netsuite_item_id,
                 type='inventoryItem'
             ),
-            'price': RecordRef(internalId=1),
-            'taxCode': RecordRef(internalId=TaxManager.get_refund_item_tax_code_id(currency)),
-            'orderLine': credit_memo_init_item['orderLine'],
-            'line': credit_memo_init_item['line']
+            'price': RecordRef(internalId=-1),
+            'rate': str(item['price_catalog']),
+            'taxCode': RecordRef(internalId=TaxManager.get_refund_item_tax_code_id(currency))
         }
+
+        if credit_memo_init_item:
+            cash_refund_item['price'] = RecordRef(internalId=1)
+            cash_refund_item['orderLine'] = credit_memo_init_item['orderLine']
+            cash_refund_item['line'] = credit_memo_init_item['line']
 
         if location_id is not None:
             cash_refund_item['location'] = RecordRef(internalId=location_id)
@@ -235,10 +242,14 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
 
 
 def get_cm_init_element(item, credit_memo_init_item_list):
+    if not credit_memo_init_item_list:
+        return None
+
     for cm_item_init in credit_memo_init_item_list:
         if cm_item_init.find(item['id']) >= 0:
             return credit_memo_init_item_list[cm_item_init]
         LOGGER.info("Product not found in Credit Memo Init record list")
+
     return None
 
 def get_discount_location(ns_return, location_id):
