@@ -262,7 +262,8 @@ def map_items(order, order_name, ns_order):
             items.append(new_item)
 
     ## Adding shipping lines at the end based on the electronic giftcard type.
-    if not has_shipping_items and has_electronic_giftcard:
+    if not has_shipping_items and has_electronic_giftcard and not order.get('shipping_address', None):
+        LOGGER.info(f'Order has EGCs, not shipping items and no shipping address - set billing address as shipping address')
         ns_order['shipping_address'] = ns_order['billing_address']
 
     ns_order['shipments'][0]['items'] = items
