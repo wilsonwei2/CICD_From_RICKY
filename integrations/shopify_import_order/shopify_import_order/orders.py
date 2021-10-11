@@ -71,6 +71,8 @@ def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=N
         LOGGER.info(f'Order has no shipment and no shipping address - set billing address as shipping address')
         ns_order['shipping_address'] = ns_order['billing_address']
 
+    LOGGER.info(ns_order)
+
     return ns_order
 
 
