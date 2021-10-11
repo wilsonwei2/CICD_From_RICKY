@@ -31,7 +31,7 @@ functions:
   s3_to_newstore:
     name: ${self:provider.tenant}-stn-availability-import
     handler: s3_to_newstore.aws.lambda_import_to_newstore.handler
-    timeout: 15
+    timeout: 30
     memorySize: 128
     environment:
       TENANT: ${self:provider.tenant}
@@ -50,7 +50,7 @@ functions:
   s3_to_newstore_prices:
     name: ${self:provider.tenant}-stn-prices-import
     handler: s3_to_newstore.aws.lambda_import_to_newstore.handler
-    timeout: 15
+    timeout: 30
     memorySize: 128
     environment:
       TENANT: ${self:provider.tenant}
@@ -69,7 +69,7 @@ functions:
   step_function:
     name: ${self:provider.tenant}-stn-step-function
     handler: s3_to_newstore.aws.lambda_step_function.handler
-    timeout: 15
+    timeout: 30
     memorySize: 128
     environment:
       DESTINATION_BUCKET: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
