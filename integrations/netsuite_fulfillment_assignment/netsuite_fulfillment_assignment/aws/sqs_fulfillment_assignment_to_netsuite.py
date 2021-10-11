@@ -71,6 +71,9 @@ async def process_fulfillment_assignment(message):
 
         LOGGER.info('Fulfillment request acknowledged.')
 
+        # Process virtual/electronic gift cards if needed
+        await ship_virtual_gift_cards(fulfillment_request)
+
         return True
 
     return False
@@ -125,6 +128,38 @@ def update_sales_order(sales_order, fulfillment_request):
         raise Exception(f'Failed to update sales order: {updated_sales_order}')
 
     LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
+
+
+#
+# Virtual or Electronic Gift Cards need to be set to shipped and paid immediately. This function
+# checks if there are gift cards in the order, and generates a shipment if so.
+#
+async def ship_virtual_gift_cards(fulfillment_request):
+    items_to_ship = []
+    for line_item in fulfillment_request.get('items', []):
+        if line_item['product_id'] == 'EGC':
+            LOGGER.info(f'Item {line_item} is a virtual gift card.')
+            items_to_ship.append(line_item)
+    if not items_to_ship:
+        return items_to_ship
+
+    LOGGER.info('Fulfillment request contains virtual gift cards - set them to shipped.')
+    shipment_json = {
+        'line_items': [
+            {
+                'product_ids': [item['product_id'] for item in items_to_ship],
+                'shipment': {
+                    'tracking_code': 'N/A',
+                    'carrier': 'N/A'
+                }
+            }
+        ]
+    }
+
+    if not NEWSTORE_HANDLER.send_shipment(fulfillment_request['id'], shipment_json):
+        raise Exception('Fulfillment request was not informed of shipping for virtual gift cards.')
+    LOGGER.info('Fulfillment request informed of shipping for virtual gift cards.')
+    return items_to_ship
 
 
 # Get the sales order from NetSuite
