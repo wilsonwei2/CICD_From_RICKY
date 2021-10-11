@@ -68,6 +68,7 @@ def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=N
     if 'shipping_offer_token' in ns_order['shipments'][0]['shipping_option']:
         del ns_order['shipping_address']
     elif not has_shipment(order) and not order.get('shipping_address', None):
+        LOGGER.info(f'Order has no shipment and no shipping address - set billing address as shipping address')
         ns_order['shipping_address'] = ns_order['billing_address']
 
     return ns_order
@@ -438,7 +439,6 @@ def _get_shipping_option(order, shipping_offer_token):
     the call is made in transform.
     '''
     shipping_lines = order.get('shipping_lines', [])
-    LOGGER.info('Inside shipping options')
 
     shipping_address = order.get('shipping_address', {})
     shipping_country_code = ''
