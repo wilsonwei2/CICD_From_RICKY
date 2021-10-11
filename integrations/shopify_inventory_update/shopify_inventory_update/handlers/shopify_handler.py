@@ -38,7 +38,8 @@ class ShopifyConnector:
 
     async def update_inventory_quantity_graphql(self, variant_list: list, location_id: int, attempts=0):
         attempts += 1
-        LOGGER.info(f'Updating variants:\n{json.dumps(variant_list)}, attempt: {attempts}')
+        LOGGER.debug(f'Updating variants:\n{json.dumps(variant_list)}')
+        LOGGER.info(f'Update attempt: {attempts}')
         url_inventory = '{url}api/graphql.json'.format(
             url=self.url)
         if len(variant_list) > 100:
@@ -76,25 +77,27 @@ class ShopifyConnector:
         if len(query['inventoryItemAdjustments']) > 0:
             async with aiohttp.ClientSession() as session:
                 async with await session.post(url=url_inventory, headers=self.auth_header, json={'query': mutation, 'variables': query}) as response:
-                    response_body = await response.json()
-                    if response.status == 429:
-                        LOGGER.warning('update_inventory_quantity_graphql - Shopify shop api limit reached')
+                    if response.status == 429 or response.status >= 502:
+                        LOGGER.warning(f'update_inventory_quantity_graphql - Shopify shop api limit reached - {response.status} - Attempts: {attempts}')
                         if attempts <= MAX_ATTEMPTS:
-                            asyncio.sleep(2)
+                            asyncio.sleep(3)
                             return await self.update_inventory_quantity_graphql(variant_list, location_id, attempts)
                         else:
                             raise Exception('update_inventory_quantity_graphql - Shopify shop api limit reached')
+
+                    response_body = await response.json()
+                    response.raise_for_status()
 
                     if len(response_body.get('errors', [])) > 0:
                         for error in response_body['errors']:
                             if error['message'] == 'Throttled':
                                 LOGGER.warning(f'update_inventory_quantity_graphql - Shopify shop api limit reached - Attempts: {attempts}')
                                 if attempts <= MAX_ATTEMPTS:
-                                    asyncio.sleep(2)
+                                    asyncio.sleep(3)
                                     return await self.update_inventory_quantity_graphql(variant_list, location_id, attempts)
                                 raise Exception('update_inventory_quantity_graphql - Shopify shop api limit reached')
 
-                    response.raise_for_status()
+
 
                     if len(response_body.get('data', {}).get('inventoryBulkAdjustQuantityAtLocation', {}).get('userErrors', [])) > 0:
                         errors = response_body['data']['inventoryBulkAdjustQuantityAtLocation']['userErrors']
@@ -142,18 +145,18 @@ class ShopifyConnector:
             ],
             "locationId": f'gid://shopify/Location/{location_id}'
         }
-        LOGGER.info(f'Calling {url_inventory}')
         LOGGER.debug(f'Calling {url_inventory} with payload: \n{query}')
         dummy_jar = aiohttp.DummyCookieJar()
         async with aiohttp.ClientSession(cookie_jar=dummy_jar) as session:
             async with await session.post(url=url_inventory, headers=self.auth_header, json={'query': mutation, 'variables': query}) as response:
-                response_body = await response.json()
-                if response.status == 429:
-                    LOGGER.warning(f'get_inventory_quantity - Shopify shop api limit reached - Attempts: {attempts}')
+                if response.status == 429 or response.status >= 502:
+                    LOGGER.warning(f'get_inventory_quantity - Shopify shop api limit reached {response.status} - Attempts: {attempts}')
                     if attempts <= MAX_ATTEMPTS:
-                        asyncio.sleep(2)
+                        asyncio.sleep(3)
                         return await self.get_inventory_quantity(variant_list, location_id, attempts)
                     raise Exception('get_inventory_quantity - Shopify shop api limit reached')
+
+                response_body = await response.json()
                 response.raise_for_status()
                 LOGGER.debug(f'Response - get_inventory_quantity: {response_body}')
 
@@ -162,7 +165,7 @@ class ShopifyConnector:
                         if error['message'] == 'Throttled':
                             LOGGER.warning(f'get_inventory_quantity - Shopify shop api limit reached - Attempts: {attempts}')
                             if attempts <= MAX_ATTEMPTS:
-                                asyncio.sleep(2)
+                                asyncio.sleep(3)
                                 return await self.get_inventory_quantity(variant_list, location_id, attempts)
                             raise Exception('get_inventory_quantity - Shopify shop api limit reached')
 
@@ -194,13 +197,14 @@ class ShopifyConnector:
                                 variant_removed = variant_list.pop(idx)
                                 LOGGER.info(f'Removed variant at index: {idx} value: {variant_removed}')
                             error_index = error_index-1
-                        asyncio.sleep(2)
+                        asyncio.sleep(3)
                         return await self.get_inventory_quantity(variant_list, location_id, attempts)
                     else:
                         LOGGER.warning('Too many attempts to get/set inventory levels at Shopify.')
                         raise Exception(errors)
-
                 LOGGER.debug(f'Inventory variants list with: \n{response_body}')
+                if response_body.get('extensions', {}).get('cost', {}).get('throttleStatus', {}).get('currentlyAvailable', {}) < 100:
+                    LOGGER.info(f'Credits currently available lower than 100:\n{response_body}')
                 return response_body.get('data', {}).get('inventoryBulkAdjustQuantityAtLocation', {}).get('inventoryLevels', [])
 
     async def get_locations(self, session):

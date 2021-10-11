@@ -52,13 +52,14 @@ def insert_item(table_name, item, dynamodb=None):
     logger.info(json.dumps(response, indent=4, cls=DecimalEncoder))
 
 
-def get_item(table_name, item, dynamodb=None):
+def get_item(table_name, item, dynamodb=None, consistent_read=False):
     if not dynamodb:
         dynamodb = get_dynamodb_resource()
     table = dynamodb.Table(table_name)
     try:
         response = table.get_item(
-            Key=item
+            Key=item,
+            ConsistentRead=consistent_read,
         )
     except ClientError as e:
         logger.exception(str(e.response['Error']['Message']))
@@ -87,7 +88,7 @@ def get_all(table_name, dynamodb=None):
             items = items + response.get('Items', [])
     except ClientError as e:
         logger.exception(str(e.response['Error']['Message']))
-    
+
     return items
 
 

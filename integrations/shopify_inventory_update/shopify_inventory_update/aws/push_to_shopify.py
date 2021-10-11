@@ -24,7 +24,8 @@ CONCURRENT_EXECUTION_BLOCKED_KEY = 'concurrent_execution_blocked'
 DYNAMODB_TABLE_NAME = os.environ.get('DYNAMODB_TABLE_NAME', 'frankandoak-availability-job-save-state')
 SQS_HANDLER = None
 WORKER_TRIGGER_DEFAULT_NAME = 'shopify_availability_export_worker'
-STOP_BEFORE_TIMEOUT = 60000
+STOP_BEFORE_TIMEOUT = 180000
+NO_OF_SLOTS = 4
 
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
@@ -88,7 +89,7 @@ async def _sync_inventory(loop, context):
     if message_count <= 0:
         LOGGER.info('No more messages to process... exiting->()')
         return
-    LOGGER.info('%s available in the queue...', str(message_count))
+    LOGGER.info(f'{str(message_count)} available in the queue...')
 
     while message_count > 0:
         if stop_before_timeout(context, STOP_BEFORE_TIMEOUT, LOGGER):
@@ -125,14 +126,14 @@ async def _sync_inventory(loop, context):
                         try:
                             await _update_variant_at_shopify(country_products, shopify_connectors, location_id)
                         except:
+                            LOGGER.warning('Exception updating shopify inventory.')
                             success = False
 
                 if success:
                     await sqs_handler.delete_message(receipt_handle)
 
         message_count = await sqs_handler.get_messages_count()
-        LOGGER.info('%s available in the queue...',
-                    str(message_count))
+        LOGGER.info(f'{str(message_count)} available in the queue...')
 
     return 'Sync of inventory with shopify complete'
 
@@ -170,13 +171,13 @@ async def _update_variant_at_shopify(products, shopify_connectors, location_id):
         currency = currency.lower()
         if currency in products:
             try:
-                LOGGER.info(f'Process products for {currency}')
+                LOGGER.debug(f'Process products for {currency}')
                 country_products = await _create_deltas_for_inventory(products[currency], shopify_connector, location_id)
                 if len(country_products) > 0:
                     LOGGER.debug(f'Sending deltas to Shopify ({currency}) location {location_id}: {country_products}')
                     await shopify_connector.update_inventory_quantity_graphql(country_products, location_id)
                 else:
-                    LOGGER.info(f'No deltas created for Shopify ({currency}) - no update send.')
+                    LOGGER.debug(f'No deltas created for Shopify ({currency}) - no update send.')
             except Exception:
                 LOGGER.exception(f'Failed to process bulk variant update for Shopify ({currency})')
                 raise
@@ -185,8 +186,8 @@ async def _update_variant_at_shopify(products, shopify_connectors, location_id):
 async def _create_deltas_for_inventory(products, shopify_connector, location_id):
     LOGGER.info('Fetching inventory levels from Shopify')
     inventory_shopify = _transform_to_dictionary_inventory_map(await shopify_connector.get_inventory_quantity(products, location_id))
-    LOGGER.info('Response from transform ')
-    LOGGER.info(inventory_shopify)
+    LOGGER.debug('Response from transform ')
+    LOGGER.debug(inventory_shopify)
     for product in products:
         formated_variant = f'gid://shopify/InventoryItem/{product["inventory_item_id"]}'
         if formated_variant in inventory_shopify:
@@ -196,7 +197,7 @@ async def _create_deltas_for_inventory(products, shopify_connector, location_id)
 
 def _transform_to_dictionary_inventory_map(inventory_shopify_response):
     result = {}
-    LOGGER.info(f'Inventory Shopify Response: {inventory_shopify_response}')
+    LOGGER.debug(f'Inventory Shopify Response: {inventory_shopify_response}')
     if inventory_shopify_response is not None:
         for inventory in inventory_shopify_response:
             id_inventory = inventory.get('item', {}).get('id')
@@ -206,26 +207,53 @@ def _transform_to_dictionary_inventory_map(inventory_shopify_response):
 
 
 def _set_blocked_state(blocked):
-    update_item(table_name=DYNAMODB_TABLE_NAME, schema={
-        'Key': {
-            'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
-        },
-        'UpdateExpression': 'set blocked=:value',
-        'ExpressionAttributeValues': {
-            ':value': str(blocked)
-        }
-    })
+    blocked_state = get_item(table_name=DYNAMODB_TABLE_NAME, item={
+        'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
+    }, consistent_read=True)
+
+    update_expression = None
+    if blocked:
+        LOGGER.info('Set one slot to blocked')
+        for i in range(NO_OF_SLOTS):
+            slot_key = f'slot{i}_blocked'
+            if blocked_state.get(slot_key, '') != 'True':
+                LOGGER.info(f'Set {slot_key} to blocked')
+                update_expression = f'set {slot_key}=:value'
+                break
+    else:
+        LOGGER.info('Set one slot to unblocked')
+        for i in range(NO_OF_SLOTS):
+            slot_key = f'slot{i}_blocked'
+            if blocked_state.get(slot_key, '') == 'True':
+                LOGGER.info(f'Set {slot_key} to unblocked')
+                update_expression = f'set {slot_key}=:value'
+                break
+
+    if update_expression:
+        update_item(table_name=DYNAMODB_TABLE_NAME, schema={
+            'Key': {
+                'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
+            },
+            'UpdateExpression': update_expression,
+            'ExpressionAttributeValues': {
+                ':value': str(blocked)
+            }
+        })
 
 
 def _is_blocked():
+    result = True
     response = get_item(table_name=DYNAMODB_TABLE_NAME, item={
         'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
-    })
+    }, consistent_read=True)
 
     if response is None:
         return False
 
-    if 'blocked' in response:
-        return response['blocked'] == 'True'
+    for i in range(NO_OF_SLOTS):
+        slot_key = f'slot{i}_blocked'
+        if response.get(slot_key, '') != 'True':
+            result = False
+            break
 
-    return False
+    return result

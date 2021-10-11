@@ -43,7 +43,7 @@ functions:
           enable: true
           name: inventory-create-export-job
       - schedule:
-          rate: rate(12 hours)
+          rate: cron(0 6 * * ? *)
           enable: true
           name: inventory-full_export-trigger
     environment:
@@ -84,7 +84,7 @@ functions:
     # reservedConcurrency: 1    // if this can be used disable BLOCK_CONCURRENT_EXECUTION
     events:
       - schedule:
-          rate: rate(5 minutes)
+          rate: rate(2 minutes)
           enable: true
           name: shopify_availability_export_worker
     environment:

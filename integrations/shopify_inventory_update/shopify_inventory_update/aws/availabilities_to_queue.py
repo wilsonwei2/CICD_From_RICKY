@@ -306,7 +306,7 @@ async def _process_variants_to_queue(variants, context):
     if export_count < 1000:
         LOGGER.debug(variants)
 
-    LOGGER.debug(f'Export items count to push: {export_count}')
+    LOGGER.info(f'Export items count to push: {export_count}')
 
     previous_product_id = None
     last_product_id = get_last_variant()
@@ -373,8 +373,8 @@ async def _process_variants_to_queue(variants, context):
         LOGGER.info(f'Pushed last message to queue {sqs_handler.queue_name}')
         shopify_inventory_item_list = {}
 
-    LOGGER.debug(f'Export items count: {export_count}')
-    LOGGER.debug(f'Pushed items count: {pushed_count}')
+    LOGGER.info(f'Export items count: {export_count}')
+    LOGGER.info(f'Pushed items count: {pushed_count}')
     return result
 
 
