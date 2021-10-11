@@ -60,6 +60,12 @@ def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=N
         'notification_blacklist': notification_blacklist
     }
 
+    LOGGER.info('Transformed order')
+    LOGGER.info(ns_order)
+
+    LOGGER.info('Shipping address Shopify')
+    LOGGER.info(order.get('shipping_address', {}))
+
     if order.get('browser_ip') and order.get('browser_ip') != "None":
         ns_order['ip_address'] = order['browser_ip']
 
