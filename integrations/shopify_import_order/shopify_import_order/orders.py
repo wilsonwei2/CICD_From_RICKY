@@ -67,7 +67,7 @@ def transform(transaction_data, order, is_exchange, shop, shipping_offer_token=N
 
     if 'shipping_offer_token' in ns_order['shipments'][0]['shipping_option']:
         del ns_order['shipping_address']
-    elif not has_shipment(order):
+    elif not has_shipment(order) and not order.get('shipping_address', None):
         ns_order['shipping_address'] = ns_order['billing_address']
 
     return ns_order
