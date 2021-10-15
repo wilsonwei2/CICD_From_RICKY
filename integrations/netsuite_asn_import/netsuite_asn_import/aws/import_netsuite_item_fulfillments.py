@@ -26,7 +26,8 @@ SEARCH_PAGE_SIZE = os.environ.get('SEARCH_PAGE_SIZE', '10')
 NEWSTORE_TO_NETSUITE_LOCATIONS = Utils.get_netsuite_location_map()
 TRANSFER_ORDER_SAVED_SEARCH_ID = Utils.get_netsuite_config()['transfer_order_fulfillments_saved_search_id']
 NETSUITE_SYNCED_TO_NEWSTORE_FLAG_SCRIPT_ID = Utils.get_netsuite_config()['item_fulfillment_processed_flag_script_id']
-
+PHYSICAL_GC_ID = os.environ.get('PHYSICAL_GC_ID', 'PGC')
+PHYSICAL_GC_SKU = os.environ.get('PHYSICAL_GC_SKU', '5500000-000')
 
 def handler(_, context):
     # Initialize newstore conector with context
@@ -117,9 +118,10 @@ async def transform_item_fulfillment(netsuite_item_fulfillment):
     netsuite_item_fulfillment_id = netsuite_item_fulfillment['tranId']
     date_shipped = netsuite_item_fulfillment['shippedDate'].isoformat()
     LOGGER.debug(f'item_list: {item_list}')
+
     product_list = [
         {
-            "product_id": str(item['itemName']),
+            "product_id": str(item['itemName']) if str(item['itemName']) != PHYSICAL_GC_SKU else PHYSICAL_GC_ID,
             "quantity": int(item['quantity'])
         } for item in item_list
     ]
