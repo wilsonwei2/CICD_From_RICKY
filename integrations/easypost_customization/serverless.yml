@@ -1,0 +1,45 @@
+service: frankandoak-easypost-customization
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - easypost_customization/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  environment:
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
+    LOG_LEVEL: INFO
+
+functions:
+  easypost-book-shipment:
+    name: ${self:provider.tenant}-easypost-book-shipment
+    handler: easypost_customization.aws.book_shipment.handler
+    timeout: 300
+    memorySize: 128
+    events:
+      - http: POST /shipment
+  easypost-shipping-options:
+    name: ${self:provider.tenant}-easypost-shipping-options
+    handler: easypost_customization.aws.shipping_options.handler
+    timeout: 300
+    memorySize: 128
+    events:
+      - http: POST /shipping_options

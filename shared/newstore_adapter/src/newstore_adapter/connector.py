@@ -758,6 +758,21 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
+    def get_consumer_price(self, product_id, catalog, pricebook):
+        url = 'https://%s/v0/c/prices' % self.host
+        params = {
+            'product_id': product_id,
+            'shop': catalog,
+            'pricebook': pricebook
+        }
+        try:
+            response = self.newstore_adapter.get_request(url, params, False)
+        except NewStoreAdapterException:
+            if self.raise_errors:
+                raise
+            return None
+        return response.json()
+
     def get_availability_groups(self):
         url = 'https://%s/v0/d/availabilities/groups' % (self.host)
         try:
