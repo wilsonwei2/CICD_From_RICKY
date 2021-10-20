@@ -173,7 +173,6 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
                 type='inventoryItem'
             ),
             'price': RecordRef(internalId=-1),
-            'rate': str(item['price_catalog']),
             'taxCode': RecordRef(internalId=TaxManager.get_refund_item_tax_code_id(currency))
         }
 
@@ -181,6 +180,8 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
             cash_refund_item['price'] = RecordRef(internalId=1)
             cash_refund_item['orderLine'] = credit_memo_init_item['orderLine']
             cash_refund_item['line'] = credit_memo_init_item['line']
+        else:
+            cash_refund_item['rate'] = str(item['price_catalog'])
 
         if location_id is not None:
             cash_refund_item['location'] = RecordRef(internalId=location_id)
