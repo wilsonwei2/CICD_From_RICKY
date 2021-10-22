@@ -324,6 +324,12 @@ async def _process_variants_to_queue(variants, context):
 
         previous_product_id = variant.get('product_id')
 
+        # Skip products with / to avoid invalid inventory update in Shopify caused by
+        # duplicate products - special issue for F&O
+        if '/' in variant.get('product_id'):
+            LOGGER.info(f'Invalid product id, skip {variant.get("product_id")}')
+            continue
+
         atp = int(variant['atp'])
         shopify_inventory_ids = {}
         current_location_ids = None
