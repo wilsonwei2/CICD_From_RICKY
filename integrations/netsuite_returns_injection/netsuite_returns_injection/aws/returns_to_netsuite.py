@@ -7,7 +7,6 @@ import json
 import logging
 import asyncio
 import collections
-from datetime import datetime
 
 # Runs startup processes
 import netsuite.netsuite_environment_loader  # pylint: disable=W0611
@@ -109,21 +108,9 @@ async def process_return(message):
         return await _handle_web_order_return(customer_order, ns_return, payments_info)
 
     if customer_order['channel_type'] == 'store':
-        # HACK - to be removed once missing Credit Memos are processed
-        if ignore_store_return_before_date(ns_return):
-            LOGGER.info('Ignore store return and remove from the queue')
-            return True
-
         return await _handle_store_order_return(customer_order, ns_return, payments_info, store_tz)
 
     return False
-
-# HACK - to be removed once missing Credit Memos are processed
-def ignore_store_return_before_date(ns_return):
-    returned_at = datetime.fromisoformat(ns_return['returned_at'][0:19])
-    ignore_until_date = datetime.fromisoformat('2021-10-19T20:35:00')
-    LOGGER.info(f'Compare {returned_at} with cutoff date {ignore_until_date}')
-    return returned_at < ignore_until_date
 
 
 async def _update_payments_info_if_needed(customer_order, payments_info):
@@ -217,9 +204,14 @@ async def _handle_web_order_return(customer_order, ns_return, payments_info):
                 'Return is historical. Proceed to create standalone CashRefund')
             return_parsed = await pwor.transform_web_order(customer_order, ns_return, payments_info, sales_order,
                                                            None)
-        elif ns_return['return_location_id'].endswith(netsuite_config['dc_suffix']) or ns_return['return_location_id'] == 'USC':
-            LOGGER.info(
-                'Return is online, proceed to create a CustomerRefund from a ReturnAuthorization')
+        else:
+            if ns_return['return_location_id'].endswith(netsuite_config['dc_suffix']) or ns_return['return_location_id'] == 'USC':
+                LOGGER.info(
+                    'Return is online, proceed to create a CustomerRefund from a ReturnAuthorization')
+            else:
+                LOGGER.info(
+                    'Return is in store, proceed to create a CustomerRefund from a ReturnAuthorization')
+
             result, return_authorizations = get_return_authorizations(
                 sales_order.internalId)
             LOGGER.info(
@@ -238,15 +230,6 @@ async def _handle_web_order_return(customer_order, ns_return, payments_info):
                                                            return_authorization)
             LOGGER.info(
                 f'Parsed Transformed Online order:{return_parsed}')
-        else:
-            LOGGER.info(
-                'Return is in store, proceed to create standalone CashRefund')
-            return_parsed = await pwor.transform_web_order(customer_order, ns_return, payments_info, sales_order,
-                                                           None)
-            LOGGER.info(
-                f'Parsed Transformed Store order:{return_parsed}')
-            return inject_store_return(return_parsed)
-
     else:
         LOGGER.info('Order is historical, proceed to create standalone record.')
         return_parsed = await pwor.transform_web_order(customer_order, ns_return, payments_info, None,

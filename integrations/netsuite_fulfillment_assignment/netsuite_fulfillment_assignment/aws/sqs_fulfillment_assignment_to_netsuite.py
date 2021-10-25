@@ -49,6 +49,8 @@ async def process_fulfillment_assignment(message):
     if 'service_level' in fulfillment_request and fulfillment_request['service_level'] == 'IN_STORE_HANDOVER':
         return True
 
+    distribution_centres = Utils.get_distribution_centres()
+
     ns_order = get_external_order(fulfillment_request['order_id'])
     if ns_order['channel'] == 'magento':
         LOGGER.info('Skipping Historical Order')
@@ -63,6 +65,12 @@ async def process_fulfillment_assignment(message):
     if sales_order:
         # Update the fulfillment locations for each item of the fulfillment request
         update_sales_order(sales_order, fulfillment_request)
+
+        # Do not acknowledge using the API for ship from store
+        fulfillment_location_id = fulfillment_request.get('fulfillment_location_id')
+        if not fulfillment_location_id in distribution_centres:
+            LOGGER.info('Fulfillment request is for a store, no acknowledgement is send.')
+            return True
 
         # Acknowledge the fulfillment request since it was send to Netsuite
         if not NEWSTORE_HANDLER.send_acknowledgement(fulfillment_request['id']):

@@ -1,17 +1,36 @@
 import os
+import json
 from .shopify.shopify import ShopifyConnector
 from newstore_adapter.connector import NewStoreConnector
 from pom_common.shopify import ShopManager
+from param_store.client import ParamStore
 
 NS_HANDLER = None
 SF_HANDLERS = {}
 SHOPIFY_CONFIGS = {}
 NEWSTORE_CONFIG = None
+PARAM_STORE = None
+SHOPIFY_LOCATIONS_MAP = {}
 
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
 REGION = os.environ.get('REGION', 'us-east-1')
 CHANNEL = os.environ.get('warehouse_usc', 'MTLDC1')
+
+
+def get_parameter_store(tenant=TENANT, stage=STAGE):
+    global PARAM_STORE # pylint: disable=global-statement
+    if not PARAM_STORE:
+        PARAM_STORE = ParamStore(tenant, stage)
+    return PARAM_STORE
+
+
+def get_shopify_locations_map():
+    global SHOPIFY_LOCATIONS_MAP # pylint: disable=global-statement
+    if not SHOPIFY_LOCATIONS_MAP:
+        SHOPIFY_LOCATIONS_MAP = json.loads(
+            get_parameter_store().get_param('shopify/dc_location_id_map'))
+    return SHOPIFY_LOCATIONS_MAP
 
 
 def get_all_shopify_handlers():

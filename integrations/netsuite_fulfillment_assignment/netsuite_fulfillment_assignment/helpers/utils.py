@@ -73,6 +73,10 @@ class Utils():
         return json.loads(Utils.get_param_store().get_param('newstore/newstore_to_netsuite_product_mapping'))
 
     @staticmethod
+    def get_distribution_centres():
+        return json.loads(Utils.get_param_store().get_param('distribution_centres'))
+
+    @staticmethod
     def _get_netsuite_store_mapping(nws_value):
         if not nws_value:
             return {}

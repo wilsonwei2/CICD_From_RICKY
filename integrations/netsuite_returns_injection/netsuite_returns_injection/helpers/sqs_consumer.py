@@ -28,7 +28,7 @@ async def consume(process, queue_name):
         # Trim message down to just the fin_trans data
         message = json.loads(messages['Messages'][0]['Body'])
         # Process the message w/ NetSuite
-        LOGGER.info(f'Processing item for order {message["payload"]["id"]}')
+        LOGGER.info(f'Processing item for order {message["payload"].get("order_id", message["payload"]["id"])}')
         try:
             result = await process(message)
             if result:
@@ -40,6 +40,6 @@ async def consume(process, queue_name):
                 else:
                     LOGGER.info(f'Message deleted from the queue {response}')
         except Exception as e: # pylint: disable=W0703
-            LOGGER.error(f'Exception on order {message["payload"]["id"]} details: {str(e)}', exc_info=True)
+            LOGGER.error(f'Exception on order {message["payload"].get("order_id", message["payload"]["id"])} details: {str(e)}', exc_info=True)
         number_of_messages_to_consume -= 1
     LOGGER.info('Execution ended normally.')

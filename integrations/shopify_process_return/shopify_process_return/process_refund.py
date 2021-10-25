@@ -3,7 +3,7 @@ import json
 import logging
 from lambda_utils.sqs.SqsHandler import SqsHandler
 # from product_id_mapper.main import ProductIdMapper
-from .utils import get_shopify_handler, get_newstore_handler
+from .utils import get_shopify_handler, get_newstore_handler, get_shopify_locations_map
 
 
 # PRODUCT_ID_MAPPER = ProductIdMapper()
@@ -111,9 +111,10 @@ def _create_return(return_data, refund, shop_id):
             f'Refund started in NewStore {is_refund_start_in_newstore}')
         if not is_refund_exists and not is_refund_start_in_newstore:
             # Send return to NewStore
+            returned_from = get_returned_from(refund)
             request_return = {
                 'items': return_data['items'],
-                'returned_from': os.environ['warehouse_usc'],
+                'returned_from': returned_from,
                 'returned_at': return_data['processed_at'],
                 'extended_attributes': _map_refund_id_ext_attr(refund)
             }
@@ -241,3 +242,9 @@ def _transform_data_to_send(refund_webhook):
         'processed_at': refund_webhook['processed_at'],
         'currency': _get_refund_currency(refund_webhook.get('transactions', []))
     }
+
+
+def get_returned_from(refund):
+    shopify_location_id = int(refund['refund_line_items'][0]['location_id'])
+    locations_map = {int(loc_id): key for key, value in get_shopify_locations_map().items() for loc_id in value.values()}
+    return locations_map.get(shopify_location_id, os.environ['warehouse_usc'])

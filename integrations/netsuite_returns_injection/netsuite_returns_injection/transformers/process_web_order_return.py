@@ -35,8 +35,8 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
     store_tz = await get_store_tz_by_customer_order(customer_order)
     if return_authorization:
         LOGGER.info('Create CashRefund/CreditMemo from ReturnAuthorization')
-        cash_refund, _ = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz)
-        credit_memo, credit_memo_init_item_list = map_cash_refund(ns_return, sales_order.location.internalId,
+        cash_refund, _ = map_cash_refund(ns_return, location_id, sales_order, return_authorization, store_tz)
+        credit_memo, credit_memo_init_item_list = map_cash_refund(ns_return, location_id,
                                                                   sales_order, return_authorization, store_tz, is_credit_memo=True)
 
 
@@ -46,7 +46,7 @@ async def transform_web_order(customer_order, ns_return, payments_info, sales_or
             raise Exception(f'Returned_from store {return_location_id} wasn\'t found')
 
         cash_refund = map_cash_refund(ns_return, location_id, sales_order, return_authorization, store_tz)
-        credit_memo = map_cash_refund(ns_return, sales_order.location.internalId, sales_order, return_authorization, store_tz, is_credit_memo=True)
+        credit_memo = map_cash_refund(ns_return, location_id, sales_order, return_authorization, store_tz, is_credit_memo=True)
 
     custom_fields_list = map_custom_fields(customer_order)
     LOGGER.debug(f'custom_fields_list: {custom_fields_list}')
@@ -127,12 +127,12 @@ def map_cash_refund(ns_return, location_id, sales_order, return_authorization=No
         initialized_record = initialize_record('creditMemo', 'returnAuthorization', return_authorization.internalId)
         LOGGER.info(f'Initizalize CreditMemo Response {initialized_record}')
         refund = {
-            "entity" : RecordRef(internalId=initialized_record['entity']['internalId']),
-            "tranDate" : initialized_record['tranDate'],
-            "createdFrom" : RecordRef(internalId=initialized_record['createdFrom']['internalId']),
-            "account" : RecordRef(internalId=initialized_record['account']['internalId']),
-            "currency":  RecordRef(internalId=initialized_record['currency']['internalId']),
-            'location': RecordRef(internalId=initialized_record['location']['internalId']),
+            'entity' : RecordRef(internalId=initialized_record['entity']['internalId']),
+            'tranDate' : initialized_record['tranDate'],
+            'createdFrom' : RecordRef(internalId=initialized_record['createdFrom']['internalId']),
+            'account' : RecordRef(internalId=initialized_record['account']['internalId']),
+            'currency':  RecordRef(internalId=initialized_record['currency']['internalId']),
+            'location': RecordRef(internalId=location_id),
             'subsidiary': RecordRef(internalId=initialized_record['subsidiary']['internalId']),
             'partner': RecordRef(internalId=initialized_record['partner']['internalId']),
             'customForm':  RecordRef(internalId=initialized_record['customForm']['internalId']),
