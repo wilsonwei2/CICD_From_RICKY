@@ -288,8 +288,7 @@ async def _process_variants_to_queue(variants, context):
     Returns:
         object -- Result Drop to queue message object
     """
-    LOGGER.info('Processing %i variants from the currently exported job. ',
-                (len(variants)))
+    LOGGER.info(f'Processing {len(variants)} variants from the currently exported job.')
 
     global MAPPING_ENTRIES
     MAPPING_ENTRIES = get_all(table_name=DYNAMODB_MAPPING_TABLE_NAME)
@@ -312,15 +311,21 @@ async def _process_variants_to_queue(variants, context):
     last_product_id = get_last_variant()
 
     for variant in variants:
-        if stop_before_timeout(context, STOP_BEFORE_TIMEOUT, LOGGER):
-            save_last_variant(previous_product_id)
+        # Check that all products for all locations have been processed before we stop before the timeout
+        if stop_before_timeout(context, STOP_BEFORE_TIMEOUT, LOGGER) \
+            and previous_product_id is not None \
+            and previous_product_id != variant.get('product_id'):
+            LOGGER.info(f'Previous Product Id: {previous_product_id} - save next product id {variant.get("product_id")}')
+            save_last_variant(variant.get('product_id'))
             result = False
             break
 
         if last_product_id != '':
             if variant.get('product_id') == last_product_id:
+                LOGGER.info(f'Continue with Product Id: {last_product_id}')
                 last_product_id = ''
-            continue
+            else:
+                continue
 
         previous_product_id = variant.get('product_id')
 

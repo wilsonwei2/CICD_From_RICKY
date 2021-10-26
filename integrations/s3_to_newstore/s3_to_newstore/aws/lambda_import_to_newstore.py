@@ -36,6 +36,8 @@ def handler(event, context):
     ns_handler = NewStoreConnector(tenant=TENANT, context=context)
     entities = [i.strip() for i in ENTITIES_CSV.split(',')]
 
+    start_prev_received_imports(ns_handler, entities)
+
     for record in event['Records']:
         assert record['eventName'] in ('ObjectCreated:Put', 'ObjectCreated:Copy')
 
@@ -63,3 +65,18 @@ def handler(event, context):
         response = ns_handler.start_import(ns_import['id'], import_start_body)
         LOGGER.info('Started import')
         LOGGER.debug(json.dumps(response, indent=4))
+
+# If an import job previously received was not started due to a timeout
+# This function handles to start it
+def start_prev_received_imports(ns_handler, entities):
+    jobs_received = ns_handler.get_import_jobs_by_state('received')
+    for job in jobs_received.get('items', []):
+        if entities[0] == job['entities'][0]: # only process if entities are same, only works for one entity(!)
+            LOGGER.info(f'Start previously received import {job}')
+            job_details = ns_handler.get_import_job(job['import_id'])
+            import_start_body = {
+                'transformed_uri': job_details['source_uri']
+            }
+            response = ns_handler.start_import(job_details['import_id'], import_start_body)
+            LOGGER.info('Started previously received import')
+            LOGGER.debug(json.dumps(response, indent=4))

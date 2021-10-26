@@ -31,7 +31,7 @@ functions:
   s3_to_newstore:
     name: ${self:provider.tenant}-stn-availability-import
     handler: s3_to_newstore.aws.lambda_import_to_newstore.handler
-    timeout: 30
+    timeout: 60
     memorySize: 128
     environment:
       TENANT: ${self:provider.tenant}
@@ -50,7 +50,7 @@ functions:
   s3_to_newstore_prices:
     name: ${self:provider.tenant}-stn-prices-import
     handler: s3_to_newstore.aws.lambda_import_to_newstore.handler
-    timeout: 30
+    timeout: 60
     memorySize: 128
     environment:
       TENANT: ${self:provider.tenant}

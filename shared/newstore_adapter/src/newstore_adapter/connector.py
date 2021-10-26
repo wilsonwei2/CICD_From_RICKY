@@ -670,6 +670,26 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
+    def get_import_job(self, import_id):
+        url = f'https://{self.host}/v0/d/import/{import_id}'
+        try:
+            response = self.newstore_adapter.get_request(url)
+        except NewStoreAdapterException as ns_err:
+            if self.raise_errors:
+                raise ns_err
+            return None
+        return response.json()
+
+    def get_import_jobs_by_state(self, state):
+        url = f'https://{self.host}/v0/d/import?filter[state]={state}'
+        try:
+            response = self.newstore_adapter.get_request(url)
+        except NewStoreAdapterException as ns_err:
+            if self.raise_errors:
+                raise ns_err
+            return None
+        return response.json()
+
     def get_reason_codes(self):
         url = 'https://%s/api/v1/org/config/reason_code_types/cancellations/reason_codes' % (self.host)
         try:
