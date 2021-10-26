@@ -115,6 +115,7 @@ def handler(event, context): # pylint: disable=W0613
 
 
 def _validate_order_risk(order, shop_id):
+    recommendation_cancel_detected = False
     shopify_order_id = order['id']
     risks = get_order_risks(shopify_order_id, shop_id)
     external_risks = [risk for risk in risks if risk['source'] == 'External']
@@ -123,10 +124,14 @@ def _validate_order_risk(order, shop_id):
     for risk in risks:
         LOGGER.debug(f'Risk: {risk}')
         recommendation = str(risk['recommendation'])
-        LOGGER.debug(f'Shopify Order Id with id # {shopify_order_id} has recommendation level as {recommendation}')
+        LOGGER.info(f'Shopify Order Id with id # {shopify_order_id} has recommendation level as {recommendation}')
         if 'cancel' in recommendation.lower():
-            return True
-    return False
+            recommendation_cancel_detected = True
+        else:
+            # Return in case there is any other recommendation
+            return False
+
+    return recommendation_cancel_detected
 
 
 def is_historical(order):
