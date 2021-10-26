@@ -33,7 +33,7 @@ def handler(event, context):
 async def _push_capture_to_shopify(body, financial_instrument_id):
     try:
         amount_info = body.get('arguments')
-        LOGGER.info(f'Processing capture: ${json.dumps(body, indent=4)}')
+        LOGGER.info(f'Processing capture: {json.dumps(body, indent=4)}')
         transactions = []
         transaction = next((x for x in body.get(
             'transactions', []) if x.get('reason') == 'authorization'), None)
@@ -49,7 +49,7 @@ async def _push_capture_to_shopify(body, financial_instrument_id):
             transaction_id = metadata.get('transaction_id')
             amount = None
 
-            LOGGER.info(f'Shopify Order: ${json.dumps(shopify_order, indent=4)}')
+            LOGGER.info(f'Shopify Order: {json.dumps(shopify_order, indent=4)}')
 
             if transaction_id:
                 shopify_transaction = await shopify_handler.get_transaction(shopify_order_id, transaction_id)
@@ -85,7 +85,7 @@ async def _push_capture_to_shopify(body, financial_instrument_id):
                 try:
                     transaction_rsp = await _create_capture_transaction(
                         shopify_order_id,
-                        amount_info.get('amount'),
+                        transaction['capture_amount'],
                         shopify_handler
                     )
                     metadata['shopify_auth_id'] = transaction_rsp.get('transaction', {}).get('parent_id')
@@ -141,7 +141,7 @@ async def _push_capture_to_shopify(body, financial_instrument_id):
                 'metadata': metadata
             })
         capture_response = transactions
-        LOGGER.info(f'Responding with: ${json.dumps(capture_response)}')
+        LOGGER.info(f'Responding with: {json.dumps(capture_response)}')
         return {
             'statusCode': 200,
             'body': json.dumps(capture_response)

@@ -45,7 +45,7 @@ def handler(event, context):
 
 async def _push_refund_to_shopify(body, financial_instrument_id):
     try:
-        LOGGER.info(f'Processing refund: ${json.dumps(body, indent=4)}')
+        LOGGER.info(f'Processing refund: {json.dumps(body, indent=4)}')
         order_id, return_id = (
             body['account_id'],
             body['idempotency_key']
@@ -64,29 +64,7 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
         is_not_return = False
         is_exchanged = False
 
-        notes = await _get_order_notes(order_id=order_id)
-        LOGGER.info(f"Order note: {asdict(notes)}")
-        note_id = _get_loop_exchange_note_id(order_notes=notes)
-        if note_id is not None:
-            LOGGER.info('Process instrument that is handled by the Loop Returns extension, do not call shopify refund')
-            await _delete_order_note(order_id=order_id, note_id=note_id)
-
-            transactions.append({
-                'transaction_id': str(uuid4()),
-                'refund_amount': -float(amount_info.get('amount')),
-                'instrument_id': financial_instrument_id,
-                'reason': 'refund',
-                'payment_method': transaction['payment_method'],
-                'currency': transaction['currency'],
-                'metadata': body['metadata']
-            })
-            refund_response = transactions
-            return {
-                'statusCode': 200,
-                'body': json.dumps(refund_response)
-            }
-
-        if not _is_reduction_revoke(return_id) and not _is_reduction_cancel(return_id):
+        if not _is_reduction_revoke(return_id, customer_order) and not _is_reduction_cancel(return_id):
             ns_return = None
             try:
                 ns_refund = (await NS_HANDLER.get_refund(order_id, return_id)).get('refund', {})
@@ -108,11 +86,11 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
                 if not ns_return:
                     ns_return = {'is_reduction': True}
 
-        elif _is_reduction_revoke(return_id):
+        elif _is_reduction_revoke(return_id, customer_order):
             # Reduction revoke will have the items returned in the revoke call
             ns_return = {
                 'return_items': canceled_items
-                }
+            }
 
         elif _is_reduction_cancel(return_id) or is_not_return:
             ns_return = {'is_reduction': True}
@@ -140,7 +118,7 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
                 LOGGER.info('This refund does not exist, we will create it')
                 json_to_calculate_refund = await parse_json_to_calculate_refund(
                     ns_return, shopify_order, customer_order, is_exchanged)
-                LOGGER.info(f'Json to calculate refund on Shopify: ${json.dumps(json_to_calculate_refund, indent=4)}')
+                LOGGER.info(f'Json to calculate refund on Shopify: {json.dumps(json_to_calculate_refund, indent=4)}')
 
                 # Shopify will actually calculate the refund based on the order and line items being returned
                 calculated_refund_json = await shopify_handler.calculate_refund(
@@ -151,7 +129,7 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
                     # Creates the refund request object to be passed to Shopify
                     json_to_create_refund = await parse_json_to_create_refund(
                         calculated_refund_json, ns_return, shopify_order, json_to_calculate_refund['refund']['refund_line_items'], amount_info)
-                    LOGGER.info(f'Json to create refund on Shopify: ${json.dumps(json_to_create_refund, indent=4)}')
+                    LOGGER.info(f'Json to create refund on Shopify: {json.dumps(json_to_create_refund, indent=4)}')
 
                     # Initiate the actual refund with Shopify
                     response = await shopify_handler.create_refund(
@@ -222,7 +200,7 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
             LOGGER.debug(json.dumps(shopify_order, indent=4))
             #json_to_calculate_refund = await parse_json_to_calculate_refund(
             #    ns_return, shopify_order, customer_order, is_exchanged)
-            #LOGGER.info(f'Json to calculate refund on Shopify: ${json.dumps(json_to_calculate_refund, indent=4)}')
+            #LOGGER.info(f'Json to calculate refund on Shopify: {json.dumps(json_to_calculate_refund, indent=4)}')
 
             #calculated_refund_json = await shopify_handler.calculate_refund(
             #    shopify_order_id, json_to_calculate_refund)
@@ -230,7 +208,7 @@ async def _push_refund_to_shopify(body, financial_instrument_id):
             #if calculated_refund_json:
             #    json_to_create_refund = await parse_json_to_create_refund(
             #        calculated_refund_json, ns_return, shopify_order, json_to_calculate_refund['refund']['refund_line_items'], amount_info)
-            #    LOGGER.info(f'Json to create refund on Shopify: ${json.dumps(json_to_create_refund, indent=4)}')
+            #    LOGGER.info(f'Json to create refund on Shopify: {json.dumps(json_to_create_refund, indent=4)}')
 
             #response = await shopify_handler.create_refund(
             #    order_id=shopify_order_id,
@@ -388,7 +366,7 @@ async def _handle_order_refund_appeasement_transaction(transaction,
             'currency': transaction['currency'],
             'metadata': body['metadata']
         }]
-    LOGGER.info(f'Responding with: ${json.dumps(refund_response)}')
+    LOGGER.info(f'Responding with: {json.dumps(refund_response)}')
     return {
         'statusCode': 200,
         'body': json.dumps(refund_response)
@@ -422,8 +400,12 @@ def _is_reduction_cancel(return_id):
     return 'reduction-cancel' in return_id
 
 
-def _is_reduction_revoke(return_id):
-    return 'reduction-revoke' in return_id
+def _is_reduction_revoke(return_id, ns_order):
+    if 'reduction-revoke' in return_id:
+        return True
+    for product in ns_order['products']:
+        if product['status'] == 'canceled':
+            return True
 
 
 def _is_not_return(ns_refund):

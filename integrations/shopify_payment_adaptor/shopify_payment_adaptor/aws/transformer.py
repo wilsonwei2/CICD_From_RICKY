@@ -17,10 +17,10 @@ async def parse_json_to_calculate_refund(ns_return, shopify_order, ns_order=None
     :return response: dict
     """
     LOGGER.info('Parse json to calculate refund')
-    LOGGER.debug(f'ns_return: \n${json.dumps(ns_return, indent=4)}')
-    LOGGER.debug('shopify_order: \n${json.dumps(shopify_order, indent=4)}')
+    LOGGER.debug(f'ns_return: \n{json.dumps(ns_return, indent=4)}')
+    LOGGER.debug(f'shopify_order: \n{json.dumps(shopify_order, indent=4)}')
     if ns_order:
-        LOGGER.debug('ns_order: \n${json.dumps(ns_order, indent=4)}')
+        LOGGER.debug(f'ns_order: \n{json.dumps(ns_order, indent=4)}')
 
     output = {
         "refund": {
@@ -129,14 +129,17 @@ async def verify_full_return(ns_return, shopify_order):
 
 async def _get_refund_line_items(ns_return, shopify_order):
     """
-    Parse information from shopify_order and ns_return to get the refund_line_itens
+    Parse information from shopify_order and ns_return to get the refund_line_items
     :param ns_return:
     :param shopify_order:
     :return array
     """
     output = []
     items_quantity_return = await _get_ns_return_items_quantity(ns_return)
+    LOGGER.info(f'Got NewStore items quantity return: {items_quantity_return}')
+
     items_quantity_order = await _get_shopify_items_quantity(shopify_order, items_quantity_return)
+    LOGGER.info(f'Got Shopify items quantity on order: {items_quantity_order}')
 
     if all_products_returned(ns_return, shopify_order):
         return list(items_quantity_order.values())
@@ -175,20 +178,14 @@ async def _get_shopify_items_quantity(shopify_order, items_quantity_return, exte
     """
     output = {}
     for item in shopify_order['line_items']:
-        external_id = _get_product_id_map_from_sku(str(item[external_key]))
-        if external_id in items_quantity_return:
-            output[external_id] = {
+        product_sku = str(item[external_key])
+        if product_sku in items_quantity_return:
+            output[product_sku] = {
                 'line_item_id': item['id'],
-                'quantity': items_quantity_return[external_id],
+                'quantity': items_quantity_return[product_sku],
                 'restock_type': 'no_restock'
             }
     return output
-
-
-async def _get_value_with_key(items, key):
-    for item in items:
-        if item['key'] == key:
-            return item['value']
 
 
 def _get_extended_attribute(extended_attributes, key):
@@ -198,14 +195,6 @@ def _get_extended_attribute(extended_attributes, key):
                 return attr['value']
     return ''
 
-
-def _get_product_id_map_from_sku(sku):
-    product_mapped = PRODUCT_ID_MAPPER.get_map('sku', sku)
-    if not product_mapped:
-        error_message = f'Could not map sku: {sku} to a product_id.'
-        LOGGER.error(error_message)
-        raise Exception(error_message)
-    return product_mapped['product_id']
 
 def all_products_returned(ns_return, shopify_order):
     """

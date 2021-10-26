@@ -63,5 +63,5 @@ class ProductIdMapper():
             product_mapped = _map_product_ext_identifiers(external_identifiers)
             product_mapped['product_id'] = id_map.get('product_id')
             product_mapped['is_active'] = id_map.get('is_active')
-        LOGGER.info(f'GET Product ID Map = ${product_mapped}')
+        LOGGER.info(f'GET Product ID Map = {product_mapped}')
         return product_mapped
