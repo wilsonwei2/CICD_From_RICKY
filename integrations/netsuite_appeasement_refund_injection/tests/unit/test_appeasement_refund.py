@@ -76,6 +76,10 @@ class TestAppeasementRefund(unittest.TestCase):
         self.patched_param_store = patcher_param_store.start()
         self.patched_param_store.return_value = {}
 
+        netsuite_taxmgr_config_mock = patch('pom_common.netsuite.tax_manager.TaxManager._get_netsuite_config')
+        self.patched_netsuite_taxmgr_config_mock = netsuite_taxmgr_config_mock.start()
+        self.patched_netsuite_taxmgr_config_mock.return_value = MOCK_NETSUITE_CONFIG
+
         patcher_get_tax_code_id = patch('pom_common.netsuite.tax_manager.TaxManager.get_appeasement_item_tax_code_id')
         self.patched_tax_manager_get_tax_code_id = patcher_get_tax_code_id.start()
         self.patched_tax_manager_get_tax_code_id.return_value = '-8'
@@ -105,6 +109,9 @@ class TestAppeasementRefund(unittest.TestCase):
         }
         result = TestAppeasementRefund._loop_wrap(PROCESS_APPEASEMENT.transform_in_store_order_refund(cash_sale, event_refund, customer_order, payments_info, store_tz))
         result = serialize_object(result)
+
+        print('Result')
+        print(result)
 
         TestAppeasementRefund._assert_json(self, result, expected_result)
 

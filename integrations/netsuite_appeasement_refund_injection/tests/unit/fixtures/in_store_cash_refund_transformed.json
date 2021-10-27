@@ -145,6 +145,20 @@
                 "chargeType": null,
                 "chargesList": null,
                 "customFieldList": null
+            }, {
+              "item": {
+                "name": null,
+                "internalId": "4711",
+                "externalId": null,
+                "type": null
+              },
+              "amount": 10000,
+              "taxCode": {
+                "name": null,
+                "internalId": "8496",
+                "externalId": null,
+                "type": null
+              }
             }
         ],
         "replaceAll": "true"

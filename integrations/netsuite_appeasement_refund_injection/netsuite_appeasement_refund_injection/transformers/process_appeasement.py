@@ -77,7 +77,7 @@ async def transform_online_order_refund(consumer, event_refund, customer_order, 
                                                location_id=location_id)
 
     cash_refund['itemList'] = CashRefundItemList(
-        cash_refund_item + payment_items)
+        cash_refund_item + payment_items + [TaxManager.get_tax_offset_line_item(event_refund['currency'])])
     cash_refund['entity'] = customer
     cash_refund['currency'] = RecordRef(internalId=currency_id)
 
@@ -112,7 +112,7 @@ async def transform_in_store_order_refund(cash_sale, event_refund, customer_orde
     )
     cash_refund['createdFrom'] = RecordRef(internalId=cash_sale['internalId'])
     cash_refund['itemList'] = CashRefundItemList(
-        cash_refund_item + payment_items)
+        cash_refund_item + payment_items + [TaxManager.get_tax_offset_line_item(event_refund['currency'])])
 
     return cash_refund
 
@@ -196,15 +196,7 @@ def map_cash_refund_custom_fields(customer_order):
         StringCustomFieldRef(
             scriptId='custbodyaccumula_ecomid',
             value=customer_order['sales_order_external_id']
-        )  # ,
-        # SelectCustomFieldRef(
-        #    scriptId='cseg_ab_sellingloc',
-        #    value=ListOrRecordRef(internalId=selling_location_id)
-        # ),
-        # SelectCustomFieldRef(
-        #    scriptId='custbody_ab_order_type',
-        #    value=ListOrRecordRef(internalId=order_type_internal_id)
-        # )
+        )
     ]
 
     if channel_type == 'store':

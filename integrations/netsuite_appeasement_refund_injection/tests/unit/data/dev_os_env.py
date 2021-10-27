@@ -15,6 +15,7 @@ values = {
     "tax_override_us": "8496",
     "tax_override_ca": "8496",
     "tax_override_uk": "8497",
+    "tax_offset_item_internal_id": "4711",
     "currency_usd_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/multicurrency/currencylist.nl?whence=
     "currency_gbp_internal_id": "2",
     "currency_cad_internal_id": "3",
@@ -63,6 +64,7 @@ netsuite = {
     "tax_override_us": "8496",
     "tax_override_ca": "8496",
     "tax_override_uk": "8497",
+    "tax_offset_item_internal_id": "4711",
     "currency_usd_internal_id": "1",  # https://4674622-sb1.app.netsuite.com/app/common/multicurrency/currencylist.nl?whence=
     "currency_gbp_internal_id": "2",
     "currency_cad_internal_id": "3",
