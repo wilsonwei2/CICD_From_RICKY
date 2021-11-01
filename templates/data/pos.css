@@ -144,11 +144,19 @@ body {
 	font-weight: bolder;
 }
 
+.item_list_refund_info_table {
+  border-collapse: collapse;
+}
+
+/* .item_list_refund_info_row {
+	border-bottom: 1px solid black;
+} */
+
 .item_list_refund_info {
 	width: 100%;
-	display: inline-block;
+	display: table-cell;
 	font-size: .11in;
-	border-bottom: 1px solid black;
+  vertical-align: top;
 }
 
 .item_list_refund_info p:first-child {

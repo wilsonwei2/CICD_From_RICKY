@@ -1,5 +1,6 @@
 {
   "common": {
+    "language": "fr-CA",
     "table_header": {
       "associate": "Associé",
       "customer": "Client",
@@ -41,9 +42,11 @@
       "amount": "Prix"
     },
     "payment": {
+      "credit_card": "Carte de Crédit",
       "gift_card": "Carte cadeau",
       "paypal": "PayPal",
-      "cash": "Comptant"
+      "cash": "Comptant",
+      "store_credit": "Crédit en Magasin"
     },
     "return_sentence": "Nous accepterons volontiers les retours dans les 30 jours suivant l'achat. La marchandise éligible doit être dans son état d'origine, avec toutes les étiquettes attachées. La marchandise qui a été portée, modifiée ou endommagée ne peut être retournée.",
     "footer": {

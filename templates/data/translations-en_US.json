@@ -1,5 +1,6 @@
 {
   "common": {
+    "language": "en-US",
     "table_header": {
       "associate": "Associate",
       "customer": "Customer",
@@ -41,9 +42,11 @@
       "amount": "Amount"
     },
     "payment": {
+      "credit_card": "Credit Card",
       "gift_card": "Gift Card",
       "paypal": "PayPal",
-      "cash": "Cash"
+      "cash": "Cash",
+      "store_credit": "Store Credit"
     },
     "return_sentence": "We will gladly accept returns post marked within 10 days of purchase. Merchandise eligible must be in its original condition, with all hang tags and care labels attached. Merchandise which has been worn, altered or damaged is not returnable.",
     "footer": {

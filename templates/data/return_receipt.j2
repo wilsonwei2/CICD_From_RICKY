@@ -1,5 +1,5 @@
 {% extends 'pos_base' %}
-{%- from 'macros' import currency, address, desnake with context -%}
+{%- from 'macros' import currency, address, translate_payment_method, desnake with context -%}
 
 {% block title %}
 	<div class="title">
@@ -31,18 +31,15 @@
 			<p>[[[#contents.header.description]]]</p>
 			<p>[[[#contents.header.price]]]</p>
 		</div>
-		<table>
+		<table class="item_list_refund_info_table">
       {% for item in flat_items %}
-        <tr>
-          <div class="item_list_refund_info">
-            <td>{{ item.product_name }}</td>
-            {% if item.product_attributes.variation_color_value %} <td> {{ item.product_attributes.variation_color_value }} </td> {% endif %}
-            {% if item.product_attributes.variation_size_value %} <td> {{ item.product_attributes.variation_size_value }} </td> {% endif %}
-            <div>
-              <p></p>
-              <p>{{ currency(item.price_net, true) }}</p>
-            </div>
-          </div>
+        <tr class="item_list_refund_info_row">
+          <td class="item_list_refund_info">{{ item.product_name }}</td>
+          {% if item.product_attributes.variation_color_value %} <td class="item_list_refund_info"> {{ item.product_attributes.variation_color_value }} </td> {% endif %}
+          {% if item.product_attributes.variation_size_value %} <td class="item_list_refund_info"> {{ item.product_attributes.variation_size_value }} </td> {% endif %}
+          <td class="item_list_refund_info">
+            {{ currency(item.price_net, true) }}
+          </td>
         </tr>
       {% endfor %}
 		</table>
@@ -95,7 +92,7 @@
 			<p>{{ currency(refund.refund_amount) }}</p>
 			</div>
 			{%- else -%}
-				<p>{{ desnake(refund.payment_method) }}</p>
+				<p>{{ translate_payment_method(refund.payment_method) }}</p>
 				<p>{{ currency(refund.refund_amount, true) }}</p>
 			{%- endif -%}
 			</div>

@@ -64,7 +64,7 @@ const updateAll = setupCommand(async (locales: string[], { skipTranslation }) =>
     switchMap(({
       file, type, basename, locale, content,
     }) => {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console, sonarjs/no-nested-template-literals
       console.info(`ìmporting ${type} ${chalk.yellow(file)} ${locale ? `(${chalk.blue(locale)})` : ''}`);
       return type === 'template' && locale
         ? updateTemplate(basename, locale, content) : updateStyle(file, content);
