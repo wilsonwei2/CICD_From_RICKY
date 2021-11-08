@@ -50,7 +50,9 @@ class TestFrankAndOakTransformProcessInventoryTransfer(unittest.TestCase):
             'netsuite_email': 'NOT_SET',
             'netsuite_password': 'NOT_SET',
             'netsuite_role_id': 'NOT_SET',
-            'netsuite_wsdl_url': 'https://webservices.netsuite.com/wsdl/v2018_1_0/netsuite.wsdl'
+            'netsuite_wsdl_url': 'https://webservices.netsuite.com/wsdl/v2018_1_0/netsuite.wsdl',
+            'PHYSICAL_GC_ID': 'PGC',
+            'PHYSICAL_GC_SKU': '5500000-000',
         }
         self.os_env = patch.dict('os.environ', self.variables)
         self.os_env.start()
@@ -124,3 +126,68 @@ class TestFrankAndOakTransformProcessInventoryTransfer(unittest.TestCase):
         self._assert_json(self, received_items, expected_result)
         self._assert_json(self, expected_result, received_items)
         self.assertEqual(overage_items, [])
+
+    def test_replace_pgc_product_id(self):
+        test_message = {
+                "asn_id": "f329f3dc-005a-4869-9064-54a1eb1fd99c",
+                "associate_id": "20467196ac8459928978b08408041fd6",
+                "chunk_number": 1,
+                "fulfillment_location_id": "TOST",
+                "id": "30df6d55-355b-4f59-a841-7764c4e8a88f",
+                "items": [
+                    {
+                        "external_identifiers": {
+                            "sku": "PGC"
+                        },
+                        "product_id": "PGC",
+                        "quantity": 5
+                    },
+                                    {
+                        "external_identifiers": {
+                            "sku": "PGC"
+                        },
+                        "product_id": "123123",
+                        "quantity": 5
+                    }
+                ],
+                "order_ref": "TO0005593",
+                "processed_at": "2021-10-18T08:25:09.717Z",
+                "published_at": "2021-10-18T08:25:55.185Z",
+                "shipment_ref": "IF0525547 - abcdef",
+                "stock_location_name": "main",
+                "total_chunks": 1
+            }
+
+        expected_result = {
+                "asn_id": "f329f3dc-005a-4869-9064-54a1eb1fd99c",
+                "associate_id": "20467196ac8459928978b08408041fd6",
+                "chunk_number": 1,
+                "fulfillment_location_id": "TOST",
+                "id": "30df6d55-355b-4f59-a841-7764c4e8a88f",
+                "items": [
+                    {
+                        "external_identifiers": {
+                            "sku": "PGC"
+                        },
+                        "product_id": "5500000-000",
+                        "quantity": 5
+                    },
+                                    {
+                        "external_identifiers": {
+                            "sku": "PGC"
+                        },
+                        "product_id": "123123",
+                        "quantity": 5
+                    }
+                ],
+                "order_ref": "TO0005593",
+                "processed_at": "2021-10-18T08:25:09.717Z",
+                "published_at": "2021-10-18T08:25:55.185Z",
+                "shipment_ref": "IF0525547 - abcdef",
+                "stock_location_name": "main",
+                "total_chunks": 1
+            }
+
+        items_received_event = self.pit.replace_pgc_product_id(test_message, 'PGC', '5500000-000')
+
+        assert items_received_event == expected_result

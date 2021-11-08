@@ -88,3 +88,8 @@ async def map_received_items(received_items, receiving_store_location_id, item_f
             mapped_received_items.append(received_item)
 
     return mapped_received_items, overage_items
+
+def replace_pgc_product_id(items_received_event, physical_gc_id, physical_gc_sku):
+    for item in items_received_event['items']:
+        item['product_id'] = item['product_id'] if item['product_id'] != physical_gc_id else physical_gc_sku
+    return items_received_event

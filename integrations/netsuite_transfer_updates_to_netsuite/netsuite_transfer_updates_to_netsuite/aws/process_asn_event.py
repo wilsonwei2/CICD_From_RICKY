@@ -3,6 +3,7 @@
 
 # Runs startup processes
 import netsuite.netsuite_environment_loader  # pylint: disable=W0611
+import os
 import netsuite.api.sale as netsuite_sale
 import netsuite.api.transfers as netsuite_transfers
 import logging
@@ -22,6 +23,9 @@ LOGGER.info(F"SQS Queue {SQS_QUEUE}")
 EVENT_ID_CACHE = Utils.get_environment_variable(
     "EVENT_ID_CACHE", "tu-item-received-event-id-cache")
 LOGGER.info(f"EVENT_ID_CACHE {EVENT_ID_CACHE}")
+
+PHYSICAL_GC_ID = os.environ.get('PHYSICAL_GC_ID', 'PGC')
+PHYSICAL_GC_SKU = os.environ.get('PHYSICAL_GC_SKU', '5500000-000')
 
 DYNAMO_TABLE = Utils.get_dynamo_table(EVENT_ID_CACHE)
 # We will limit this to clearing once per instantiation to limit overhead
@@ -47,7 +51,7 @@ def handler(_, context):
 
 async def process_inventory(message):
     LOGGER.info(f"Message to process: \n {json.dumps(message, indent=4)}")
-    items_received_event = message['payload']
+    items_received_event = pit.replace_pgc_product_id(message['payload'], PHYSICAL_GC_ID, PHYSICAL_GC_SKU)
 
     if Utils.event_already_received(f"{items_received_event['id']}-{items_received_event['chunk_number']}", DYNAMO_TABLE):
         LOGGER.info("Event was already processed, skipping")
