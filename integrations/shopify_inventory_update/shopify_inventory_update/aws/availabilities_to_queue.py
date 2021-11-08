@@ -298,6 +298,7 @@ async def _process_variants_to_queue(variants, context):
 
     result = True
     export_count = len(variants)
+    mapped_inventory_ids = []
     shopify_inventory_item_list = []
     counter = 0
 
@@ -353,6 +354,14 @@ async def _process_variants_to_queue(variants, context):
             LOGGER.debug(f'Shopify inventory ID for CAD not present for "{product_id}", skipping variant')
             continue
 
+        # Due to a data issue inventory records might be exported twice for a location
+        # one for the english and one for the french catalog; and it could also be its only exported
+        # for the english OR the french catalog - so we check here for duplicates
+        if shopify_inventory_ids.get('cad') + '-' + fulfillment_node_id in mapped_inventory_ids:
+            LOGGER.debug(f'Skip inventory record since its already in the list {shopify_inventory_ids.get("cad")}-{fulfillment_node_id}')
+            continue
+        mapped_inventory_ids.append(shopify_inventory_ids.get('cad') + '-' + fulfillment_node_id)
+
         shopify_inventory_id_usd = _get_usd_inventory_item_id(variant.get('product_id'))
         if shopify_inventory_id_usd:
             shopify_inventory_ids['usd'] = shopify_inventory_id_usd
@@ -369,6 +378,7 @@ async def _process_variants_to_queue(variants, context):
             await _drop_to_queue(sqs_handler, shopify_inventory_item_list)
             counter = counter + 1
             LOGGER.info(f'Pushed message number {counter} to queue {sqs_handler.queue_name}')
+            mapped_inventory_ids = []
             shopify_inventory_item_list = []
 
         shopify_inventory_item_list.append({
@@ -382,7 +392,8 @@ async def _process_variants_to_queue(variants, context):
     if len(shopify_inventory_item_list) > 0:
         await _drop_to_queue(sqs_handler, shopify_inventory_item_list)
         LOGGER.info(f'Pushed last message to queue {sqs_handler.queue_name}')
-        shopify_inventory_item_list = {}
+        mapped_inventory_ids = []
+        shopify_inventory_item_list = []
 
     LOGGER.info(f'Export items count: {export_count}')
     LOGGER.info(f'Pushed items count: {pushed_count}')
