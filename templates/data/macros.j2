@@ -88,21 +88,3 @@
     {% endif %}
   {% endfor %}
 {%- endmacro -%}
-
-{%- macro translate_payment_method(payment_method) -%}
-    {% if "[[[#language]]]" != "en_US" %}
-      {% if payment_method == "cash" %}
-          <span>[[[#payment.cash]]]</span>
-      {% elif payment_method == "credit_card" %}
-          <span>[[[#payment.credit_card]]]</span>
-      {% elif payment_method == "gift_card" %}
-          <span>[[[#payment.gift_card]]]</span>
-      {% elif payment_method == "store_credit" %}
-          <span>[[[#payment.store_credit]]]</span>
-      {% else %}
-          {{ desnake(payment_method) }}
-      {% endif %}
-    {% else %}
-      {{ desnake(payment_method) }}
-    {% endif %}
-{%- endmacro -%}

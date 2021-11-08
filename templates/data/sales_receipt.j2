@@ -1,5 +1,5 @@
 {% extends 'pos_base' %}
-{%- from 'macros' import currency, address, translate_payment_method, desnake with context -%}
+{%- from 'macros' import currency, address, desnake with context -%}
 
 {% block top_info %}
 	<div class="top_info">
@@ -139,7 +139,7 @@
 				{% endif %}
 			{%- else -%}
 			<div>
-				<p>{{ translate_payment_method(instrument.payment_method) }}</p>
+				<p>{{desnake(instrument.payment_method)}}</p>
 				<p>{{ currency(instrument.amount) }}</p>
 			</div>
 				{% if instrument.payment_method == "cash" %}

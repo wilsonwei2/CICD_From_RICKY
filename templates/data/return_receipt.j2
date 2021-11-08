@@ -1,5 +1,5 @@
 {% extends 'pos_base' %}
-{%- from 'macros' import currency, address, translate_payment_method, desnake with context -%}
+{%- from 'macros' import currency, address, desnake with context -%}
 
 {% block title %}
 	<div class="title">
@@ -92,7 +92,7 @@
 			<p>{{ currency(refund.refund_amount) }}</p>
 			</div>
 			{%- else -%}
-				<p>{{ translate_payment_method(refund.payment_method) }}</p>
+				<p>{{ desnake(refund.payment_method) }}</p>
 				<p>{{ currency(refund.refund_amount, true) }}</p>
 			{%- endif -%}
 			</div>
