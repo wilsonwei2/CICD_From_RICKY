@@ -216,13 +216,7 @@ def get_currency_list():
             currency=RecordRef(internalId=int(Utils.get_netsuite_config()['currency_usd_internal_id']))
         ),
         CustomerCurrency(
-            currency=RecordRef(internalId=int(Utils.get_netsuite_config()['currency_gbp_internal_id']))
-        ),
-        CustomerCurrency(
             currency=RecordRef(internalId=int(Utils.get_netsuite_config()['currency_cad_internal_id']))
-        ),
-        CustomerCurrency(
-            currency=RecordRef(internalId=int(Utils.get_netsuite_config()['currency_eur_internal_id']))
         )
     ])
 

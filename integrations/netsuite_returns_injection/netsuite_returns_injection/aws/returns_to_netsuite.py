@@ -65,6 +65,13 @@ async def process_return(message):
     LOGGER.info(f"Message to process: \n {json.dumps(message, indent=4)}")
     ns_return = message['payload']
 
+    # In case of a blind return the order id is not set, but a pseudo-order has been created for the return
+    is_blind_return = False
+    if 'order_id' not in ns_return:
+        LOGGER.info('Event is for a blind return')
+        is_blind_return = True
+        ns_return['order_id'] = fetch_order_uuid(ns_return)
+
     # The lambda should not ignore returns to historical orders, it should just ignore historical returns
     if check_historic_return(ns_return):
         LOGGER.info('Skipping Historical Return...')
@@ -80,6 +87,10 @@ async def process_return(message):
         f'customer_order_envelope: \n{json.dumps(customer_order_envelope, indent=4)}')
 
     customer_order = customer_order_envelope['customer_order']
+
+    if not is_blind_return:
+        payment_history = customer_order_envelope['payment_history']
+        is_blind_return = (len(payment_history) == 1 and payment_history[0]['category'] == 'Refund')
 
     # Fix this field with the timestamp we find in the customer order's timeline
     # only if the order_timeline is present, otherwise utilize the original returned_at
@@ -108,7 +119,7 @@ async def process_return(message):
         return await _handle_web_order_return(customer_order, ns_return, payments_info)
 
     if customer_order['channel_type'] == 'store':
-        return await _handle_store_order_return(customer_order, ns_return, payments_info, store_tz)
+        return await _handle_store_order_return(customer_order, ns_return, payments_info, store_tz, is_blind_return)
 
     return False
 
@@ -123,12 +134,13 @@ async def _update_payments_info_if_needed(customer_order, payments_info):
     return updated_payments_info
 
 
-async def _handle_store_order_return(customer_order, ns_return, payments_info, store_tz):
+async def _handle_store_order_return(customer_order, ns_return, payments_info, store_tz, is_blind_return):
     cash_sale = None
     is_historical = Utils.get_extended_attribute(
         customer_order['extended_attributes'], 'is_historical')
 
-    if not (is_historical and is_historical.lower() == 'true'):
+    if not (is_historical and is_historical.lower() == 'true') \
+        and not is_blind_return:
         # Retrieve the associated order from NetSuite
         cash_sale = get_cash_sale(customer_order['sales_order_external_id'])
         if not cash_sale:
@@ -388,7 +400,7 @@ def search_sales_order(order_id, external_order_id):
             # If the SalesOrder was not found by the searchs above then we have a last way to search
             _, sales_order = get_transaction_with_custom_field(
                 external_order_id,
-                'custbody_nws_ecom_orderinternalid',
+                'custbody_nws_shopifyorderid',
                 '_salesOrder'
             )
     return sales_order
@@ -555,6 +567,11 @@ def inject_credit_memo(return_parsed):
         LOGGER.error('Error on creating Credit Memo. Credit Memo not created.')
 
     return response
+
+
+def fetch_order_uuid(ns_return):
+    refund = Utils.get_newstore_conn().get_refund(ns_return['id'], ns_return['id'])
+    return refund['refund']['order_id']
 
 
 def check_historic_return(ns_return):

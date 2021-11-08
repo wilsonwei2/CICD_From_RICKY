@@ -335,7 +335,7 @@ def map_custom_fields(customer_order):
 
     custom_fields_list = [
         StringCustomFieldRef(
-            scriptId='custbody_nws_ecom_orderinternalid',
+            scriptId='custbody_nws_shopifyorderid',
             value=customer_order['sales_order_external_id']
         )
     ]

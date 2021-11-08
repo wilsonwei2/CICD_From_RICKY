@@ -37,6 +37,9 @@ async def transform_order(cash_sale, ns_return, payments_info, customer_order=No
         LOGGER.info('Map customer')
         customer = map_customer_information(customer_order, subsidiary_id)
 
+        cash_refund['entity'] = customer
+        cash_refund['currency'] = RecordRef(internalId=Utils.get_currency_id(ns_return['currency']))
+
     # This verifies the transactions on NewStore
     if not Utils.verify_all_transac_refunded(refund_transactions, ns_return['total_refund_amount']):
         LOGGER.error(f'transform_order - refund_transactions {refund_transactions}')

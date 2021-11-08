@@ -270,3 +270,13 @@ class Utils():
             payment_item_id = Utils.get_payment_item_id(
                 payment_method, None, currency, payment_type)
         return payment_item_id
+
+    @staticmethod
+    def get_currency_id(currency_code):
+        currency_map = {
+            'USD': int(Utils.get_netsuite_config()['currency_usd_internal_id']),
+            'CAD': int(Utils.get_netsuite_config()['currency_cad_internal_id']),
+            'GBP': int(Utils.get_netsuite_config()['currency_gbp_internal_id']),
+            'EUR': int(Utils.get_netsuite_config()['currency_eur_internal_id'])
+        }
+        return currency_map.get(str(currency_code))
