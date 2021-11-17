@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 lambda-utils = {path = "./../../shared/lambda_utils"}
 boto3 = "*"
+newstore-adapter = {path = "./../../shared/newstore_adapter"}
 param-store = {path = "./../../shared/3.6/param_store"}
 psycopg2-binary = "*"
 aiohttp = "*"

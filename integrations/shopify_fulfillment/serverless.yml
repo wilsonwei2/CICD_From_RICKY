@@ -57,13 +57,22 @@ functions:
     timeout: 300
     memorySize: 128
     environment:
-      WEBHOOK_URL: ''
+      WEBHOOK_URL:
+        Fn::Join:
+          - ''
+          - - 'https://'
+            - Ref: ApiGatewayRestApi
+            - '.execute-api.'
+            - Ref: AWS::Region
+            - '.amazonaws.com/'
+            - ${self:provider.stage}
+            - '/shopify_fulfillment/receive_event'
       WEBHOOK_NAME: ${self:provider.tenant}-sf-event-to-sqs
       WEBHOOK_EVENT_FILTER: 'fulfillment_request.items_completed'
     events:
       - schedule:
           name: ${self:provider.tenant}-sf-trigger-register-hook
-          rate: rate(1 day)
+          rate: rate(2 hours)
 
 resources:
   Resources:

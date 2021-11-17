@@ -1,7 +1,7 @@
 import os
 import logging
 import asyncio
-from shopify_fulfillment.helpers.utils import Utils
+from  netsuite_event_stream_receiver.helpers.utils import Utils
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)

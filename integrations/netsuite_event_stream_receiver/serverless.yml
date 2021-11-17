@@ -22,6 +22,10 @@ provider:
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
   role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  environment:
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
+    newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_use_auth_lambda: 1
 
 functions:
   receive_events:
@@ -44,3 +48,36 @@ functions:
       HANDLE_POS_ORDER_AS_SALES_ORDER: false
     events:
       - http: POST /netsuite_integration/receive_event
+  register_hook_on_newstore:
+    name: ${self:provider.tenant}-netsuite-event-stream-receiver-register-webhook
+    handler: netsuite_event_stream_receiver.aws.webhook_register.handler
+    timeout: 300
+    memorySize: 128
+    environment:
+      WEBHOOK_URL:
+        Fn::Join:
+          - ''
+          - - 'https://'
+            - Ref: ApiGatewayRestApi
+            - '.execute-api.'
+            - Ref: AWS::Region
+            - '.amazonaws.com/'
+            - ${self:provider.stage}
+            - '/netsuite_integration/receive_event'
+      WEBHOOK_NAME: fao-netsuite-event-stream-receiver
+      WEBHOOK_EVENT_FILTER:
+        Fn::Join:
+          - ','
+          - - 'order.items_cancelled'
+            - 'refund_request.issued'
+            - 'return.processed'
+            - 'fulfillment_request.items_completed'
+            - 'order.cancelled'
+            - 'order.opened'
+            - 'inventory_transaction.items_received'
+            - 'inventory_transaction.asn_created'
+            - 'fulfillment_request.assigned'
+    events:
+      - schedule:
+          name: ${self:provider.tenant}-netsuite-event-stream-receiver-trigger-register-hook
+          rate: rate(1 hour)
