@@ -31,14 +31,9 @@ class Utils():
     @staticmethod
     def get_ns_handler(context=None):
         if not Utils._ns_handler:
-            newstore_config = json.loads(Utils.get_param_store().get_param(
-                os.environ.get('NEWSTORE_CREDS_PARAM', 'newstore')))
             Utils._ns_handler = NewStoreConnector(
                 tenant=os.environ.get('TENANT'),
                 context=context,
-                host=newstore_config['host'],
-                username=newstore_config['username'],
-                password=newstore_config['password'],
                 raise_errors=True
             )
 

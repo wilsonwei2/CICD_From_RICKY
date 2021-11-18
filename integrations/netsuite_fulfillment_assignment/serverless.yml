@@ -29,6 +29,9 @@ provider:
     SLACK_HOOK_URL: 'NOT_SET'
     RUN_DLQ_AT: 23
     RUN_DLQ_FOR: 45
+    newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_use_auth_lambda: 1
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
 
 functions:
   fulfillment_assignment:

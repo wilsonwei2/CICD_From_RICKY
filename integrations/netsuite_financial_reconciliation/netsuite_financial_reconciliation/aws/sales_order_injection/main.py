@@ -4,7 +4,7 @@ import os
 
 from newstore_adapter.connector import NewStoreConnector
 
-from . import params
+from . import params  # pylint: disable=unused-import
 from . import sales_order
 from . import sqs_consumer
 
@@ -17,14 +17,9 @@ LOGGER.setLevel(logging.INFO)
 def handler(event, context):  # pylint: disable=W0613
     global NEWSTORE_HANDLER  # pylint: disable=W0603
 
-    newstore_config = params.get_newstore_config()
-
     NEWSTORE_HANDLER = NewStoreConnector(
         tenant=os.environ.get('TENANT'),
         context=context,
-        host=newstore_config['host'],
-        username=newstore_config['username'],
-        password=newstore_config['password'],
         raise_errors=True
     )
 

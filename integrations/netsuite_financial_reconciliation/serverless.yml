@@ -19,6 +19,10 @@ provider:
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
   role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  environment:
+    newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_use_auth_lambda: 1
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
 
 functions:
   netsuite_cash_sale_injection:
