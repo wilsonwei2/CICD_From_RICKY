@@ -242,7 +242,11 @@ class Utils():
         payment_config = {}
         if payment_provider:
             payment_config = Utils.get_nws_to_netsuite_payment(payment_type)[payment_method].get(
-                payment_provider, {})
+                payment_provider, None)
+            # For BOPIS shopify/returnly orders, this fallback is needed for paypal, sezzle etc.
+            if not payment_config:
+                payment_config = Utils.get_nws_to_netsuite_payment(payment_type).get(
+                    payment_method, {})
         else:
             payment_config = Utils.get_nws_to_netsuite_payment(payment_type).get(
                 payment_method, {})
