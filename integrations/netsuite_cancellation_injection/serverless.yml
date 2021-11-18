@@ -29,6 +29,9 @@ provider:
     TENANT: ${self:provider.tenant}
     SQS_QUEUE: ${self:provider.tenant}-cancellation-to-netsuite-queue.fifo
     MAX_MESSAGE_QUEUE_SIZE: 25
+    newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_use_auth_lambda: 1
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
 
 functions:
   cancellation:
