@@ -27,13 +27,9 @@ REJECTED_ORDER_SAVED_SEARCH_ID = None
 def handler(event, context):
     LOGGER.info(f"Event received: {json.dumps(event, indent=4)}")
     global NEWSTORE_HANDLER  # pylint: disable=W0603
-    newstore_config = Utils.get_instance().get_newstore_config()
     NEWSTORE_HANDLER = NewStoreConnector(
         tenant=TENANT,
         context=context,
-        host=newstore_config['host'],
-        username=newstore_config['username'],
-        password=newstore_config['password'],
         raise_errors=True
     )
 

@@ -105,13 +105,9 @@ def activate_giftcard(giftcards_data):
 
 
 def send_updates_to_newstore(order_data):
-    newstore_config = json.loads(PARAM_STORE.get_param('newstore'))
     newstore_handler = NewStoreConnector(
         tenant=TENANT,
         context={},
-        host=newstore_config['host'],
-        username=newstore_config['username'],
-        password=newstore_config['password']
     )
 
     LOGGER.info(f'Send updates for newstore for order data: {order_data}')
