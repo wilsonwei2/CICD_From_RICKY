@@ -52,7 +52,10 @@ class TestFrankandoakASNImport(unittest.TestCase):
             'netsuite_email': 'NOT_SET',
             'netsuite_password': 'NOT_SET',
             'netsuite_role_id': 'NOT_SET',
-            'netsuite_wsdl_url': 'https://webservices.netsuite.com/wsdl/v2018_1_0/netsuite.wsdl'
+            'netsuite_wsdl_url': 'https://webservices.netsuite.com/wsdl/v2018_1_0/netsuite.wsdl',
+            'newstore_url_api': 'url',
+            # 'newstore_use_auth_lambda': '1',
+            # 'newstore_auth_lambda': '${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token',
         }
         self.os_env = patch.dict('os.environ', self.variables)
         self.os_env.start()

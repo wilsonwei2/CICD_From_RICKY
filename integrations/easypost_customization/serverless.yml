@@ -27,6 +27,9 @@ provider:
     TENANT: ${self:provider.tenant}
     REGION: ${self:provider.region}
     LOG_LEVEL: INFO
+    newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_use_auth_lambda: 1
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
 
 functions:
   easypost-book-shipment:

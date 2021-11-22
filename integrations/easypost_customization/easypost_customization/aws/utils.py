@@ -37,9 +37,6 @@ def get_newstore_conn(context, raise_errors=True):
         NEWSTORE_CONN = NewStoreConnector(
             tenant=TENANT,
             context=context,
-            host=get_newstore_creds()['host'],
-            username=get_newstore_creds()['username'],
-            password=get_newstore_creds()['password'],
             raise_errors=raise_errors
         )
     return NEWSTORE_CONN

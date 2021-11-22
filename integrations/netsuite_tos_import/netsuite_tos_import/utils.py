@@ -22,13 +22,9 @@ class Utils():
     @staticmethod
     def get_newstore_conn(context=None):
         if not Utils._newstore_conn:
-            newstore_config = Utils.get_newstore_config()
             Utils._newstore_conn = NewStoreConnector(
                 tenant=TENANT,
                 context=context,
-                host=newstore_config['host'],
-                username=newstore_config['username'],
-                password=newstore_config['password'],
                 raise_errors=True
             )
         return Utils._newstore_conn
