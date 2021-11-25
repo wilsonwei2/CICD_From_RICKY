@@ -31,7 +31,7 @@ def handler(event, context): # pylint: disable=W0613
         ## Making sure that the newstore -- tags are not added to the order.
         json_object = json.loads(order)
         existing_tags = [tag.strip() for tag in json_object.get('tags', '').split(',')]
-        stop_retry_tags = os.environ.get('STOP_RETRY_TAGS', 'newstore_created').split(",")
+        stop_retry_tags = os.environ.get('STOP_RETRY_TAGS', 'newstore_created,newstore_failed').split(",")
         if any(tag in stop_retry_tags for tag in existing_tags):
             LOGGER.debug(f'Not processing Order with id {order_id} -- request because it has {existing_tags} - tags')
             return {
