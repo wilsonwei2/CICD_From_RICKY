@@ -32,6 +32,45 @@ LOGGER.setLevel(logging.INFO)
 CITY_SUBSTRING_LIMIT = 49
 
 
+# Removes any incompatible chars from a string - mainly used to filter values
+# entered by customers in the webshop.
+def remove_incompatible_chars(string):
+    return remove_emojis(''.join(c for c in string if valid_xml_char_ordinal(c)))
+
+
+def valid_xml_char_ordinal(c):
+    codepoint = ord(c)
+    return (
+        0x20 <= codepoint <= 0xD7FF or
+        codepoint in (0x9, 0xA, 0xD) or
+        0xE000 <= codepoint <= 0xFFFD or
+        0x10000 <= codepoint <= 0x10FFFF
+        )
+
+
+def remove_emojis(string):
+    pattern = re.compile("["
+                           u"\U0001F600-\U0001F64F"  # emoticons
+                           u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                           u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                           u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                           u"\U00002500-\U00002BEF"  # chinese char
+                           u"\U00002702-\U000027B0"
+                           u"\U00002702-\U000027B0"
+                           u"\U000024C2-\U0001F251"
+                           u"\U0001f926-\U0001f937"
+                           u"\U00010000-\U0010ffff"
+                           u"\u2640-\u2642"
+                           u"\u2600-\u2B55"
+                           u"\u200d"
+                           u"\u23cf"
+                           u"\u23e9"
+                           u"\u231a"
+                           u"\ufe0f"  # dingbats
+                           u"\u3030"
+                           "]+", flags=re.UNICODE)
+    return pattern.sub(r'', string)
+
 # Gets the customer internal id. If the customer is not created yet, a new customer is created
 # in Netsuite. Otherwise, it is updated.
 def get_customer_internal_id(order_event, order_data, consumer):  # pylint: disable=too-many-statements
@@ -70,6 +109,9 @@ def get_customer_internal_id(order_event, order_data, consumer):  # pylint: disa
             first_name = consumer.get('first_name', '-')
             last_name = consumer.get('last_name', '-')
             phone_number = consumer.get('phone_number')
+
+        first_name = remove_incompatible_chars(first_name)
+        last_name = remove_incompatible_chars(last_name)
 
         netsuite_customer = {
             'customForm': params.RecordRef(internalId=int(params.get_netsuite_config()['customer_custom_form_internal_id'])),
@@ -117,6 +159,9 @@ def get_customer_internal_id(order_event, order_data, consumer):  # pylint: disa
                 first_name = address['firstName']
                 last_name = address['lastName']
                 phone_number = address['phone']
+
+            first_name = remove_incompatible_chars(first_name)
+            last_name = remove_incompatible_chars(last_name)
 
             # Generate the netsuite customer using the above data
             netsuite_customer = {
@@ -331,9 +376,9 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
             'state': shipping_address['state'],
             'zip': shipping_address['zipCode'],
             'city': shipping_address['city'][0:CITY_SUBSTRING_LIMIT],
-            'addr1': shipping_address['addressLine1'],
-            'addr2': shipping_address['addressLine2'],
-            'addressee': customer_name
+            'addr1': remove_incompatible_chars(shipping_address['addressLine1']),
+            'addr2': remove_incompatible_chars(shipping_address['addressLine2']),
+            'addressee': remove_incompatible_chars(customer_name)
         }
 
         sales_order['shippingAddress'] = Address(**address)
@@ -351,9 +396,9 @@ def get_sales_order(order_event, order_data):  # pylint: disable=W0613
             'state': billing_address['state'],
             'zip': billing_address['zipCode'],
             'city': billing_address['city'][0:CITY_SUBSTRING_LIMIT],
-            'addr1': billing_address['addressLine1'],
-            'addr2': billing_address['addressLine2'],
-            'addressee': customer_name
+            'addr1': remove_incompatible_chars(billing_address['addressLine1']),
+            'addr2': remove_incompatible_chars(billing_address['addressLine2']),
+            'addressee': remove_incompatible_chars(customer_name)
         }
 
         sales_order['billingAddress'] = Address(**address)
