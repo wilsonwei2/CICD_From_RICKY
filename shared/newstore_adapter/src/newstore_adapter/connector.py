@@ -196,7 +196,8 @@ class NewStoreConnector(object):
         url = 'https://%s/v0/d/consumer_profiles' % (self.host)
         params = {
             'q': email,
-            'offset': offset
+            'offset': offset,
+            'count': 10
         }
         try:
             response = self.newstore_adapter.get_request(url, params)
