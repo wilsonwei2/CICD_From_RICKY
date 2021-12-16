@@ -6,6 +6,7 @@ import logging
 from datetime import datetime
 from lambda_utils.sqs.SqsHandler import SqsHandler
 from param_store.client import ParamStore
+from netsuite_event_stream_receiver.helpers.utils import Utils
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
@@ -44,7 +45,7 @@ def handler(event, _):
     }
 
 
-async def process_event(event): #pylint: disable=too-many-branches, too-many-return-statements
+async def process_event(event): #pylint: disable=too-many-branches, too-many-return-statements, too-many-statements
     event_body = json.loads(event.get('body', {}))
     if not event_body:
         LOGGER.info('Empty event received')
@@ -99,12 +100,17 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
 
         queue_name = SQS_FULFILLMENT_ASSIGNED
     elif event_type == 'fulfillment_request.items_completed':
-        if event_body.get('payload', {}).get('service_level') == 'IN_STORE_HANDOVER':
-            LOGGER.info('Received a fulfillment_request.items_completed message with a service level of '
-                        'IN_STORE_HANDOVER. Will not process.')
-            return True
-
-        if is_historical_fulfillment(payload):
+        if payload.get('service_level') == 'IN_STORE_HANDOVER':
+            order_id = payload['order_id']
+            customer_order = Utils.get_newstore_conn().get_customer_order(order_id).get('customer_order', {})
+            if is_mixed_cart_order(customer_order):
+                LOGGER.info('Received a fulfillment_request.items_completed message with a service level of '
+                            'IN_STORE_HANDOVER in a mixed cart. Will send to queue.')
+            else:
+                LOGGER.info('Received a fulfillment_request.items_completed message with a service level of '
+                            'IN_STORE_HANDOVER. Will not process.')
+                return True
+        elif is_historical_fulfillment(payload):
             LOGGER.info('Received historical order...ignored')
             return True
 
@@ -120,6 +126,14 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
 
     push_message_to_sqs(queue_name, message)
     return True
+
+
+def is_mixed_cart_order(customer_order):
+    is_mixed = [
+        ship_detail['shipping_option']['service_level_identifier'] != 'IN_STORE_HANDOVER'
+        for ship_detail in customer_order['shipment_details']
+    ]
+    return len(is_mixed) >= 2 and any(is_mixed)
 
 
 def is_endless_aisle_order(payload):
