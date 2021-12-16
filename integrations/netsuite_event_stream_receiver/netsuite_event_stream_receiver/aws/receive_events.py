@@ -73,8 +73,7 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
         # A channel_type of 'web' or a shipping service level denotes that this is
         # not a cash sale, so should be handled as a sales order
         is_a_web_order = payload['channel_type'] == 'web'
-        shipping_service_level = payload['items'][0].get('shipping_service_level', None)
-        is_endless_aisle = bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER')
+        is_endless_aisle = is_endless_aisle_order(payload)
         if is_a_web_order or is_endless_aisle or HANDLE_POS_ORDER_AS_SALES_ORDER in ('1', 't', 'true', 'yes'):
             queue_name = SQS_SALES_ORDER
         else:
@@ -121,6 +120,15 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
 
     push_message_to_sqs(queue_name, message)
     return True
+
+
+def is_endless_aisle_order(payload):
+    for item in payload['items']:
+        shipping_service_level = item.get('shipping_service_level', None)
+        if bool(shipping_service_level and shipping_service_level != 'IN_STORE_HANDOVER'):
+            return True
+
+    return False
 
 
 def is_historical_fulfillment(payload):

@@ -289,7 +289,11 @@ def get_payment_items(order_event, order_data, location):
 
 # Creates the Netsuite Sales order out of a NewStore order
 def get_sales_order(order_event, order_data):  # pylint: disable=W0613
-    service_level = order_event['items'][0].get('shipping_service_level', None)
+    for item in order_event['items']:
+        # Get a service level which is not IN_STORE_HANDOVER for mixed orders
+        if item.get('shipping_service_level', None) != 'IN_STORE_HANDOVER':
+            service_level = item.get('shipping_service_level', None)
+
     logging.info(f'service level is {service_level}')
 
     if service_level in params.get_newstore_to_netsuite_shipping_methods_config():
