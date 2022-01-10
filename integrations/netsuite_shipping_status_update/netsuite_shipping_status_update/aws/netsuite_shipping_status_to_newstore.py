@@ -176,7 +176,6 @@ def send_updates_to_newstore(order_data):
 
 
 def get_fulfillment_requests_from_graphql(order_data, newstore_handler):
-    # TODO update item filter!
     graphql_query = """
         query Orders($order_ids: [String!]) {
             orders(first: 100, filter: {externalId: {in: $order_ids}}) {
@@ -256,6 +255,7 @@ def filter_ffr_product_ids(netsuite_product_ids, fulfillment_items):
     filtered_item_ids = []
     for item in fulfillment_items:
         if item['product_id'] in netsuite_product_ids:
+            netsuite_product_ids.remove(item['product_id'])
             filtered_item_ids.append(item['product_id'])
 
     return filtered_item_ids
