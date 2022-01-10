@@ -121,7 +121,7 @@ def map_customer_information(customer_order, subsidiary_id):
 
 def map_cash_refund(ns_return, location_id, sales_order, return_authorization=None, store_tz='America/New_York', is_credit_memo=False): # pylint: disable=too-many-arguments
     refund = {}
-    cm_init_item_list_reduced = {}
+    cm_init_item_list_reduced = []
 
     if is_credit_memo:
         initialized_record = initialize_record('creditMemo', 'returnAuthorization', return_authorization.internalId)
@@ -141,9 +141,10 @@ def map_cash_refund(ns_return, location_id, sales_order, return_authorization=No
         for item in credit_memo_init_item_list:
             current_item = {}
             item_name = item['item']['name']
+            current_item['itemName'] = item_name
             current_item['orderLine'] = item['orderLine']
             current_item['line'] = item['line']
-            cm_init_item_list_reduced[item_name] = current_item
+            cm_init_item_list_reduced.append(current_item)
 
         LOGGER.info(f"credit_memo_init_item_list {credit_memo_init_item_list}")
         LOGGER.info(f"cm_init_item_list_reduced {cm_init_item_list_reduced}")

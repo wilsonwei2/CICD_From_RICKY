@@ -180,6 +180,7 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
             cash_refund_item['price'] = RecordRef(internalId=1)
             cash_refund_item['orderLine'] = credit_memo_init_item['orderLine']
             cash_refund_item['line'] = credit_memo_init_item['line']
+            credit_memo_init_item_list.remove(credit_memo_init_item)
         else:
             cash_refund_item['rate'] = str(item['price_catalog'])
 
@@ -246,10 +247,12 @@ def get_cm_init_element(item, credit_memo_init_item_list):
     if not credit_memo_init_item_list:
         return None
 
+    LOGGER.info(f'Search product {item["id"]} in Credit Memo Init Item List {credit_memo_init_item_list}')
+
     for cm_item_init in credit_memo_init_item_list:
-        if cm_item_init.find(item['id']) >= 0:
-            return credit_memo_init_item_list[cm_item_init]
-        LOGGER.info("Product not found in Credit Memo Init record list")
+        if cm_item_init['itemName'].find(item['id']) >= 0:
+            return cm_item_init
+        LOGGER.info('Product not found in Credit Memo Init record list')
 
     return None
 
