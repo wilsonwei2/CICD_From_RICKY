@@ -4,6 +4,46 @@
     },
     "itemList": {
         "item": [
+              {
+                "item": {
+                    "name": "XXX : 10000 Fake Product A",
+                    "internalId": "10000",
+                    "externalId": null,
+                    "type": null
+                },
+                "line": 1,
+                "itemIsFulfilled": false,
+                "quantityFulfilled": 1.0,
+                "price": null,
+                "rate": null,
+                "taxCode": null,
+                "isClosed": false,
+                "amount": 20.0,
+                "customFieldList": {
+                    "customField": [
+                        {
+                            "value": "0.0",
+                            "internalId": null,
+                            "scriptId": "custcol_fao_line_item_discount"
+                        },
+                        {
+                            "value": "0.0",
+                            "internalId": null,
+                            "scriptId": "custcol_fao_order_item_discount"
+                        },
+                        {
+                            "value": "15.0",
+                            "internalId": "3751",
+                            "scriptId": "custcol_nws_override_taxcode"
+                        },
+                        {
+                            "value": "10000",
+                            "internalId": null,
+                            "scriptId": "custcol_ava_item"
+                        }
+                    ]
+                }
+            },
             {
                 "item": {
                     "name": "XXX : 10000 Fake Product A",
@@ -30,6 +70,11 @@
                             "value": "0.0",
                             "internalId": null,
                             "scriptId": "custcol_fao_order_item_discount"
+                        },
+                        {
+                            "value": "15.0",
+                            "internalId": "3751",
+                            "scriptId": "custcol_nws_override_taxcode"
                         },
                         {
                             "value": "10000",
@@ -67,6 +112,11 @@
                             "scriptId": "custcol_fao_order_item_discount"
                         },
                         {
+                            "value": "10.0",
+                            "internalId": "3751",
+                            "scriptId": "custcol_nws_override_taxcode"
+                        },
+                        {
                             "value": "10001",
                             "internalId": null,
                             "scriptId": "custcol_ava_item"
@@ -88,24 +138,7 @@
                 "rate": null,
                 "taxCode": null,
                 "isClosed": false,
-                "amount": -15.0,
-                "customFieldList": null
-            },
-            {
-                "item": {
-                    "name": "Fake Payment B",
-                    "internalId": "91254",
-                    "externalId": null,
-                    "type": null
-                },
-                "line": 4,
-                "itemIsFulfilled": false,
-                "quantityFulfilled": null,
-                "price": null,
-                "rate": null,
-                "taxCode": null,
-                "isClosed": false,
-                "amount": -35.0,
+                "amount": -56.0,
                 "customFieldList": null
             }
         ]

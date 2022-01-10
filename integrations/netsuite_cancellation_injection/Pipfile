@@ -10,6 +10,7 @@ lambda-utils = {path = "./../../shared/lambda_utils"}
 param-store = {path = "./../../shared/3.6/param_store"}
 newstore-adapter = {path = "./../../shared/newstore_adapter"}
 netsuite = {path = "./../../shared/python_netsuite"}
+pom-common = {path = "./../../shared/pom_common"}
 boto3 = "*"
 
 [requires]

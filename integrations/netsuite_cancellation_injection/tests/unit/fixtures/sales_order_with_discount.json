@@ -1,4 +1,7 @@
 {
+    "currency": {
+        "internalId": 1
+    },
     "itemList": {
         "item": [
             {
@@ -10,6 +13,10 @@
                 },
                 "line": 1,
                 "itemIsFulfilled": false,
+                "quantityFulfilled": 0.0,
+                "price": null,
+                "rate": null,
+                "taxCode": null,
                 "isClosed": false,
                 "amount": 20.0,
                 "customFieldList": {
@@ -23,6 +30,11 @@
                             "value": "10.0",
                             "internalId": null,
                             "scriptId": "custcol_fao_order_item_discount"
+                        },
+                        {
+                            "value": "10000",
+                            "internalId": null,
+                            "scriptId": "custcol_ava_item"
                         }
                     ]
                 }
@@ -36,8 +48,13 @@
                 },
                 "line": 2,
                 "itemIsFulfilled": false,
+                "quantityFulfilled": null,
+                "price": null,
+                "rate": null,
+                "taxCode": null,
                 "isClosed": false,
-                "amount": 10.0
+                "amount": -10.0,
+                "customFieldList": null
             },
             {
                 "item": {
@@ -48,6 +65,10 @@
                 },
                 "line": 3,
                 "itemIsFulfilled": false,
+                "quantityFulfilled": null,
+                "price": null,
+                "rate": null,
+                "taxCode": null,
                 "isClosed": false,
                 "amount": 30.0,
                 "customFieldList": {
@@ -61,6 +82,11 @@
                             "value": "0.0",
                             "internalId": null,
                             "scriptId": "custcol_fao_order_item_discount"
+                        },
+                        {
+                            "value": "10001",
+                            "internalId": null,
+                            "scriptId": "custcol_ava_item"
                         }
                     ]
                 }
@@ -73,9 +99,14 @@
                     "type": null
                 },
                 "line": 4,
+                "price": null,
+                "rate": null,
+                "taxCode": null,
                 "itemIsFulfilled": false,
+                "quantityFulfilled": null,
                 "isClosed": false,
-                "amount": 40.0
+                "amount": -40.0,
+                "customFieldList": null
             }
         ]
     },

@@ -35,11 +35,11 @@ async def consume(process, queue_name):
                 # If return is True we remove, else we don't so it may be processed on next run
                 try:
                     response = sqs_handler.delete_message(receipt_handle)
-                except Exception as ex:
+                except Exception as ex: # pylint: disable=broad-except
                     LOGGER.warning(f"Message wasn't deleted due to: {ex}")
                 else:
                     LOGGER.info(f'Message deleted from the queue {response}')
-        except Exception as e:
+        except Exception as e: # pylint: disable=broad-except
             LOGGER.error(f'Exception on event ID {message["payload"]["id"]} details: {str(e)}', exc_info=True)
         number_of_messages_to_consume -= 1
     LOGGER.info('Execution ended normally.')

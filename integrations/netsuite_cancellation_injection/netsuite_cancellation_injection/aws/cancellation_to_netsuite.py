@@ -95,7 +95,8 @@ async def handle_item_cancellation(event_cancellation, sales_order):
     update_items = []
 
     for item in sales_order['itemList']['item']:
-        if item['itemIsFulfilled'] or item['isClosed']:
+        if item['itemIsFulfilled'] or item['isClosed'] or \
+            (item['quantityFulfilled'] is not None and item['quantityFulfilled'] > 0):
             continue
 
         # Remove fields we don't need for line reference so they are not
@@ -103,25 +104,33 @@ async def handle_item_cancellation(event_cancellation, sales_order):
         updated_item = ns_s.SalesOrderItem(
             item=item['item'],
             line=item['line'],
+            amount=0.0,
             isClosed=True
         )
 
-        if get_product_id_by_netsuite_name(item['item']['name']) in cancelled_item_ids:
+        product_id = get_product_id_by_netsuite_name(item, cancelled_item_ids)
+        if product_id in cancelled_item_ids:
+            updated_item['quantity'] = 0
             update_items.append(updated_item)
-            cancelled_item_ids.remove(get_product_id_by_netsuite_name(item['item']['name']))
+            cancelled_item_ids.remove(product_id)
             amount_cancelled += abs(float(item['amount']))
+            taxes = get_item_taxes(item)
 
             if item_has_discount(item):
                 has_discount = True
 
+            if taxes:
+                amount_cancelled += (float(item['amount']) * taxes) / 100
+
         elif has_discount and str(item['item']['internalId']) == str(Utils.get_netsuite_config()['newstore_discount_item_id']):
+            updated_item['rate'] = 0.0
             update_items.append(updated_item)
             amount_cancelled -= abs(float(item['amount']))
             has_discount = False
 
         elif is_payment_item(item) and amount_cancelled > 0:
-            if item['amount'] >= amount_cancelled:
-                updated_item['amount'] = abs(item['amount']) - amount_cancelled
+            if abs(item['amount']) >= amount_cancelled:
+                updated_item['amount'] = -abs(abs(item['amount']) - amount_cancelled)
                 amount_cancelled = 0.0
             else:
                 amount_cancelled -= abs(item['amount'])
@@ -177,7 +186,18 @@ def get_customer_order(order_id):
     return customer_order.get('customer_order', {})
 
 
-def get_product_id_by_netsuite_name(netsuite_name):
-    # Parses the product id from the netsuite item name
-    output = netsuite_name.split(' ')
-    return '' if len(output) < 3 else netsuite_name.split(' ')[2]
+def get_product_id_by_netsuite_name(item, cancelled_item_ids):
+    netsuite_name = item['item']['name']
+    product_id = None
+    for possible_item_id in netsuite_name.split(' '):
+        if possible_item_id in cancelled_item_ids:
+            product_id = possible_item_id
+            break
+    return product_id
+
+
+def get_item_taxes(item):
+    for custom_field in item['customFieldList']['customField']:
+        if custom_field['scriptId'] == 'custcol_nws_override_taxcode':
+            return float(custom_field['value'])
+    return 0
