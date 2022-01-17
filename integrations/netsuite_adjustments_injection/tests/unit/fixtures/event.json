@@ -1,0 +1,24 @@
+{
+    "payload": {
+        "id": "c18582dd-accd-4078-928b-25d57c27be76",
+        "fulfillment_node_id": "012_Boston",
+        "adjustment_type": "Damage out",
+        "adjustment_reason": "Damaged",
+        "origin_stock_location_name": "main",
+        "associate_id": "51c73b055bf142c5b883943294eefd84",
+        "processed_at": "2020-06-04T16:21:24.866Z",
+        "chunk_number": 1,
+        "total_chunks": 1,
+        "items": [
+            {
+                "product_id": "01065PinRelLG",
+                "quantity": 1,
+                "external_identifiers": {
+                    "upc": "193405021449",
+                    "sku": "UT-14-35899-LG"
+                }
+            }
+        ],
+        "published_at": "2020-06-04T16:21:25.219Z"
+    }
+}

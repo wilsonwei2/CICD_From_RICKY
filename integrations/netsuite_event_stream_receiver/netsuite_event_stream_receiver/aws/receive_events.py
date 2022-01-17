@@ -19,6 +19,7 @@ SQS_FULFILLMENT = os.environ.get('SQS_FULFILLMENT')
 SQS_FULFILLMENT_ASSIGNED = os.environ.get('SQS_FULFILLMENT_ASSIGNED')
 SQS_APPEASEMENT_REFUND = os.environ.get('SQS_APPEASEMENT_REFUND')
 SQS_CANCELLATION = os.environ.get('SQS_CANCELLATION')
+SQS_ADJUSTMENTS = os.environ.get('SQS_ADJUSTMENTS')
 TENANT = os.environ.get('TENANT')
 STAGE = os.environ.get('STAGE')
 NEWSTORE_HANDLER = None
@@ -120,6 +121,9 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
     elif event_type in ('order.cancelled', 'order.items_cancelled'):
         queue_name = SQS_CANCELLATION
         message['event_type'] = event_type
+    elif event_type == 'inventory_transaction.adjustment_created':
+        queue_name = SQS_ADJUSTMENTS
+
     else:
         LOGGER.warning(f'Received an unsupported event type: {event_type}')
         return True
