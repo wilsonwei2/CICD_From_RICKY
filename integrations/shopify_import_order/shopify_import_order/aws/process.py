@@ -18,6 +18,8 @@ from shopify_import_order.returns import NewStoreReturnService
 TENANT = os.environ.get('TENANT') or 'frankandoak'
 STAGE = os.environ.get('STAGE') or 'x'
 BLOCK_BEFORE_DATE = os.environ.get('BLOCK_BEFORE_DATE')
+GIFTCARD_ELECTRONIC = os.environ.get('giftcard_electronic', 'EGC')
+GIFTCARD_PHYSICAL = os.environ.get('giftcard_physical', 'PGC')
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER = logging.getLogger(__name__)
@@ -155,8 +157,17 @@ def get_shipping_offer_token(order, newstore_handler):
     shipping_address = order.get('shipping_address', None)
 
     def get_bag_item(line_item):
+        product_id = line_item['sku']
+        is_gift_card_sku = product_id.lower().startswith('5500000')
+
+        is_gift_card = line_item['gift_card'] or is_gift_card_sku
+        if is_gift_card and line_item['requires_shipping']:
+            product_id = GIFTCARD_PHYSICAL
+        elif is_gift_card:
+            product_id = GIFTCARD_ELECTRONIC
+
         return {
-            'product_id': line_item['sku'],
+            'product_id': product_id,
             'quantity': line_item['quantity']
         }
 
@@ -176,6 +187,7 @@ def get_shipping_offer_token(order, newstore_handler):
                 },
                 'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])]
             }
+            LOGGER.debug(f'Payload to get in store pickup options: {payload}')
             in_store_pickup_options = newstore_handler.get_in_store_pickup_options(payload).get('options', [])
             LOGGER.debug(f'In store pickup options: {in_store_pickup_options}')
 
