@@ -470,7 +470,7 @@ def get_product_by_name(name):
         f'Product not Found in NetSuite. {name}')
 
 
-def get_sales_order_items(order_event): # pylint: disable=too-many-locals
+def get_sales_order_items(order_event): # pylint: disable=too-many-locals, too-many-statements
     store_id = order_event['channel']
     # subsidiary_id = get_subsidiary_id_for_web()
     currency = order_event['currency']
@@ -522,6 +522,13 @@ def get_sales_order_items(order_event): # pylint: disable=too-many-locals
             'taxCode': params.RecordRef(internalId=TaxManager.get_order_item_tax_code_id(currency)),
             'quantity': 1
         }
+
+        item_custom_field_list.append(
+            StringCustomFieldRef(
+                scriptId='custcol_nws_item_id',
+                value=item['id']
+            )
+        )
 
         # Set the location only for an Endless Aisle Order, but only for the items with INSTORE_HANDOVER
         # The location_id is already the one of the store

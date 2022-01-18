@@ -26,7 +26,6 @@ provider:
     SQS_QUEUE: !GetAtt FulfillmentAssignmentQueue.QueueName
     SQS_QUEUE_DLQ: !GetAtt FulfillmentAssignmentDeadLetterQueue.QueueName
     MAX_MESSAGE_QUEUE_SIZE: 25
-    SLACK_HOOK_URL: 'NOT_SET'
     RUN_DLQ_AT: 23
     RUN_DLQ_FOR: 45
     newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
@@ -44,7 +43,6 @@ functions:
       STAGE: ${self:provider.environment.STAGE}
       TENANT: ${self:provider.environment.TENANT}
       MAX_MESSAGE_QUEUE_SIZE: ${self:provider.environment.MAX_MESSAGE_QUEUE_SIZE}
-      SLACK_HOOK_URL: ${self:provider.environment.SLACK_HOOK_URL}
     events:
       - schedule:
           name: ${self:provider.tenant}-fulfillment-assignment-to-netsuite-trigger

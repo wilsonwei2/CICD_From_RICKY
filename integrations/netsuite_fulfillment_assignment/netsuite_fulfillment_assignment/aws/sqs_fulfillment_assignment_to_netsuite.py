@@ -4,6 +4,10 @@
 # Runs startup processes (expecting to be 'unused')
 import netsuite.netsuite_environment_loader # pylint: disable=W0611
 import netsuite.api.sale as nsas
+from netsuite.service import (
+    CustomFieldList,
+    StringCustomFieldRef
+)
 import logging
 import os
 import json
@@ -101,15 +105,32 @@ def update_sales_order(sales_order, fulfillment_request):
     netsuite_location_id = Utils.get_netsuite_store_internal_id(fulfillment_request['fulfillment_location_id'])
     product_ids_in_fulfillment = [item['product_id'] for item in fulfillment_request['items']]
 
+    item_ids_in_fulfillment = [item['id'] for item in fulfillment_request['items']]
+
+    # It could be that the items ids in NewStore don't match anymore the item ids stored in Netsuite
+    # Especially, for the DC rejections and fulfillments this might be the case
+    # This needs to be checked first
+    item_ids_in_fulfillment, updated_item_ids = check_item_ids_matching(sales_order, item_ids_in_fulfillment)
+
     update_items = []
     ship_method_id = service_level.get(shipping_service_level)
 
-    product_mapping = Utils.get_product_mappping()
+    product_mapping = Utils.get_product_mapping()
 
     if shipping_service_level in service_level:
         for item in sales_order_update.itemList.item:
             # To ensure that only the product IDs present in the fulfillment have their locations updated
             item_name = get_item_name(item, product_ids_in_fulfillment, product_mapping)
+            item_id = get_item_id(item)
+
+            # the sales order injection stores the UUID of each item in Netsuite
+            # the check below ensures that the correct item is updated in Netsuite in case of
+            # multiple of the same SKUs ordered but fulfilled in different locations
+            # Fallback to the original logic if the item_id is not stored or not found
+            if item_id is not None and item_id not in item_ids_in_fulfillment:
+                LOGGER.info(f'Skip update of line {item_id}, {item_name} in Netsuite since it is not part of the fulfillment.')
+                continue
+
             if item_name in product_ids_in_fulfillment:
                 # Remove fields we don't need for line reference so they are not
                 # updated to identical values (also avoids permissions errors)
@@ -135,8 +156,49 @@ def update_sales_order(sales_order, fulfillment_request):
     if not result:
         raise Exception(f'Failed to update sales order: {updated_sales_order}')
 
+    if len(updated_item_ids) > 0:
+        LOGGER.info('Update Sales Order with swapped item ids...')
+        update_sales_order_item_ids(updated_item_ids, updated_sales_order)
+
     LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
 
+# Updates the sales order (again) and re-assigns the item ids to make sure the reference
+# to NewStore items ids is still correct
+def update_sales_order_item_ids(updated_item_ids, sales_order):
+    sales_order_update = nsas.SalesOrder(
+        internalId=sales_order.internalId,
+        itemList=sales_order.itemList
+    )
+
+    update_items = []
+    for item in sales_order_update.itemList.item:
+        item_id = get_item_id(item)
+        for mapping in updated_item_ids:
+            if mapping['old_item_id'] == item_id:
+                LOGGER.info(f'Update SalesOrderItem and swap {mapping["old_item_id"]} with {mapping["new_item_id"]}')
+
+                sales_order_item = nsas.SalesOrderItem(
+                    item=item.item,
+                    line=item.line
+                )
+                item_custom_field_list = []
+                item_custom_field_list.append(
+                    StringCustomFieldRef(
+                        scriptId='custcol_nws_item_id',
+                        value=mapping['new_item_id']
+                    )
+                )
+                sales_order_item['customFieldList'] = CustomFieldList(item_custom_field_list)
+                update_items.append(sales_order_item)
+
+    sales_order_update.itemList.item = update_items
+    sales_order_update.itemList.replaceAll = False
+
+    LOGGER.info(f"SalesOrder to update: \n{json.dumps(serialize_object(sales_order_update), indent=4, default=Utils.json_serial)}")
+    result, updated_sales_order = nsas.update_sales_order(sales_order_update)
+
+    if not result:
+        raise Exception(f'Failed to update sales order: {updated_sales_order}')
 
 #
 # Virtual or Electronic Gift Cards need to be set to shipped and paid immediately. This function
@@ -215,3 +277,98 @@ def get_item_name(item, product_ids_in_fulfillment, product_mapping):
             break
 
     return item_name
+
+
+# Gets the NewStore Item ID stored by the Sales Order injection script from the item
+def get_item_id(item):
+    if item['customFieldList'] is not None:
+        custom_field_list = item['customFieldList']['customField']
+        for custom_field in custom_field_list:
+            script_id = custom_field['scriptId']
+            if script_id == 'custcol_nws_item_id':
+                return str(custom_field['value'])
+
+    return None
+
+
+# Gets the rejected flag stored for a Sales Order Item
+def get_nws_rejected_flag(item):
+    if item['customFieldList'] is not None:
+        custom_field_list = item['customFieldList']['customField']
+        for custom_field in custom_field_list:
+            script_id = custom_field['scriptId']
+            if script_id == 'custcol_nws_fulfillrejected':
+                return custom_field['value']
+
+    return False
+
+
+def check_item_ids_matching(sales_order, item_ids_in_fulfillment):
+    # 1) Get all sales order items which should be updated
+    sales_order_items = []
+    updated_item_ids = []
+    already_processed_rejected_ids = []
+    for item in sales_order.itemList.item:
+        item_id = get_item_id(item)
+
+        if item_id in item_ids_in_fulfillment:
+            sales_order_items.append(item)
+
+    # 2) If there is no item found, proceed with the data as given
+    if len(sales_order_items) == 0:
+        LOGGER.info('No Sales Order Item matches the given ID list.')
+        return item_ids_in_fulfillment
+
+    # 3) Check if one of the sales order items is already fulfilled and matches the list
+    #    of ids in the NewStore fulfillment request, then we need to swap
+    for item in sales_order_items: # pylint: disable=too-many-nested-blocks
+        item_is_fulfilled = item.itemIsFulfilled or \
+            (item.quantityFulfilled is not None and item.quantityFulfilled > 0)
+        if item_is_fulfilled:
+            item_id = get_item_id(item)
+
+            LOGGER.info(f'The item {item_id}, line {item.line}, is already fulfilled.')
+            LOGGER.info(f'Try to find a rejected item and replace the IDs.')
+
+            rejected_items = get_rejected_items(sales_order, item)
+
+            if len(rejected_items) == 0:
+                LOGGER.info('Rejected item not found. Will proceed with original data')
+
+            for rejected_item in rejected_items:
+                rejected_item_id = get_item_id(rejected_item)
+
+                if rejected_item_id in already_processed_rejected_ids:
+                    LOGGER.info(f'ID {rejected_item_id} already processed.')
+                    continue
+
+                LOGGER.info(f'Replace {item_id} with {rejected_item_id}')
+                item_ids_in_fulfillment.remove(item_id)
+                item_ids_in_fulfillment.append(rejected_item_id)
+
+                # Add to already processed list
+                already_processed_rejected_ids.append(rejected_item_id)
+
+                # Item IDs have been swapped
+                updated_item_ids.append({
+                    'old_item_id': item_id,
+                    'new_item_id': rejected_item_id
+                })
+                updated_item_ids.append({
+                    'old_item_id': rejected_item_id,
+                    'new_item_id': item_id
+                })
+
+    return item_ids_in_fulfillment, updated_item_ids
+
+# Gets the rejected items which have the same SKU as the given item.
+def get_rejected_items(sales_order, fulfilled_item):
+    product_id = fulfilled_item.item.name
+    rejected_items = []
+    for item in sales_order.itemList.item:
+        if product_id == item.item.name:
+            rejected = get_nws_rejected_flag(item)
+            if rejected:
+                rejected_items.append(item)
+
+    return rejected_items

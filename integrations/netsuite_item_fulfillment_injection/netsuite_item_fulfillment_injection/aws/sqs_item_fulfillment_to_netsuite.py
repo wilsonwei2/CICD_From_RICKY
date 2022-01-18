@@ -18,6 +18,8 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 SQS_QUEUE = os.environ['SQS_QUEUE']
 
+PHYSICAL_GC_ID = os.environ.get('PHYSICAL_GC_ID', 'PGC')
+PHYSICAL_GC_SKU = os.environ.get('PHYSICAL_GC_SKU', '5500000-000')
 
 def handler(_, context):
     """
@@ -39,7 +41,7 @@ def handler(_, context):
 
 async def process_fulfillment(message):
     LOGGER.info(f"Message to process: \n {json.dumps(message, indent=4)}")
-    fulfillment_request = message.get('payload')
+    fulfillment_request = replace_pgc_product_id(message.get('payload'), PHYSICAL_GC_ID, PHYSICAL_GC_SKU)
     order_id = fulfillment_request['order_id']
 
     # The customer_order endpoint is defined in the `affiliate app` end points
@@ -103,6 +105,7 @@ def update_sales_order(sales_order, fulfillment_request):
         itemList=sales_order.itemList
     )
     product_ids_in_fulfillment = [item['product_id'] for item in fulfillment_request['items']]
+    item_ids_in_fulfillment = [item['id'] for item in fulfillment_request['items']]
     netsuite_location_id = Utils.get_netsuite_store_internal_id(fulfillment_request['fulfillment_location_id'])
     update_items = []
 
@@ -115,7 +118,13 @@ def update_sales_order(sales_order, fulfillment_request):
             if custcol.scriptId == fulfillment_rejected_script_id:
                 is_rejected = custcol.value
 
-        item_is_fulfilled = item.itemIsFulfilled
+        item_is_fulfilled = item.itemIsFulfilled or \
+            (item.quantityFulfilled is not None and item.quantityFulfilled > 0)
+
+        location = item.location
+
+        item_name = item.item.name.split(' ')[2]
+        item_id = get_item_id(item)
 
         # Remove fields we don't need for line reference so they are not
         # updated to identical values (also avoids permissions errors)
@@ -124,21 +133,32 @@ def update_sales_order(sales_order, fulfillment_request):
             line=item.line
         )
 
-        LOGGER.info(f"Verify if product {item.item.name.split(' ')[2]} is in {product_ids_in_fulfillment}")
+        LOGGER.info(f'Item {item_name}, {item_id} is fulfilled {item_is_fulfilled}, is rejected {is_rejected}')
 
-        if item.item.name.split(' ')[2] in product_ids_in_fulfillment \
+        # the sales order injection stores the UUID of each item in Netsuite
+        # the check below ensures that the correct item is updated in Netsuite in case of
+        # multiple of the same SKUs ordered but fulfilled in different locations
+        # Fallback to the original logic if the item_id is not stored or not found
+        if item_id is not None and item_id not in item_ids_in_fulfillment:
+            LOGGER.info(f'Skip update of line {item_id}, {item_name} in Netsuite since it is not part of the fulfillment.')
+            continue
+
+        LOGGER.info(f"Verify if product {item_name} is in {product_ids_in_fulfillment}")
+
+        if item_name in product_ids_in_fulfillment \
                 and not item_is_fulfilled \
-                and not is_rejected \
-                and item.location is None:
+                and not is_rejected:
 
-            if item.item.name.split(' ')[2] not in Utils.get_virtual_product_ids_config():
+            if item_name not in Utils.get_virtual_product_ids_config():
                 # We can only set commitInventory on inventory items and avoid doing so in non-inventory items
                 item.commitInventory = '_availableQty'
 
-            item.location = nsas.RecordRef(internalId=netsuite_location_id)
-            product_ids_in_fulfillment.remove(item.item.name.split(' ')[2])
+            if location is None:
+                item.location = nsas.RecordRef(internalId=netsuite_location_id)
 
-        update_items.append(item)
+            product_ids_in_fulfillment.remove(item_name)
+
+            update_items.append(item)
 
     sales_order_update.itemList.item = update_items
     sales_order_update.itemList.replaceAll = False
@@ -197,3 +217,20 @@ def check_product_internal_ids(item_fulfillment_items):
         product = get_product_by_name(item['item']['internalId'])
         assert product, f"Could not find product {item['item']['internalId']} in NetSuite."
         item['item']['internalId'] = product['internalId']
+
+
+# Gets the NewStore Item ID stored by the Sales Order injection script from the item
+def get_item_id(item):
+    custom_field_list = item['customFieldList']['customField']
+    for custom_field in custom_field_list:
+        script_id = custom_field['scriptId']
+        if script_id == 'custcol_nws_item_id':
+            return str(custom_field['value'])
+
+    return None
+
+
+def replace_pgc_product_id(fulfillment_request_event, physical_gc_id, physical_gc_sku):
+    for item in fulfillment_request_event['items']:
+        item['product_id'] = item['product_id'] if item['product_id'] != physical_gc_id else physical_gc_sku
+    return fulfillment_request_event
