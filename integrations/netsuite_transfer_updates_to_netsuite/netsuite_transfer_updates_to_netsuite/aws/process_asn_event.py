@@ -73,6 +73,11 @@ async def process_inventory(message):
 
     item_fulfillments = await get_item_fulfillments(items_received_event)
 
+    # This fixes the situation when products are split over different item fulfillments
+    # The map only contains one item when a matching IF is found, but keep the further logic
+    # as fallback
+    item_fulfillments = get_item_fulfillment_for_asn(items_received_event, item_fulfillments)
+
     current_item_receipt = {}
     current_inventory_adjustment = None
     for item_fulfillment in item_fulfillments:
@@ -166,9 +171,46 @@ async def get_item_fulfillment(tran_id=None, created_from_id=None):
     return response
 
 
+async def get_item_receipts(created_from_id=None):
+    is_success, response = netsuite_sale.get_item_receipt_list(
+        created_from_id)
+
+    if not is_success:
+        LOGGER.error(f'Error retrieving item receipts: {response}')
+        return None
+    return response
+
+
 async def get_transfer_order(tran_id):
     is_success, response = netsuite_sale.get_transaction_with_tran_id(tran_id)
     if not is_success:
         LOGGER.error(f'Error retrieving transfer order: {response}')
         return None
     return response
+
+
+def get_item_fulfillment_for_asn(items_received_event, item_fulfillments):
+    asn_number = items_received_event['shipment_ref']
+    item_fulfillment_for_asn = []
+    for item_fulfillment in item_fulfillments:
+        item_fulfillment_asn = get_item_fulfillment_asn(item_fulfillment)
+        if asn_number == item_fulfillment_asn:
+            LOGGER.info(f'Found Item Fulfillment for ASN Number {asn_number}')
+            item_fulfillment_for_asn.append(item_fulfillment)
+
+    if len(item_fulfillment_for_asn) > 0:
+        return item_fulfillment_for_asn
+
+    LOGGER.info(f'No ASN number found, proceed with original item fulfillments.')
+    return item_fulfillments
+
+
+def get_item_fulfillment_asn(item_fulfillment):
+    if item_fulfillment['customFieldList'] is not None:
+        custom_field_list = item_fulfillment['customFieldList']['customField']
+        for custom_field in custom_field_list:
+            script_id = custom_field['scriptId']
+            if script_id == 'custbody_nws_asn_number':
+                return str(custom_field['value'])
+
+    return None

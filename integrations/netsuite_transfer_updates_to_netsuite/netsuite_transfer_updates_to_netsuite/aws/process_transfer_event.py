@@ -38,7 +38,7 @@ def handler(_, context):
     Receives event payloads from an SQS queue. The payload is taken from the order
     event stream, detailed here:
         https://apidoc.newstore.io/newstore-cloud/hooks_eventstream.html
-    Event Type: inventory_transaction.adjustment_created
+    Event Type: inventory_transaction.asn_created
     """
     LOGGER.info(f'Beginning queue retrieval...')
     Utils.get_newstore_conn(context)

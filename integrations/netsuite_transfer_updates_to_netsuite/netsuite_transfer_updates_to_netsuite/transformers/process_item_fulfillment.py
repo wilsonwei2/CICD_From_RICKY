@@ -1,7 +1,9 @@
 import logging
 from netsuite_transfer_updates_to_netsuite.helpers.utils import Utils
 from netsuite.service import (
-    RecordRef
+    RecordRef,
+    CustomFieldList,
+    StringCustomFieldRef
 )
 
 LOGGER = logging.getLogger(__file__)
@@ -20,7 +22,11 @@ def transform_item_fulfillment(asn_created_event, products_info, store, item_ful
             'item': map_item_fulfillment_items(products_info, item_fulfillment),
             'replaceAll': False
         },
-        'customFieldList': None
+        'customFieldList': CustomFieldList([
+            StringCustomFieldRef(
+                scriptId='custbody_nws_asn_number',
+                value=asn_created_event['shipment_ref']
+            )])
     }
 
 

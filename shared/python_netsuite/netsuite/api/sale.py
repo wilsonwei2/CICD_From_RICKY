@@ -146,6 +146,10 @@ def get_item_fulfillment_list(createdFromInternalId):
     return get_transaction_with_created_from_id(createdFromInternalId, '_itemFulfillment', True)
 
 
+def get_item_receipt_list(createdFromInternalId):
+    return get_transaction_with_created_from_id(createdFromInternalId, '_itemReceipt', True)
+
+
 def get_return_authorizations(createdFromInternalId):
     return get_transaction_with_created_from_id(createdFromInternalId, '_returnAuthorization', True)
 
