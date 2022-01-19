@@ -317,7 +317,7 @@ def check_item_ids_matching(sales_order, item_ids_in_fulfillment):
     # 2) If there is no item found, proceed with the data as given
     if len(sales_order_items) == 0:
         LOGGER.info('No Sales Order Item matches the given ID list.')
-        return item_ids_in_fulfillment
+        return item_ids_in_fulfillment, updated_item_ids
 
     # 3) Check if one of the sales order items is already fulfilled and matches the list
     #    of ids in the NewStore fulfillment request, then we need to swap
