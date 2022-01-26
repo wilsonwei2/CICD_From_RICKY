@@ -112,13 +112,14 @@ async def process_return(message):
     store_tz = await get_store_tz_by_customer_order(customer_order)
     LOGGER.info(f'Timezone: {store_tz}')
 
-    # In case of Endless Aisle channel_type is store, but it needs to be treated as web
-    if customer_order['channel_type'] == 'web' or is_endless_aisle:
+    # Endless Aisle orders should generate CashRefunds and not CreditMemo, since there is no
+    # ReturnAuthorization in Netsuite
+    if customer_order['channel_type'] == 'web':
         payments_info = await _update_payments_info_if_needed(payments_info=payments_info,
                                                               customer_order=customer_order)
         return await _handle_web_order_return(customer_order, ns_return, payments_info)
 
-    if customer_order['channel_type'] == 'store':
+    if customer_order['channel_type'] == 'store' or is_endless_aisle:
         return await _handle_store_order_return(customer_order, ns_return, payments_info, store_tz, is_blind_return)
 
     return False
@@ -139,8 +140,12 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
     is_historical = Utils.get_extended_attribute(
         customer_order['extended_attributes'], 'is_historical')
 
+    is_endless_aisle = False
+    if customer_order:
+        is_endless_aisle = Utils.is_endless_aisle(order_payload=customer_order)
+
     if not (is_historical and is_historical.lower() == 'true') \
-        and not is_blind_return:
+        and not is_blind_return and not is_endless_aisle:
         # Retrieve the associated order from NetSuite
         cash_sale = get_cash_sale(customer_order['sales_order_external_id'])
         if not cash_sale:
@@ -166,6 +171,9 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
         f"Transformed return: \n{json.dumps(serialize_object(return_parsed), indent=4, default=Utils.json_serial)}")
 
     if 'customer' in return_parsed and return_parsed['customer']:
+        if is_endless_aisle:
+            # Enhance the customer information with addresses for the tax calculation
+            return_parsed = por.map_shipping_billing_address(customer_order, return_parsed)
         customer = get_or_create_customer(return_parsed)
         if not customer:
             raise Exception('The customer could not be created')
@@ -354,10 +362,10 @@ def _get_custom_field_value(custom_fields_list, field):
     return ''
 
 
-def get_or_create_customer(order_data):
-    customer = order_data['customer']
-    shipping_addr = order_data.get('shipping_address')
-    billing_addr = order_data.get('billing_address')
+def get_or_create_customer(return_parsed):
+    customer = return_parsed['customer']
+    shipping_addr = return_parsed.get('shipping_address')
+    billing_addr = return_parsed.get('billing_address')
 
     addressbook = []
     if shipping_addr:

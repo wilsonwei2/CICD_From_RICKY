@@ -1,4 +1,5 @@
 import logging
+import re
 from netsuite.service import RecordRef, CustomFieldList
 from pom_common.netsuite import TaxManager
 from netsuite_returns_injection.transformers.return_transformer import (
@@ -92,3 +93,87 @@ def _get_cash_refund(ns_return, cash_sale, store_tz):
         cash_refund['createdFrom'] = RecordRef(internalId=cash_sale['internalId'])
 
     return cash_refund
+
+
+def map_shipping_billing_address(customer_order, return_parsed):
+    LOGGER.info('Prepare countries')
+    countries = Utils.get_countries()
+
+    LOGGER.info('Map shipping address')
+    shipping_address = build_shipping_address(
+        customer_order['shipping_address'], countries)
+
+    LOGGER.info('Map billing address')
+    if customer_order.get('billing_address'):
+        billing_address = build_billing_address(
+            customer_order['billing_address'], countries)
+    else:
+        billing_address = None
+
+    return_parsed['shipping_address'] = shipping_address
+    return_parsed['billing_address'] = billing_address
+
+    return return_parsed
+
+def build_shipping_address(address, countries):
+    return build_address(address=address,
+                         countries=countries,
+                         is_default_shipping=True)
+
+
+def build_billing_address(address, countries):
+    return build_address(address=address,
+                         countries=countries,
+                         is_default_billing=True)
+
+
+def build_address(address, countries, is_default_shipping=False, is_default_billing=False):
+    country_code = Utils.get_one_of_these_fields(
+        address, ['country', 'country_code'])
+    addr1 = Utils.get_one_of_these_fields(
+        address, ['address_line1', 'address_line_1'])
+    addr2 = Utils.get_one_of_these_fields(
+        address, ['address_line2', 'address_line_2'])
+    addressee = ' '.join(filter(None, [address.get('first_name', '-'),
+                                       address.get('second_name', ''),
+                                       address.get('last_name', '')
+                                       ]))
+    built_address = {
+        'defaultShipping': is_default_shipping,
+        'defaultBilling': is_default_billing,
+        'addressbookAddress': {
+            'addressee': addressee,
+            'country': countries[country_code],
+            'addr1': addr1,
+            'addr2': addr2,
+            'city': address['city'],
+            'state': address['state'],
+            'zip': address['zip_code'],
+            'addrPhone': get_phone_from_object(address)
+        }
+    }
+    return built_address
+
+
+def get_phone_from_object(object_with_phone):
+    if object_with_phone.get('phone', None):
+        phone = object_with_phone['phone']
+    elif object_with_phone.get('contact_phone', None):
+        phone = object_with_phone['contact_phone']
+    else:
+        for items in object_with_phone.get('addresses', []):
+            phone = items.get('contact_phone', None)
+            if phone:
+                return phone
+        phone = '5555555555'
+    return get_formated_phone(phone)
+
+
+def get_formated_phone(phone):
+    regex = r'^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$'
+    regex_international = r'^\+?(?:[0-9] ?){6,14}[0-9]$'
+    phone = phone if re.match(regex, phone) or re.match(
+        regex_international, phone) else '5555555555'
+    if re.match(regex, phone):
+        phone = re.sub(regex, r'\1-\2-\3', phone)
+    return phone
