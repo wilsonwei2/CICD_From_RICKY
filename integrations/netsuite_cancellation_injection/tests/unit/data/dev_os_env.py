@@ -3,7 +3,8 @@ NETSUITE = {
     "cancellation_item_internal_id": "92045",
     "currency_usd_internal_id": "2",
     "tax_offset_item_internal_id": "10",
-    "tax_override_ca": "20"
+    "tax_override_ca": "20",
+    "tax_rounding_adj_item_id": "12777"
 }
 
 PAYMENTS = {

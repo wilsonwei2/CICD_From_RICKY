@@ -80,6 +80,10 @@ class Utils():
         return Utils._payment_ids
 
     @staticmethod
+    def get_tax_rounding_adj_id():
+        return int(Utils.get_netsuite_config()['tax_rounding_adj_item_id'])
+
+    @staticmethod
     def json_serial(obj):
         """JSON serializer for objects not serializable by default json code"""
         if isinstance(obj, (datetime, date)):

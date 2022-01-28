@@ -89,7 +89,8 @@ async def handle_item_cancellation(event_cancellation, sales_order):
     sales_order_update = ns_s.SalesOrder(
         internalId=sales_order['internalId']
     )
-    cancelled_item_ids = [str(item['product_id']) for item in event_cancellation['items']]
+    cancelled_product_ids = [str(item['product_id']) for item in event_cancellation['items']]
+    cancelled_item_ids = [item['id'] for item in event_cancellation['items']]
     has_discount = False
     amount_cancelled = 0.0
     update_items = []
@@ -108,11 +109,21 @@ async def handle_item_cancellation(event_cancellation, sales_order):
             isClosed=True
         )
 
-        product_id = get_product_id_by_netsuite_name(item, cancelled_item_ids)
-        if product_id in cancelled_item_ids:
+        item_id = get_item_id(item)
+        product_id = get_product_id_by_netsuite_name(item, cancelled_product_ids)
+
+        # the sales order injection stores the UUID of each item in Netsuite
+        # the check below ensures that the correct item is updated in Netsuite in case of
+        # multiple of the same SKUs ordered
+        # Fallback to the original logic if the item_id is not stored or not found
+        if item_id is not None and item_id not in cancelled_item_ids:
+            LOGGER.info(f'Skip update of line {item_id}, {product_id} in Netsuite since it is not part of the cancellation.')
+            continue
+
+        if product_id in cancelled_product_ids:
             updated_item['quantity'] = 0
             update_items.append(updated_item)
-            cancelled_item_ids.remove(product_id)
+            cancelled_product_ids.remove(product_id)
             amount_cancelled += abs(float(item['amount']))
             taxes = get_item_taxes(item)
 
@@ -138,6 +149,12 @@ async def handle_item_cancellation(event_cancellation, sales_order):
 
             updated_item['isClosed'] = False
             update_items.append(updated_item)
+
+        elif is_tax_rounding_adj_item(item):
+            if item['amount'] < 0:
+                updated_item['amount'] = 0.0
+                updated_item['isClosed'] = False
+                update_items.append(updated_item)
 
     sales_order_update['itemList'] = {
         'item': update_items,
@@ -178,6 +195,9 @@ def is_payment_item(item):
     return int(item['item']['internalId']) in Utils.get_payment_ids()
 
 
+def is_tax_rounding_adj_item(item):
+    return int(item['item']['internalId']) == Utils.get_tax_rounding_adj_id()
+
 def get_customer_order(order_id):
     LOGGER.info('Getting customer order from NewStore.')
     customer_order = Utils.get_newstore_conn().get_customer_order(order_id)
@@ -186,12 +206,12 @@ def get_customer_order(order_id):
     return customer_order.get('customer_order', {})
 
 
-def get_product_id_by_netsuite_name(item, cancelled_item_ids):
+def get_product_id_by_netsuite_name(item, cancelled_product_ids):
     netsuite_name = item['item']['name']
     product_id = None
-    for possible_item_id in netsuite_name.split(' '):
-        if possible_item_id in cancelled_item_ids:
-            product_id = possible_item_id
+    for possible_product_id in netsuite_name.split(' '):
+        if possible_product_id in cancelled_product_ids:
+            product_id = possible_product_id
             break
     return product_id
 
@@ -201,3 +221,15 @@ def get_item_taxes(item):
         if custom_field['scriptId'] == 'custcol_nws_override_taxcode':
             return float(custom_field['value'])
     return 0
+
+
+# Gets the NewStore Item ID stored by the Sales Order injection script from the item
+def get_item_id(item):
+    if item['customFieldList'] is not None:
+        custom_field_list = item['customFieldList']['customField']
+        for custom_field in custom_field_list:
+            script_id = custom_field['scriptId']
+            if script_id == 'custcol_nws_item_id':
+                return str(custom_field['value'])
+
+    return None

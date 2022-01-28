@@ -144,3 +144,17 @@ class TestCancellation(unittest.TestCase):
         updated_sales_order = serialize_object(mock_update_so.call_args[0][0])
 
         TestCancellation._assert_json(self, updated_sales_order, expected_result)
+
+    @patch('netsuite_cancellation_injection.aws.cancellation_to_netsuite.get_sales_order', autospec=True)
+    @patch('netsuite_cancellation_injection.aws.cancellation_to_netsuite.update_sales_order', autospec=True)
+    def test_map_item_cancellation_with_tax_rounding_adj(self, mock_update_so, mock_get_so):
+        cancellation_event = TestCancellation._load_json_file('item_cancellation.json')
+        sales_order = TestCancellation._load_json_file('sales_order_w_tax_rounding.json')
+        expected_result = TestCancellation._load_json_file('updated_so_item_cancellation_w_tax_rounding.json')
+
+        mock_get_so.return_value = sales_order
+
+        TestCancellation._loop_wrap(self.cancellation_to_netsuite.process_cancellation(cancellation_event))
+        updated_sales_order = serialize_object(mock_update_so.call_args[0][0])
+
+        TestCancellation._assert_json(self, updated_sales_order, expected_result)
