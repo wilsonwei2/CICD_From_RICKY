@@ -56,16 +56,8 @@ async def _push_revoke_to_shopify(body, financial_instrument_id):
                         'Revoke of captured transaction should proceed to refund.')
                     response = await _push_captured_revoke_to_shopify(shopify_handler, body, financial_instrument_id, shopify_order_id, transactions)
 
-                    if response['statusCode'] == 200:
-                        LOGGER.info(f'Trying to cancel order with ID: ${shopify_order_id}')
-                        cancel_order = await shopify_handler.cancel_order(order_id=shopify_order_id)
-                        LOGGER.info(f'Cancelled response: ${json.dumps(cancel_order)}')
                     return response
-                [void_transaction, cancel_order] = await asyncio.gather(
-                    shopify_handler.void_transaction(
-                        order_id=shopify_order_id, amount=amount_info['amount'], auth_id=auth_id),
-                    shopify_handler.cancel_order(order_id=shopify_order_id)
-                )
+                void_transaction = shopify_handler.void_transaction(order_id=shopify_order_id, amount=amount_info['amount'], auth_id=auth_id),
                 transactions.append({
                     'transaction_id': str(uuid4()),
                     'instrument_id': financial_instrument_id,
@@ -81,7 +73,7 @@ async def _push_revoke_to_shopify(body, financial_instrument_id):
                     'The metadata field doesn\'t contain the shopify_order_id')
         # If is gift card and Shopify order
         elif transaction and is_capture_gift_card(transaction['payment_method']) and transaction['metadata'].get('shopify_order_id'):
-            LOGGER.info('Refund for Shopify order paid with gift card, cancel order in Shopify.')
+            LOGGER.info('Refund for Shopify order paid with gift card.')
 
             shopify_order_id = transaction['metadata'].get('shopify_order_id')
 
@@ -97,11 +89,6 @@ async def _push_revoke_to_shopify(body, financial_instrument_id):
                                                                   financial_instrument_id,
                                                                   shopify_order_id,
                                                                   shopify_transactions)
-
-            if response['statusCode'] == 200:
-                LOGGER.info(f'Trying to cancel order with ID: ${shopify_order_id}')
-                cancel_order = await shopify_handler.cancel_order(order_id=shopify_order_id)
-                LOGGER.info(f'Cancelled response: ${json.dumps(cancel_order)}')
 
             return response
         elif transaction and is_capture_gift_card(transaction['payment_method']):
