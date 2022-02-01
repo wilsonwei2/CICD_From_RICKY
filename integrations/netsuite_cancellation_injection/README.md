@@ -4,7 +4,7 @@
 - Once triggered this lambda reads a SQS queue that contains the events sent by NewStore for the cancellation, event type `order.cancelled` and `order.items_cancelled`.
 - For each event it fetches the SalesOrder information from NetSuite and closes the cancelled items in the SalesOrder.
 - There are 2 cases considered:
-    - Full Cancellation (original event order.cancelled): 
+    - Full Cancellation (original event order.cancelled):
         - Get the Netsuite Sales Order
         - Go through the items, set them all to closed: True
         - Update the Sales order
@@ -54,3 +54,4 @@ NetSuite objects need to be referenced explicitly (e.g. payment processing types
 ## References
 
 - [NewStore Event Stream](https://apidoc.newstore.io/newstore-cloud/hooks_eventstream.html)
+
