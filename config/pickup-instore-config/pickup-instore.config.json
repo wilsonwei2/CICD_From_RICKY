@@ -32,6 +32,15 @@
               "currency_code": "CAD"
           }
       },
+      "KITST": {
+        "delivery_time": "Available now",
+        "delivery_time_if_not_available": "Pick up in 5-6 days",
+        "cost": {
+            "price": 0,
+            "tax_code": "FR",
+            "currency_code": "CAD"
+        }
+      },
       "MTLST": {
           "delivery_time": "Available now",
           "delivery_time_if_not_available": "Pick up in 5-6 days",
@@ -49,6 +58,15 @@
               "tax_code": "FR",
               "currency_code": "CAD"
           }
+      },
+      "SQOST": {
+        "delivery_time": "Available now",
+        "delivery_time_if_not_available": "Pick up in 5-6 days",
+        "cost": {
+            "price": 0,
+            "tax_code": "FR",
+            "currency_code": "CAD"
+        }
       },
       "STANST": {
           "delivery_time": "Available now",

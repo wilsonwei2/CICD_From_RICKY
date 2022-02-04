@@ -6,7 +6,7 @@
             "service_level": "STANDARD_UPS",
             "shipping_carrier_name": "UPS",
             "shipping_type": "traditional_carrier",
-            "use_as_customer_facing_cost": true
+            "use_as_customer_facing_cost": false
         },
         "UPSSaver": {
             "return_provider_rate": "",
@@ -15,42 +15,56 @@
             "shipping_type": "traditional_carrier",
             "use_as_customer_facing_cost": true
         },
-      "Expedited": {
+        "Expedited": {
+            "return_provider_rate": "",
+            "service_level": "EXPEDITED",
+            "shipping_carrier_name": "UPS",
+            "shipping_type": "same_day_delivery",
+            "use_as_customer_facing_cost": true
+        },
+        "Express": {
+            "return_provider_rate": "",
+            "service_level": "EXPRESS",
+            "shipping_carrier_name": "UPS",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
+        },
+        "3DaySelect": {
           "return_provider_rate": "",
-          "service_level": "EXPEDITED",
+          "service_level": "3DAYSELECT",
           "shipping_carrier_name": "UPS",
           "shipping_type": "traditional_carrier",
           "use_as_customer_facing_cost": true
-      },
-      "Express": {
+        },
+        "Ground": {
           "return_provider_rate": "",
-          "service_level": "EXPRESS",
+          "service_level": "GROUND",
           "shipping_carrier_name": "UPS",
           "shipping_type": "traditional_carrier",
           "use_as_customer_facing_cost": true
-      },
-      "ExpeditedParcel": {
-          "return_provider_rate": "",
-          "service_level": "EXPEDITED_PARCEL",
-          "shipping_carrier_name": "CAPOST",
-          "shipping_type": "traditional_carrier",
-          "use_as_customer_facing_cost": true
         },
-      "RegularParcel": {
-          "return_provider_rate": "",
-          "service_level": "REGULAR_PARCEL",
-          "shipping_carrier_name": "CAPOST",
-          "shipping_type": "traditional_carrier",
-          "use_as_customer_facing_cost": true
+        "ExpeditedParcel": {
+            "return_provider_rate": "",
+            "service_level": "EXPEDITED_PARCEL",
+            "shipping_carrier_name": "CAPOST",
+            "shipping_type": "same_day_delivery",
+            "use_as_customer_facing_cost": true
         },
-      "Priority": {
-          "return_provider_rate": "",
-          "service_level": "PRIORITY",
-          "shipping_carrier_name": "CAPOST",
-          "shipping_type": "same_day_delivery",
-          "use_as_customer_facing_cost": true
+        "RegularParcel": {
+            "return_provider_rate": "",
+            "service_level": "REGULAR_PARCEL",
+            "shipping_carrier_name": "CAPOST",
+            "shipping_type": "traditional_carrier",
+            "use_as_customer_facing_cost": true
         },
-      "Xpresspost": {
+        "Priority": {
+            "return_provider_rate": "",
+            "service_level": "PRIORITY",
+            "shipping_carrier_name": "CAPOST",
+            "shipping_type": "same_day_delivery",
+            "use_as_customer_facing_cost": true
+        },
+        "Xpresspost": {
           "return_provider_rate": "",
           "service_level": "EXPRESS_POST",
           "shipping_carrier_name": "CAPOST",
@@ -68,7 +82,7 @@
             "return_provider_rate": "",
             "service_level": "EXPEDITED_PARCEL_USA",
             "shipping_carrier_name": "CAPOST",
-            "shipping_type": "traditional_carrier",
+            "shipping_type": "same_day_delivery",
             "use_as_customer_facing_cost": true
         },
         "TrackedPacketUSA": {
@@ -1560,13 +1574,19 @@
                   "GROUND": [
                     {
                         "fulfillment_node_id": "MTLDC1",
-                        "provider_rate": "Express"
+                        "provider_rate": "Ground"
+                    }
+                  ],
+                  "STANDARD_UPS": [
+                    {
+                        "fulfillment_node_id": "MTLDC1",
+                        "provider_rate": "UPSStandard"
                     }
                   ],
                   "3DAYSELECT": [
                     {
                         "fulfillment_node_id": "MTLDC1",
-                        "provider_rate": "Express"
+                        "provider_rate": "3DaySelect"
                     }
                   ],
                   "EXPRESS_POST_USA": [
@@ -1787,7 +1807,7 @@
           "tax_code": "CA"
         },
         "STANDARD_UPS": {
-          "currency_code": "",
+          "currency_code": "CAD",
           "delivery_time": "1 - 5 business days",
           "delivery_time_after_cutoff_hour": "3 - 5 business days",
           "display_name": "UPS Standard",
@@ -1915,18 +1935,18 @@
       },
       "sl_levels_priority": [
           "EXPRESS",
-          "STANDARD_UPS",
-          "SAVER_UPS",
           "EXPEDITED",
           "EXPEDITED_PARCEL",
-          "REGULAR_PARCEL",
           "PRIORITY",
           "EXPRESS_POST",
           "EXPRESS_POST_USA",
           "EXPEDITED_PARCEL_USA",
-          "TRACKED_PACKET_USA",
           "PRIORITY_INTER",
           "EXPRESS_INTER",
+          "STANDARD_UPS",
+          "SAVER_UPS",
+          "REGULAR_PARCEL",
+          "TRACKED_PACKET_USA",
           "GROUND",
           "3DAYSELECT"
       ],
