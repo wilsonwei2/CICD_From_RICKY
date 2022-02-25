@@ -56,6 +56,8 @@ async def import_transfer_orders():
 
     newstore_transfer_order_list = await transform_search_result(search_result)
     for transfer_order_payload in newstore_transfer_order_list:
+        LOGGER.info(f'transfer_order_payload: {transfer_order_payload}')
+        transfer_order_payload = validate_products(transfer_order_payload)
         try:
             create_transfer(transfer_order_payload['newstore_transfer'])
         except NewStoreAdapterException as nws_exc:
@@ -64,13 +66,15 @@ async def import_transfer_orders():
                     f'Transfer Order already exists in NOM, marking transfer as processed in NetSuite.')
                 mark_to_imported_by_newstore(
                     transfer_order_payload['internal_id'])
+            elif "missing_products" in str(nws_exc):
+                find_valid_products_in_newstore(transfer_order_payload)
             else:
                 LOGGER.error(
                     f'Failed to create Transfer Order: {str(nws_exc)}', exc_info=True)
         else:
             mark_to_imported_by_newstore(transfer_order_payload['internal_id'])
             LOGGER.info(
-                f"Transfer Order successfully injected {json.dumps(transfer_order_payload['newstore_transfer'], indent=4)}")
+                f"Transfer Order successfully injected {json.dumps(transfer_order_payload['newstore_transfer'])}")
 
 
 async def run_transfer_order_ss():
@@ -118,7 +122,7 @@ async def transform_search_result(search_result):
 
         transfer_order_payload = await transform_transfer(transfer_order)
         LOGGER.debug(
-            f'Transfer Order Payload: {json.dumps(transfer_order_payload, indent=4)}')
+            f'Transfer Order Payload: {json.dumps(transfer_order_payload)}')
 
         if not transfer_order_payload:
             continue
@@ -242,3 +246,46 @@ def mark_to_imported_by_newstore(internal_id):
     else:
         LOGGER.error(
             f'Failed to mark transfer order {internal_id} as synced: {response.body}')
+
+def validate_products(transfer_order_payload):
+    valid = []
+    invalid = []
+    for item in transfer_order_payload["newstore_transfer"]["items"]:
+        if len(item["product_id"]) >= 6 and item["product_id"][:6].isnumeric():
+            valid.append(item)
+            LOGGER.info(f'{item["product_id"]} is valid')
+        else:
+            invalid.append(item["product_id"])
+            LOGGER.info(f'{item["product_id"]} is invalid')
+
+    LOGGER.info(f'INVALID product_ids removed from transfer order: {invalid}')
+    transfer_order_payload['newstore_transfer']["items"] = valid
+    LOGGER.info(f'Updated transfer order payload after sku validation: {transfer_order_payload}')
+    return transfer_order_payload
+
+def find_valid_products_in_newstore(transfer_order_payload):
+    valid = []
+    invalid = []
+    for item in transfer_order_payload['newstore_transfer']["items"]:
+        try:
+            response = Utils.get_newstore_conn().find_product('sku', item["product_id"], "storefront-catalog-en", "en-US", {})
+            LOGGER.info(f'GET product response: {response}')
+            if response is None:
+                invalid.append(item)
+            else:
+                valid.append(item)
+        except NewStoreAdapterException as nws_exc:
+            invalid.append(item["product_id"])
+    LOGGER.info(f'INVALID: Product ids not found in NewStore and removed from transfer order: {invalid}')
+
+    transfer_order_payload['newstore_transfer']["items"] = valid
+    LOGGER.info(f'creating transfer: {transfer_order_payload["newstore_transfer"]}')
+    try:
+        create_transfer(transfer_order_payload['newstore_transfer'])
+    except NewStoreAdapterException as nws_exc:
+        LOGGER.error(
+            f'Failed to create Transfer Order after validating in NewStore: {str(nws_exc)}', exc_info=True)
+    else:
+        mark_to_imported_by_newstore(transfer_order_payload['internal_id'])
+        LOGGER.info(
+            f"Transfer Order successfully injected {json.dumps(transfer_order_payload['newstore_transfer'])}")
