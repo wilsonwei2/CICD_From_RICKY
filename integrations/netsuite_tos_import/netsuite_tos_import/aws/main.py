@@ -56,6 +56,7 @@ async def import_transfer_orders():
 
     newstore_transfer_order_list = await transform_search_result(search_result)
     for transfer_order_payload in newstore_transfer_order_list:
+        LOGGER.info(f'transfer_order_payload: {transfer_order_payload}')
         transfer_order_payload = validate_products(transfer_order_payload)
         try:
             create_transfer(transfer_order_payload['newstore_transfer'])
@@ -249,11 +250,13 @@ def mark_to_imported_by_newstore(internal_id):
 def validate_products(transfer_order_payload):
     valid = []
     invalid = []
-    for item in transfer_order_payload['newstore_transfer']["items"]:
-        if item["product_id"].split('-')[0].isnumeric():
+    for item in transfer_order_payload["newstore_transfer"]["items"]:
+        if item["product_id"][:6].isnumeric():
             valid.append(item)
+            LOGGER.info(f'{item["product_id"]} is valid')
         else:
             invalid.append(item["product_id"])
+            LOGGER.info(f'{item["product_id"]} is invalid')
     if len(invalid) > 0:
         LOGGER.info(f'Invalid product_ids removed from transfer order: {invalid}')
     transfer_order_payload['newstore_transfer']["items"] = valid
@@ -263,20 +266,23 @@ def find_valid_products_in_newstore(transfer_order_payload):
     valid = []
     invalid = []
     for item in transfer_order_payload['newstore_transfer']["items"]:
-        item_response = Utils.get_newstore_conn().get_product(item["product_id"], "storefront_catalog_en", "en-us")
-        if "error_code" in item_response and item_response["error_code"] == "not_found":
-            invalid.append(item["product_id"])
-        else:
+        try:
+            Utils.get_newstore_conn().get_product(item["product_id"], "storefront_catalog_en", "en-us")
+            LOGGER.info(f'{item["product_id"]} is in NewStore')
             valid.append(item)
+        except NewStoreAdapterException as nws_exc:
+            LOGGER.info(f'{item["product_id"]} is not in NewStore')
+            invalid.append(item["product_id"])
     if len(invalid) > 0:
         LOGGER.info(f'Product ids not found in NewStore and removed from transfer order: {invalid}')
 
     transfer_order_payload['newstore_transfer']["items"] = valid
+    LOGGER.info(f'creating transfer: {transfer_order_payload["newstore_transfer"]}')
     try:
         create_transfer(transfer_order_payload['newstore_transfer'])
     except NewStoreAdapterException as nws_exc:
         LOGGER.error(
-            f'Failed to create Transfer Order: {str(nws_exc)}', exc_info=True)
+            f'Failed to create Transfer Order after validating in NewStore: {str(nws_exc)}', exc_info=True)
     else:
         mark_to_imported_by_newstore(transfer_order_payload['internal_id'])
         LOGGER.info(
