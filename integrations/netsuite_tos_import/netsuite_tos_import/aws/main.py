@@ -257,7 +257,7 @@ def validate_products(transfer_order_payload):
         else:
             invalid.append(item["product_id"])
             LOGGER.info(f'{item["product_id"]} is invalid')
-    
+
     LOGGER.info(f'INVALID product_ids removed from transfer order: {invalid}')
     transfer_order_payload['newstore_transfer']["items"] = valid
     LOGGER.info(f'Updated transfer order payload after sku validation: {transfer_order_payload}')
