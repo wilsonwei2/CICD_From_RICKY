@@ -251,7 +251,7 @@ def validate_products(transfer_order_payload):
     valid = []
     invalid = []
     for item in transfer_order_payload["newstore_transfer"]["items"]:
-        if item["product_id"][:6].isnumeric():
+        if len(item["product_id"]) >= 6 and item["product_id"][:6].isnumeric():
             valid.append(item)
             LOGGER.info(f'{item["product_id"]} is valid')
         else:
