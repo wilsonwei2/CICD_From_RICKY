@@ -122,7 +122,7 @@ async def transform_search_result(search_result):
 
         transfer_order_payload = await transform_transfer(transfer_order)
         LOGGER.debug(
-            f'Transfer Order Payload: {json.dumps(transfer_order_payload, indent=4)}')
+            f'Transfer Order Payload: {json.dumps(transfer_order_payload)}')
 
         if not transfer_order_payload:
             continue
@@ -257,9 +257,10 @@ def validate_products(transfer_order_payload):
         else:
             invalid.append(item["product_id"])
             LOGGER.info(f'{item["product_id"]} is invalid')
-    if len(invalid) > 0:
-        LOGGER.info(f'Invalid product_ids removed from transfer order: {invalid}')
+    
+    LOGGER.info(f'INVALID product_ids removed from transfer order: {invalid}')
     transfer_order_payload['newstore_transfer']["items"] = valid
+    LOGGER.info(f'Updated transfer order payload after sku validation: {transfer_order_payload}')
     return transfer_order_payload
 
 def find_valid_products_in_newstore(transfer_order_payload):
@@ -267,7 +268,7 @@ def find_valid_products_in_newstore(transfer_order_payload):
     invalid = []
     for item in transfer_order_payload['newstore_transfer']["items"]:
         try:
-            response = Utils.get_newstore_conn().get_product(item["product_id"], "storefront_catalog_en", "en-us")
+            response = Utils.get_newstore_conn().find_product('sku', item["product_id"], "storefront_catalog_en", "en-us")
             LOGGER.info(f'GET product response: {response}')
             if response is None:
                 invalid.append(item)
@@ -275,7 +276,7 @@ def find_valid_products_in_newstore(transfer_order_payload):
                 valid.append(item)
         except NewStoreAdapterException as nws_exc:
             invalid.append(item["product_id"])
-    LOGGER.info(f'Product ids not found in NewStore and removed from transfer order: {invalid}')
+    LOGGER.info(f'INVALID: Product ids not found in NewStore and removed from transfer order: {invalid}')
 
     transfer_order_payload['newstore_transfer']["items"] = valid
     LOGGER.info(f'creating transfer: {transfer_order_payload["newstore_transfer"]}')
