@@ -267,8 +267,9 @@ def find_valid_products_in_newstore(transfer_order_payload):
     invalid = []
     for item in transfer_order_payload['newstore_transfer']["items"]:
         try:
-            Utils.get_newstore_conn().get_product(item["product_id"], "storefront_catalog_en", "en-us")
+            response = Utils.get_newstore_conn().get_product(item["product_id"], "storefront_catalog_en", "en-us")
             LOGGER.info(f'{item["product_id"]} is in NewStore')
+            LOGGER.info(f'GET product response: {response}')
             valid.append(item)
         except NewStoreAdapterException as nws_exc:
             LOGGER.info(f'{item["product_id"]} is not in NewStore')
