@@ -269,14 +269,14 @@ def find_valid_products_in_newstore(transfer_order_payload):
         try:
             response = Utils.get_newstore_conn().get_product(item["product_id"], "storefront_catalog_en", "en-us")
             LOGGER.info(f'GET product response: {response}')
-            if response == None:
+            if response is None:
                 invalid.append(item)
             else:
                 valid.append(item)
         except NewStoreAdapterException as nws_exc:
             invalid.append(item["product_id"])
     LOGGER.info(f'Product ids not found in NewStore and removed from transfer order: {invalid}')
-    
+
     transfer_order_payload['newstore_transfer']["items"] = valid
     LOGGER.info(f'creating transfer: {transfer_order_payload["newstore_transfer"]}')
     try:
