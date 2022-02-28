@@ -179,8 +179,15 @@ async def transform_transfer(netsuite_transfer_order):
 def get_item_name(item_name):
     output = item_name
     item_name_list = item_name.split(' ')
+    #for matrix items, selects variant id from name
+    #'name': '2210304 : 2210304-002-XS The Hybrid Jogger in Black'
+    #for non matrix items, selects the product id from name
+    #'name' : '1940073-002 The Merino Wool Beanie in Black'
     if len(item_name_list) > 2:
-        output = item_name_list[2]
+        if item_name_list[2].split('-')[0].isnumeric():
+            output = item_name_list[2]
+        else:
+            output = item_name_list[0]
     return output
 
 
