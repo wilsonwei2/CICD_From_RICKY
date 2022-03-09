@@ -38,6 +38,13 @@ def handler(event, context): # pylint: disable=W0613
                 'statusCode': 200,
                 'body': json.dumps({'message': 'Order already processed by newstore'})
             }
+        # if 'signifyd approved' is not in tags, send 500 so Shopify will retry later
+        wait_to_receive_tags = os.environ.get('RETRY_TAGS', 'signifyd approved').split(",")
+        if any(tag in wait_to_receive_tags for tag in existing_tags):
+            LOGGER.info(f'Not processing order with {order_id}. It is not signifyd approved. Senging 500 back to Shopify')
+            return {
+                'statusCode': 500,
+                'body': f'{order_id} not signifyd approved'}
 
         shopify_secret = Utils.get_instance().get_shopify_config(shop_name)['shared_secret']
         hmac = event['headers'].get('X-Shopify-Hmac-Sha256')
