@@ -34,7 +34,7 @@ def handler(event, context): # pylint: disable=W0613
         LOGGER.debug(f'tags: {existing_tags}')
         stop_retry_tags = os.environ.get('STOP_RETRY_TAGS', 'newstore_created,newstore_failed').split(",")
         LOGGER.debug(f'STOP_RETRY_TAGS: {stop_retry_tags}')
-        if any(tag in stop_retry_tags for tag in existing_tags):
+        if all(tag not in stop_retry_tags for tag in existing_tags):
             LOGGER.debug(f'Not processing Order with id {order_id} -- request because it has {existing_tags} - tags')
             return {
                 'statusCode': 200,
