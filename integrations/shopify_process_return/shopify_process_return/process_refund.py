@@ -56,7 +56,7 @@ def _process_refund(raw):
     shopify_handler = get_shopify_handler(shop_id)
     shopify_refunds = shopify_handler.get_order(refund.get('order_id'), params='refunds')
     transactions = shopify_refunds.get('transactions', [])
-    LOGGER(f'Latest transactions from Shopify for {refund.get("order_id")}: {transactions}')
+    LOGGER.info(f'Latest transactions from Shopify for {refund.get("order_id")}: {transactions}')
     # Transform Shopify format to NS format
     data_to_send = _transform_data_to_send(refund, transactions)
     # if the reurn is pending, send False to handler so message will be requeued
