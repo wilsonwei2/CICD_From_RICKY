@@ -183,7 +183,7 @@ def _refund_started_in_newstore(note: str) -> bool:
 
 def _map_refund_id_ext_attr(refund, transactions):
     refund_transactions_ids = ','.join(str(transaction.get('id')) for transaction in transactions
-        if transaction.get('status') == 'success')
+                                       if transaction.get('status') == 'success')
     return [
         {
             'name': 'shopify_refund_id',
