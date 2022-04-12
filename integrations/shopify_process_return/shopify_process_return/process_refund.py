@@ -55,6 +55,7 @@ def _process_refund(raw):
     #get updated transactions from shopify
     shopify_handler = get_shopify_handler(shop_id)
     shopify_refunds = shopify_handler.get_order(refund.get('order_id'), params='refunds')
+    LOGGER.info(f'shopify refunds {shopify_refunds}')
     transactions = shopify_refunds.get('transactions', [])
     LOGGER.info(f'Latest transactions from Shopify for {refund.get("order_id")}: {transactions}')
     # Transform Shopify format to NS format
