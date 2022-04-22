@@ -51,17 +51,27 @@ def handler(event, context):  # pylint: disable=unused-argument
 def _process_refund(raw):
     LOGGER.info(f'Processing Shopify refund event: {raw}')
     refund = json.loads(raw)
-    # Transform Shopify format to NS format
-    data_to_send = _transform_data_to_send(refund)
     shop_id = refund['shop_id']
+    #get updated transactions from shopify
+    shopify_handler = get_shopify_handler(shop_id)
+    shopify_refunds = shopify_handler.get_order(refund.get('order_id'), params='refunds')
+    LOGGER.info(f'shopify refunds {shopify_refunds}')
+    transactions = shopify_refunds.get('refunds', [])[0].get('transactions', [])
+    LOGGER.info(f'Latest transactions from Shopify for {refund.get("order_id")}: {transactions}')
+    # Transform Shopify format to NS format
+    data_to_send = _transform_data_to_send(refund, transactions)
+    # if the reurn is pending, send False to handler so message will be requeued
+    if data_to_send['currency'] == "pending":
+        LOGGER.info(f'Return is pending and will not be processed until status = success')
+        return False
     if len(refund.get('refund_line_items', [])) == 0:
         LOGGER.info('Processing an order appeasment')
-        return _create_refund(data_to_send, refund, shop_id)
+        return _create_refund(data_to_send, refund, shop_id, transactions)
     LOGGER.info('Processing an order return')
-    return _create_return(data_to_send, refund, shop_id)
+    return _create_return(data_to_send, refund, shop_id, transactions)
 
 
-def _create_refund(refund_data, refund, shop_id):
+def _create_refund(refund_data, refund, shop_id, transactions):
     LOGGER.info(f'Data for refund {json.dumps(refund_data, indent=4)}')
     ns_external_order_id = get_order_name(refund['order_id'], shop_id)
     ns_order = _get_external_order(ns_external_order_id)
@@ -81,7 +91,7 @@ def _create_refund(refund_data, refund, shop_id):
             request_refund = {
                 'amount': refund_data['amount'],
                 'currency': refund_data['currency'],
-                'extended_attributes': _map_refund_id_ext_attr(refund),
+                'extended_attributes': _map_refund_id_ext_attr(refund, transactions),
                 'note': refund_data.get('reason') or '',
                 'is_historical': True,
             }
@@ -95,7 +105,7 @@ def _create_refund(refund_data, refund, shop_id):
     return False
 
 
-def _create_return(return_data, refund, shop_id):
+def _create_return(return_data, refund, shop_id, transactions):
     LOGGER.info(f'Data for return {json.dumps(return_data, indent=4)}')
     ns_external_order_id = get_order_name(refund['order_id'], shop_id)
     ns_order = _get_external_order(ns_external_order_id)
@@ -116,7 +126,7 @@ def _create_return(return_data, refund, shop_id):
                 'items': return_data['items'],
                 'returned_from': returned_from,
                 'returned_at': return_data['processed_at'],
-                'extended_attributes': _map_refund_id_ext_attr(refund)
+                'extended_attributes': _map_refund_id_ext_attr(refund, transactions)
             }
             if return_data.get('amount'):
                 request_return['refund_amount'] = return_data['amount']
@@ -172,9 +182,9 @@ def _refund_started_in_newstore(note: str) -> bool:
     return note.startswith('Newstore originated refund')
 
 
-def _map_refund_id_ext_attr(refund):
-    refund_transactions_ids = ','.join(str(transaction.get('id')) for transaction in refund.get(
-        'transactions', []) if transaction.get('status') == 'success')
+def _map_refund_id_ext_attr(refund, transactions):
+    refund_transactions_ids = ','.join(str(transaction.get('id')) for transaction in transactions
+                                       if transaction.get('status') == 'success')
     return [
         {
             'name': 'shopify_refund_id',
@@ -203,6 +213,9 @@ def _get_refund_currency(transactions):
     if len(currency) == 1:
         return str(currency[0])
     if len(currency) == 0:
+        if "pending" in [transaction.get('status') for transaction in transactions]:
+            LOGGER.info('order status is pending')
+            return "pending"
         LOGGER.error(
             f'No currency could be detected.\n\nTransactions: {json.dumps(transactions)}')
         raise Exception('We could not detect the currency type;')
@@ -212,15 +225,15 @@ def _get_refund_currency(transactions):
         'Newstore do not support multiple currencies for refunds')
 
 
-def _transform_data_to_send(refund_webhook):
+def _transform_data_to_send(refund_webhook, transactions):
     ####
     # Transforms the data received on the webhook to match what NewStore receives on return endpoint
     # Returns the data ready to be send to NewStore
     ####
     product_ids = []
     reason = refund_webhook.get('note') or ''
-    refund_value = _get_successful_refunds_value(
-        refund_webhook.get('transactions', []))
+    refund_value = _get_successful_refunds_value(transactions)
+    LOGGER.debug(f'refund value: {refund_value}')
     for item in refund_webhook['refund_line_items']:
         product_id = item['line_item']['sku']
 
@@ -240,7 +253,7 @@ def _transform_data_to_send(refund_webhook):
         'amount': refund_value,
         'reason': reason,
         'processed_at': refund_webhook['processed_at'],
-        'currency': _get_refund_currency(refund_webhook.get('transactions', []))
+        'currency': _get_refund_currency(transactions)
     }
 
 
