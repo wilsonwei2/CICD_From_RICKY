@@ -185,7 +185,12 @@ def get_shipping_offer_token(order, newstore_handler):
                         'longitude': longitude
                     }
                 },
-                'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])]
+                'bag': [get_bag_item(line_item) for line_item in order.get('line_items', [])],
+                'options': {
+                    'search_radius': 30,
+                    'limit': 3,
+                    'show_stores_without_atp': False
+                }
             }
             LOGGER.debug(f'Payload to get in store pickup options: {payload}')
             in_store_pickup_options = newstore_handler.get_in_store_pickup_options(payload).get('options', [])
