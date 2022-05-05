@@ -36,6 +36,7 @@ def handler(event, context):  # pylint: disable=unused-argument
                 SQS_HANDLER.delete_message(record['receiptHandle'])
             else:
                 LOGGER.error(f'Failed to process event: {record["body"]}')
+                raise Exception("status pending")
         except Exception as ex:  # pylint: disable=broad-except
             LOGGER.exception('Some error happen while processing the return')
             # In case an other process already returned the product we delete it from the queue to avoid exeptions again and again.
