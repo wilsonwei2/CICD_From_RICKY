@@ -63,7 +63,7 @@ def _process_refund(raw):
     # if the reurn is pending, send False to handler so message will be requeued
     if data_to_send['currency'] == "pending":
         LOGGER.info(f'Return is pending. Will not processed until status = success. Sending back to SQS')
-        SQS_HANDLER.push_message(message=json.dumps(raw))
+        SQS_HANDLER.push_message(message=json.dumps(refund))
         return False
     if len(refund.get('refund_line_items', [])) == 0:
         LOGGER.info('Processing an order appeasment')
