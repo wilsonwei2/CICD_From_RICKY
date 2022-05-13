@@ -7,7 +7,7 @@ parameters:
       AWS region to operate in
   trigger:
     type: boolean
-    default: true 
+    default: true
   integration:
     type: string
     default: ""
@@ -22,11 +22,11 @@ parameters:
     default: "python"
   version:
     type: string
-    default: "3.9-buster"
+    default: "3.7-buster"
 
 executors:
   default:
-    docker: 
+    docker:
       - image: $AWS_ECR_Repository_URI:python<< pipeline.parameters.version >>
         aws_auth:
           aws_access_key_id: $AWS_ACCESS_KEY_ID_x
@@ -40,14 +40,14 @@ commands:
     steps:
       - run:
           name: run target
-          command:  python /deploy/run.py << parameters.target >>
+          command: python /deploy/run.py << parameters.target >>
   set-aws-access-key-and-region:
     parameters:
       stage:
         type: string
     steps:
       - run:
-          name: "set aws access key and region as environment variables for the stage"     
+          name: "set aws access key and region as environment variables for the stage"
           command: |
             echo "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_<< parameters.stage >>" >> $BASH_ENV
             echo "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_<< parameters.stage >>" >> $BASH_ENV
@@ -55,7 +55,6 @@ commands:
             source $BASH_ENV
 
 jobs:
-
   trigger_workflows:
     executor: default
     steps:
@@ -70,7 +69,7 @@ jobs:
     steps:
       - checkout
       - run-ci-script:
-          target: ci cibuild         
+          target: ci cibuild
 
   deploy:
     executor: default
@@ -87,7 +86,6 @@ jobs:
           name: deploy serverless
           command: python /deploy/run.py ci deploy --stage << parameters.stage >> --tenant $CI_DEPLOY_TENANT
 
-
 workflows:
   ci:
     when: << pipeline.parameters.trigger >>
@@ -100,12 +98,12 @@ workflows:
     jobs:
       - run:
           name: test-<< pipeline.parameters.integration >>
-          
+
       - hold:
           name: hold-sandbox
           type: approval
           requires:
-           - test-<< pipeline.parameters.integration >>   
+            - test-<< pipeline.parameters.integration >>
           filters:
             branches:
               ignore: master
@@ -113,7 +111,7 @@ workflows:
           name: deploy-sandbox-<< pipeline.parameters.integration >>
           stage: x
           requires:
-           - hold-sandbox
+            - hold-sandbox
           filters:
             branches:
               ignore: master
@@ -121,8 +119,8 @@ workflows:
       - hold:
           name: hold-staging
           type: approval
-          requires: 
-           - test-<< pipeline.parameters.integration >>
+          requires:
+            - test-<< pipeline.parameters.integration >>
       - deploy: #always available
           name: deploy-staging-<< pipeline.parameters.integration >>
           stage: s
@@ -131,9 +129,9 @@ workflows:
 
       - hold:
           name: hold-prod
-          type: approval 
-          requires: 
-           - test-<< pipeline.parameters.integration >>   
+          type: approval
+          requires:
+            - test-<< pipeline.parameters.integration >>
           filters:
             branches:
               only: master

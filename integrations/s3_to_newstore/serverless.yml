@@ -21,7 +21,7 @@ provider:
   region: us-east-1
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
-  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole"
   environment:
     newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
     newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
@@ -36,7 +36,7 @@ functions:
     environment:
       TENANT: ${self:provider.tenant}
       STAGE: ${self:provider.stage}
-      ENTITIES: 'availabilities'
+      ENTITIES: "availabilities"
       PROVIDER: ${self:provider.tenant}
     events:
       - s3:
@@ -55,7 +55,7 @@ functions:
     environment:
       TENANT: ${self:provider.tenant}
       STAGE: ${self:provider.stage}
-      ENTITIES: 'prices'
+      ENTITIES: "prices"
       PROVIDER: ${self:provider.tenant}
     events:
       - s3:
@@ -73,7 +73,7 @@ functions:
     memorySize: 128
     environment:
       DESTINATION_BUCKET: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
-      DESTINATION_PREFIX: 'import_files/availabilities'
+      DESTINATION_PREFIX: "import_files/availabilities"
 
 stepFunctions:
   stateMachines:
@@ -89,9 +89,9 @@ stepFunctions:
           continue?:
             Type: Choice
             Choices:
-            - Variable: "$.continue"
-              BooleanEquals: true
-              Next: wait
+              - Variable: "$.continue"
+                BooleanEquals: true
+                Next: wait
             Default: End
           Lambda:
             Type: Task
@@ -99,11 +99,11 @@ stepFunctions:
               Fn::GetAtt: [step_function, Arn]
             Next: continue?
             Retry:
-            - ErrorEquals:
-              - States.TaskFailed
+              - ErrorEquals:
+                  - States.TaskFailed
             Catch:
-            - ErrorEquals: ["States.TaskFailed"]
-              Next: continue?
+              - ErrorEquals: ["States.TaskFailed"]
+                Next: continue?
           End:
             Type: Succeed
   validate: true # enable pre-deployment definition validation (disabled by default)
