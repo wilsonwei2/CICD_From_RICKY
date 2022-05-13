@@ -31,7 +31,7 @@ def handler(event, context):
     Returns:
         nothing
     """
-    LOGGER.debug(f"Event: {json.dumps(event, indent=2)}")
+    LOGGER.info(f"Event: {json.dumps(event, indent=2)}")
 
     ns_handler = NewStoreConnector(tenant=TENANT, context=context)
     entities = [i.strip() for i in ENTITIES_CSV.split(',')]
@@ -70,7 +70,10 @@ def handler(event, context):
 # This function handles to start it
 def start_prev_received_imports(ns_handler, entities):
     jobs_received = ns_handler.get_import_jobs_by_state('received')
-    for job in jobs_received.get('items', []):
+    job_received_items = jobs_received.get('items', [])
+    if not job_received_items:
+        LOGGER.info('No previous imports to start')
+    for job in job_received_items:
         if entities[0] == job['entities'][0]: # only process if entities are same, only works for one entity(!)
             LOGGER.info(f'Start previously received import {job}')
             job_details = ns_handler.get_import_job(job['import_id'])
