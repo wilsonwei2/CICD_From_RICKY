@@ -66,6 +66,10 @@ async def process_fulfillment_assignment(message):
     # Get the Netsuite Sales Order
     sales_order = await get_sales_order(external_order_id)
 
+    # Mark a virtual gift card as shipped regardless of its order presence
+    # in NetSuite
+    await ship_virtual_gift_cards(fulfillment_request)
+
     if sales_order:
         # Update the fulfillment locations for each item of the fulfillment request
         update_sales_order(sales_order, fulfillment_request)
@@ -82,9 +86,6 @@ async def process_fulfillment_assignment(message):
             return
 
         LOGGER.info('Fulfillment request acknowledged.')
-
-        # Process virtual/electronic gift cards if needed
-        await ship_virtual_gift_cards(fulfillment_request)
 
         return True
 
