@@ -37,7 +37,6 @@ provider:
   httpApi:
     payload: '2.0'
   timeout: 60
-  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
   memorySize: 256
   environment:
     TABLE_NAME: ${self:service}-${self:provider.stage}-item-ids-map
@@ -48,8 +47,7 @@ provider:
         - ssm:GetParameters
         - ssm:GetParameter
         - ssm:GetParametersByPath
-      Resource: arn:aws:ssm:${self:provider.region}:*:parameter/CYCLE_COUNTS/*
-    - Effect: Allow
+      Resource: arn:aws:ssm:${self:provider.region}:*:parameter/*
       Action:
         - sqs:GetQueueUrl
         - sqs:SendMessage
