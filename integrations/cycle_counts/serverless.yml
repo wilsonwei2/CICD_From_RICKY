@@ -37,6 +37,7 @@ provider:
   httpApi:
     payload: '2.0'
   timeout: 60
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
   memorySize: 256
   environment:
     TABLE_NAME: ${self:service}-${self:provider.stage}-item-ids-map
