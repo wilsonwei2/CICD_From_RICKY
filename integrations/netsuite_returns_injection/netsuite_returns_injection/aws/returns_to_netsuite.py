@@ -144,6 +144,10 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
     if customer_order:
         is_endless_aisle = Utils.is_endless_aisle(order_payload=customer_order)
 
+    LOGGER.debug(
+        f'is_historical: {is_historical}, is_historical.lower(): {is_historical.lower()},' \
+        f' is_blind_return: {is_blind_return}, is_endless_aisle: {is_endless_aisle}')
+
     if not (is_historical and is_historical.lower() == 'true') \
         and not is_blind_return and not is_endless_aisle:
         # Retrieve the associated order from NetSuite
