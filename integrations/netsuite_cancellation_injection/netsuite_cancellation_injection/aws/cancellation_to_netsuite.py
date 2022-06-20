@@ -124,7 +124,7 @@ async def handle_item_cancellation(event_cancellation, sales_order):
             updated_item['quantity'] = 0
             update_items.append(updated_item)
             cancelled_product_ids.remove(product_id)
-            LOGGER.debug(f'***display item dict: {item}')
+            LOGGER.info(f'DEBUG MSG display item dict: {item}')
             amount_cancelled += abs(float(item['amount']))
             taxes = get_item_taxes(item)
 
