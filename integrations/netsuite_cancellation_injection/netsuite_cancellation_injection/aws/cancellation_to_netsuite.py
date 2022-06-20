@@ -141,7 +141,7 @@ async def handle_item_cancellation(event_cancellation, sales_order):
 
         elif is_payment_item(item) and amount_cancelled > 0:
             if abs(item['amount']) >= amount_cancelled:
-                updated_item['amount'] = -abs(abs(item['amount']) - amount_cancelled)
+                updated_item['amount'] -= abs(abs(item['amount']) - amount_cancelled)
                 amount_cancelled = 0.0
             else:
                 amount_cancelled -= abs(item['amount'])
