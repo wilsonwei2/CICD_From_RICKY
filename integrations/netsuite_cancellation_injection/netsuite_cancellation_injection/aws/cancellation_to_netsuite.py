@@ -124,6 +124,7 @@ async def handle_item_cancellation(event_cancellation, sales_order):
             updated_item['quantity'] = 0
             update_items.append(updated_item)
             cancelled_product_ids.remove(product_id)
+            LOGGER.debug(f'***display item dict: {item}')
             amount_cancelled += abs(float(item['amount']))
             taxes = get_item_taxes(item)
 
@@ -141,7 +142,7 @@ async def handle_item_cancellation(event_cancellation, sales_order):
 
         elif is_payment_item(item) and amount_cancelled > 0:
             if abs(item['amount']) >= amount_cancelled:
-                updated_item['amount'] -= abs(abs(item['amount']) - amount_cancelled)
+                updated_item['amount'] = -abs(abs(item['amount']) - amount_cancelled)
                 amount_cancelled = 0.0
             else:
                 amount_cancelled -= abs(item['amount'])
