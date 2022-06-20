@@ -125,7 +125,7 @@ async def handle_item_cancellation(event_cancellation, sales_order):
             update_items.append(updated_item)
             cancelled_product_ids.remove(product_id)
             amount_cancelled += abs(float(item['amount']))
-            LOGGER.info(f"DBMSG: Item being canceled: {item['item']['name']}, amount cancelled: {item['amount']}, total inprocess amount cancelled: {amount_cancelled}")
+            LOGGER.info(f"DBMSG: Item {item['item']['name']}, amount: {item['amount']}, total: {amount_cancelled}")
             taxes = get_item_taxes(item)
 
             if item_has_discount(item):
