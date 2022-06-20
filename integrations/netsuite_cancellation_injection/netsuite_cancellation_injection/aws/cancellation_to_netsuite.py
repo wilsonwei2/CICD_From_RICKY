@@ -124,8 +124,8 @@ async def handle_item_cancellation(event_cancellation, sales_order):
             updated_item['quantity'] = 0
             update_items.append(updated_item)
             cancelled_product_ids.remove(product_id)
-            LOGGER.info(f'DEBUG MSG display item dict: {item}')
             amount_cancelled += abs(float(item['amount']))
+            LOGGER.info(f"DBMSG: Item being canceled: {item['item']['name']}, amount cancelled: {item['amount']}, total inprocess amount cancelled: {amount_cancelled}")
             taxes = get_item_taxes(item)
 
             if item_has_discount(item):
@@ -133,16 +133,20 @@ async def handle_item_cancellation(event_cancellation, sales_order):
 
             if taxes:
                 amount_cancelled += (float(item['amount']) * taxes) / 100
+                LOGGER.info(f"DBMSG: Tax amount cancelled: {item['amount']}, total inprocess amount cancelled: {amount_cancelled}")
 
         elif has_discount and str(item['item']['internalId']) == str(Utils.get_netsuite_config()['newstore_discount_item_id']):
             updated_item['rate'] = 0.0
             update_items.append(updated_item)
             amount_cancelled -= abs(float(item['amount']))
+            LOGGER.info(f"DBMSG: Discount Amount: {item['amount']}, total inprocess amount cancelled: {amount_cancelled}")
             has_discount = False
 
         elif is_payment_item(item) and amount_cancelled > 0:
             if abs(item['amount']) >= amount_cancelled:
+                LOGGER.info(f"DBMSG: Payment Item Amount: {item['amount']}")
                 updated_item['amount'] = -abs(abs(item['amount']) - amount_cancelled)
+                LOGGER.info(f"DBMSG: Updated Discount Amount: {updated_item['amount']}")
                 amount_cancelled = 0.0
             else:
                 amount_cancelled -= abs(item['amount'])
