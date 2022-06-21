@@ -157,8 +157,11 @@ class Utils():
 
     @staticmethod
     def is_endless_aisle(order_payload):
-        return order_payload.get('channel_type', '') == 'store' and \
-            order_payload['shipment_details'][0]['shipping_option']['shipping_type'] == 'traditional_carrier'
+        if order_payload.get('channel_type', '') == 'store':
+            for shipping_option in order_payload['shipment_details']:
+                if shipping_option['shipping_option']['shipping_type'] == 'traditional_carrier':
+                    return True
+        return False
 
     @staticmethod
     def get_extended_attribute(extended_attributes, key):
