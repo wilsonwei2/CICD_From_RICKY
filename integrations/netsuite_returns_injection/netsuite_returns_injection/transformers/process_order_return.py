@@ -23,6 +23,7 @@ async def transform_order(cash_sale, ns_return, payments_info, customer_order=No
     cash_refund_items = await map_cash_refund_items(customer_order,
                                                     ns_return,
                                                     subsidiary_id)
+    LOGGER.debug(f'payments_info: {payments_info}')
     payment_items, refund_transactions = await map_payment_items(payment_instrument_list=payments_info['instruments'],
                                                                  ns_return=ns_return,
                                                                  store_tz=store_tz,

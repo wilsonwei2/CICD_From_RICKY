@@ -156,6 +156,7 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
 
         # In case of return for exchanged order, original order payment must be fetched
         original_order = await _get_original_order(cash_sale)
+        LOGGER.debug(f'original_order: {original_order}')
         if original_order and original_order['internalId'] != cash_sale['internalId']:
             ext_order = Utils.get_newstore_conn().get_external_order(original_order.externalId)
             payments_info = Utils.get_newstore_conn(
