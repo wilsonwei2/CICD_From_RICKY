@@ -1,9 +1,13 @@
 import json
 import logging
+import os
 
 from yotpo_shopper_loyalty.handlers.utils import Utils
 
 LOGGER = logging.getLogger(__name__)
+LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
+LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
+LOGGER.setLevel(LOG_LEVEL)
 
 def handler(event, context): # pylint: disable=W0613
     """
