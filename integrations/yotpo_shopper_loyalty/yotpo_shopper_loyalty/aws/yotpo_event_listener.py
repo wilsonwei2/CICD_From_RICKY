@@ -11,7 +11,7 @@ def handler(event, context): # pylint: disable=W0613
     """
     LOGGER.info(f"Event: {event}")
 
-    event_body = event['body']
+    event_body = json.loads(event['body'])
     # log the event body
 
     if event_body.get('topic') == 'swell/redemption/created':
