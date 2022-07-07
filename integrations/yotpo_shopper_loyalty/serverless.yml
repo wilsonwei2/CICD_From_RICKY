@@ -32,8 +32,6 @@ functions:
     handler: yotpo_shopper_loyalty.aws.yotpo_webhook.handler
     timeout: 300
     memorySize: 128
-    environment:
-      PROCESS_ORDER_LAMBDA_NAME: ${self:functions.process_order.name}
     events:
       - http: POST /yotpo_event_stream
 
