@@ -89,7 +89,8 @@ resources:
     YotpoOrderOpenQueue:
       Type: AWS::SQS::Queue
       Properties:
-        QueueName: ${self:provider.tenant}-yotpo-order-opened-queue.fifo
+        FifoQueue: True
+        QueueName: ${self:provider.tenant}-yotpo-order-opened-queue
         VisibilityTimeout: 300
         ContentBasedDeduplication: True
         RedrivePolicy:
@@ -101,7 +102,7 @@ resources:
         FifoQueue: True
         ContentBasedDeduplication: True
         MessageRetentionPeriod: 1209600
-        QueueName: ${self:provider.tenant}-yotpo-order-opened-queue-dlq.fifo
+        QueueName: ${self:provider.tenant}-yotpo-order-opened-queue-dlq
 #     YotpoOrderCancellationQueue:
 #       Type: "AWS::SQS::Queue"
 #       Properties:
