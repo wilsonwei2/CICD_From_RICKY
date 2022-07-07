@@ -87,15 +87,16 @@ functions:
 resources:
   Resources:
     YotpoOrderOpenQueue:
-      Type: "AWS::SQS::Queue"
+      Type: AWS::SQS::Queue
       Properties:
         QueueName: ${self:provider.tenant}-yotpo-order-opened-queue.fifo
         VisibilityTimeout: 300
+        ContentBasedDeduplication: True
         RedrivePolicy:
           deadLetterTargetArn: !GetAtt YotpoOrderOpenDeadLetterQueue.Arn
           maxReceiveCount: 24
     YotpoOrderOpenDeadLetterQueue:
-      Type: "AWS::SQS::Queue"
+      Type: AWS::SQS::Queue
       Properties:
         FifoQueue: True
         ContentBasedDeduplication: True
