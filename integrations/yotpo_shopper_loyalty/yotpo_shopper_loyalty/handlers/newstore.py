@@ -156,6 +156,7 @@ class NShandler():
         coupon = {}
         coupon["label"] = redemption_option_name
         coupon["template_label"] = coupon_definition_label
+        LOGGER.info(f"NS Coupon definition payload {coupon}")
         response = requests.post(url, headers=self.get_headers(), json=coupon)
         response.raise_for_status()
         return response.json()
