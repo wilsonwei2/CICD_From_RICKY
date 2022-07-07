@@ -94,14 +94,13 @@ resources:
         RedrivePolicy:
           deadLetterTargetArn: !GetAtt YotpoOrderOpenDeadLetterQueue.Arn
           maxReceiveCount: 24
-#     YotpoOrderOpenDeadLetterQueue:
-#       Type: "AWS::SQS::Queue"
-#       Properties:
-#         FifoQueue: True
-#         ContentBasedDeduplication: True
-#         MessageRetentionPeriod: 1209600
-#         QueueName: ${self:provider.tenant}-yotpo-order-opened-queue-dlq.fifo
-
+    YotpoOrderOpenDeadLetterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        FifoQueue: True
+        ContentBasedDeduplication: True
+        MessageRetentionPeriod: 1209600
+        QueueName: ${self:provider.tenant}-yotpo-order-opened-queue-dlq.fifo
 #     YotpoOrderCancellationQueue:
 #       Type: "AWS::SQS::Queue"
 #       Properties:
