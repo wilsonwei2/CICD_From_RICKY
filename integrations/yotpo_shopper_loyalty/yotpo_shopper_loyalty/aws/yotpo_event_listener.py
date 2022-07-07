@@ -62,5 +62,6 @@ def _get_ns_discount_rule_id(utils_obj, redempttion_option_id):
         get_parameter_store().
         get_param('yotpo_ns_discount_rules_mapping')
     )
+    LOGGER.info(f"redempttion_option_id: {redempttion_option_id}")
     LOGGER.info(f"fetched ns_discount_rules from param store: {ns_discount_rules}")
     return ns_discount_rules.get(redempttion_option_id)
