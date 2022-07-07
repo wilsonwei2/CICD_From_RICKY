@@ -33,23 +33,23 @@ functions:
     memorySize: 128
     events:
       - http: POST /yotpo_event_stream
-#   process_order_to_yotpo:
-#     name: ${self:provider.tenant}-process-order-to-yotpo
-#     handler: yotpo_shopper_loyalty.aws.process_order.handler
-#     timeout: 900
-#     environment:
-#       SQS_YOTPO_ORDER_OPENED:
-#         Fn::GetAtt:
-#           - YotpoOrderOpenQueue
-#           - QueueName
-#     events:
-#       - sqs:
-#           arn:
-#             Fn::GetAtt:
-#               - YotpoOrderOpenQueue
-#               - Arn
-#           batchSize: 1
 
+  # process_order_to_yotpo:
+  #   name: ${self:provider.tenant}-process-order-to-yotpo
+  #   handler: yotpo_shopper_loyalty.aws.process_order.handler
+  #   timeout: 900
+  #   environment:
+  #     SQS_YOTPO_ORDER_OPENED:
+  #       Fn::GetAtt:
+  #         - YotpoOrderOpenQueue
+  #         - QueueName
+  #   events:
+  #     - sqs:
+  #         arn:
+  #           Fn::GetAtt:
+  #             - YotpoOrderOpenQueue
+  #             - Arn
+  #         batchSize: 1
 #   process_cancellation_to_yotpo:
 #     name: ${self:provider.tenant}-process-cancellation-to-yotpo
 #     handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
@@ -84,17 +84,16 @@ functions:
 #               - Arn
 #           batchSize: 1
 
-# resources:
-#   Resources:
-#     YotpoOrderOpenQueue:
-#       Type: "AWS::SQS::Queue"
-#       Properties:
-#         QueueName: ${self:provider.tenant}-yotpo-order-opened-queue.fifo
-#         VisibilityTimeout: 300
-#         RedrivePolicy:
-#           deadLetterTargetArn: !GetAtt YotpoOrderOpenDeadLetterQueue.Arn
-#           maxReceiveCount: 24
-
+resources:
+  Resources:
+    YotpoOrderOpenQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:provider.tenant}-yotpo-order-opened-queue.fifo
+        VisibilityTimeout: 300
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt YotpoOrderOpenDeadLetterQueue.Arn
+          maxReceiveCount: 24
 #     YotpoOrderOpenDeadLetterQueue:
 #       Type: "AWS::SQS::Queue"
 #       Properties:
