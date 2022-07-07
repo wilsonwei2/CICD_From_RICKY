@@ -137,3 +137,40 @@ class NShandler():
         response = requests.get(url=url, headers=self.get_headers())
         response.raise_for_status()
         return response.json()
+
+    def create_coupon_definition(self, coupon_code: str, coupon_definition_label: str, discount_rule_id: str):
+        url = f'https://{self.host}/v0/d/coupon_definitions'
+        LOGGER.info("Create Coupon Definition")
+        coupon_definition = {}
+        coupon_definition["pattern"] = coupon_code
+        coupon_definition["label"] = coupon_definition_label
+        coupon_definition["discount_rule_id"] = discount_rule_id
+        coupon_definition["max_redemptions"] = 1
+        response = requests.post(url, headers=self.get_headers(), json=coupon_definition)
+        response.raise_for_status()
+        return response.json()
+
+    def create_coupon(self, coupon_definition_label: str, redemption_option_name: str):
+        url = f'https://{self.host}/v0/d/coupons'
+        LOGGER.info("Create Coupon")
+        coupon = {}
+        coupon["label"] = redemption_option_name
+        coupon["template_label"] = coupon_definition_label
+        response = requests.post(url, headers=self.get_headers(), json=coupon)
+        response.raise_for_status()
+        return response.json()
+
+    def get_coupons(self, coupon_codes: List[str]):
+        filter_string = "&filter[code]=".join(coupon_codes)
+        url = f'https://{self.host}/v0/d/coupons?filter[code]={filter_string}'
+        LOGGER.info("Get Coupons")
+        response = requests.get(url, headers=self.get_headers())
+        response.raise_for_status()
+        return response.json().get('items')
+
+    def disable_coupon(self, coupon_id: str):
+        url = f'https://{self.host}/v0/d/coupons/{coupon_id}'
+        LOGGER.info("Disable Coupon")
+        response = requests.patch(url, headers=self.get_headers(), json={"is_enabled": False})
+        response.raise_for_status()
+        return response.json()

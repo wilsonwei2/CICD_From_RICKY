@@ -1,4 +1,4 @@
-service: frankandoak-shopify-import-order
+service: frankandoak-yotpo-shopper-loyalty
 
 plugins:
   - serverless-python-requirements
@@ -10,7 +10,7 @@ package:
   exclude:
     - ./**
   include:
-    - shopify_import_order/**
+    - yotpo_shopper_loyalty/**
 
 provider:
   name: aws
@@ -20,59 +20,123 @@ provider:
   region: us-east-1
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
-  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole"
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
     REGION: ${self:provider.region}
 
 functions:
-  receive_order:
-    name: ${self:provider.tenant}-receive-shopify-order
-    handler: shopify_import_order.aws.receive.handler
+  yotpo_webhook:
+    name: ${self:provider.tenant}-yotpo-webhook
+    handler: yotpo_shopper_loyalty.aws.yotpo_webhook.handler
     timeout: 300
     memorySize: 128
     environment:
       PROCESS_ORDER_LAMBDA_NAME: ${self:functions.process_order.name}
     events:
-      - http: POST /d/import/shopify/order
-  process_order:
-    name: ${self:provider.tenant}-process-shopify-order-to-newstore
-    handler: shopify_import_order.aws.process.handler
-    timeout: 300
-    memorySize: 128
+      - http: POST /yotpo_event_stream
+
+  process_order_to_yotpo:
+    name: ${self:provider.tenant}-process-order-to-yotpo
+    handler: yotpo_shopper_loyalty.aws.process_order.handler
+    timeout: 900
     environment:
-      CONDITION_CODE: 1
-      ITEM_CONDITION: Sellable
-      SHOP: storefront-catalog-en
-      LOCALE: en-US
-      USE_HACKS: 'False'
-      SLACK_HOOK_URL: ''
-      BLOCK_BEFORE_DATE: '2021-07-20'
+      SQS_YOTPO_ORDER_OPENED:
+        Fn::GetAtt:
+          - YotpoOrderOpenQueue
+          - QueueName
     events:
-      - http: POST /d/process/shopify/order
-  sync_orders:
-    name: ${self:provider.tenant}-shopify-order-sync-newstore
-    handler: shopify_import_order.aws.sync.handler
-    timeout: 300
-    memorySize: 128
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - YotpoOrderOpenQueue
+              - Arn
+          batchSize: 1
+
+  process_cancellation_to_yotpo:
+    name: ${self:provider.tenant}-process-cancellation-to-yotpo
+    handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
+    timeout: 900
     environment:
-      HOURS_TO_CHECK: 1
-      ORDER_IMPORT_API: ''
+      SQS_YOTPO_ORDER_CANCELLED:
+        Fn::GetAtt:
+          - YotpoOrderCancellationQueue
+          - QueueName
     events:
-      - http: POST /sync/shopify/order
-      - schedule:
-          name: ${self:provider.tenant}-sync-shopify-order-trigger
-          rate: rate(1 hour)
-  sync_webhooks:
-    name: ${self:provider.tenant}-shopify-sync-order-webhooks
-    handler: shopify_import_order.aws.sync_webhooks.handler
-    timeout: 300
-    memorySize: 128
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - YotpoOrderCancellationQueue
+              - Arn
+          batchSize: 1
+
+  process_yotpo_return:
+    name: ${self:provider.tenant}-process-yotpo-return
+    handler: yotpo_shopper_loyalty.aws.store_return.handler
+    timeout: 900
     environment:
-      EVENT_TYPE: 'orders/paid,orders/updated'
-      ORDER_IMPORT_API: ''
+      SQS_YOTPO_ORDER_RETURN_PROCESSED:
+        Fn::GetAtt:
+          - YotpoReturnQueue
+          - QueueName
     events:
-      - schedule:
-          name: ${self:provider.tenant}-sync-shopify-webhooks-trigger
-          rate: rate(1 hour)
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - YotpoReturnQueue
+              - Arn
+          batchSize: 1
+
+resources:
+  Resources:
+    YotpoOrderOpenQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:provider.tenant}-yotpo-order-opened-queue.fifo
+        VisibilityTimeout: 300
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt YotpoOrderOpenDeadLetterQueue.Arn
+          maxReceiveCount: 24
+
+    YotpoOrderOpenDeadLetterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        FifoQueue: True
+        ContentBasedDeduplication: True
+        MessageRetentionPeriod: 1209600
+        QueueName: ${self:provider.tenant}-yotpo-order-opened-queue-dlq.fifo
+
+    YotpoOrderCancellationQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:provider.tenant}-yotpo-order-cancelled-queue.fifo
+        VisibilityTimeout: 300
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt YotpoOrderCancellationDeadLetterQueue.Arn
+          maxReceiveCount: 24
+
+    YotpoOrderCancellationDeadLetterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        FifoQueue: True
+        ContentBasedDeduplication: True
+        MessageRetentionPeriod: 1209600
+        QueueName: ${self:provider.tenant}-yotpo-order-cancelled-queue-dlq.fifo
+
+    YotpoReturnQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue.fifo
+        VisibilityTimeout: 300
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt YotpoReturnDeadLetterQueue.Arn
+          maxReceiveCount: 24
+
+    YotpoReturnDeadLetterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        FifoQueue: True
+        ContentBasedDeduplication: True
+        MessageRetentionPeriod: 1209600
+        QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue-dlq.fifo

@@ -6,6 +6,7 @@ name = "pypi"
 [dev-packages]
 
 [packages]
+lambda-utils = {path = "./../../shared/lambda_utils"}
 newstore-adapter = {path = "./../../shared/newstore_adapter"}
 shopify-adapter = {path = "./../../shared/shopify_adapter"}
 pom-common = {path = "./../../shared/pom_common"}
