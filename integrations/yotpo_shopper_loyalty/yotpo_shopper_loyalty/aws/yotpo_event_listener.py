@@ -9,10 +9,10 @@ def handler(event, context): # pylint: disable=W0613
     """
     This is the webhook that is triggered by Yotpo.
     """
-    event = json.loads(event)
+    LOGGER.info(f"Event: {event}")
+
     event_body = event['body']
     # log the event body
-    LOGGER.info(f"Event body: {event.get('body')}")
 
     if event_body.get('topic') == 'swell/redemption/created':
         # read event body and create coupons in NewStore accordingly
