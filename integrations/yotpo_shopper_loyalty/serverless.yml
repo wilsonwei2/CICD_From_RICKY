@@ -50,13 +50,13 @@ functions:
         Fn::GetAtt:
           - YotpoOrderOpenQueue
           - QueueName
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - YotpoOrderOpenQueue
-              - Arn
-          batchSize: 1
+    # events:
+    #   - sqs:
+    #       arn:
+    #         Fn::GetAtt:
+    #           - YotpoOrderOpenQueue
+    #           - Arn
+    #       batchSize: 1
 #   process_cancellation_to_yotpo:
 #     name: ${self:provider.tenant}-process-cancellation-to-yotpo
 #     handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
