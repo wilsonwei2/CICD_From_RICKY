@@ -34,22 +34,22 @@ functions:
     events:
       - http: POST /yotpo_event_stream
 
-  # process_order_to_yotpo:
-  #   name: ${self:provider.tenant}-process-order-to-yotpo
-  #   handler: yotpo_shopper_loyalty.aws.process_order.handler
-  #   timeout: 900
-  #   environment:
-  #     SQS_YOTPO_ORDER_OPENED:
-  #       Fn::GetAtt:
-  #         - YotpoOrderOpenQueue
-  #         - QueueName
-  #   events:
-  #     - sqs:
-  #         arn:
-  #           Fn::GetAtt:
-  #             - YotpoOrderOpenQueue
-  #             - Arn
-  #         batchSize: 1
+  process_order_to_yotpo:
+    name: ${self:provider.tenant}-process-order-to-yotpo
+    handler: yotpo_shopper_loyalty.aws.process_order.handler
+    timeout: 900
+    environment:
+      SQS_YOTPO_ORDER_OPENED:
+        Fn::GetAtt:
+          - YotpoOrderOpenQueue
+          - QueueName
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - YotpoOrderOpenQueue
+              - Arn
+          batchSize: 1
 #   process_cancellation_to_yotpo:
 #     name: ${self:provider.tenant}-process-cancellation-to-yotpo
 #     handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
