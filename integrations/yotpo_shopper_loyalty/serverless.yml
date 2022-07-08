@@ -36,6 +36,7 @@ functions:
   yotpo_webhook:
     name: ${self:provider.tenant}-yotpo-webhook
     handler: yotpo_shopper_loyalty.aws.yotpo_event_listener.handler
+    role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole"
     timeout: 300
     memorySize: 128
     events:
