@@ -44,7 +44,7 @@ functions:
   process_order_to_yotpo:
     name: ${self:provider.tenant}-process-order-to-yotpo
     handler: yotpo_shopper_loyalty.aws.process_order.handler
-    timeout: 900
+    timeout: 300
     environment:
       SQS_YOTPO_ORDER_OPENED:
         Fn::GetAtt:
