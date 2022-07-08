@@ -19,7 +19,7 @@ provider:
   region: us-east-1
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
-  role: arn:aws:iam::#{AWS::AccountId}:role/LambdaExecutionRole
+  role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole"
   environment:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
@@ -36,7 +36,6 @@ functions:
   yotpo_webhook:
     name: ${self:provider.tenant}-yotpo-webhook
     handler: yotpo_shopper_loyalty.aws.yotpo_event_listener.handler
-    role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole"
     timeout: 300
     memorySize: 128
     events:
@@ -51,13 +50,13 @@ functions:
         Fn::GetAtt:
           - YotpoOrderOpenQueue
           - QueueName
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - YotpoOrderOpenQueue
-              - Arn
-          batchSize: 1
+    # events:
+    #   - sqs:
+    #       arn:
+    #         Fn::GetAtt:
+    #           - YotpoOrderOpenQueue
+    #           - Arn
+    #       batchSize: 1
 #   process_cancellation_to_yotpo:
 #     name: ${self:provider.tenant}-process-cancellation-to-yotpo
 #     handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
