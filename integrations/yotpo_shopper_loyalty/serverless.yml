@@ -57,39 +57,39 @@ functions:
               - YotpoOrderOpenQueue
               - Arn
           batchSize: 1
-#   process_cancellation_to_yotpo:
-#     name: ${self:provider.tenant}-process-cancellation-to-yotpo
-#     handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
-#     timeout: 900
-#     environment:
-#       SQS_YOTPO_ORDER_CANCELLED:
-#         Fn::GetAtt:
-#           - YotpoOrderCancellationQueue
-#           - QueueName
-#     events:
-#       - sqs:
-#           arn:
-#             Fn::GetAtt:
-#               - YotpoOrderCancellationQueue
-#               - Arn
-#           batchSize: 1
+  process_cancellation_to_yotpo:
+    name: ${self:provider.tenant}-process-cancellation-to-yotpo
+    handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
+    timeout: 300
+    environment:
+      SQS_YOTPO_ORDER_CANCELLED:
+        Fn::GetAtt:
+          - YotpoOrderCancellationQueue
+          - QueueName
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - YotpoOrderCancellationQueue
+              - Arn
+          batchSize: 1
 
-#   process_yotpo_return:
-#     name: ${self:provider.tenant}-process-yotpo-return
-#     handler: yotpo_shopper_loyalty.aws.store_return.handler
-#     timeout: 900
-#     environment:
-#       SQS_YOTPO_ORDER_RETURN_PROCESSED:
-#         Fn::GetAtt:
-#           - YotpoReturnQueue
-#           - QueueName
-#     events:
-#       - sqs:
-#           arn:
-#             Fn::GetAtt:
-#               - YotpoReturnQueue
-#               - Arn
-#           batchSize: 1
+  process_yotpo_return:
+    name: ${self:provider.tenant}-process-yotpo-return
+    handler: yotpo_shopper_loyalty.aws.store_return.handler
+    timeout: 300
+    environment:
+      SQS_YOTPO_ORDER_RETURN_PROCESSED:
+        Fn::GetAtt:
+          - YotpoReturnQueue
+          - QueueName
+    events:
+      - sqs:
+          arn:
+            Fn::GetAtt:
+              - YotpoReturnQueue
+              - Arn
+          batchSize: 1
 
 resources:
   Resources:
@@ -110,36 +110,36 @@ resources:
         ContentBasedDeduplication: True
         MessageRetentionPeriod: 1209600
         QueueName: ${self:provider.tenant}-yotpo-order-opened-queue-dlq.fifo
-#     YotpoOrderCancellationQueue:
-#       Type: "AWS::SQS::Queue"
-#       Properties:
-#         QueueName: ${self:provider.tenant}-yotpo-order-cancelled-queue.fifo
-#         VisibilityTimeout: 300
-#         RedrivePolicy:
-#           deadLetterTargetArn: !GetAtt YotpoOrderCancellationDeadLetterQueue.Arn
-#           maxReceiveCount: 24
+    YotpoOrderCancellationQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:provider.tenant}-yotpo-order-cancelled-queue.fifo
+        VisibilityTimeout: 300
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt YotpoOrderCancellationDeadLetterQueue.Arn
+          maxReceiveCount: 24
 
-#     YotpoOrderCancellationDeadLetterQueue:
-#       Type: "AWS::SQS::Queue"
-#       Properties:
-#         FifoQueue: True
-#         ContentBasedDeduplication: True
-#         MessageRetentionPeriod: 1209600
-#         QueueName: ${self:provider.tenant}-yotpo-order-cancelled-queue-dlq.fifo
+    YotpoOrderCancellationDeadLetterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        FifoQueue: True
+        ContentBasedDeduplication: True
+        MessageRetentionPeriod: 1209600
+        QueueName: ${self:provider.tenant}-yotpo-order-cancelled-queue-dlq.fifo
 
-#     YotpoReturnQueue:
-#       Type: "AWS::SQS::Queue"
-#       Properties:
-#         QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue.fifo
-#         VisibilityTimeout: 300
-#         RedrivePolicy:
-#           deadLetterTargetArn: !GetAtt YotpoReturnDeadLetterQueue.Arn
-#           maxReceiveCount: 24
+    YotpoReturnQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue.fifo
+        VisibilityTimeout: 300
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt YotpoReturnDeadLetterQueue.Arn
+          maxReceiveCount: 24
 
-#     YotpoReturnDeadLetterQueue:
-#       Type: "AWS::SQS::Queue"
-#       Properties:
-#         FifoQueue: True
-#         ContentBasedDeduplication: True
-#         MessageRetentionPeriod: 1209600
-#         QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue-dlq.fifo
+    YotpoReturnDeadLetterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        FifoQueue: True
+        ContentBasedDeduplication: True
+        MessageRetentionPeriod: 1209600
+        QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue-dlq.fifo
