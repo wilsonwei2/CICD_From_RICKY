@@ -24,6 +24,13 @@ provider:
     STAGE: ${self:provider.stage}
     TENANT: ${self:provider.tenant}
     REGION: ${self:provider.region}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - sqs:GetQueueUrl
+        - sqs:SendMessage
+        - sqs:GetQueueAttributes
+      Resource: !GetAtt YotpoOrderOpenQueue.Arn
 
 functions:
   yotpo_webhook:
