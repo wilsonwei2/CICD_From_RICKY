@@ -58,22 +58,22 @@ functions:
               - Arn
           batchSize: 1
 
-  process_cancellation_to_yotpo:
-    name: ${self:provider.tenant}-process-cancellation-to-yotpo
-    handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
-    timeout: 300
-    environment:
-      SQS_YOTPO_ORDER_CANCELLED:
-        Fn::GetAtt:
-          - YotpoOrderCancellationQueue
-          - QueueName
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - YotpoOrderCancellationQueue
-              - Arn
-          batchSize: 1
+  # process_cancellation_to_yotpo:
+  #   name: ${self:provider.tenant}-process-cancellation-to-yotpo
+  #   handler: yotpo_shopper_loyalty.aws.process_cancellation.handler
+  #   timeout: 300
+  #   environment:
+  #     SQS_YOTPO_ORDER_CANCELLED:
+  #       Fn::GetAtt:
+  #         - YotpoOrderCancellationQueue
+  #         - QueueName
+  #   events:
+  #     - sqs:
+  #         arn:
+  #           Fn::GetAtt:
+  #             - YotpoOrderCancellationQueue
+  #             - Arn
+  #         batchSize: 1
 
   # process_yotpo_return:
   #   name: ${self:provider.tenant}-process-yotpo-return
