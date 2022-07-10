@@ -58,6 +58,7 @@ def _disable_ns_coupons(coupon_codes):
     for coupon_id in coupon_ids_to_disable:
         NEWSTORE_HANDLER.disable_coupon(coupon_id)
         LOGGER.info(f'Disabled coupon: {coupon_id}')
+    return None
 
 
 def _disable_shopify_coupons(coupon_codes):
@@ -68,6 +69,7 @@ def _disable_shopify_coupons(coupon_codes):
     for coupon in coupon_codes:
         LOGGER.info(f'Disabling coupon: {coupon}')
         shopify_discount_gql.disable_shopify_coupon(coupon)
+    return None
 
 def _create_yotpo_order(order_payload):
     LOGGER.info(f'Creating yotpo order: {order_payload}')

@@ -84,7 +84,7 @@ class ShopifyDiscountCodeGQL:
         LOGGER.info(f'Disable coupon GQL variables: {variables}')
         response = self._call_shopify_gql(mutation, variables)
         LOGGER.info(f'Disable coupon GQL response: {response}')
-        if response['discountCodeDeactivate']['codeDiscountNode']['codeDiscount']['status'] is not 'EXPIRED':
+        if response['discountCodeDeactivate']['codeDiscountNode']['codeDiscount']['status'] != 'EXPIRED':
             raise ValueError('Coupon not expired')
 
     def _call_shopify_gql(self, gql_string: str, variables=None):
