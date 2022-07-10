@@ -116,8 +116,10 @@ resources:
     YotpoOrderCancellationQueue:
       Type: "AWS::SQS::Queue"
       Properties:
+        FifoQueue: True
         QueueName: ${self:provider.tenant}-yotpo-order-cancelled-queue.fifo
         VisibilityTimeout: 300
+        ContentBasedDeduplication: True
         RedrivePolicy:
           deadLetterTargetArn: !GetAtt YotpoOrderCancellationDeadLetterQueue.Arn
           maxReceiveCount: 24
