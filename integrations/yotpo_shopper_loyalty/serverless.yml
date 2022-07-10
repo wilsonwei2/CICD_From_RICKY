@@ -132,19 +132,21 @@ resources:
         MessageRetentionPeriod: 1209600
         QueueName: ${self:provider.tenant}-yotpo-order-cancelled-queue-dlq.fifo
 
-    # YotpoReturnQueue:
-    #   Type: "AWS::SQS::Queue"
-    #   Properties:
-    #     QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue.fifo
-    #     VisibilityTimeout: 300
-    #     RedrivePolicy:
-    #       deadLetterTargetArn: !GetAtt YotpoReturnDeadLetterQueue.Arn
-    #       maxReceiveCount: 24
+    YotpoReturnQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        FifoQueue: True
+        QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue.fifo
+        VisibilityTimeout: 300
+        ContentBasedDeduplication: True
+        RedrivePolicy:
+          deadLetterTargetArn: !GetAtt YotpoReturnDeadLetterQueue.Arn
+          maxReceiveCount: 24
 
-    # YotpoReturnDeadLetterQueue:
-    #   Type: "AWS::SQS::Queue"
-    #   Properties:
-    #     FifoQueue: True
-    #     ContentBasedDeduplication: True
-    #     MessageRetentionPeriod: 1209600
-    #     QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue-dlq.fifo
+    YotpoReturnDeadLetterQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        FifoQueue: True
+        ContentBasedDeduplication: True
+        MessageRetentionPeriod: 1209600
+        QueueName: ${self:provider.tenant}-yotpo-order-return-processed-queue-dlq.fifo
