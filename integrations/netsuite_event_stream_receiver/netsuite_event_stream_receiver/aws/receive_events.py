@@ -127,7 +127,8 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
     elif event_type in ('order.cancelled', 'order.items_cancelled'):
         queue_name = SQS_CANCELLATION
         message['event_type'] = event_type
-        push_message_to_sqs(SQS_YOTPO_ORDER_CANCELLED, message)
+        if event_type == 'order.items_cancelled':
+            push_message_to_sqs(SQS_YOTPO_ORDER_CANCELLED, message)
 
     elif event_type == 'inventory_transaction.adjustment_created':
         queue_name = SQS_ADJUSTMENTS
