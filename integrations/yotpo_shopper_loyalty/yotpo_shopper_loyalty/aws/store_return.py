@@ -101,7 +101,7 @@ def _get_return_data(return_id):
     return graphql_response['data']['return']
 
 def _contains_yotpo_coupons(return_data):
-    for item in return_data['discounts']['nodes']:
+    for item in return_data['order']['discounts']['nodes']:
         if item['couponCode'].startswith('FAOC') or item['couponCode'].startswith('FAOU'):
             return True
     return False
