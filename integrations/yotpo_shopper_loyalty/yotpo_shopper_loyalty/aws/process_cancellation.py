@@ -19,11 +19,15 @@ def handler(event, context):
     utils = Utils.get_instance()
     ns_config_creds = json.loads(utils.get_parameter_store().get_param('newstore'))
     host = ns_config_creds['host']
+    username = ns_config_creds['username']
+    password = ns_config_creds['password']
     NEWSTORE_HANDLER = NewStoreConnector(
         tenant=os.environ.get('TENANT'),
         context=context,
         raise_errors=True,
-        host=host
+        host=host,
+        username=username,
+        password=password
     )
 
     for cancellation_record in event.get('Records', []):

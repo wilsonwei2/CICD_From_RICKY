@@ -19,11 +19,15 @@ def handler(event, context):
     utils = Utils.get_instance()
     ns_config = json.loads(utils.get_parameter_store().get_param('newstore'))
     host = ns_config['host']
+    username = ns_config['username']
+    password = ns_config['password']
     NEWSTORE_HANDLER = NewStoreConnector(
         tenant=os.environ.get('TENANT'),
         context=context,
         raise_errors=True,
-        host=host
+        host=host,
+        username=username,
+        password=password
     )
 
     for record in event.get('Records', []):
