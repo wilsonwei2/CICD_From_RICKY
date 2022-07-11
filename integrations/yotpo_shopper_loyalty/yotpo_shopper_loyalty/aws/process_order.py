@@ -2,6 +2,7 @@ import os
 import logging
 import json
 from lambda_utils.sqs.SqsHandler import SqsHandler
+from requests import HTTPError
 from yotpo_shopper_loyalty.handlers.utils import Utils
 from yotpo_shopper_loyalty.handlers.yotpo_handler import YotpoHandler
 from yotpo_shopper_loyalty.handlers.shopify_gql import ShopifyDiscountCodeGQL
@@ -40,36 +41,47 @@ def _process_order(order_json):
     coupon_codes = list([discount.get('coupon_code') for discount in discounts
                          if (discount.get('coupon_code').startswith("FAOU") or discount.get('coupon_code').startswith("FAOC"))])
     if (order_payload.get('channel_type')) == 'web':
-        _disable_ns_coupons(coupon_codes)
+        return _disable_ns_coupons(coupon_codes)
     elif (order_payload.get('channel_type')) == 'store':
-        _disable_shopify_coupons(coupon_codes)
-        _create_yotpo_order(order_payload)
+        if _disable_shopify_coupons(coupon_codes) and _create_yotpo_order(order_payload):
+            return True
     return False
 
 def _disable_ns_coupons(coupon_codes):
     if not coupon_codes:
         LOGGER.info('No coupons to disable on Newstore')
         return True
-    LOGGER.info(f'Disabling coupons: {coupon_codes}')
-    coupon_items_to_disable = NEWSTORE_HANDLER.get_coupons(coupon_codes)
-    LOGGER.info(f'Get Coupons response: {coupon_items_to_disable}')
-    coupon_ids_to_disable = [coupon_item.get('id') for coupon_item in coupon_items_to_disable]
-    LOGGER.info(f'Disabling coupons: {coupon_ids_to_disable}')
-    for coupon_id in coupon_ids_to_disable:
-        NEWSTORE_HANDLER.disable_coupon(coupon_id)
-        LOGGER.info(f'Disabled coupon: {coupon_id}')
-    return None
-
+    try:
+        LOGGER.info(f'Disabling coupons: {coupon_codes}')
+        coupon_items_to_disable = NEWSTORE_HANDLER.get_coupons(coupon_codes)
+        LOGGER.info(f'Get Coupons response: {coupon_items_to_disable}')
+        coupon_ids_to_disable = [coupon_item.get('id') for coupon_item in coupon_items_to_disable]
+        LOGGER.info(f'Disabling coupons: {coupon_ids_to_disable}')
+        for coupon_id in coupon_ids_to_disable:
+            NEWSTORE_HANDLER.disable_coupon(coupon_id)
+            LOGGER.info(f'Disabled coupon: {coupon_id}')
+        return True
+    except HTTPError as exc:
+        LOGGER.exception('Some error occurred while disabling coupons on Newstore')
+        err_msg = str(exc)
+        LOGGER.error(f'Error message: {err_msg}')
+        return False
 
 def _disable_shopify_coupons(coupon_codes):
-    if not coupon_codes:
-        LOGGER.info('No coupons to disable on Shopify')
+    try:
+        if not coupon_codes:
+            LOGGER.info('No coupons to disable on Shopify')
+            return True
+        shopify_discount_gql = ShopifyDiscountCodeGQL()
+        for coupon in coupon_codes:
+            LOGGER.info(f'Disabling coupon: {coupon}')
+            shopify_discount_gql.disable_shopify_coupon(coupon)
         return True
-    shopify_discount_gql = ShopifyDiscountCodeGQL()
-    for coupon in coupon_codes:
-        LOGGER.info(f'Disabling coupon: {coupon}')
-        shopify_discount_gql.disable_shopify_coupon(coupon)
-    return None
+    except HTTPError as exc:
+        LOGGER.exception('Some error occurred while disabling coupons on Shopify')
+        err_msg = str(exc)
+        LOGGER.error(f'Error message: {err_msg}')
+        return False
 
 def _create_yotpo_order(order_payload):
     LOGGER.info(f'Creating yotpo order: {order_payload}')

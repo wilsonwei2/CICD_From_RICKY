@@ -13,7 +13,7 @@ SQS_HANDLER = SqsHandler(os.environ['SQS_YOTPO_ORDER_CANCELLED'])
 NEWSTORE_HANDLER = None
 
 def handler(event, context):
-    LOGGER.info(f'Processing return Event: {event}')
+    LOGGER.info(f'Processing cancellation Event: {event}')
     global NEWSTORE_HANDLER  # pylint: disable=W0603
     NEWSTORE_HANDLER = NewStoreConnector(
         tenant=os.environ.get('TENANT'),
@@ -45,8 +45,8 @@ def _process_cancellation(payload_json):
     # using order uuid as refund id for Yotpo
     refund_request = _create_yotpo_refund_request(order, order_payload['id'])
     if (order_payload.get('channel_type')) == 'store':
-        _create_yotpo_refund(refund_request)
-    return False
+        return _create_yotpo_refund(refund_request)
+    return True
 
 def _get_order_data(order_id):
     graphql_query = """
