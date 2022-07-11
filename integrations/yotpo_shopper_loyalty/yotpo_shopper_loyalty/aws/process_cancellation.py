@@ -53,7 +53,8 @@ def _process_cancellation(payload_json):
     LOGGER.info(f'NS GraphQL Order: {order}')
     # using order uuid as refund id for Yotpo
     refund_request = _create_yotpo_refund_request(order, order_payload['id'])
-    if (order_payload.get('channel_type')) == 'store':
+    LOGGER.info(f'Yotpo Refund Request: {refund_request}')
+    if (order.get('channelType')) == 'store':
         return _create_yotpo_refund(refund_request)
     return True
 
