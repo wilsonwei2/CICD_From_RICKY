@@ -22,7 +22,7 @@ class ShopifyDiscountCodeGQL:
         self.api_version = '2022-07'
         self.utils = Utils.get_instance()
         self.param_store = self.utils.get_parameter_store()
-        self.shopify_config = self.param_store.get_param('shopify')
+        self.shopify_config = json.loads(self.param_store.get_param('shopify'))
         self.api_key = self.shopify_config['username']
         self.password = self.shopify_config['password']
         self.shop = self.shopify_config['shop']
