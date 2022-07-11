@@ -5,6 +5,7 @@ import logging
 from yotpo_shopper_loyalty.handlers.utils import Utils
 
 LOGGER = logging.getLogger(__name__)
+LOGGER.setLevel(logging.INFO)
 
 class YotpoHandler:
 
