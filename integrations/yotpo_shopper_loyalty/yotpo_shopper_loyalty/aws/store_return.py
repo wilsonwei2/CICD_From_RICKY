@@ -77,6 +77,7 @@ def _get_return_data(return_id):
             totalRefundTax
             order {
                 id
+                externalId
                 channelType
                 currency
                 discounts(first: 100) {
@@ -110,7 +111,7 @@ def _create_yotpo_refund_request(return_data, refund_id):
     refund_request = {}
     LOGGER.info(f'Creating yotpo refund request')
     refund_request['id'] = refund_id
-    refund_request['order_id'] = return_data['order']['id']
+    refund_request['order_id'] = return_data['order']['externalId']
     refund_request['total_amount_cents'] = return_data['totalRefundAmount'] * 100
     refund_request['items'] = _get_returned_items(return_data['items']['nodes'])
     refund_request['currency'] = return_data['order']['currency']

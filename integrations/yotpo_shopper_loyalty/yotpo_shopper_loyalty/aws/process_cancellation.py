@@ -102,7 +102,7 @@ def _create_yotpo_refund_request(order, refund_id):
     refund_request = {}
     LOGGER.info(f'Creating yotpo refund request')
     refund_request['id'] = refund_id
-    refund_request['order_id'] = order['id']
+    refund_request['order_id'] = order['externalId']
     refund_request['total_amount_cents'] = _calculate_total_cancel_amount(order['items']['nodes'])
     refund_request['items'] = _get_cancelled_items(order['items']['nodes'])
     refund_request['currency'] = order['currency']
