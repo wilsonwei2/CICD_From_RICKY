@@ -3,6 +3,7 @@ import logging
 import json
 from lambda_utils.sqs.SqsHandler import SqsHandler
 from yotpo_shopper_loyalty.handlers.yotpo_handler import YotpoHandler
+from yotpo_shopper_loyalty.handlers.utils import Utils
 from newstore_adapter.connector import NewStoreConnector
 
 LOGGER = logging.getLogger(__name__)
@@ -15,10 +16,14 @@ NEWSTORE_HANDLER = None
 def handler(event, context):
     LOGGER.info(f'Processing return Event: {event}')
     global NEWSTORE_HANDLER  # pylint: disable=W0603
+    utils = Utils.get_instance()
+    ns_config = json.loads(utils.get_parameter_store().get_param('newstore'))
+    host = ns_config['host']
     NEWSTORE_HANDLER = NewStoreConnector(
         tenant=os.environ.get('TENANT'),
         context=context,
-        raise_errors=True
+        raise_errors=True,
+        host=host
     )
 
     for record in event.get('Records', []):
@@ -42,6 +47,9 @@ def _process_store_return(payload_json):
     LOGGER.info('Getting return data from NS...')
     return_data = _get_return_data(return_payload['id'])
     LOGGER.info(f'NS GraphQL Return: {return_data}')
+    if not _contains_yotpo_coupons(return_data):
+        LOGGER.info('No Yotpo coupons found in return, skipping...')
+        return True
     if (return_data.get('order').get('channelType')) == 'store':
         # using order_id as refund_id for Yotpo
         refund_request = _create_yotpo_refund_request(return_data, return_payload['order_id'])
@@ -67,6 +75,11 @@ def _get_return_data(return_id):
                 id
                 channelType
                 currency
+                discounts(first: 100) {
+                    nodes {
+                        couponCode
+                    }
+                }
             }
         }
     }
@@ -82,6 +95,12 @@ def _get_return_data(return_id):
 
     graphql_response = NEWSTORE_HANDLER.graphql_api_call(data)
     return graphql_response['data']['return']
+
+def _contains_yotpo_coupons(return_data):
+    for item in return_data['discounts']['nodes']:
+        if item['couponCode'].startswith('FAOC') or item['couponCode'].startswith('FAOU'):
+            return True
+    return False
 
 def _create_yotpo_refund_request(return_data, refund_id):
     refund_request = {}

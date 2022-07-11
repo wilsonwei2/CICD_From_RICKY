@@ -3,6 +3,7 @@ import logging
 import json
 from lambda_utils.sqs.SqsHandler import SqsHandler
 from yotpo_shopper_loyalty.handlers.yotpo_handler import YotpoHandler
+from yotpo_shopper_loyalty.handlers.utils import Utils
 from newstore_adapter.connector import NewStoreConnector
 
 LOGGER = logging.getLogger(__name__)
@@ -15,10 +16,14 @@ NEWSTORE_HANDLER = None
 def handler(event, context):
     LOGGER.info(f'Processing cancellation Event: {event}')
     global NEWSTORE_HANDLER  # pylint: disable=W0603
+    utils = Utils.get_instance()
+    ns_config_creds = json.loads(utils.get_parameter_store().get_param('newstore'))
+    host = ns_config_creds['host']
     NEWSTORE_HANDLER = NewStoreConnector(
         tenant=os.environ.get('TENANT'),
         context=context,
-        raise_errors=True
+        raise_errors=True,
+        host=host
     )
 
     for record in event.get('Cancellation Records', []):
