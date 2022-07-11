@@ -31,7 +31,7 @@ class YotpoHandler:
         LOGGER.info(f'Yotpo order creation payload data: {yotpo_order_data}')
         response = requests.post(self.yotpo_order_url, headers=headers, data=json.dumps(yotpo_order_data))
         LOGGER.info(f'Yotpo order creation response: {response.text}')
-        if response.status_code != 200:
+        if response.status_code not in [200, 201]:
             LOGGER.error(f'Failed to create order in Yotpo: {response.text}')
             return False
         return True
@@ -48,7 +48,7 @@ class YotpoHandler:
         LOGGER.info(f'Yotpo refund creation payload data: {refund_data}')
         response = requests.post(self.yotpo_refund_url, headers=headers, data=json.dumps(refund_data))
         LOGGER.info(f'Yotpo refund creation response: {response.text}')
-        if response.status_code != 200:
+        if response.status_code not in [200, 201]:
             LOGGER.error(f'Failed to create refund in Yotpo: {response.text}')
             return False
         return True
