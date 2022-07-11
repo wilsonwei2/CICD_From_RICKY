@@ -111,7 +111,7 @@ def _create_yotpo_refund_request(order, refund_id):
 def _calculate_total_cancel_amount(items):
     total_amount_cents = 0
     for item in items:
-        total_amount_cents += (item['listPrice'] + item['tax']) * 100
+        total_amount_cents += int(float(item['listPrice'] + item['tax']) * 100)
     return total_amount_cents
 
 def _get_cancelled_items(items):
