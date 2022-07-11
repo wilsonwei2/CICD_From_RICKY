@@ -11,23 +11,23 @@ LOGGER.setLevel(logging.INFO)
 
 SQS_HANDLER = SqsHandler(os.environ['SQS_YOTPO_ORDER_CANCELLED'])
 
-NEWSTORE_HANDLER = None
+NS_HANDLER = None
 
 def handler(event, context):
     LOGGER.info(f'Processing cancellation Event: {event}')
-    global NEWSTORE_HANDLER  # pylint: disable=W0603
+    global NS_HANDLER  # pylint: disable=W0603
     utils = Utils.get_instance()
     ns_config_creds = json.loads(utils.get_parameter_store().get_param('newstore'))
-    host = ns_config_creds['host']
-    username = ns_config_creds['username']
-    password = ns_config_creds['password']
-    NEWSTORE_HANDLER = NewStoreConnector(
+    ns_host = ns_config_creds['host']
+    ns_username = ns_config_creds['username']
+    ns_password = ns_config_creds['password']
+    NS_HANDLER = NewStoreConnector(
         tenant=os.environ.get('TENANT'),
         context=context,
         raise_errors=True,
-        host=host,
-        username=username,
-        password=password
+        host=ns_host,
+        username=ns_username,
+        password=ns_password
     )
 
     for cancellation_record in event.get('Records', []):
@@ -95,7 +95,7 @@ def _get_order_data(order_id):
         }
     }
 
-    graphql_response = NEWSTORE_HANDLER.graphql_api_call(data)
+    graphql_response = NS_HANDLER.graphql_api_call(data)
     return graphql_response['data']['order']
 
 def _create_yotpo_refund_request(order, refund_id):
