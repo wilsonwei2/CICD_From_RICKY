@@ -27,6 +27,7 @@ class YotpoHandler:
             'x-guid': self.yotpo_api_guid
         }
         yotpo_order_data = self._map_order_data(order_data)
+        LOGGER.info(f'Yotpo order creation payload data: {yotpo_order_data}')
         response = requests.post(self.yotpo_order_url, headers=headers, data=json.dumps(yotpo_order_data))
         LOGGER.info(f'Yotpo order creation response: {response.text}')
         if response.status_code != 200:
@@ -43,8 +44,8 @@ class YotpoHandler:
             'x-api-key': self.yotpo_api_key,
             'x-guid': self.yotpo_api_guid
         }
-        yotpo_refund_data = self._map_refund_data(refund_data)
-        response = requests.post(self.yotpo_refund_url, headers=headers, data=json.dumps(yotpo_refund_data))
+        LOGGER.info(f'Yotpo refund creation payload data: {refund_data}')
+        response = requests.post(self.yotpo_refund_url, headers=headers, data=json.dumps(refund_data))
         LOGGER.info(f'Yotpo refund creation response: {response.text}')
         if response.status_code != 200:
             LOGGER.error(f'Failed to create refund in Yotpo: {response.text}')
@@ -66,9 +67,6 @@ class YotpoHandler:
         yotpo_order['customer'] = self._get_customer_data(order_data)
         yotpo_order['ignore_ip_ua'] = True
         return yotpo_order
-
-    def _map_refund_data(self, refund_data: dict) -> dict: # pylint: disable=W0613
-        return {}
 
     def _get_ns_coupons(self, order_opened_payload) -> list:
         if not order_opened_payload.get('discounts'):
