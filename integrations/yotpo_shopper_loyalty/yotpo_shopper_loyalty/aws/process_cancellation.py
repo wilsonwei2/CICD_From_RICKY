@@ -26,14 +26,14 @@ def handler(event, context):
         host=host
     )
 
-    for record in event.get('Cancellation Records', []):
+    for cancellation_record in event.get('Records', []):
         try:
-            response_bool = _process_cancellation(record['body'])
+            response_bool = _process_cancellation(cancellation_record['body'])
             if response_bool:
                 LOGGER.info('Event processed, deleting message from queue...')
-                SQS_HANDLER.delete_message(record['receiptHandle'])
+                SQS_HANDLER.delete_message(cancellation_record['receiptHandle'])
             else:
-                LOGGER.error(f'Failed to process event: {record["body"]}')
+                LOGGER.error(f'Failed to process event: {cancellation_record["body"]}')
         except Exception as ex:  # pylint: disable=broad-except
             LOGGER.exception('Some error occurred while processing the cancellation w.r.t Yotpo')
             err_msg = str(ex)
