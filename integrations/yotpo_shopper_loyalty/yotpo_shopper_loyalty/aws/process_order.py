@@ -42,7 +42,7 @@ def _process_order(order_json):
                          if (discount.get('coupon_code').startswith("FAOU") or discount.get('coupon_code').startswith("FAOC"))])
     if (order_payload.get('channel_type')) == 'web':
         return _disable_ns_coupons(coupon_codes)
-    elif (order_payload.get('channel_type')) == 'store':
+    if (order_payload.get('channel_type')) == 'store':
         if _disable_shopify_coupons(coupon_codes) and _create_yotpo_order(order_payload):
             return True
     return False

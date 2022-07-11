@@ -21,7 +21,7 @@ def handler(event, context):
         raise_errors=True
     )
 
-    for record in event.get('Records', []):
+    for record in event.get('Cancellation Records', []):
         try:
             response_bool = _process_cancellation(record['body'])
             if response_bool:
