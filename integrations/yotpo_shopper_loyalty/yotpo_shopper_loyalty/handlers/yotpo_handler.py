@@ -56,14 +56,14 @@ class YotpoHandler:
     def _map_order_data(self, order_data: dict) -> dict:
         yotpo_order = {}
         yotpo_order['customer_email'] = order_data.get('customer_email')
-        yotpo_order['total_amount_cents'] = order_data.get('grand_total') * 100
+        yotpo_order['total_amount_cents'] = int(float(order_data.get('grand_total') * 100))
         yotpo_order['currency_code'] = order_data.get('currency')
         yotpo_order['order_id'] = order_data.get('external_id')
         yotpo_order['created_at'] = order_data.get('created_at')
         yotpo_order['coupon_code'] = self._get_ns_coupons(order_data)
         yotpo_order['ip_address'] = '0.0.0.0'
         yotpo_order['user_agent'] = 'NewStore Yotpo integration'
-        yotpo_order['discount_amount_cents'] = order_data.get('discount_total') * 100
+        yotpo_order['discount_amount_cents'] = int(float(order_data.get('discount_total') * 100))
         yotpo_order['items'] = self._get_order_items(order_data)
         yotpo_order['customer'] = self._get_customer_data(order_data)
         yotpo_order['ignore_ip_ua'] = True
