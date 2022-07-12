@@ -1,6 +1,8 @@
 import os
 import logging
 import json
+import time
+
 from lambda_utils.sqs.SqsHandler import SqsHandler
 from yotpo_shopper_loyalty.handlers.yotpo_handler import YotpoHandler
 from yotpo_shopper_loyalty.handlers.utils import Utils
@@ -32,6 +34,9 @@ def handler(event, context):
 
     for record in event.get('Records', []):
         try:
+            LOGGER.info(f'Waiting for 10 seconds to wait for return to be created in NS DB')
+            time.sleep(10)
+            LOGGER.info(f'Wait finished, proceeding to process return to Yotpo')
             response_bool = _process_store_return(record['body'])
             if response_bool:
                 LOGGER.info('Event processed, deleting message from queue...')
