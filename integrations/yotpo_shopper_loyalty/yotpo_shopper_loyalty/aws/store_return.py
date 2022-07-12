@@ -51,9 +51,6 @@ def _process_store_return(payload_json):
     LOGGER.info('Getting return data from NS...')
     return_data = _get_return_data(return_payload['id'])
     LOGGER.info(f'NS GraphQL Return: {return_data}')
-    if not _contains_yotpo_coupons(return_data):
-        LOGGER.info('No Yotpo coupons found in return, skipping...')
-        return True
     if (return_data.get('order').get('channelType')) == 'store':
         # using order_id as refund_id for Yotpo
         refund_request = _create_yotpo_refund_request(return_data, return_payload['order_id'])
@@ -100,12 +97,6 @@ def _get_return_data(return_id):
 
     graphql_response = NEWSTORE_HANDLER.graphql_api_call(data)
     return graphql_response['data']['return']
-
-def _contains_yotpo_coupons(return_data):
-    for item in return_data['order']['discounts']['nodes']:
-        if item['couponCode'].startswith('FAOC') or item['couponCode'].startswith('FAOU'):
-            return True
-    return False
 
 def _create_yotpo_refund_request(return_data, refund_id):
     refund_request = {}
