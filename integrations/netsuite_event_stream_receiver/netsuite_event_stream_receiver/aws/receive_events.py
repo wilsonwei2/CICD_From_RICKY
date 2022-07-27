@@ -20,9 +20,6 @@ SQS_FULFILLMENT_ASSIGNED = os.environ.get('SQS_FULFILLMENT_ASSIGNED')
 SQS_APPEASEMENT_REFUND = os.environ.get('SQS_APPEASEMENT_REFUND')
 SQS_CANCELLATION = os.environ.get('SQS_CANCELLATION')
 SQS_ADJUSTMENTS = os.environ.get('SQS_ADJUSTMENTS')
-SQS_YOTPO_ORDER_OPENED = os.environ.get('SQS_YOTPO_ORDER_OPENED')
-SQS_YOTPO_ORDER_CANCELLED = os.environ.get('SQS_YOTPO_ORDER_CANCELLED')
-SQS_YOTPO_ORDER_RETURN_PROCESSED = os.environ.get('SQS_YOTPO_ORDER_RETURN_PROCESSED')
 TENANT = os.environ.get('TENANT')
 STAGE = os.environ.get('STAGE')
 NEWSTORE_HANDLER = None
@@ -66,7 +63,6 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
     LOGGER.info(f'Event name -- {event_type}')
 
     if event_type == 'order.opened':
-        push_message_to_sqs(SQS_YOTPO_ORDER_OPENED, message)
         external_id = payload.get('external_id')
 
         # Ignore historical orders
@@ -96,8 +92,6 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
             return True
 
         queue_name = SQS_RETURN_PROCESSED
-        push_message_to_sqs(SQS_YOTPO_ORDER_RETURN_PROCESSED, message)
-
 
     elif event_type == 'fulfillment_request.assigned':
         if event_body.get('payload', {}).get('service_level') == 'IN_STORE_HANDOVER':
@@ -127,9 +121,6 @@ async def process_event(event): #pylint: disable=too-many-branches, too-many-ret
     elif event_type in ('order.cancelled', 'order.items_cancelled'):
         queue_name = SQS_CANCELLATION
         message['event_type'] = event_type
-        if event_type == 'order.items_cancelled':
-            push_message_to_sqs(SQS_YOTPO_ORDER_CANCELLED, message)
-
     elif event_type == 'inventory_transaction.adjustment_created':
         queue_name = SQS_ADJUSTMENTS
 

@@ -24,4 +24,4 @@ class TestFrankAndOakEventStreamReceiver(unittest.TestCase):
             "body": "{\"payload\": {},\"published_at\": \"\",\"name\": \"return.processed\"}"
         }
         self.handler(event, None)
-        mock_push_message_to_sqs.assert_called_with('SQS_RETURN_PROCESSED', {'payload': {'published_at': ''}})
+        mock_push_message_to_sqs.assert_called_once_with('SQS_RETURN_PROCESSED', {'payload': {'published_at': ''}})
