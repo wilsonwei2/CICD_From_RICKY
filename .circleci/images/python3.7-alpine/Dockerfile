@@ -11,7 +11,7 @@ RUN apk add --update --no-cache \
         libxslt-dev \
         nodejs \
         nodejs-npm \
-        && pip install "pipenv==2018.11.26" && npm install -g serverless@2.72.3
+        && pip install "pipenv==2018.11.26" && npm install -g serverless@2.34.0
 
 
 WORKDIR /deploy
