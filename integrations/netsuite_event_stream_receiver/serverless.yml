@@ -21,7 +21,7 @@ provider:
   region: us-east-1
   deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
   configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
-  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole"
   environment:
     newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
     newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
@@ -46,6 +46,9 @@ functions:
       SQS_APPEASEMENT_REFUND: ${self:provider.tenant}-appeasement-to-netsuite-queue.fifo
       SQS_CANCELLATION: ${self:provider.tenant}-cancellation-to-netsuite-queue.fifo
       SQS_ADJUSTMENTS: ${self:provider.tenant}-adjustments-to-netsuite-queue.fifo
+      SQS_YOTPO_ORDER_OPENED: ${self:provider.tenant}-yotpo-order-opened-queue.fifo
+      SQS_YOTPO_ORDER_CANCELLED: ${self:provider.tenant}-yotpo-order-cancelled-queue.fifo
+      SQS_YOTPO_ORDER_RETURN_PROCESSED: ${self:provider.tenant}-yotpo-order-return-processed-queue.fifo
       HANDLE_POS_ORDER_AS_SALES_ORDER: false
     events:
       - http: POST /netsuite_integration/receive_event
@@ -57,28 +60,28 @@ functions:
     environment:
       WEBHOOK_URL:
         Fn::Join:
-          - ''
-          - - 'https://'
+          - ""
+          - - "https://"
             - Ref: ApiGatewayRestApi
-            - '.execute-api.'
+            - ".execute-api."
             - Ref: AWS::Region
-            - '.amazonaws.com/'
+            - ".amazonaws.com/"
             - ${self:provider.stage}
-            - '/netsuite_integration/receive_event'
+            - "/netsuite_integration/receive_event"
       WEBHOOK_NAME: fao-netsuite-event-stream-receiver
       WEBHOOK_EVENT_FILTER:
         Fn::Join:
-          - ','
-          - - 'order.items_cancelled'
-            - 'refund_request.issued'
-            - 'return.processed'
-            - 'fulfillment_request.items_completed'
-            - 'order.cancelled'
-            - 'order.opened'
-            - 'inventory_transaction.items_received'
-            - 'inventory_transaction.asn_created'
-            - 'fulfillment_request.assigned'
-            - 'inventory_transaction.adjustment_created'
+          - ","
+          - - "order.items_cancelled"
+            - "refund_request.issued"
+            - "return.processed"
+            - "fulfillment_request.items_completed"
+            - "order.cancelled"
+            - "order.opened"
+            - "inventory_transaction.items_received"
+            - "inventory_transaction.asn_created"
+            - "fulfillment_request.assigned"
+            - "inventory_transaction.adjustment_created"
     events:
       - schedule:
           name: ${self:provider.tenant}-netsuite-event-stream-receiver-trigger-register-hook
