@@ -26,6 +26,8 @@ def parse_info(fulfillment_request, sales_order, item_fulfillment):
 
 
 def map_item_fulfillment(fulfillment_request, sales_order, item_fulfillment_packages, item_fulfillment):
+    if 'createdDate' in item_fulfillment:
+        del item_fulfillment['createdDate']
     item_fulfillment['externalId'] = fulfillment_request['id']
     item_fulfillment['createdFrom'] = RecordRef(internalId=sales_order.internalId)
     item_fulfillment['customForm'] = RecordRef(internalId=int(Utils.get_netsuite_config()['item_fulfillment_custom_form_internal_id']))
