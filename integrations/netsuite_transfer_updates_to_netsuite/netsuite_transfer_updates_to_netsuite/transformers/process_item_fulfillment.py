@@ -13,7 +13,6 @@ LOGGER.setLevel(logging.INFO)
 def transform_item_fulfillment(asn_created_event, products_info, store, item_fulfillment):
     tran_date = Utils.format_datestring_for_netsuite(date_string=asn_created_event['shipment_date'],
                                                      time_zone=store['timezone'])
-
     if 'createdDate' in item_fulfillment:
         del item_fulfillment['createdDate']
     
