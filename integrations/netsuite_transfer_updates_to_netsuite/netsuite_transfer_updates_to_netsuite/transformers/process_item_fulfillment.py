@@ -15,7 +15,6 @@ def transform_item_fulfillment(asn_created_event, products_info, store, item_ful
                                                      time_zone=store['timezone'])
     if 'createdDate' in item_fulfillment:
         del item_fulfillment['createdDate']
-    
     return {
         **item_fulfillment,
         'tranDate': tran_date.date(),
