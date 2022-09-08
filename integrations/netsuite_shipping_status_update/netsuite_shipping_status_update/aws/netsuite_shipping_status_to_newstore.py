@@ -141,7 +141,7 @@ def send_updates_to_newstore(order_data):
 
                 LOGGER.info(
                     f'Check location against FFR {location} -- {fulfillment_request}')
-
+                #Adding a comment to test the build
                 if location == fulfillment_request['fulfillment_node_id'] or location == fulfillment_request['fulfillment_location_id']:
 
                     ffr_id = fulfillment_request['fulfillment_request_id']
