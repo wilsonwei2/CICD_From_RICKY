@@ -142,8 +142,7 @@ def send_updates_to_newstore(order_data):
                 LOGGER.info(
                     f'Check location against FFR {location} -- {fulfillment_request}')
 
-                if (location == fulfillment_request['fulfillment_node_id'] or location == fulfillment_request['fulfillment_location_id']
-                    or location == "BDC1"):
+                if location == fulfillment_request['fulfillment_node_id'] or location == fulfillment_request['fulfillment_location_id']:
 
                     ffr_id = fulfillment_request['fulfillment_request_id']
                     tracking_number = netsuite_result['tracking_number']
