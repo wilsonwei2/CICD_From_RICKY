@@ -142,10 +142,10 @@ async def get_consumer(order):
 
 def order_data_is_complete(order):
     if order is not None:
-      if not order['id']:
-          LOGGER.error(f'Order data does not load. {order}')
-          return False
-      if not (order['items'] and order['items']['nodes']):
-          LOGGER.error(f'Order data does not contain items. {order}')
-          return False
+        if not order['id']:
+            LOGGER.error(f'Order data does not load. {order}')
+            return False
+        if not (order['items'] and order['items']['nodes']):
+            LOGGER.error(f'Order data does not contain items. {order}')
+            return False
     return True
