@@ -136,7 +136,8 @@ def get_order_data(order_id):
 
 
 async def get_consumer(order):
-    email = order.get('customerEmail')
+    if order is not None:
+        email = order.get('customerEmail')
     return NEWSTORE_HANDLER.get_consumer(email) if email else None
 
 
