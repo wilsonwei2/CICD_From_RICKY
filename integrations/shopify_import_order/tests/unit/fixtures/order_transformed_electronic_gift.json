@@ -85,7 +85,7 @@
             "metadata": {
                 "external_order_id": "9999",
                 "shopify_order_id": "820982911946154508",
-                "channel": "MTLDC1",
+                "channel": "BDC1",
                 "transaction_id": "389404469",
                 "credit_card_bin": "",
                 "avs_result_code": "",
@@ -114,7 +114,7 @@
         },
         {
             "name": "ext_channel_name",
-            "value": "MTLDC1"
+            "value": "BDC1"
         },
         {
             "name": "is_historical",
