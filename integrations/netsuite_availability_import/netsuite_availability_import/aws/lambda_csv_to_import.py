@@ -192,7 +192,7 @@ def add_stores_to_mapping(store_mapping, ns_handler):
     locations = ns_handler.get_stores()['stores']
     for store in locations:
         store_id = None
-        if 'store_id' in store and "depricated" not in store['store_id']:
+        if 'store_id' in store and "BDC" not in store['store_id']:
             store_id = store['store_id']
 
         store_mapping.append({
