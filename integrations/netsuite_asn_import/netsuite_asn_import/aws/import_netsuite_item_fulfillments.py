@@ -99,6 +99,7 @@ async def transform_search_result(search_result):
         if not is_success:
             LOGGER.error(f'Failed to retrieve Item Fulfillment: {item_fulfillment}')
             continue
+        LOGGER.info(f"retrieved netsuite Item fulfillment {json.dumps(item_fulfillment, indent=4)}")
         asn_payload = await transform_item_fulfillment(item_fulfillment)
         LOGGER.debug(f'ASN Payload: {json.dumps(asn_payload, indent=4)}')
         if not asn_payload:
