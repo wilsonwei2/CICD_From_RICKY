@@ -127,19 +127,7 @@ async def transform_item_fulfillment(netsuite_item_fulfillment):
         } for item in item_list
     ]
 
-    transfer_order_name = ""
-    if netsuite_item_fulfillment['customFieldList']:
-        if netsuite_item_fulfillment['customFieldList']['customField']:
-            for field in netsuite_item_fulfillment['customFieldList']['customField']:
-                if field.get('scriptId') == "custbody_fb_ordername":
-                    transfer_order_name = field['value']
-                    LOGGER.debug(f"Setting Transfer Order Name: {transfer_order_name}")
-                    break
-                
-    if len(transfer_order_name) == 0:
-        transfer_order_name = netsuite_item_fulfillment['createdFrom']['name']
-        LOGGER.debug(f"Setting Transfer Order Name: {transfer_order_name}")
-
+    transfer_order_name = get_trans_order_name(netsuite_item_fulfillment)
     transfer_order_name_trimmed = transfer_order_name[transfer_order_name.index('#') + 1:]
 
     tracking_numbers = list({
@@ -212,3 +200,23 @@ def mark_imported_by_newstore(internal_id):
         LOGGER.info(f'Marked fulfillment item with id "{internal_id}" as imported by NewStore in Netsuite.')
     else:
         LOGGER.error(f'Failed to mark item fulfillment {internal_id} as synced: {response.body}')
+
+def get_trans_order_name(item_fulfillment):
+    
+    custom_field_list = item_fulfillment.get('customFieldList')
+    if not custom_field_list:
+        LOGGER.debug(f"customFieldList not found, setting name to: {item_fulfillment['createdFrom']['name']}")
+        return item_fulfillment['createdFrom']['name']
+        
+    custom_fields = custom_field_list.get('customField')
+    if not custom_fields:
+        LOGGER.debug(f"customField not found, setting name to: {item_fulfillment['createdFrom']['name']}")
+        return item_fulfillment['createdFrom']['name']
+
+    for field in custom_fields:
+        if field.get('scriptId') == "custbody_bb_ordername":
+            LOGGER.debug(f"Setting Transfer Order Name: {field['value']}")
+            return field['value']
+    
+    LOGGER.debug(f"custbody_gb_ordername not found, setting name to: {item_fulfillment['createdFrom']['name']}")
+    return item_fulfillment['createdFrom']['name']
