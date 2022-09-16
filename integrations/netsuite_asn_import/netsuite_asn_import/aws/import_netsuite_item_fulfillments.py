@@ -206,13 +206,13 @@ def get_trans_order_name(item_fulfillment):
     #LOGGER.debug(f"item_fulfillment: {item_fulfillment}")
     try:
         custom_field_list = item_fulfillment['customFieldList']
-    except:
+    except KeyError:
         LOGGER.debug(f"customFieldList not found, setting name to: {item_fulfillment['createdFrom']['name']}")
         return item_fulfillment['createdFrom']['name']
 
     try:
         custom_fields = custom_field_list['customField']
-    except:
+    except KeyError:
         LOGGER.debug(f"customField not found, setting name to: {item_fulfillment['createdFrom']['name']}")
         return item_fulfillment['createdFrom']['name']
 
@@ -221,7 +221,7 @@ def get_trans_order_name(item_fulfillment):
             if field['scriptId'] == "custbody_gb_ordername":
                 LOGGER.debug(f"Setting Transfer Order Name: {field['value']}")
                 return field['value']
-        except:
+        except KeyError:
             continue
     LOGGER.debug(f"custbody_gb_ordername not found, setting name to: {item_fulfillment['createdFrom']['name']}")
     return item_fulfillment['createdFrom']['name']
