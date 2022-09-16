@@ -204,20 +204,24 @@ def mark_imported_by_newstore(internal_id):
 def get_trans_order_name(item_fulfillment):
     LOGGER.debug(f"item_fulfillment: {type(item_fulfillment)}")
     #LOGGER.debug(f"item_fulfillment: {item_fulfillment}")
-    custom_field_list = item_fulfillment['customFieldList']
-    if not custom_field_list:
+    try:
+        custom_field_list = item_fulfillment['customFieldList']
+    except:
         LOGGER.debug(f"customFieldList not found, setting name to: {item_fulfillment['createdFrom']['name']}")
         return item_fulfillment['createdFrom']['name']
 
-    custom_fields = custom_field_list['customField']
-    if not custom_fields:
+    try:
+        custom_fields = custom_field_list['customField']
+    except:
         LOGGER.debug(f"customField not found, setting name to: {item_fulfillment['createdFrom']['name']}")
         return item_fulfillment['createdFrom']['name']
 
     for field in custom_fields:
-        if field['scriptId'] == "custbody_gb_ordername":
-            LOGGER.debug(f"Setting Transfer Order Name: {field['value']}")
-            return field['value']
-
+        try:
+            if field['scriptId'] == "custbody_gb_ordername":
+                LOGGER.debug(f"Setting Transfer Order Name: {field['value']}")
+                return field['value']
+        except:
+            continue
     LOGGER.debug(f"custbody_gb_ordername not found, setting name to: {item_fulfillment['createdFrom']['name']}")
     return item_fulfillment['createdFrom']['name']
