@@ -127,7 +127,17 @@ async def transform_item_fulfillment(netsuite_item_fulfillment):
         } for item in item_list
     ]
 
-    transfer_order_name = netsuite_item_fulfillment['createdFrom']['name']
+    transfer_order_name = ""
+    if netsuite_item_fulfillment.get('customFieldList') and netsuite_item_fulfillment['customFieldList'].get('customField'):
+        for field in netsuite_item_fulfillment.get('customFieldList').get('customField'):
+            if field.get('scriptId') == "custbody_fb_ordername":
+                transfer_order_name = field.get('value')
+                LOGGER.debug(f"Setting Transfer Order Name: {transfer_order_name}")
+                break
+    if len(transfer_order_name) == 0:
+        transfer_order_name = netsuite_item_fulfillment['createdFrom']['name']
+        LOGGER.debug(f"Setting Transfer Order Name: {transfer_order_name}")
+
     transfer_order_name_trimmed = transfer_order_name[transfer_order_name.index('#') + 1:]
 
     tracking_numbers = list({
