@@ -202,12 +202,12 @@ def mark_imported_by_newstore(internal_id):
         LOGGER.error(f'Failed to mark item fulfillment {internal_id} as synced: {response.body}')
 
 def get_trans_order_name(item_fulfillment):
-    
+
     custom_field_list = item_fulfillment.get('customFieldList')
     if not custom_field_list:
         LOGGER.debug(f"customFieldList not found, setting name to: {item_fulfillment['createdFrom']['name']}")
         return item_fulfillment['createdFrom']['name']
-        
+
     custom_fields = custom_field_list.get('customField')
     if not custom_fields:
         LOGGER.debug(f"customField not found, setting name to: {item_fulfillment['createdFrom']['name']}")
@@ -217,6 +217,6 @@ def get_trans_order_name(item_fulfillment):
         if field.get('scriptId') == "custbody_bb_ordername":
             LOGGER.debug(f"Setting Transfer Order Name: {field['value']}")
             return field['value']
-    
+
     LOGGER.debug(f"custbody_gb_ordername not found, setting name to: {item_fulfillment['createdFrom']['name']}")
     return item_fulfillment['createdFrom']['name']
