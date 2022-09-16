@@ -203,7 +203,7 @@ def mark_imported_by_newstore(internal_id):
 
 def get_trans_order_name(item_fulfillment):
     LOGGER.debug(f"item_fulfillment: {type(item_fulfillment)}")
-    LOGGER.debug(f"item_fulfillment: {item_fulfillment}")
+    #LOGGER.debug(f"item_fulfillment: {item_fulfillment}")
     custom_field_list = item_fulfillment['customFieldList']
     if not custom_field_list:
         LOGGER.debug(f"customFieldList not found, setting name to: {item_fulfillment['createdFrom']['name']}")
