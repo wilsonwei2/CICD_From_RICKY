@@ -293,7 +293,7 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
 def get_shipping_carrier_url(carrier, tracking_code):
     if carrier == 'Canada Post':
         return 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor='+str(tracking_code)
-    if carrier == 'UPS':
+    if carrier == 'UPS' or carrier == 'UPS Expedited':
         return 'https://www.ups.com/track?loc=en_US&tracknum='+str(tracking_code)
     if carrier == 'USPS':
         return 'https://tools.usps.com/go/TrackConfirmAction.action?tLabels='+str(tracking_code)
