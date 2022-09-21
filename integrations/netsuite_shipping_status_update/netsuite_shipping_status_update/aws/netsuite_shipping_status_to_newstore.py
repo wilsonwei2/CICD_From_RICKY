@@ -208,7 +208,8 @@ def get_fulfillment_requests_from_graphql(order_data, newstore_handler):
     order_ids = []
 
     for order_id in order_data:
-        order_ids.append(order_id)
+        if order_id is not None:
+            order_ids.append(order_id)
 
     data = {
         "query": graphql_query,
