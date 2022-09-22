@@ -12,7 +12,7 @@ LOGGER = logging.getLogger(__name__)
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER.setLevel(LOG_LEVEL)
-SHOPIFY_CHANNEL = 'MTLDC1'
+SHOPIFY_CHANNEL = os.environ.get('DC_LOCATION', 'BDC1')
 CITY_SUBSTRING_LIMIT = 49
 
 

@@ -141,7 +141,7 @@ def send_updates_to_newstore(order_data):
 
                 LOGGER.info(
                     f'Check location against FFR {location} -- {fulfillment_request}')
-
+                #Adding a comment to test the build
                 if location == fulfillment_request['fulfillment_node_id'] or location == fulfillment_request['fulfillment_location_id']:
 
                     ffr_id = fulfillment_request['fulfillment_request_id']
@@ -208,7 +208,8 @@ def get_fulfillment_requests_from_graphql(order_data, newstore_handler):
     order_ids = []
 
     for order_id in order_data:
-        order_ids.append(order_id)
+        if order_id is not None:
+            order_ids.append(order_id)
 
     data = {
         "query": graphql_query,
@@ -292,7 +293,7 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
 def get_shipping_carrier_url(carrier, tracking_code):
     if carrier == 'Canada Post':
         return 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor='+str(tracking_code)
-    if carrier == 'UPS':
+    if carrier == 'UPS' or carrier == 'UPS Expedited':
         return 'https://www.ups.com/track?loc=en_US&tracknum='+str(tracking_code)
     if carrier == 'USPS':
         return 'https://tools.usps.com/go/TrackConfirmAction.action?tLabels='+str(tracking_code)

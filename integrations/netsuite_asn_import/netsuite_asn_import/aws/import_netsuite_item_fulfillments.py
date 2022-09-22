@@ -116,7 +116,7 @@ async def transform_item_fulfillment(netsuite_item_fulfillment):
         return None
     item_list = netsuite_item_fulfillment['itemList']['item']
     from_location = get_newstore_location_id(item_list[0]['location']['internalId'])
-    netsuite_item_fulfillment_id = netsuite_item_fulfillment['tranId']
+    netsuite_item_fulfillment_id = get_fulfillment_id(netsuite_item_fulfillment)
     date_shipped = netsuite_item_fulfillment['shippedDate'].isoformat()
     LOGGER.debug(f'item_list: {item_list}')
 
@@ -200,3 +200,28 @@ def mark_imported_by_newstore(internal_id):
         LOGGER.info(f'Marked fulfillment item with id "{internal_id}" as imported by NewStore in Netsuite.')
     else:
         LOGGER.error(f'Failed to mark item fulfillment {internal_id} as synced: {response.body}')
+
+def get_fulfillment_id(item_fulfillment):
+    LOGGER.debug(f"item_fulfillment: {type(item_fulfillment)}")
+    #LOGGER.debug(f"item_fulfillment: {item_fulfillment}")
+    try:
+        custom_field_list = item_fulfillment['customFieldList']
+    except KeyError:
+        LOGGER.debug(f"customFieldList not found, setting name to: {item_fulfillment['createdFrom']['name']}")
+        return item_fulfillment['tranId']
+
+    try:
+        custom_fields = custom_field_list['customField']
+    except KeyError:
+        LOGGER.debug(f"customField not found, setting name to: {item_fulfillment['createdFrom']['name']}")
+        return item_fulfillment['tranId']
+
+    for field in custom_fields:
+        try:
+            if field['scriptId'] == "custbody_gb_ordername":
+                LOGGER.debug(f"Setting Transfer Order Name: {field['value']}")
+                return field['value']
+        except KeyError:
+            continue
+    LOGGER.debug(f"custbody_gb_ordername not found, setting name to: {item_fulfillment['createdFrom']['name']}")
+    return item_fulfillment['tranId']
