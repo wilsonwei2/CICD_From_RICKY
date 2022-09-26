@@ -275,6 +275,8 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
     shipment['carrier'] = carrier or ''
 
     if shipment['carrier']:
+        if 'UPS' in shipment['carrier']:
+            shipment['carrier'] = 'UPS'
         tracking_url = get_shipping_carrier_url(
             carrier, tracking_number)
         if tracking_url:
