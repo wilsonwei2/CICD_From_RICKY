@@ -246,7 +246,7 @@ def _is_blocked():
     response = get_item(table_name=DYNAMODB_TABLE_NAME, item={
         'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
     }, consistent_read=True)
-
+    LOGGER.info(f'Blocked state: {response}')
     if response is None:
         return False
 
