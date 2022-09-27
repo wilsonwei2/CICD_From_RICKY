@@ -16,9 +16,9 @@ class NewStoreReturnService:
             item = self._create_item(line_item['line_item'])
             items.extend(repeat(item, int(line_item['quantity'])))
 
+        return NewStoreReturn(items=items, returned_from=returned_from, returned_at=shopify_refund['created_at'],
+                              is_historical=False)
 
-        return NewStoreReturn(items=items, returned_from=returned_from, returned_at=shopify_refund['created_at'], is_historical=False)
-
-    def _create_item(self, item: Dict) ->  Item:
+    def _create_item(self, item: Dict) -> Item:
         return Item(product_id=item['sku'], item_condition=self.item_condition, condition_code=self.condition_code,
                     return_code=None, return_reason=None)

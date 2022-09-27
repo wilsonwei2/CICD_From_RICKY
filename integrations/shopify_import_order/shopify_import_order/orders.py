@@ -133,6 +133,7 @@ def map_extended_attributes(order, order_name, is_exchange, shop):
         }
     ]
 
+
 def map_exchange_payments(order_name, order):
     payments_list = []
     order_total_price = order.get("total_price")
@@ -162,9 +163,8 @@ def map_payments(transaction_data, order_name, order, is_exchange):
         return map_exchange_payments(order_name=order_name, order=order)
     for transaction in transaction_data:
         if transaction.get('kind') in ('sale', 'authorization') \
-                and transaction.get('status') == 'success' \
-                and transaction.get('id') not in refunded_list:
-
+            and transaction.get('status') == 'success' \
+            and transaction.get('id') not in refunded_list:
             payments_list.append(
                 {
                     'processor': PROCESSOR,
@@ -215,10 +215,10 @@ def map_items(order, order_name, ns_order):
 
             ns_item = {
                 'external_item_id': str(variant_id),
-                'product_id':str(p_id),
-                'item_tax_lines':item_tax_lines,
-                'price':{
-                    'item_price':float(item_price),
+                'product_id': str(p_id),
+                'item_tax_lines': item_tax_lines,
+                'price': {
+                    'item_price': float(item_price),
                     'item_list_price': float(item_price),
                     'item_tax_lines': None,
                     **discounts['price']
@@ -263,7 +263,8 @@ def map_items(order, order_name, ns_order):
 
     ## Adding shipping lines at the end based on the electronic giftcard type.
     if not has_shipping_items and has_electronic_giftcard and not order.get('shipping_address', None):
-        LOGGER.info(f'Order has EGCs, not shipping items and no shipping address - set billing address as shipping address')
+        LOGGER.info(
+            f'Order has EGCs, not shipping items and no shipping address - set billing address as shipping address')
         ns_order['shipping_address'] = ns_order['billing_address']
 
     ns_order['shipments'][0]['items'] = items
@@ -361,7 +362,7 @@ def _adjust_discount_price(discount_info, quantity, index):
             Decimal(discount['price_adjustment']), quantity)
         price_adjustment = price_adjustments[0] if index + \
                                                    1 <= price_adjustments[2] else price_adjustments[1]
-        discount['price_adjustment'] = float(Decimal(price_adjustment)/100)
+        discount['price_adjustment'] = float(Decimal(price_adjustment) / 100)
 
 
 ## Used in item pricing
@@ -387,7 +388,6 @@ def _get_payment_metadata(transaction, order_name, order, is_exchange):
             'channel': SHOPIFY_CHANNEL,
             'transaction_id': str(transaction['id'])
         }
-
 
     shopify_payment_details = transaction.get('payment_details', {})
 
@@ -487,7 +487,8 @@ def _get_shipping_option(order, shipping_offer_token):
                 shipping_option['discount_info'] = [shipping_discount_info]
 
     else:
-        service_level_identifier = shopify_helper.get_shipment_service_level('default', 'default', shipping_country_code) # Get default
+        service_level_identifier = shopify_helper.get_shipment_service_level('default', 'default',
+                                                                             shipping_country_code)  # Get default
         LOGGER.warning(f"Order doesn't have shipping lines, utilizing default shipping {service_level_identifier}.")
 
         shipping_option = {
