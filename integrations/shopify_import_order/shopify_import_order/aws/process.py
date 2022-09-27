@@ -93,7 +93,7 @@ def handler(event, context):  # pylint: disable=W0613
 
         LOGGER.info('Response from Newstore Platform')
         LOGGER.debug(response)
-        newstore_order_url = f'https://manager.{newstore_handler.get_host()}.newstore.net/sales/orders/{response.get("id")}'
+        newstore_order_url = f'https://manager.{newstore_handler.get_host()}/sales/orders/{response.get("id")}'
         success_note_message = f'Injected into NewStore: {newstore_order_url}'
         note_and_tag_response = _update_note_on_order(shopify_handler=shopify_handler, order=order_body,
                                                       message=success_note_message, order_processed=True)
