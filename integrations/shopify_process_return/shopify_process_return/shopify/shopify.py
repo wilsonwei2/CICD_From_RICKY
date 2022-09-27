@@ -1,7 +1,6 @@
 import base64
 import requests
 import logging
-
 # import json
 
 LOGGER = logging.getLogger(__name__)
@@ -11,6 +10,7 @@ SHOPIFY_HOST = 'myshopify.com/admin'
 
 
 class ShopifyConnector:
+
     """
     This classes handles interaction with shopify
     """
@@ -20,7 +20,7 @@ class ShopifyConnector:
     shop = None
     url = None
 
-    def __init__(self, api_key, password, shop=None, url=None, host=SHOPIFY_HOST):  # pylint: disable=too-many-arguments
+    def __init__(self, api_key, password, shop=None, url=None, host=SHOPIFY_HOST): # pylint: disable=too-many-arguments
         self.host = host
         self.api_key = api_key
         self.password = password
@@ -28,8 +28,7 @@ class ShopifyConnector:
             key=self.api_key, pwd=self.password))
         self.auth_header = {
             'Content-Type': 'application/json ',
-            'Authorization': 'Basic {auth_base64}'.format(
-                auth_base64=base64.b64encode(auth_string.encode()).decode('utf-8'))
+            'Authorization': 'Basic {auth_base64}'.format(auth_base64=base64.b64encode(auth_string.encode()).decode('utf-8'))
         }
         self.shop = shop
         if not url:
@@ -38,7 +37,7 @@ class ShopifyConnector:
         else:
             self.url = url
 
-    def get_orders(self, starts_at, ends_at, params, query=None, limit=250):  # pylint: disable=too-many-arguments
+    def get_orders(self, starts_at, ends_at, params, query=None, limit=250): # pylint: disable=too-many-arguments
         """
         Get shopify order based on a shopify order id;
         params allows to pass a filter of the fields that should be available in the response
@@ -60,7 +59,7 @@ class ShopifyConnector:
 
         orders = []
 
-        while True:  # pylint: disable=R1702
+        while True: # pylint: disable=R1702
             if next_page:
                 next_page_parts = next_page.split('?')
                 endpoint = next_page_parts[0]
