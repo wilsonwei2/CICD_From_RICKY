@@ -24,7 +24,7 @@ LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
-HOST_NEWSTORE = Utils.get_instance().get_host_newstore()
+
 
 
 def handler(event, context):  # pylint: disable=W0613
