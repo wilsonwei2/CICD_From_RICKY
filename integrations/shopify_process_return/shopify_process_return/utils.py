@@ -19,14 +19,14 @@ CHANNEL = os.environ.get('warehouse_usc', 'MTLDC1')
 
 
 def get_parameter_store(tenant=TENANT, stage=STAGE):
-    global PARAM_STORE # pylint: disable=global-statement
+    global PARAM_STORE  # pylint: disable=global-statement
     if not PARAM_STORE:
         PARAM_STORE = ParamStore(tenant, stage)
     return PARAM_STORE
 
 
 def get_shopify_locations_map():
-    global SHOPIFY_LOCATIONS_MAP # pylint: disable=global-statement
+    global SHOPIFY_LOCATIONS_MAP  # pylint: disable=global-statement
     if not SHOPIFY_LOCATIONS_MAP:
         SHOPIFY_LOCATIONS_MAP = json.loads(
             get_parameter_store().get_param('shopify/dc_location_id_map'))
@@ -41,6 +41,7 @@ def get_all_shopify_handlers():
     } for shop_id in shop_manager.get_shop_ids()]
     return _create_shopify_handlers(shopify_configs)
 
+
 def get_shop_id(shop_name):
     get_all_shopify_handlers()
     for current in get_all_shopify_handlers():
@@ -48,15 +49,17 @@ def get_shop_id(shop_name):
             return current['shop_id']
     return None
 
+
 def get_shopify_config(shop_id):
-    global SHOPIFY_CONFIGS # pylint: disable=global-statement
+    global SHOPIFY_CONFIGS  # pylint: disable=global-statement
     if not shop_id in SHOPIFY_CONFIGS:
         shop_manager = ShopManager(TENANT, STAGE, REGION)
         SHOPIFY_CONFIGS[shop_id] = shop_manager.get_shop_config(shop_id)
     return SHOPIFY_CONFIGS[shop_id]
 
+
 def get_shopify_handler(shop_id):
-    global SF_HANDLERS # pylint: disable=global-statement
+    global SF_HANDLERS  # pylint: disable=global-statement
     if not shop_id in SF_HANDLERS:
         shopify_config = get_shopify_config(shop_id)
         SF_HANDLERS[shop_id] = ShopifyConnector(
@@ -65,6 +68,7 @@ def get_shopify_handler(shop_id):
             shop=shopify_config['shop']
         )
     return SF_HANDLERS[shop_id]
+
 
 def _create_shopify_handlers(configs):
     """Take an list of configs in the following format and return a list of
@@ -110,7 +114,11 @@ def _create_shopify_handlers(configs):
 
 
 def get_newstore_handler(context):
-    global NS_HANDLER # pylint: disable=global-statement
+    global NS_HANDLER  # pylint: disable=global-statement
     if not NS_HANDLER:
-        NS_HANDLER = NewStoreConnector(TENANT, context, raise_errors=True)
+        newstore_creds = json.loads(
+            get_parameter_store().get_param('newstore'))
+        NS_HANDLER = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                       username=newstore_creds['username'], password=newstore_creds['password'],
+                                       host=newstore_creds['host'], raise_errors=True)
     return NS_HANDLER
