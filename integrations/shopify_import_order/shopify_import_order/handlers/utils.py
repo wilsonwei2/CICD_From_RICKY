@@ -17,6 +17,7 @@ class Utils():
     shopify_handlers = {}
     shopify_configs = {}
     shopify_service_level_map = None
+    host_newstore = None
 
     @staticmethod
     def get_instance():
@@ -46,6 +47,14 @@ class Utils():
                 password=newstore_creds['password']
             )
         return self.ns_handler
+
+    def get_host_newstore(self):
+        if not self.host_newstore:
+            newstore_creds = json.loads(
+                self.get_parameter_store().get_param('newstore'))
+            self.host_newstore = newstore_creds['host']
+
+        return self.host_newstore
 
     def get_shopify_handlers(self):
         if len(self.shopify_handlers) == 0:
