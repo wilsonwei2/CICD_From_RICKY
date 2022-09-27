@@ -78,7 +78,8 @@ class NShandler():
             response.raise_for_status()
         except HTTPError as ex:
             LOGGER.error(
-                f"Response for order {order_data['external_id']} {response.text}; \nException: {str(ex)}", exc_info=True)
+                f"Response for order {order_data['external_id']} {response.text}; \nException: {str(ex)}",
+                exc_info=True)
             raise
         return response.json()
 
@@ -107,13 +108,13 @@ class NShandler():
             response.raise_for_status()
         except HTTPError as ex:
             LOGGER.info(f'Response: {response.text}; \nException: {str(ex)}', exc_info=True)
-            if "The following products were already returned" in  response.text:
+            if "The following products were already returned" in response.text:
                 return {"repeated_returned": True, "message": response.json().get("message")}
             raise
         success_response = response.json()
         LOGGER.info(f"Response {response.text}")
         success_response["repeated_returned"] = False
-        return  success_response
+        return success_response
 
     def create_order_note(self, order_id: str, text: str, source: str, tags: List[str]):
         url = f'https://{self.host}/v0/d/orders/{order_id}/notes'
@@ -140,4 +141,3 @@ class NShandler():
 
     def get_host(self):
         return self.host
-
