@@ -26,7 +26,6 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
 
 
-
 def handler(event, context):  # pylint: disable=W0613
     """
     Take new shopify order from webhook call. Should include a query parameter

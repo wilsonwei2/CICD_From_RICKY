@@ -137,3 +137,7 @@ class NShandler():
         response = requests.get(url=url, headers=self.get_headers())
         response.raise_for_status()
         return response.json()
+
+    def get_host(self):
+        return self.host
+
