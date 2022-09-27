@@ -5,7 +5,6 @@ from lambda_utils.sqs.SqsHandler import SqsHandler
 # from product_id_mapper.main import ProductIdMapper
 from .utils import get_shopify_handler, get_newstore_handler, get_shopify_locations_map
 
-
 # PRODUCT_ID_MAPPER = ProductIdMapper()
 
 LOGGER = logging.getLogger(__name__)
@@ -38,7 +37,8 @@ def handler(event, context):  # pylint: disable=unused-argument
                 LOGGER.error(f'Failed to process event: {record["body"]}')
         except Exception as ex:  # pylint: disable=broad-except
             LOGGER.exception('Some error happen while processing the return')
-            # In case an other process already returned the product we delete it from the queue to avoid exeptions again and again.
+            # In case an other process already returned the product we delete it from the queue to avoid exeptions
+            # again and again.
             err_msg = str(ex)
             if err_msg.find("The following products were already returned") >= 0:
                 LOGGER.info(
@@ -52,7 +52,7 @@ def _process_refund(raw):
     LOGGER.info(f'Processing Shopify refund event: {raw}')
     refund = json.loads(raw)
     shop_id = refund['shop_id']
-    #get updated transactions from shopify
+    # get updated transactions from shopify
     shopify_handler = get_shopify_handler(shop_id)
     shopify_refunds = shopify_handler.get_order(refund.get('order_id'), params='refunds')
     LOGGER.info(f'shopify refunds {shopify_refunds}')
@@ -144,7 +144,7 @@ def _create_return(return_data, refund, shop_id, transactions):
 def _get_external_order(external_order_id):
     try:
         return NEWSTORE_HANDLER.get_external_order(external_order_id.replace("#", ""))
-    except Exception as ex: # pylint: disable=broad-except
+    except Exception as ex:  # pylint: disable=broad-except
         LOGGER.error('Couldn\'t get order from NewStore.')
         LOGGER.exception(str(ex))
     return None
@@ -260,5 +260,6 @@ def _transform_data_to_send(refund_webhook, transactions):
 
 def get_returned_from(refund):
     shopify_location_id = int(refund['refund_line_items'][0]['location_id'])
-    locations_map = {int(loc_id): key for key, value in get_shopify_locations_map().items() for loc_id in value.values()}
+    locations_map = {int(loc_id): key for key, value in get_shopify_locations_map().items() for loc_id in
+                     value.values()}
     return locations_map.get(shopify_location_id, os.environ['warehouse_usc'])
