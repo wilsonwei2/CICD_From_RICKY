@@ -1,8 +1,9 @@
+import json
 import logging
 import os
 import requests
 from requests.utils import quote
-
+from param_store.client import ParamStore
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
@@ -19,6 +20,13 @@ def _map_product_ext_identifiers(external_identifiers: list):
     return return_dict
 
 
+def _get_parameter_store(tenant: str = TENANT, stage: str = STAGE):
+    global PARAM_STORE
+    if not PARAM_STORE:
+        PARAM_STORE = ParamStore(tenant, stage)
+    return PARAM_STORE
+
+
 class ProductIdMapper():
     """
     fetch identifiers for products.
@@ -27,7 +35,9 @@ class ProductIdMapper():
     def __init__(self):
         self.tenant = TENANT
         self.stage = STAGE
-        self.host = f'{self.tenant}.{self.stage}.newstore.net'
+        newstore_config = json.loads(
+            _get_parameter_store().get_param('newstore'))
+        self.host = f"{newstore_config['host']}"
 
     def find(self, key, value, shop='storefront-catalog-en', locale='en-US', params=None):
         """
