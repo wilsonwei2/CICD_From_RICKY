@@ -2,11 +2,10 @@ import asyncio
 import logging
 import os
 
-from newstore_adapter.connector import NewStoreConnector
-
 from . import params  # pylint: disable=unused-import
 from . import sales_order
 from . import sqs_consumer
+from ...helpers.utils import Utils
 
 NEWSTORE_HANDLER = None
 
@@ -17,11 +16,7 @@ LOGGER.setLevel(logging.INFO)
 def handler(event, context):  # pylint: disable=W0613
     global NEWSTORE_HANDLER  # pylint: disable=W0603
 
-    NEWSTORE_HANDLER = NewStoreConnector(
-        tenant=os.environ.get('TENANT'),
-        context=context,
-        raise_errors=True
-    )
+    NEWSTORE_HANDLER = Utils.get_newstore_conn(context)
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -127,7 +122,7 @@ def get_order_data(order_id):
         "query": graphql_query,
         "variables": {
             "id": order_id,
-            "tenant": os.environ.get('TENANT')
+            "tenant": Utils.get_newstore_tenant()
         }
     }
 

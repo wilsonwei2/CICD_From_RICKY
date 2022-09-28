@@ -16,7 +16,6 @@ from netsuite.service import (
     CashSaleItem,
     CashSaleItemList, StringCustomFieldRef, CustomFieldList, SelectCustomFieldRef, ListOrRecordRef, Address
 )
-from newstore_adapter.connector import NewStoreConnector
 from pom_common.netsuite import TaxManager
 
 import json
@@ -41,11 +40,7 @@ CITY_SUBSTRING_LIMIT = 49
 
 def handler(event, context):  # pylint: disable=W0613
     global NEWSTORE_HANDLER  # pylint: disable=W0603
-    NEWSTORE_HANDLER = NewStoreConnector(
-        tenant=os.environ.get('TENANT'),
-        context=context,
-        raise_errors=True
-    )
+    NEWSTORE_HANDLER = Utils.get_newstore_conn(context)
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -572,7 +567,7 @@ def get_order_data(order_payload):
         "query": graphql_query,
         "variables": {
             "id": order_id,
-            "tenant": os.environ.get('TENANT')
+            "tenant": Utils.get_newstore_tenant()
         }
     }
 
