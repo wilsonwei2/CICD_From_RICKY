@@ -32,7 +32,11 @@ class TestMarineWebhookRegister(unittest.TestCase):
     def setUp(self):
         self.variables = {
             'WEBHOOK_URL': 'webhook_url',
-            'newstore_url_api': 'url'
+            'newstore_url_api': 'url',
+            'REGION': 'us-east-1',
+            'TENANT': 'frankandoak',
+            'STAGE': 's',
+            'WEBHOOK_EVENT_FILTER': 'fulfillment_request.items_completed'
         }
         self.os_env = patch.dict('os.environ', self.variables)
         self.os_env.start()
