@@ -27,7 +27,7 @@ class Utils():
                 Utils.get_param_store().get_param('newstore'))
             Utils._newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
                                                      username=newstore_creds['username'],
-                                                     password=newstore_creds['password'],host=newstore_creds['host'],
+                                                     password=newstore_creds['password'], host=newstore_creds['host'],
                                                      raise_errors=True)
         return Utils._newstore_conn
 
