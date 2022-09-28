@@ -36,11 +36,11 @@ class Utils:
     def get_newstore_conn(self, context=None):
         if not Utils._newstore_conn:
             newstore_creds = self.get_newstore_config()
-            self.newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
-                                                   username=newstore_creds['username'],
-                                                   password=newstore_creds['password'], host=newstore_creds['host'],
-                                                   raise_errors=True)
-        return self.newstore_conn
+            self._newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                                    username=newstore_creds['username'],
+                                                    password=newstore_creds['password'],
+                                                    host=newstore_creds['host'], raise_errors=True)
+        return self._newstore_conn
 
     def get_newstore_tenant(self):
         if not Utils._newstore_tenant:
