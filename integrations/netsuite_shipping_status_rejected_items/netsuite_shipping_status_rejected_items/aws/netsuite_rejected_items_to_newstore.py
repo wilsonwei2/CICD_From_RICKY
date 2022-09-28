@@ -27,7 +27,7 @@ REJECTED_ORDER_SAVED_SEARCH_ID = None
 def handler(event, context):
     LOGGER.info(f"Event received: {json.dumps(event, indent=4)}")
     global NEWSTORE_HANDLER  # pylint: disable=W0603
-    NEWSTORE_HANDLER = Utils.get_newstore_conn(context)
+    NEWSTORE_HANDLER = Utils.get_instance().get_newstore_conn(context)
 
     global REJECTED_ORDER_SAVED_SEARCH_ID  # pylint: disable=W0603
     netsuite_config = Utils.get_instance().get_netsuite_config()

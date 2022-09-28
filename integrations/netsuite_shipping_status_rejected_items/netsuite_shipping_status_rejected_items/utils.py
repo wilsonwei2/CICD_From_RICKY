@@ -33,30 +33,21 @@ class Utils:
             self.param_store = ParamStore(TENANT, STAGE)
         return self.param_store
 
-    @staticmethod
-    def _get_newstore_config():
-        if not Utils._newstore_config:
-            Utils._newstore_config = json.loads(
-                Utils.get_param_store().get_param('newstore'))
-        return Utils._newstore_config
-
-    @staticmethod
-    def get_newstore_conn(context=None):
+    def get_newstore_conn(self, context=None):
         if not Utils._newstore_conn:
-            newstore_creds = Utils._get_newstore_config()
-            Utils._newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
-                                                     username=newstore_creds['username'],
-                                                     password=newstore_creds['password'], host=newstore_creds['host'],
-                                                     raise_errors=True)
-        return Utils._newstore_conn
+            newstore_creds = self.get_newstore_config()
+            self.newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                                   username=newstore_creds['username'],
+                                                   password=newstore_creds['password'], host=newstore_creds['host'],
+                                                   raise_errors=True)
+        return self.newstore_conn
 
-    @staticmethod
-    def get_newstore_tenant():
+    def get_newstore_tenant(self):
         if not Utils._newstore_tenant:
-            newstore_creds = Utils._get_newstore_config()
-            Utils._newstore_tenant = newstore_creds['tenant']
+            newstore_creds = self.get_newstore_config()
+            self._newstore_tenant = newstore_creds['tenant']
 
-        return Utils._newstore_tenant
+        return self._newstore_tenant
 
     def get_distribution_centres(self):
         return json.loads(self.get_param_store().get_param('distribution_centres'))
