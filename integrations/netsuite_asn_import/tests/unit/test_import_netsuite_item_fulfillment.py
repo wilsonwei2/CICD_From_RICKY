@@ -70,7 +70,7 @@ class TestFrankandoakASNImport(unittest.TestCase):
             "host": "url",
             "username": "username",
             "password": "password",
-            "tenant": "tenant",
+            "tenant": "frankandoak",
             "stage": "stage"
         }
 
