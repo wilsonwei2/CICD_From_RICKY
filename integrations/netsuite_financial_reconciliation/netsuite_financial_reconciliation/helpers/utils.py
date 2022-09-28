@@ -73,4 +73,3 @@ class Utils():
             Utils._newstore_tenant = newstore_creds['tenant']
 
         return Utils._newstore_tenant
-
