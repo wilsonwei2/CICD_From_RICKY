@@ -20,6 +20,7 @@ class Utils():
     _netsuite_config = {}
     _fulfillment_config = {}
     _ns_handler = None
+    _newstore_config = {}
 
     @staticmethod
     def get_param_store():
@@ -29,14 +30,20 @@ class Utils():
         return Utils._param_store
 
     @staticmethod
+    def _get_newstore_config():
+        if not Utils._newstore_config:
+            Utils._newstore_config = json.loads(
+                Utils._get_param_store().get_param('newstore'))
+        return Utils._newstore_config
+
+    @staticmethod
     def get_ns_handler(context=None):
         if not Utils._ns_handler:
-            Utils._ns_handler = NewStoreConnector(
-                tenant=os.environ.get('TENANT'),
-                context=context,
-                raise_errors=True
-            )
-
+            newstore_creds = Utils._get_newstore_config()
+            Utils._ns_handler = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                                  username=newstore_creds['username'],
+                                                  password=newstore_creds['password'], host=newstore_creds['host'],
+                                                  raise_errors=True)
         return Utils._ns_handler
 
     @staticmethod
