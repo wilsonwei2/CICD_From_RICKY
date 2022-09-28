@@ -10,7 +10,6 @@ import asyncio
 import os
 import boto3
 
-
 from netsuite_shipping_status_update.transformers.retrieve_netsuite_data import (
     RetrieveNetsuiteItem,
 )
@@ -48,13 +47,36 @@ def handler(event, context):
     FULFILLMENT_UPDATE_SAVED_SEARCH_ID = netsuite_config['fulfillment_update_saved_search_id']
     NETSUITE_SYNCED_TO_NEWSTORE_FLAG_SCRIPT_ID = netsuite_config[
         'item_fulfillment_processed_flag_script_id']
-    #NETSUITE_GIFTCARD_ITEM_ID = netsuite_config['netsuite_p_gift_card_item_id']
+    # NETSUITE_GIFTCARD_ITEM_ID = netsuite_config['netsuite_p_gift_card_item_id']
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(sync_fulfillments_from_netsuite())
     loop.stop()
     loop.close()
+
+
+def get_param_store():
+    return ParamStore(tenant=TENANT, stage=STAGE)
+
+
+def get_newstore_config():
+    newstore_config = json.loads(get_param_store().get_param('newstore'))
+    return newstore_config
+
+
+def get_newstore_conn(context=None):
+    newstore_creds = get_newstore_config()
+    newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                      username=newstore_creds['username'], password=newstore_creds['password'],
+                                      host=newstore_creds['host'], raise_errors=True)
+    return newstore_conn
+
+
+def get_newstore_tenant():
+    newstore_creds = get_newstore_config()
+    newstore_tenant = newstore_creds['tenant']
+    return newstore_tenant
 
 
 async def sync_fulfillments_from_netsuite():
@@ -105,10 +127,7 @@ def activate_giftcard(giftcards_data):
 
 
 def send_updates_to_newstore(order_data):
-    newstore_handler = NewStoreConnector(
-        tenant=TENANT,
-        context={},
-    )
+    newstore_handler = get_newstore_conn(context={})
 
     LOGGER.info(f'Send updates for newstore for order data: {order_data}')
 
@@ -141,8 +160,9 @@ def send_updates_to_newstore(order_data):
 
                 LOGGER.info(
                     f'Check location against FFR {location} -- {fulfillment_request}')
-                #Adding a comment to test the build
-                if location == fulfillment_request['fulfillment_node_id'] or location == fulfillment_request['fulfillment_location_id']:
+                # Adding a comment to test the build
+                if location == fulfillment_request['fulfillment_node_id'] or location == fulfillment_request[
+                    'fulfillment_location_id']:
 
                     ffr_id = fulfillment_request['fulfillment_request_id']
                     tracking_number = netsuite_result['tracking_number']
@@ -294,15 +314,16 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
 # Used this link as a reference for generating the URL.
 def get_shipping_carrier_url(carrier, tracking_code):
     if carrier == 'Canada Post':
-        return 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor='+str(tracking_code)
+        return 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=' + str(tracking_code)
     if carrier == 'USPS':
-        return 'https://tools.usps.com/go/TrackConfirmAction.action?tLabels='+str(tracking_code)
+        return 'https://tools.usps.com/go/TrackConfirmAction.action?tLabels=' + str(tracking_code)
     if 'UPS' in carrier:
-        return 'https://www.ups.com/track?loc=en_US&tracknum='+str(tracking_code)
+        return 'https://www.ups.com/track?loc=en_US&tracknum=' + str(tracking_code)
 
     LOGGER.error(f'Carrier {carrier} not mapped to get shipping carrier URL.')
 
     return ''
+
 
 #
 # Extracts the fulfillment item IDs from the mapped search results and calls for them to be updated in NetSuite
