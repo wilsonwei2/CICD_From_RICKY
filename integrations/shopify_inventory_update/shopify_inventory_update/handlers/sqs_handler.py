@@ -1,4 +1,5 @@
 import aiobotocore
+from aiobotocore.session import get_session
 import logging
 import asyncio
 
@@ -13,7 +14,7 @@ class SqsHandler:
         """
         self.queue_name = queue_name
         self.profile_name = profile_name
-        self.session = aiobotocore.get_session()
+        self.session = get_session()
         self.sqs_url = queue_url
 
     async def load_queues_info(self):

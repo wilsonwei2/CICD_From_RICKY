@@ -1,4 +1,5 @@
 import aiobotocore
+from aiobotocore.session import get_session
 import asyncio
 import logging
 
@@ -10,7 +11,7 @@ class EventsHandler:
         """
         Construct events wrapper obj
         """
-        self.session = aiobotocore.get_session()
+        self.session = get_session()
 
     async def update_trigger(self, trigger_name, schedule_expression, is_enabled):
         """
