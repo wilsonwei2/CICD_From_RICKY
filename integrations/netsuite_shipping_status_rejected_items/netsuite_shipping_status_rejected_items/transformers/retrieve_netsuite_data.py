@@ -237,7 +237,7 @@ def get_newstore_order_data(order_id, ns_handler):
         "query": graphql_query,
         "variables": {
             "id": order_uuid,
-            "tenant": os.environ.get('TENANT')
+            "tenant": Utils.get_newstore_tenant()
         }
     }
 

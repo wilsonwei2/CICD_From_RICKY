@@ -1,6 +1,8 @@
 import os
 import json
 from param_store.client import ParamStore
+from newstore_adapter.connector import NewStoreConnector
+
 
 TENANT = os.environ['TENANT'] or 'frankandoak'
 STAGE = os.environ['STAGE'] or 'x'
@@ -9,6 +11,9 @@ STAGE = os.environ['STAGE'] or 'x'
 class Utils:
     __instance = None
     param_store = None
+    _newstore_conn = None
+    _newstore_config = {}
+    _newstore_tenant = None
 
     @staticmethod
     def get_instance():
@@ -27,6 +32,31 @@ class Utils:
         if not self.param_store:
             self.param_store = ParamStore(TENANT, STAGE)
         return self.param_store
+
+    @staticmethod
+    def _get_newstore_config():
+        if not Utils._newstore_config:
+            Utils._newstore_config = json.loads(
+                Utils.get_param_store().get_param('newstore'))
+        return Utils._newstore_config
+
+    @staticmethod
+    def get_newstore_conn(context=None):
+        if not Utils._newstore_conn:
+            newstore_creds = Utils._get_newstore_config()
+            Utils._newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                                     username=newstore_creds['username'],
+                                                     password=newstore_creds['password'], host=newstore_creds['host'],
+                                                     raise_errors=True)
+        return Utils._newstore_conn
+
+    @staticmethod
+    def get_newstore_tenant():
+        if not Utils._newstore_tenant:
+            newstore_creds = Utils._get_newstore_config()
+            Utils._newstore_tenant = newstore_creds['tenant']
+
+        return Utils._newstore_tenant
 
     def get_distribution_centres(self):
         return json.loads(self.get_param_store().get_param('distribution_centres'))

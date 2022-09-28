@@ -2,7 +2,7 @@
 # Copyright (C) 2015, 2016, 2017 NewStore, Inc. All rights reserved.
 
 # Runs startup processes (expecting to be 'unused')
-import netsuite.netsuite_environment_loader # pylint: disable=W0611
+import netsuite.netsuite_environment_loader  # pylint: disable=W0611
 
 import logging
 import os
@@ -11,7 +11,6 @@ import json
 
 import netsuite_shipping_status_rejected_items.transformers.retrieve_netsuite_data as retrieve_netsuite_data
 from netsuite_shipping_status_rejected_items.utils import Utils
-from newstore_adapter.connector import NewStoreConnector
 
 LOG_LEVEL_STR = os.environ.get('LOG_LEVEL', 'INFO')
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_STR.lower() in ['debug'] else logging.INFO
@@ -24,14 +23,11 @@ SEARCH_PAGE_SIZE = os.environ['SEARCH_PAGE_SIZE']
 NEWSTORE_HANDLER = None
 REJECTED_ORDER_SAVED_SEARCH_ID = None
 
+
 def handler(event, context):
     LOGGER.info(f"Event received: {json.dumps(event, indent=4)}")
     global NEWSTORE_HANDLER  # pylint: disable=W0603
-    NEWSTORE_HANDLER = NewStoreConnector(
-        tenant=TENANT,
-        context=context,
-        raise_errors=True
-    )
+    NEWSTORE_HANDLER = Utils.get_newstore_conn(context)
 
     global REJECTED_ORDER_SAVED_SEARCH_ID  # pylint: disable=W0603
     netsuite_config = Utils.get_instance().get_netsuite_config()
