@@ -122,7 +122,6 @@ class NewStoreConnector(object):
             return None
         return response.json()
 
-
     def get_stores(self):
         url = 'https://%s/v0/i/stores' % (self.host)
         try:
@@ -213,7 +212,7 @@ class NewStoreConnector(object):
         # If the consumer profile is not found we check count and total of profiles
         # And call again if there are still profiles to be get on NewStore
         if int(consumer_profiles.get('pagination_info', {}).get('count')) + offset \
-                < int(consumer_profiles.get('pagination_info', {}).get('total')):
+            < int(consumer_profiles.get('pagination_info', {}).get('total')):
             return self.get_consumer(email, offset + int(consumer_profiles.get('pagination_info', {}).get('count')))
         # If there is no consumer, return None
         logger.info('No consumer found')
@@ -244,7 +243,6 @@ class NewStoreConnector(object):
         except NewStoreAdapterException:
             return None
         return response.json()
-
 
     def send_acknowledgement(self, ff_id):
         url = 'https://%s/v0/d/fulfillment_requests/%s/acknowledgement' % (self.host, ff_id)
@@ -321,7 +319,6 @@ class NewStoreConnector(object):
                 raise
             return False
         return True
-
 
     ###
     # params response_json: it's the shipping details and must be in the following format
@@ -507,7 +504,6 @@ class NewStoreConnector(object):
         logger.info('Getting ASN from newstore %s', url)
         response = self.newstore_adapter.get_request(url)
         return response.json()
-
 
     def get_asns_by_store(self, store_id, status='open'):
         url = f'https://{self.host}/v0/i/inventory/stores/{store_id}/asns'
