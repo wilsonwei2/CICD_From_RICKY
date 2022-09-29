@@ -111,6 +111,7 @@ def test_order_dynamodb_to_sqs_order_discount(monkeypatch):
 
     assert json.loads(response["Messages"][0]["Body"]) == ns_order
 
+
 @mock_sqs
 @mock_dynamodb2
 def test_order_dynamodb_to_sqs_order_single_discount(monkeypatch):
@@ -444,6 +445,7 @@ def test_order_dynamodb_to_sqs_tax_cent_adjustment_2(monkeypatch):
     ns_order = json.load(output_file)
 
     assert json.loads(response["Messages"][0]["Body"]) == ns_order
+
 
 @mock_sqs
 @mock_dynamodb2
