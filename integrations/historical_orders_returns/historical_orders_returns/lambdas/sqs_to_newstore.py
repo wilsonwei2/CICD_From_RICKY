@@ -5,11 +5,13 @@ import boto3
 from newstore_adapter.connector import NewStoreConnector
 from newstore_common.aws import init_root_logger
 
+from historical_orders_returns.utils import Utils
+
 init_root_logger(__name__)
 LOGGER = logging.getLogger(__name__)
 
 SQS = boto3.resource("sqs", os.environ['REGION'])
-QUEUE = SQS.get_queue_by_name(QueueName=os.environ['QUEUE_NAME']) # pylint: disable=no-member
+QUEUE = SQS.get_queue_by_name(QueueName=os.environ['QUEUE_NAME'])  # pylint: disable=no-member
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
 TYPE = os.environ['TYPE']
@@ -30,10 +32,7 @@ def import_return_to_newstore(order_id, payload, ns_handler):
 
 
 def handler(_, context):
-    ns_handler = NewStoreConnector(
-        tenant=TENANT,
-        context=context
-    )
+    ns_handler = Utils.get_newstore_conn(context)
 
     messages = QUEUE.receive_messages(
         MaxNumberOfMessages=10,
@@ -58,9 +57,8 @@ def handler(_, context):
                 LOGGER.info('Deleting message from queue...')
                 message.delete()
 
-        except Exception as e: # pylint: disable=broad-except
+        except Exception as e:  # pylint: disable=broad-except
             LOGGER.exception(e)
-
 
     return {
         "success": True

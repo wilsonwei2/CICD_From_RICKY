@@ -65,7 +65,8 @@ class TestTOsImport(unittest.TestCase):
         self.patched_newstore_config_mock.return_value = {
             "NS_URL_API": "url",
             "NS_USERNAME": "username",
-            "NS_PASSWORD": "password"
+            "NS_PASSWORD": "password",
+            "tenant": "frankandoak"
         }
 
         netsuite_config_mock = patch('netsuite_tos_import.utils.Utils.get_netsuite_config')

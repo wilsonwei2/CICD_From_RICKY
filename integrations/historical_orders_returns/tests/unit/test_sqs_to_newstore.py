@@ -47,7 +47,7 @@ def test_sqs_to_newstore(monkeypatch):
     ssm = boto3.client('ssm', "us-east-1")
     ssm.put_parameter(
         Name="/frankandoak/x/newstore",
-        Value=json.dumps({'username': 'mock', 'password': 'mock', 'host': 'mock'}),
+        Value=json.dumps({'username': 'mock', 'password': 'mock', 'host': 'mock', 'tenant': 'frankandoak'}),
         Type="String"
     )
 
