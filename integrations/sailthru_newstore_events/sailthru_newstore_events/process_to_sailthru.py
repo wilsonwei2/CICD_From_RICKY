@@ -3,16 +3,16 @@ import logging
 import json
 from lambda_utils.sqs.SqsHandler import SqsHandler
 from .handlers.lambda_handler import start_lambda_function
-from .utils import get_param
+from .utils import get_param, get_newstore_conn
 from newstore_common.aws import init_root_logger
-from newstore_adapter.connector import NewStoreConnector
 
 init_root_logger(__name__)
 LOGGER = logging.getLogger(__name__)
 
 TENANT = os.environ.get('TENANT')
 
-def handler(event, context): # pylint: disable=unused-argument
+
+def handler(event, context):  # pylint: disable=unused-argument
     result = _read_from_queue(event, context)
     return result
 
@@ -37,10 +37,7 @@ def _process_event(data: dict, event_name: str, context):
     Args:
         data (dict): customer.created event payload
     """
-    ns_handler = NewStoreConnector(
-        tenant=TENANT,
-        context=context
-    )
+    ns_handler = get_newstore_conn(context)
     ns_order = ns_handler.get_external_order(data.get('order_id', data['id']), id_type='id')
     to_process_countries = os.environ.get('TO_PROCESS_COUNTRIES')
     if to_process_countries and _get_country_code(ns_order) not in to_process_countries:
@@ -64,8 +61,9 @@ def _process_event(data: dict, event_name: str, context):
         'body': json.dumps(body)
     }
     return start_lambda_function(
-                os.environ.get('INVOKE_SAILTHRU_LAMBDA', f'{TENANT}-sailthru'),
-                payload=payload)
+        os.environ.get('INVOKE_SAILTHRU_LAMBDA', f'{TENANT}-sailthru'),
+        payload=payload)
+
 
 def _filter_sc_items(data, ns_handler):
     order_item_ids = list(map(lambda item: item['id'], data['items']))
@@ -87,7 +85,7 @@ def _filter_sc_items(data, ns_handler):
         "order_item_ids": order_item_ids
     })
 
-    for item in order_item_data['orderItems']['nodes']: # pylint: disable=too-many-nested-blocks
+    for item in order_item_data['orderItems']['nodes']:  # pylint: disable=too-many-nested-blocks
         if not require_shipping(item):
             for order_li in data['items']:
                 if order_li['id'] == item['id']:
@@ -106,6 +104,7 @@ def require_shipping(item):
     requires_shipping = get_extended_attribute(item.get('extended_attributes'), 'requires_shipping')
     # If it's requires_shipping is None assume that it needs shipping
     return requires_shipping is None or requires_shipping.lower() == 'true'
+
 
 # shipping confirmation data mapping
 def _sailthru_mapping_sc(data, order):
@@ -175,7 +174,7 @@ def _sailthru_mapping_sc(data, order):
                 'COD': '0.00',
                 'ORDERDISCOUNT': '0.00 USD',
                 'SHIPPING':
-                    f'{order["totals"]["shipping_total"]+order["totals"]["shipping_taxes"]} {order["totals"]["currency"]}',
+                    f'{order["totals"]["shipping_total"] + order["totals"]["shipping_taxes"]} {order["totals"]["currency"]}',
                 'SALESTAX': f'{order["totals"]["taxes"]} {order["totals"]["currency"]}',
                 'SHIPPINGMETHOD': shipment.get('details', {}).get('method', ''),
                 'TOTAL': f'{order["totals"]["grand_total"]} {order["totals"]["currency"]}',
@@ -241,7 +240,8 @@ def _get_language(ns_order):
     lang = 'en'
     if ns_order['channel_type'] == 'store':
         lang = get_param(
-            os.environ.get('STORE_LANGUAGE_MAPPING', 'non_english_store_language_mapping')).get(ns_order['channel'], 'en')
+            os.environ.get('STORE_LANGUAGE_MAPPING', 'non_english_store_language_mapping')).get(ns_order['channel'],
+                                                                                                'en')
     else:
         # web
         if ns_order['billing_address']['country_code'] == 'CA' and ns_order['billing_address']['state'] == 'QC':
@@ -279,7 +279,7 @@ def _get_apropos_shipment(shipments, tracking_code):
         return {}
     for shipment in shipments:
         if shipment.get('details', {}).get('shipping_packages', []) and next((
-                True for package in shipment['details']['shipping_packages']
-                if package.get('tracking_code') == tracking_code), False):
+            True for package in shipment['details']['shipping_packages']
+            if package.get('tracking_code') == tracking_code), False):
             return shipment
     return {}
