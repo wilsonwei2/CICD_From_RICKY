@@ -27,7 +27,7 @@
         "s3_bucket": "frankandoak-d-0-newstore-dmz"
     },
     "staging": {
-      "url_api": "frankandoak.s.newstore.net",
+      "url_api": "frankandoak-staging.p.newstore.net",
       "s3_bucket": "frankandoak-s-0-newstore-dmz",
       "url_image_placeholder": "https://s3.amazonaws.com/frankandoak-s-0-newstore-dmz/image_placeholder.jpg"
     },
