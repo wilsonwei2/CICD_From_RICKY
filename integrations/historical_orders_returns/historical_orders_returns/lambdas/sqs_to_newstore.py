@@ -2,7 +2,6 @@ import os
 import logging
 import json
 import boto3
-from newstore_adapter.connector import NewStoreConnector
 from newstore_common.aws import init_root_logger
 
 from historical_orders_returns.utils import Utils
