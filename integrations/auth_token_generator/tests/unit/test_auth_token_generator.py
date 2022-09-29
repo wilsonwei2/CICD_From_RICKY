@@ -43,7 +43,7 @@ def test_auth_token_generator(monkeypatch):
             return {
                 "NS_URL_API": f"{TENANT}.{STAGE}.newstore.net",
                 "tenant": "frankandoak",
-                "host": "host"
+                "host": f"{TENANT}.{STAGE}.newstore.net"
             }
 
     class mock_utils():
