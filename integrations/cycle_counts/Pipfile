@@ -16,6 +16,7 @@ dacite = "*"
 boto3 = "*"
 falcon = "*"
 requests-oauthlib = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
