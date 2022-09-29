@@ -278,8 +278,8 @@ def _get_apropos_shipment(shipments, tracking_code):
         LOGGER.exception('Missing tracking code, cannot map to correct shipment.')
         return {}
     for shipment in shipments:
-        if shipment.get('details', {}).get('shipping_packages', []) and next((
-            True for package in shipment['details']['shipping_packages']
-            if package.get('tracking_code') == tracking_code), False):
+        if shipment.get('details', {}).get('shipping_packages', []) and \
+            next((True for package in shipment['details']['shipping_packages']
+                  if package.get('tracking_code') == tracking_code), False):
             return shipment
     return {}
