@@ -47,11 +47,11 @@ provider:
         - ssm:GetParameters
         - ssm:GetParameter
         - ssm:GetParametersByPath
-      Resource: arn:aws:ssm:${self:provider.region}:*:parameter/*
-      Action:
         - sqs:GetQueueUrl
         - sqs:SendMessage
-      Resource: !GetAtt ItemCountEventQueue.Arn
+      Resource:
+          - arn:aws:ssm:${self:provider.region}:*:parameter/*
+          - !GetAtt ItemCountEventQueue.Arn
     - Effect: Allow
       Action:
         - dynamodb:GetItem
