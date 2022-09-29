@@ -42,7 +42,8 @@ def test_auth_token_generator(monkeypatch):
         def get_newstore_config(self):
             return {
                 "NS_URL_API": f"{TENANT}.{STAGE}.newstore.net",
-                "tenant": "frankandoak"
+                "tenant": "frankandoak",
+                "host": "host"
             }
 
     class mock_utils():
