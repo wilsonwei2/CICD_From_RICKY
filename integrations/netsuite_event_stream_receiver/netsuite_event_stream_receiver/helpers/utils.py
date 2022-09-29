@@ -17,6 +17,7 @@ class Utils():
     _param_store = None
     _shopify_conns = {}
     _newstore_conn = None
+    _newstore_config = None
 
     @staticmethod
     def _get_newstore_config():
