@@ -15,6 +15,7 @@ SQS_HANDLER = SqsHandler(os.environ['SQS_YOTPO_ORDER_RETURN_PROCESSED'])
 
 NEWSTORE_HANDLER = None
 
+
 def handler(event, context):
     LOGGER.info(f'Processing return Event: {event}')
     global NEWSTORE_HANDLER  # pylint: disable=W0603
@@ -23,8 +24,9 @@ def handler(event, context):
     host = ns_config['host']
     username = ns_config['username']
     password = ns_config['password']
+    tenant = ns_config['tenant']
     NEWSTORE_HANDLER = NewStoreConnector(
-        tenant=os.environ.get('TENANT'),
+        tenant=tenant,
         context=context,
         raise_errors=True,
         host=host,
@@ -49,6 +51,7 @@ def handler(event, context):
             LOGGER.error(f'Error message: {err_msg}')
             continue
 
+
 def _process_store_return(payload_json):
     LOGGER.info(f'Event Payload: {payload_json}')
     # get GQL order from NS
@@ -62,7 +65,10 @@ def _process_store_return(payload_json):
         return _create_yotpo_refund(refund_request)
     return True
 
+
 def _get_return_data(return_id):
+    utils_ns = Utils.get_instance()
+    ns_config_tenant = json.loads(utils_ns.get_parameter_store().get_param('newstore'))
     graphql_query = """
     query Return($id: String!, $tenant: String!) {
         return(id: $id, tenant: $tenant) {
@@ -96,12 +102,13 @@ def _get_return_data(return_id):
         "query": graphql_query,
         "variables": {
             "id": return_id,
-            "tenant": os.environ.get('TENANT')
+            "tenant": ns_config_tenant['tenant']
         }
     }
 
     graphql_response = NEWSTORE_HANDLER.graphql_api_call(data)
     return graphql_response['data']['return']
+
 
 def _create_yotpo_refund_request(return_data, refund_id):
     refund_request = {}
@@ -113,6 +120,7 @@ def _create_yotpo_refund_request(return_data, refund_id):
     refund_request['currency'] = return_data['order']['currency']
     return refund_request
 
+
 def _get_returned_items(items):
     returned_items = []
     for item in items:
@@ -121,6 +129,7 @@ def _get_returned_items(items):
         yotpo_item['quantity'] = item['quantity']
         returned_items.append(yotpo_item)
     return returned_items
+
 
 def _create_yotpo_refund(refund_request):
     LOGGER.info(f'Creating yotpo refund: {refund_request}')

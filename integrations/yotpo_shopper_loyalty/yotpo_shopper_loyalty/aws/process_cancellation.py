@@ -13,6 +13,7 @@ SQS_HANDLER = SqsHandler(os.environ['SQS_YOTPO_ORDER_CANCELLED'])
 
 NS_HANDLER = None
 
+
 def handler(event, context):
     LOGGER.info(f'Processing cancellation Event: {event}')
     global NS_HANDLER  # pylint: disable=W0603
@@ -21,8 +22,9 @@ def handler(event, context):
     ns_host = ns_config_creds['host']
     ns_username = ns_config_creds['username']
     ns_password = ns_config_creds['password']
+    ns_tenant = ns_config_creds['tenant']
     NS_HANDLER = NewStoreConnector(
-        tenant=os.environ.get('TENANT'),
+        tenant=ns_tenant,
         context=context,
         raise_errors=True,
         host=ns_host,
@@ -44,6 +46,7 @@ def handler(event, context):
             LOGGER.error(f'Error message: {err_msg}')
             continue
 
+
 def _process_cancellation(payload_json):
     LOGGER.info(f'Event Payload: {payload_json}')
     # get GQL order from NS
@@ -58,7 +61,10 @@ def _process_cancellation(payload_json):
         return _create_yotpo_refund(refund_request)
     return True
 
+
 def _get_order_data(order_id):
+    utils = Utils.get_instance()
+    ns_config_creds = json.loads(utils.get_parameter_store().get_param('newstore'))
     graphql_query = """
     query Order($id: String!, $tenant: String!) {
         order(id: $id, tenant: $tenant) {
@@ -92,12 +98,13 @@ def _get_order_data(order_id):
         "query": graphql_query,
         "variables": {
             "id": order_id,
-            "tenant": os.environ.get('TENANT')
+            "tenant": ns_config_creds['tenant']
         }
     }
 
     graphql_response = NS_HANDLER.graphql_api_call(data)
     return graphql_response['data']['order']
+
 
 def _create_yotpo_refund_request(order, refund_id):
     refund_request = {}
@@ -109,11 +116,13 @@ def _create_yotpo_refund_request(order, refund_id):
     refund_request['currency'] = order['currency']
     return refund_request
 
+
 def _calculate_total_cancel_amount(items):
     total_amount_cents = 0
     for item in items:
         total_amount_cents += int((float(item['listPrice']) + float(item['tax'])) * 100)
     return total_amount_cents
+
 
 def _get_cancelled_items(items):
     cancelled_items = []
@@ -124,6 +133,7 @@ def _get_cancelled_items(items):
             yotpo_item['quantity'] = item['quantity']
             cancelled_items.append(yotpo_item)
     return cancelled_items
+
 
 def _create_yotpo_refund(refund_request):
     LOGGER.info(f'Creating yotpo refund: {refund_request}')

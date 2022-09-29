@@ -43,7 +43,8 @@ class Utils():
             self.ns_handler = NShandler(
                 host=newstore_creds['host'],
                 username=newstore_creds['username'],
-                password=newstore_creds['password']
+                password=newstore_creds['password'],
+                tenant=newstore_creds['tenant']
             )
         return self.ns_handler
 
