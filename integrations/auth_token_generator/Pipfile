@@ -6,17 +6,18 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-boto3 = "*"
-pyjwt = "*"
-moto = "*"
-pyyaml = "*"
-requests_mock = "*"
-freezegun = "*"
+boto3 = "==1.17.52"
+pyjwt = "==2.0.1"
+moto = "==2.0.5"
+pyyaml = "==5.4.1"
+requests_mock = "==1.8.0"
+freezegun = "==1.1.0"
+cryptography="==3.4.7"
 newstore-common = {path = "./../../shared/common"}
 newstore-adapter = {path = "./../../shared/newstore_adapter"}
 param-store = {path = "./../../shared/3.6/param_store"}
 pom-common = {path = "./../../shared/pom_common"}
-requests = "*"
+requests = "==2.25.1"
 
 [requires]
 python_version = "3.7"
