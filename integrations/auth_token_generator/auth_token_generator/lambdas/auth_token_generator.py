@@ -64,9 +64,9 @@ def get_token(context):
 
         newstore_config = Utils.get_instance().get_newstore_config()
         ns_handler = NewStoreConnector(
-            tenant=TENANT,
+            tenant=newstore_config["tenant"],
             context=context,
-            host=os.environ.get("HOST", newstore_config.get("NS_URL_API")),
+            host=newstore_config["host"],
             username=credentials["username"],
             password=credentials["password"]
         )
