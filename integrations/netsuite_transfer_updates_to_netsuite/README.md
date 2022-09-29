@@ -20,7 +20,8 @@ Integration layer to create ItemFulfillment records when a transfer order is mar
 {
     "host": "",
     "username": "",
-    "password": ""
+    "password": "",
+    "tenant": ""
 }
 ```
 - "{TENANT_NAME}/{STAGE}/netsuite": Store the settings for the NetSuite configuration variables.
