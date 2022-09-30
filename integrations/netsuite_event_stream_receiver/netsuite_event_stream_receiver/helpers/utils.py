@@ -23,7 +23,7 @@ class Utils():
     def _get_newstore_config():
         if not Utils._newstore_config:
             Utils._newstore_config = json.loads(
-                Utils._get_param_store().get_param('newstore'))
+                Utils.get_param_store().get_param('newstore'))
         return Utils._newstore_config
 
     @staticmethod
