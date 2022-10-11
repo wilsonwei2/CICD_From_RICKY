@@ -17,12 +17,14 @@ import netsuite_fulfillment_assignment.helpers.sqs_consumer as sqs_consumer
 from datetime import datetime
 from netsuite_fulfillment_assignment.helpers.utils import Utils
 from zeep.helpers import serialize_object
+from newstore_adapter.exceptions import NewStoreAdapterException
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 SQS_QUEUE = os.environ['SQS_QUEUE']
 SQS_QUEUE_DLQ = os.environ['SQS_QUEUE_DLQ']
 NEWSTORE_HANDLER = None
+BYPASS_EGC = os.environ.get('BYPASS_EGC', 'false').lower() == 'true'
 
 def handler(_event, _context):
     """
@@ -227,11 +229,21 @@ async def ship_virtual_gift_cards(fulfillment_request):
         ]
     }
 
+    if BYPASS_EGC: # Flag to ignore errors on EGC fulfillment used to bypass injecting already fulfilled gift cards
+        LOGGER.debug('Bypassing EGC fulfillment.')
+        try:
+            if NEWSTORE_HANDLER.send_shipment(fulfillment_request['id'], shipment_json):
+                LOGGER.info('Fulfillment request informed of shipping for virtual gift cards.')
+        except NewStoreAdapterException:
+            LOGGER.error('Failed to send shipment for virtual gift card fulfillment.')
+            #raise
+            #raise Exception('Fulfillment request was not informed of shipping for virtual gift cards.')
+        return items_to_ship
+
     if not NEWSTORE_HANDLER.send_shipment(fulfillment_request['id'], shipment_json):
         raise Exception('Fulfillment request was not informed of shipping for virtual gift cards.')
     LOGGER.info('Fulfillment request informed of shipping for virtual gift cards.')
     return items_to_ship
-
 
 # Get the sales order from NetSuite
 async def get_sales_order(order_id):
