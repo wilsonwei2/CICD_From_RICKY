@@ -63,12 +63,6 @@ async def process_fulfillment(message):
                     f'sales order lambda. Ignoring message.')
         return True
 
-    fulfillment_request_id = fulfillment_request['id']
-    if await check_existing_item_fulfillment(fulfillment_request_id):
-        LOGGER.info(f'Fulfillment request {fulfillment_request_id} for order {order_external_id} already has an ' \
-                    'ItemFulfillment on NetSuite. Ignoring message.')
-        return True
-
     sales_order = await get_sales_order(order_external_id)
 
     # Before creating the ItemFulfillment, update SalesOrder with correct location in item level
@@ -176,13 +170,6 @@ async def get_sales_order(order_id):
     if not sales_order:
         raise Exception('SalesOrder not found on NetSuite for order %s.' % (order_id))
     return sales_order
-
-
-async def check_existing_item_fulfillment(external_id):
-    item_fulfillment = nsas.get_transaction(external_id, '_itemFulfillment')
-    if item_fulfillment:
-        return True
-    return False
 
 
 def mark_shipped_items(item_fulfillment_items, item_fulfillment):
