@@ -13,10 +13,13 @@ import netsuite_item_fulfillment_injection.helpers.sqs_consumer as sqs_consumer
 import netsuite_item_fulfillment_injection.transformers.process_fulfillment as pf
 from netsuite_item_fulfillment_injection.helpers.utils import Utils
 from zeep.helpers import serialize_object
+from newstore_adapter.connector import NewStoreConnector
 
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(logging.DEBUG)
 SQS_QUEUE = os.environ['SQS_QUEUE']
+
+NEWSTORE_HANDLER = None
 
 PHYSICAL_GC_ID = os.environ.get('PHYSICAL_GC_ID', 'PGC')
 PHYSICAL_GC_SKU = os.environ.get('PHYSICAL_GC_SKU', '5500000-000')
@@ -30,7 +33,13 @@ def handler(_, context):
     """
     LOGGER.info(f'Beginning queue retrieval...')
     # Initialize newstore conector
-    Utils.get_newstore_conn(context)
+    global NEWSTORE_HANDLER  # pylint: disable=W0603
+    NEWSTORE_HANDLER = NewStoreConnector(
+        tenant=os.environ.get('TENANT'),
+        context=context,
+        raise_errors=True
+    )
+
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     task = sqs_consumer.consume(process_fulfillment, SQS_QUEUE)
@@ -256,5 +265,5 @@ def get_fulfillment_request(fulfillment_payload):
         }
     }
 
-    graphql_response = Utils._newstore_conn.graphql_api_call(data)
+    graphql_response = NEWSTORE_HANDLER.graphql_api_call(data)
     return graphql_response['data']['fulfillmentRequest']
