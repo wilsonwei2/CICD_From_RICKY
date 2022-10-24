@@ -22,12 +22,12 @@
   "created_at": "2017-10-27T12:24:17Z",
   "items": [
     {
-      "product_id": "35738DreTreXXL",
-      "tracking_code": "IAMATRACKINGCODE"
+      "productId": "35738DreTreXXL",
+      "trackingCode": "IAMATRACKINGCODE"
     },
     {
-      "product_id": "35686NavTreXXL",
-      "tracking_code": "IAMATRACKINGCODE"
+      "productId": "35686NavTreXXL",
+      "trackingCode": "IAMATRACKINGCODE"
     }
   ],
   "extended_attributes": [
