@@ -15,7 +15,7 @@ from netsuite_transfer_updates_to_netsuite.helpers.utils import Utils
 from zeep.helpers import serialize_object
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel(logging.INFO)
+LOGGER.setLevel(logging.DEBUG)
 SQS_QUEUE = Utils.get_environment_variable(
     "SQS_QUEUE", "frankandoak-tu-item-receipt-queue.fifo")
 LOGGER.info(F"SQS Queue {SQS_QUEUE}")
