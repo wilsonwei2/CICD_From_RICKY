@@ -147,7 +147,8 @@ async def get_item_fulfillments(items_received_event):
         item_fulfillments = await get_item_fulfillment(created_from_id=transfer_order['internalId'])
     else:
         # shipment_ref now contains tracking as well, so we need to extract the tranId
-        tran_id = tran_id.split('-')[0].strip()
+        tran_id = tran_id.split(' -')[0].strip()
+        LOGGER.debug(f'Tran ID: {tran_id}')
         item_fulfillments = await get_item_fulfillment(tran_id=tran_id)
 
     if not item_fulfillments:
