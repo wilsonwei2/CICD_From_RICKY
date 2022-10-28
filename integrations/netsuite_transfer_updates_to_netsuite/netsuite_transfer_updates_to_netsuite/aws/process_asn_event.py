@@ -207,6 +207,8 @@ def get_item_fulfillment_for_asn(items_received_event, item_fulfillments):
 
 def get_item_fulfillment_asn(item_fulfillment):
     LOGGER.debug(f'Item Fulfillment: {item_fulfillment}')
+    if not item_fulfillment:
+        return None
     if item_fulfillment['customFieldList'] is not None:
         custom_field_list = item_fulfillment['customFieldList']['customField']
         for custom_field in custom_field_list:
