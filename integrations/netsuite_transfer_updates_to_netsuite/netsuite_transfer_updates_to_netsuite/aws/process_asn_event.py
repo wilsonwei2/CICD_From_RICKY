@@ -133,7 +133,7 @@ async def create_inventory_adjustment(current_inventory_adjustment):
 
 
 async def get_item_fulfillments(items_received_event):
-    tran_id = items_received_event['shipment_ref']
+    tran_id = items_received_event['order_ref']
     if tran_id.startswith('TO'):
         # In this case the ASN was created in NewStore by NewStore after a Transfer Order was fulfilled in NewStore
         # So we need to fetch the Transfer Order from NetSuite and then the ItemFulfillment for that Transfer Order
