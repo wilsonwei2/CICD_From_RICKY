@@ -6,15 +6,23 @@
         "fulfillmentLocationId": "MTLST",
         "associateId": "4",
         "serviceLevel": "IN_STORE_HANDOVER",
-        "items": [
-            {
-                "id": "9f34722d-2272-4271-849d-6814303a069e",
-                "productId": "35686NavTreXXL"
-            },
-            {
-                "id": "9f34722d-2272-4271-849d-6814303a069e",
-                "productId": "35738DreTreXXL"
-            }
-        ]
+        "items": {
+            "edges": [
+                {   
+                "node":
+                    {
+                        "id": "9f34722d-2272-4271-849d-6814303a069e",
+                        "productId": "35686NavTreXXL"
+                    }
+                },
+                {
+                "node":
+                    {
+                        "id": "9f34722d-2272-4271-849d-6814303a069e",
+                        "productId": "35738DreTreXXL"
+                    }
+                }
+            ]
+        }
     }
 }

@@ -41,7 +41,7 @@ def handler(_, context):
 
 async def process_fulfillment(message):
     LOGGER.info(f"Message to process: \n {json.dumps(message, indent=4)}")
-    payload = json.loads(get_fulfillment_request(message.get('payload')))
+    payload = get_fulfillment_request(message.get('payload'))
     fulfillment_request = replace_pgc_product_id(payload, PHYSICAL_GC_ID, PHYSICAL_GC_SKU)
     order_id = fulfillment_request['orderId']
 
