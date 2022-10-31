@@ -99,8 +99,8 @@ def update_sales_order(sales_order, fulfillment_request):
         internalId=sales_order.internalId,
         itemList=sales_order.itemList
     )
-    product_ids_in_fulfillment = [item['productId'] for item in fulfillment_request['items']]
-    item_ids_in_fulfillment = [item['id'] for item in fulfillment_request['items']]
+    product_ids_in_fulfillment = [item['node']['productId'] for item in fulfillment_request['items']['edges']]
+    item_ids_in_fulfillment = [item['node']['id'] for item in fulfillment_request['items']['edges']]
     netsuite_location_id = Utils.get_netsuite_store_internal_id(fulfillment_request['fulfillmentLocationId'])
     update_items = []
 
@@ -219,8 +219,8 @@ def get_item_id(item):
 
 
 def replace_pgc_product_id(fulfillment_request_event, physical_gc_id, physical_gc_sku):
-    for item in fulfillment_request_event['items']:
-        item['productId'] = item['productId'] if item['productId'] != physical_gc_id else physical_gc_sku
+    for item in fulfillment_request_event['items']['edges']:
+        item['node']['productId'] = item['node']['productId'] if item['node']['productId'] != physical_gc_id else physical_gc_sku
     return fulfillment_request_event
 
 

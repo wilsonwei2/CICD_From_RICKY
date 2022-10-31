@@ -55,8 +55,8 @@ def map_item_fulfillment_items(fulfillment_request):
 
 def group_products_by_id(product_list):
     grouped_products = {}
-    for product in product_list:
-        product_id = product['productId']
+    for product in product_list['edges']:
+        product_id = product['node']['productId']
         if product_id in grouped_products:
             grouped_products[product_id] += 1
         else:
@@ -67,12 +67,12 @@ def group_products_by_id(product_list):
 def map_item_fulfillment_packages(fulfillment_request):
     item_fulfillment_packages = []
     shipment_list = {}
-    for product in fulfillment_request['items']:
-        tracking_code = product.get('trackingCode', 'N/A')
+    for product in fulfillment_request['items']['edges']:
+        tracking_code = product['node'].get('trackingCode', 'N/A')
         if tracking_code not in shipment_list:
-            shipment_list[tracking_code] = [product['productId']]
+            shipment_list[tracking_code] = [product['node']['productId']]
         else:
-            shipment_list[tracking_code].append(product['productId'])
+            shipment_list[tracking_code].append(product['node']['productId'])
 
     for shipment_tracking_code in shipment_list:
         item = {
