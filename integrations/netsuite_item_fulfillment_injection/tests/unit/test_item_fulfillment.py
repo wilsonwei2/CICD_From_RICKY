@@ -82,7 +82,7 @@ class TestItemFulfillmentProcessing(unittest.TestCase):
 
     def test_map_item_fulfillment_items_multi_item(self):
         fulfillment_request = TestItemFulfillmentProcessing._load_json_file('fulfillment_request_message.json')['order']
-        fulfillment_request['items'].append(fulfillment_request['items'][0])
+        fulfillment_request['items']['edges'].append(fulfillment_request['items']['edges'][0]['node'])
         item_fulfillment_items_mapped = TestItemFulfillmentProcessing._load_json_file('item_fulfillment_items_mapped.json')
         item_fulfillment_items_mapped[0]['quantity'] = 2
 
