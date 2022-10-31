@@ -252,7 +252,7 @@ def get_fulfillment_request(fulfillment_payload):
         "query": graphql_query,
         "variables": {
             "id": fulfillment_id,
-            "tenant": os.environ.get('TENANT')
+            "tenant": os.environ.get('TENANT_TEMP')
         }
     }
 
