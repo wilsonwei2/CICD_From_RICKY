@@ -41,8 +41,9 @@ def handler(_, context):
 
 async def process_fulfillment(message):
     LOGGER.info(f"Message to process: \n {json.dumps(message, indent=4)}")
-    fulfillment_request = replace_pgc_product_id(message.get('payload'), PHYSICAL_GC_ID, PHYSICAL_GC_SKU)
-    order_id = fulfillment_request['order_id']
+    payload = get_fulfillment_request(message.get('payload'))
+    fulfillment_request = replace_pgc_product_id(payload, PHYSICAL_GC_ID, PHYSICAL_GC_SKU)
+    order_id = fulfillment_request['orderId']
 
     # The customer_order endpoint is defined in the `affiliate app` end points
     customer_order_envelope = Utils.get_newstore_conn().get_customer_order(order_id)
@@ -57,7 +58,7 @@ async def process_fulfillment(message):
         return True
 
     order_external_id = customer_order['sales_order_external_id']
-    fulfillment_location_id = fulfillment_request.get('fulfillment_location_id')
+    fulfillment_location_id = fulfillment_request.get('fulfillmentLocationId')
     if not Utils.is_store(fulfillment_location_id):
         LOGGER.info(f'Fulfillment request for order {order_external_id} has a DC fulfillment location and will be handled in the '
                     f'sales order lambda. Ignoring message.')
@@ -98,9 +99,9 @@ def update_sales_order(sales_order, fulfillment_request):
         internalId=sales_order.internalId,
         itemList=sales_order.itemList
     )
-    product_ids_in_fulfillment = [item['product_id'] for item in fulfillment_request['items']]
-    item_ids_in_fulfillment = [item['id'] for item in fulfillment_request['items']]
-    netsuite_location_id = Utils.get_netsuite_store_internal_id(fulfillment_request['fulfillment_location_id'])
+    product_ids_in_fulfillment = [item['node']['productId'] for item in fulfillment_request['items']['edges']]
+    item_ids_in_fulfillment = [item['node']['id'] for item in fulfillment_request['items']['edges']]
+    netsuite_location_id = Utils.get_netsuite_store_internal_id(fulfillment_request['fulfillmentLocationId'])
     update_items = []
 
     for item in sales_order_update.itemList.item:
@@ -218,6 +219,42 @@ def get_item_id(item):
 
 
 def replace_pgc_product_id(fulfillment_request_event, physical_gc_id, physical_gc_sku):
-    for item in fulfillment_request_event['items']:
-        item['product_id'] = item['product_id'] if item['product_id'] != physical_gc_id else physical_gc_sku
+    for item in fulfillment_request_event['items']['edges']:
+        item['node']['productId'] = item['node']['productId'] if item['node']['productId'] != physical_gc_id else physical_gc_sku
     return fulfillment_request_event
+
+
+def get_fulfillment_request(fulfillment_payload):
+    fulfillment_id = fulfillment_payload["id"]
+
+    graphql_query = """query MyQuery($id: String!, $tenant: String!) {
+        fulfillmentRequest(id: $id, tenant: $tenant) {
+            fulfillmentLocationId       
+            id          
+            items { 
+                edges {
+                    node {
+                            id        
+                            carrier        
+                            productId        
+                            trackingCode        
+                            shippedAt 
+                        }
+                    }
+                }           
+            associateId              
+            serviceLevel              
+            orderId              
+            logicalTimestamp 
+        }
+    }"""
+    data = {
+        "query": graphql_query,
+        "variables": {
+            "id": fulfillment_id,
+            "tenant": os.environ.get('TENANT_TEMP')
+        }
+    }
+
+    graphql_response = Utils.get_newstore_conn().graphql_api_call(data)
+    return graphql_response['data']['fulfillmentRequest']

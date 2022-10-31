@@ -38,8 +38,8 @@ def map_item_fulfillment(fulfillment_request, sales_order, item_fulfillment_pack
 
 def map_item_fulfillment_items(fulfillment_request):
     item_fulfillment_items = []
-    netsuite_location = Utils.get_netsuite_store_internal_id(fulfillment_request['fulfillment_location_id'])
-    grouped_products = group_products_by_id(fulfillment_request.get('items'))
+    netsuite_location = Utils.get_netsuite_store_internal_id(fulfillment_request['fulfillmentLocationId'])
+    grouped_products = group_products_by_id(fulfillment_request['items']['edges'])
 
     for product_id in grouped_products:
         item_fulfillment_item = {
@@ -56,7 +56,7 @@ def map_item_fulfillment_items(fulfillment_request):
 def group_products_by_id(product_list):
     grouped_products = {}
     for product in product_list:
-        product_id = product['product_id']
+        product_id = product['node']['productId']
         if product_id in grouped_products:
             grouped_products[product_id] += 1
         else:
@@ -67,12 +67,12 @@ def group_products_by_id(product_list):
 def map_item_fulfillment_packages(fulfillment_request):
     item_fulfillment_packages = []
     shipment_list = {}
-    for product in fulfillment_request['items']:
-        tracking_code = product.get('tracking_code', 'N/A')
+    for product in fulfillment_request['items']['edges']:
+        tracking_code = product['node'].get('trackingCode', 'N/A')
         if tracking_code not in shipment_list:
-            shipment_list[tracking_code] = [product['product_id']]
+            shipment_list[tracking_code] = [product['node']['productId']]
         else:
-            shipment_list[tracking_code].append(product['product_id'])
+            shipment_list[tracking_code].append(product['node']['productId'])
 
     for shipment_tracking_code in shipment_list:
         item = {
