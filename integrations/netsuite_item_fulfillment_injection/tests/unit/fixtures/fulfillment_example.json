@@ -20,16 +20,24 @@
     "service_level": "express"
   },
   "created_at": "2017-10-27T12:24:17Z",
-  "items": [
-    {
-      "productId": "35738DreTreXXL",
-      "trackingCode": "IAMATRACKINGCODE"
-    },
-    {
-      "productId": "35686NavTreXXL",
-      "trackingCode": "IAMATRACKINGCODE"
-    }
-  ],
+  "items": {
+    "edges": [
+      {   
+      "node":
+        {
+          "productId": "35738DreTreXXL",
+          "trackingCode": "IAMATRACKINGCODE"
+        }
+      },
+      {
+      "node":
+        {
+          "productId": "35686NavTreXXL",
+          "trackingCode": "IAMATRACKINGCODE"
+        }
+      }
+    ]
+  },
   "extended_attributes": [
     {
       "name": "inventory_item_id",
