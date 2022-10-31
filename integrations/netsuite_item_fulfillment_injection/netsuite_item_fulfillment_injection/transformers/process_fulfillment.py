@@ -39,7 +39,7 @@ def map_item_fulfillment(fulfillment_request, sales_order, item_fulfillment_pack
 def map_item_fulfillment_items(fulfillment_request):
     item_fulfillment_items = []
     netsuite_location = Utils.get_netsuite_store_internal_id(fulfillment_request['fulfillmentLocationId'])
-    grouped_products = group_products_by_id(fulfillment_request.get('items').get('edges'))
+    grouped_products = group_products_by_id(fulfillment_request['items']['edges'])
 
     for product_id in grouped_products:
         item_fulfillment_item = {
