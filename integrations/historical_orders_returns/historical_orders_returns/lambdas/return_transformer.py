@@ -2,7 +2,7 @@ import os
 import logging
 import itertools
 from newstore_common.aws import init_root_logger
-from newstore_adapter.connector import NewStoreConnector
+from historical_orders_returns.utils import Utils
 
 init_root_logger(__name__)
 LOGGER = logging.getLogger(__name__)
@@ -11,19 +11,17 @@ TENANT = os.environ.get('TENANT', 'frankandoak')
 
 VALID_RETURN_CODES = [2864, 392, 395, 398, 401, 404]
 
+
 class ReturnTransformer():
     def __init__(self, context):
         self.return_item = None
-        self.ns_handler = NewStoreConnector(
-            tenant=TENANT,
-            context=context
-        )
-
+        self.ns_handler = Utils.get_newstore_conn(context)
 
     def transform_return_items(self, items):
         return_items = []
         for item in items:
-            return_code = int(item["return_code"]) if item["return_code"] and int(item["return_code"]) in VALID_RETURN_CODES else 99
+            return_code = int(item["return_code"]) if item["return_code"] and int(
+                item["return_code"]) in VALID_RETURN_CODES else 99
             returned_product = {
                 "product_id": item["sku"],
                 "return_reason": item["reason_comment"] or "historical return",
@@ -32,7 +30,6 @@ class ReturnTransformer():
             for _ in itertools.repeat(None, item["qtyReturning"]):
                 return_items.append(returned_product)
         return return_items
-
 
     def get_order(self, external_id):
         gql_response = self.ns_handler.graphql("""
@@ -53,10 +50,8 @@ query MyQuery($externalId: String!) {
             raise ValueError(f"Cannot find order {external_id}")
         return gql_response["orders"]["edges"][0]["node"]
 
-
     def format_date(self, datestr):
         return f"{datestr.replace(' ', 'T')}.000Z"
-
 
     def transform_return(self, return_item):
         gql_order = self.get_order(return_item["order_increment_id"])

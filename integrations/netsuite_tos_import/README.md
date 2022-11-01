@@ -23,7 +23,8 @@ in NewStore.
 {
     "host": "",
     "username": "",
-    "password": ""
+    "password": "",
+    "tenant": ""
 }
 ```
 - "{TENANT_NAME}/{STAGE}/netsuite": Store the settings for the NetSuite configuration variables.

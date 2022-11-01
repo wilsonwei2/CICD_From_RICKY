@@ -29,7 +29,7 @@ LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INF
 LOGGER.setLevel(LOG_LEVEL)
 
 
-def handler(event, context): # pylint: disable=W0613,too-many-locals
+def handler(event, context):  # pylint: disable=W0613,too-many-locals
     """
     Load availabilities from CSV file sent by Netsuite, format data and pass to step function `s3_to_newstore` which handles Newstore import logic.
     """
@@ -60,7 +60,7 @@ def handler(event, context): # pylint: disable=W0613,too-many-locals
             S3.Object(s3_bucket_name, "archive/" + s3_file_key).copy_from(CopySource=copy_source)
             obj.delete()
 
-        except Exception as ex: # pylint: disable=broad-except
+        except Exception as ex:  # pylint: disable=broad-except
             LOGGER.exception(f'Error while reading CSV: {ex}.')
 
     if not items:
@@ -84,10 +84,11 @@ def handler(event, context): # pylint: disable=W0613,too-many-locals
     ]
 
     # Add the store inventory mapping
-    ns_handler = NewStoreConnector(
-        tenant=TENANT,
-        context=context,
-    )
+    newstore_creds = Utils.get_instance().get_newstore_config()
+    ns_handler = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                   username=newstore_creds['username'], password=newstore_creds['password'],
+                                   host=newstore_creds['host'])
+
     add_stores_to_mapping(store_mapping, ns_handler)
 
     LOGGER.debug(f'store_mapping: {store_mapping}')
@@ -142,7 +143,7 @@ def handler(event, context): # pylint: disable=W0613,too-many-locals
 
 def iter_chunks(arr, size):
     for i in range(0, len(arr), size):
-        yield arr[i:i+size]
+        yield arr[i:i + size]
 
 
 def get_items(csv_data):
@@ -182,10 +183,12 @@ def execute_step_function(object_prefix):
             "dest_bucket": S3_BUCKET.name,
             "dest_prefix": "import_files/",
         })
-        return boto3.client('stepfunctions').start_execution(stateMachineArn=STATE_MACHINE_ARN, input=step_function_input)
-    except Exception as ex: # pylint: disable=broad-except
+        return boto3.client('stepfunctions').start_execution(stateMachineArn=STATE_MACHINE_ARN,
+                                                             input=step_function_input)
+    except Exception as ex:  # pylint: disable=broad-except
         LOGGER.exception(f"Failed to execute import step function. CSV files have already been archived. Error: {ex}")
         return None
+
 
 def add_stores_to_mapping(store_mapping, ns_handler):
     # Add Stores to store mapping - only required if store inventory is imported

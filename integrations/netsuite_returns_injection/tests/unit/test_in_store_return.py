@@ -71,7 +71,8 @@ class TestInStoreReturnProcessing(unittest.TestCase):
         self.patched_newstore_config_mock.return_value = {
             "host": "url",
             "username": "username",
-            "password": "password"
+            "password": "password",
+            "tenant": "frankandoak"
         }
 
         netsuite_config_mock = patch('netsuite_returns_injection.helpers.utils.Utils.get_netsuite_config')

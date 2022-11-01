@@ -22,3 +22,8 @@ This lambda will run once a day a validate if the webhook is up, if not it will 
 Currently when the process lambda creates a historical refund in Newstore, it passes in the extended_attributes the shopify refund id, this will then be used after to validate if we already processed this refund.
 
 
+## Environment newstore
+  - tenant = 'frankandoak-staging'
+  - username = manual definition
+  - password = manual definition
+  - host = `https://frankandoak-staging.p.newstore.net`

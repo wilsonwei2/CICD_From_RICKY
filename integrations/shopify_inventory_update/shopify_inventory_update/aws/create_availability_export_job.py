@@ -6,6 +6,7 @@ import logging
 import asyncio
 
 from newstore_adapter.connector import NewStoreConnector
+from param_store.client import ParamStore
 from shopify_inventory_update.handlers.lambda_handler import start_lambda_function
 from shopify_inventory_update.handlers.dynamodb_handler import (
     get_item,
@@ -18,9 +19,12 @@ LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
 
 TENANT = os.environ['TENANT'] or 'frankandoak'
+STAGE = os.environ.get('STAGE', 'x')
+REGION = os.environ.get('REGION', 'us-east-1')
 LAST_UPDATED_KEY = 'last_updated_at'
 DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
 CONCURRENT_EXECUTION_BLOCKED_KEY = 'push_to_queue_concurrent_execution_blocked'
+
 
 def handler(event, context):
     """
@@ -66,7 +70,11 @@ async def _create_export_availabilities_job(context, is_full: False):
     Returns:
      string -- string with result export job id
     """
-    ns_handler = NewStoreConnector(TENANT, context)
+    newstore_creds = json.loads(
+        get_parameter_store().get_param('newstore'))
+    ns_handler = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                   username=newstore_creds['username'], password=newstore_creds['password'],
+                                   host=newstore_creds['host'])
     export = ns_handler.start_availability_export(_get_last_entry_object(is_full))
 
     ## And the request response is forwarded to Next lambda -- availabilities to queue
@@ -111,6 +119,12 @@ def _get_last_entry_object(is_full):
         max_key = 0
 
     return max_key
+
+
+def get_parameter_store(tenant=TENANT, stage=STAGE):
+    param_store = ParamStore(tenant, stage)
+    return param_store
+
 
 def save_last_updated_to_dynamo_db(last_updated_at):
     key = {

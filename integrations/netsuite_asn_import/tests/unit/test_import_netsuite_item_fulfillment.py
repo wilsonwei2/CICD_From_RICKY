@@ -69,7 +69,9 @@ class TestFrankandoakASNImport(unittest.TestCase):
         self.patched_newstore_config_mock.return_value = {
             "host": "url",
             "username": "username",
-            "password": "password"
+            "password": "password",
+            "tenant": "frankandoak",
+            "stage": "stage"
         }
 
         netsuite_config_mock = patch('netsuite_asn_import.utils.Utils.get_netsuite_config')

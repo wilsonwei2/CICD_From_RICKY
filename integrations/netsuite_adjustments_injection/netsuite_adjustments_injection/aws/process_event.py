@@ -31,8 +31,7 @@ EVENT_ID_CACHE = os.environ.get('EVENT_ID_CACHE')
 EVENT_ID_CACHE_CLEARED = False
 DYNAMO_SCAN_LIMIT = int(os.environ.get('DYNAMO_SCAN_LIMIT', 50))
 DYNAMO_TABLE = None
-DAY_IN_SECONDS = 60*60*24
-
+DAY_IN_SECONDS = 60 * 60 * 24
 
 """
 Receives event payloads from an SQS queue. The payload is taken from the order
@@ -40,15 +39,15 @@ event stream, detailed here:
     https://apidoc.newstore.io/newstore-cloud/hooks_eventstream.html
 Event Type: inventory_transaction.adjustment_created
 """
+
+
 def handler(_event, context):
     LOGGER.info(f'Beginning queue retrieval...')
     global NEWSTORE_HANDLER
-    NEWSTORE_HANDLER = NewStoreConnector(
-        tenant=os.environ.get('TENANT_NAME'),
-        context=context,
-        raise_errors=True
-    )
-
+    newstore_creds = util.get_newstore_config()
+    NEWSTORE_HANDLER = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                         username=newstore_creds['username'], password=newstore_creds['password'],
+                                         host=newstore_creds['host'], raise_errors=True)
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     task = sqs_consumer.consume(process_inventory, SQS_QUEUE)
@@ -65,12 +64,13 @@ async def process_inventory(message):
         LOGGER.info("Event was already processed, skipping")
         return True
 
-    store, products_info = get_store_and_products_from_nom(adjustment_event['items'], adjustment_event['fulfillment_node_id'])
+    store, products_info = get_store_and_products_from_nom(adjustment_event['items'],
+                                                           adjustment_event['fulfillment_node_id'])
     inventory_transfer = pa.transform_inventory_transfer(adjustment_event, products_info, store)
     is_success, result = netsuite_transfers.create_inventory_transfer(inventory_transfer)
 
     if is_success:
-        LOGGER.info("Inventory Transfer successfully created in NetSuite: "\
+        LOGGER.info("Inventory Transfer successfully created in NetSuite: " \
                     f"\n{json.dumps(serialize_object(result), default=util.json_serial)}")
         await mark_event_as_received(f"{adjustment_event['id']}-{adjustment_event['chunk_number']}")
     else:
@@ -81,7 +81,7 @@ async def process_inventory(message):
 
 def get_store_and_products_from_nom(items, fulfillment_node_id):
     output = []
-    product_ids = {item['product_id']:item['quantity'] for item in items}
+    product_ids = {item['product_id']: item['quantity'] for item in items}
 
     store_id = util.get_nws_location_id(fulfillment_node_id)
     store = util.get_store(NEWSTORE_HANDLER, store_id)
@@ -98,7 +98,8 @@ def get_store_and_products_from_nom(items, fulfillment_node_id):
                 'quantity': product_ids[product_id]
             })
         else:
-            LOGGER.info('NetSuite internal id not found on NewStore for Item/Product {product_id}. Fallback to NetSuite sku lookup.')
+            LOGGER.info(
+                'NetSuite internal id not found on NewStore for Item/Product {product_id}. Fallback to NetSuite sku lookup.')
             netsuite_item = get_product_by_sku(product_id)
             if netsuite_item:
                 output.append({

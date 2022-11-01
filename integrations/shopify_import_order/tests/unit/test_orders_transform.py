@@ -69,7 +69,6 @@ class TestFrankandoakImportOrderTransformer(unittest.TestCase):
         except Exception as ex:
             raise self.failureException('{} raised'.format(ex))
 
-
     def test_transform_final_sale(self):
         order = self._load_json_file('shopify_order_webhook_final_sale.json')
         transactions = self._load_json_file('shopify_order_transactions.json')['transactions']
@@ -85,7 +84,6 @@ class TestFrankandoakImportOrderTransformer(unittest.TestCase):
             validate(response, order_schema)
         except Exception as ex:
             raise self.failureException('{} raised'.format(ex))
-
 
     def test_transform_with_pickup_in_store(self):
         order = self._load_json_file('shopify_order_webhook.json')
@@ -103,7 +101,6 @@ class TestFrankandoakImportOrderTransformer(unittest.TestCase):
         except Exception as ex:
             raise self.failureException('{} raised'.format(ex))
 
-
     def test_transform_with_electronic_gift(self):
         order = self._load_json_file('shopify_order_electronic_gift.json')
         transactions = self._load_json_file('shopify_order_transactions.json')['transactions']
@@ -120,7 +117,6 @@ class TestFrankandoakImportOrderTransformer(unittest.TestCase):
         except Exception as ex:
             raise self.failureException('{} raised'.format(ex))
 
-
     def test_transform_shipping_discount(self):
         order = self._load_json_file('shopify_order_webhook_shipping_discount.json')
         transactions = self._load_json_file('shopify_order_transactions.json')['transactions']
@@ -136,7 +132,6 @@ class TestFrankandoakImportOrderTransformer(unittest.TestCase):
             validate(response, order_schema)
         except Exception as ex:
             raise self.failureException('{} raised'.format(ex))
-
 
     def test_get_refund(self):
         refunds = self._load_json_file('shopify_order_refunds.json')['refunds']

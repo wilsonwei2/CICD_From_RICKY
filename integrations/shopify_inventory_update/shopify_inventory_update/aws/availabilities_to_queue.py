@@ -41,11 +41,9 @@ PARAM_STORE = None
 MAPPING_ENTRIES = None
 STOP_BEFORE_TIMEOUT = 60000
 
-
 TENANT = os.environ['TENANT'] or 'frankandoak'
 STAGE = os.environ['STAGE'] or 'x'
 REGION = os.environ['REGION'] or 'us-east-1'
-
 
 def handler(event, context):
     """
@@ -186,11 +184,13 @@ async def _save_to_queue_availabilities(context, event):
     else:
         response = get_availability_job_id()
         if response['availability_export_id'] and response['availability_job_state']:
-            LOGGER.info(f"Found current job from dynamo db table - as -- {str(response['availability_export_id'])} and previous state -- {response['availability_job_state']}")
+            LOGGER.info(
+                f"Found current job from dynamo db table - as -- {str(response['availability_export_id'])} and previous state -- {response['availability_job_state']}")
             ## Possible inputs -- availability id respoinse
             return await wait_job_and_process_variants(context, response)
         else:
-            LOGGER.info('Could not find which method to process variants to queue; make sure it is a api gateway request or a lambdas invocation with the id inside.')
+            LOGGER.info(
+                'Could not find which method to process variants to queue; make sure it is a api gateway request or a lambdas invocation with the id inside.')
 
 
 async def wait_job_and_process_variants(context, event):
@@ -205,7 +205,11 @@ async def wait_job_and_process_variants(context, event):
         return {'result': 'All variants exported to the queue'}
 
     events_handler = EventsHandler()
-    ns_handler = NewStoreConnector(TENANT, context)
+    newstore_credentials = json.loads(
+        PARAM_STORE.get_param('newstore'))
+    ns_handler = NewStoreConnector(tenant=newstore_credentials['tenant'], context=context,
+                                   username=newstore_credentials['username'], password=newstore_credentials['password'],
+                                   host=newstore_credentials['host'])
 
     '''
     Example
@@ -260,7 +264,7 @@ async def read_variants_from_export_file(file_url, last_updated_at):
     s3_handler = S3Handler(
         bucket_name=os.environ["S3_BUCKET_NAME"],
         key_name='helpers/exports/{last_updated_at}/inventory_levels.json'.
-        format(last_updated_at=last_updated_at)
+            format(last_updated_at=last_updated_at)
     )
     variants = None
 
@@ -316,7 +320,8 @@ async def _process_variants_to_queue(variants, context):
         if stop_before_timeout(context, STOP_BEFORE_TIMEOUT, LOGGER) \
             and previous_product_id is not None \
             and previous_product_id != variant.get('product_id'):
-            LOGGER.info(f'Previous Product Id: {previous_product_id} - save next product id {variant.get("product_id")}')
+            LOGGER.info(
+                f'Previous Product Id: {previous_product_id} - save next product id {variant.get("product_id")}')
             save_last_variant(variant.get('product_id'))
             result = False
             break
@@ -358,7 +363,8 @@ async def _process_variants_to_queue(variants, context):
         # one for the english and one for the french catalog; and it could also be its only exported
         # for the english OR the french catalog - so we check here for duplicates
         if shopify_inventory_ids.get('cad') + '-' + fulfillment_node_id in mapped_inventory_ids:
-            LOGGER.debug(f'Skip inventory record since its already in the list {shopify_inventory_ids.get("cad")}-{fulfillment_node_id}')
+            LOGGER.debug(
+                f'Skip inventory record since its already in the list {shopify_inventory_ids.get("cad")}-{fulfillment_node_id}')
             continue
         mapped_inventory_ids.append(shopify_inventory_ids.get('cad') + '-' + fulfillment_node_id)
 
@@ -371,7 +377,8 @@ async def _process_variants_to_queue(variants, context):
 
         if current_location_ids is None:
             product_id = variant.get('product_id')
-            LOGGER.debug(f'Fulfillment node ID "{fulfillment_node_id}" not mapped to location for "{product_id}", skipping variant')
+            LOGGER.debug(
+                f'Fulfillment node ID "{fulfillment_node_id}" not mapped to location for "{product_id}", skipping variant')
             continue
 
         if len(shopify_inventory_item_list) == 100:

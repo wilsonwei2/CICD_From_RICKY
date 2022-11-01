@@ -3,7 +3,7 @@ import json
 from typing import List
 from dacite import from_dict
 
-import netsuite.netsuite_environment_loader # pylint: disable=W0611
+import netsuite.netsuite_environment_loader  # pylint: disable=W0611
 from param_store.client import ParamStore
 
 from cycle_counts.app.netsuite_newstore_service import NetSuiteNewStoreService
@@ -17,6 +17,7 @@ PARAM_STORE = None
 NEWSTORE_CONFIG = None
 NETSUITE_CONFIG = None
 
+
 def get_lambda_parameters() -> {}:
     environment_variables = {key.lower(): os.environ[key] for key in [
         'TENANT',
@@ -29,7 +30,7 @@ def get_lambda_parameters() -> {}:
         **environment_variables,
         'ns_user': newstore_config['username'],
         'ns_password': newstore_config['password'],
-        'ns_tenant': environment_variables['tenant']
+        'ns_tenant': newstore_config['tenant']
     }
 
 

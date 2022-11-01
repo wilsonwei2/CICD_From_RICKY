@@ -4,7 +4,8 @@ from time import time
 import logging
 from urllib.parse import unquote
 import boto3
-from newstore_adapter.connector import NewStoreConnector
+
+from s3_to_newstore.utils import Utils
 
 S3 = boto3.client('s3')
 ENTITIES_CSV = os.environ['ENTITIES']
@@ -33,7 +34,7 @@ def handler(event, context):
     """
     LOGGER.info(f"Event: {json.dumps(event, indent=2)}")
 
-    ns_handler = NewStoreConnector(tenant=TENANT, context=context)
+    ns_handler = Utils.get_newstore_conn(context)
     entities = [i.strip() for i in ENTITIES_CSV.split(',')]
 
     start_prev_received_imports(ns_handler, entities)

@@ -25,7 +25,8 @@ LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INF
 LOGGER = logging.getLogger(__name__)
 LOGGER.setLevel(LOG_LEVEL)
 
-def handler(event, context): # pylint: disable=W0613
+
+def handler(event, context):  # pylint: disable=W0613
     """
     Take new shopify order from webhook call. Should include a query parameter
     denoting which shopify channel the order is coming from (e.g., 'MTLDC1').
@@ -56,7 +57,7 @@ def handler(event, context): # pylint: disable=W0613
         if order.get('name').startswith('LGC'):
             LOGGER.info(f'Order is a Loop Gift Card Shopify id {order["id"]}. Name {order.get("name")}. Not injecting.')
             return {
-                'statusCode':200,
+                'statusCode': 200,
                 'body': 'Order is a LGC'
             }
 
@@ -72,7 +73,7 @@ def handler(event, context): # pylint: disable=W0613
         if order_risk:
             LOGGER.info(f'Order with Shopify ID {order["id"]} is at risk state. Not injecting.')
             return {
-                'statusCode':200,
+                'statusCode': 200,
                 'body': 'Order at Risk by Kount System not injecting into NewStore'
             }
 
@@ -92,7 +93,7 @@ def handler(event, context): # pylint: disable=W0613
 
         LOGGER.info('Response from Newstore Platform')
         LOGGER.debug(response)
-        newstore_order_url = f'https://manager.{TENANT}.{STAGE}.newstore.net/sales/orders/{response.get("id")}'
+        newstore_order_url = f'https://manager.{newstore_handler.get_host()}/sales/orders/{response.get("id")}'
         success_note_message = f'Injected into NewStore: {newstore_order_url}'
         note_and_tag_response = _update_note_on_order(shopify_handler=shopify_handler, order=order_body,
                                                       message=success_note_message, order_processed=True)
@@ -107,7 +108,8 @@ def handler(event, context): # pylint: disable=W0613
         LOGGER.exception('Error transforming or injecting order')
         LOGGER.info(ex)
         try:
-            note_and_tag_response = _update_note_on_order(shopify_handler=shopify_handler, order=order_body, message=str(ex),
+            note_and_tag_response = _update_note_on_order(shopify_handler=shopify_handler, order=order_body,
+                                                          message=str(ex),
                                                           order_processed=False)
             LOGGER.info(f'Updated the order in shopify with note - {str(ex)}')
             LOGGER.info(json.dumps(note_and_tag_response))
@@ -195,14 +197,15 @@ def get_shipping_offer_token(order, newstore_handler):
             in_store_pickup_options = newstore_handler.get_in_store_pickup_options(payload).get('options', [])
             LOGGER.debug(f'In store pickup options: {in_store_pickup_options}')
 
-            selected_option = next(filter(lambda option: option['fulfillment_node_id'] == shipping_code, in_store_pickup_options), None)
+            selected_option = next(
+                filter(lambda option: option['fulfillment_node_id'] == shipping_code, in_store_pickup_options), None)
             LOGGER.debug(f'Selected option: {selected_option}')
 
             if selected_option is not None:
                 shipping_offer_token = selected_option['in_store_pickup_option']['shipping_offer_token']
 
             LOGGER.debug(f'Got pickup in store shipping offer token: {shipping_offer_token}')
-        except Exception as error: # pylint: disable=W0702
+        except Exception as error:  # pylint: disable=W0702
             LOGGER.debug('Could not get a shipping offer token, no pickup in store.')
             LOGGER.debug(str(error))
 
@@ -293,7 +296,8 @@ def _all_products_returned(ns_return: NewStoreReturn, return_response: str) -> b
     return True
 
 
-def _create_loop_exchange_note(original_order_id: str, exchange_date: str, exchange_name: str, newstore_handler) -> NewStoreNote:
+def _create_loop_exchange_note(original_order_id: str, exchange_date: str, exchange_name: str,
+                               newstore_handler) -> NewStoreNote:
     text = f"Return from a loop exchange order name: {exchange_name}, at {exchange_date}"
     source = "Loop Exchange"
     response = newstore_handler.create_order_note(order_id=original_order_id, text=text, source=source, tags=[])
@@ -307,7 +311,6 @@ def _create_ns_return(order, shopify_handler, newstore_handler):
     original_order_refunds = shopify_handler.get_refunds(original_order_id)
     LOGGER.info(f'Original order refunds from original order id {original_order_id}')
     LOGGER.info(original_order_refunds)
-
 
     exchange_order_date = datetime.datetime.strptime(order['created_at'], "%Y-%m-%dT%H:%M:%S%z")
     refund = _get_refund(original_order_refunds["refunds"], exchange_order_date)
@@ -328,6 +331,7 @@ def _create_ns_return(order, shopify_handler, newstore_handler):
         newstore_handler.delete_order_note(created_note.order_id, created_note.id)
         if not _all_products_returned(ns_return, response.get("message")):
             raise Exception("The exchange contains products that some were returned already and others not returned")
+
 
 def _get_newstore_original_order(external_id: str, newstore_handler) -> Dict:
     try:

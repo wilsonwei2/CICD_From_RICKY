@@ -1,3 +1,4 @@
+import json
 import os
 import logging
 from param_store.client import ParamStore
@@ -20,11 +21,11 @@ class Utils():
     @staticmethod
     def get_newstore_conn(context=None):
         if not Utils._newstore_conn:
-            Utils._newstore_conn = NewStoreConnector(
-                tenant=TENANT,
-                context=context,
-                raise_errors=True
-            )
+            newstore_creds = json.loads(Utils.get_param_store().get_param('newstore'))
+            Utils._newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                                     username=newstore_creds['username'],
+                                                     password=newstore_creds['password'], host=newstore_creds['host'],
+                                                     raise_errors=True)
         return Utils._newstore_conn
 
     @staticmethod

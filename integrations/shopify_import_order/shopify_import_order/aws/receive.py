@@ -15,7 +15,7 @@ TWO_DAYS = 172800
 PROCESS_ORDER_LAMBDA_NAME = os.environ.get('PROCESS_ORDER_LAMBDA_NAME', '')
 
 
-def handler(event, context): # pylint: disable=W0613
+def handler(event, context):  # pylint: disable=W0613
     """
     Start of the lambda handler
     :param event: Shopify webhook order json
@@ -44,7 +44,8 @@ def handler(event, context): # pylint: disable=W0613
         wait_to_receive_tags = os.environ.get('RETRY_TAGS', 'signifyd approved').split(",")
         LOGGER.debug(f'RETRY_TAGS: {wait_to_receive_tags}')
         if all(tag not in wait_to_receive_tags for tag in existing_tags):
-            LOGGER.info(f'Not processing order with {order_id}. It is not signifyd approved. Senging 500 back to Shopify')
+            LOGGER.info(
+                f'Not processing order with {order_id}. It is not signifyd approved. Senging 500 back to Shopify')
             return {
                 'statusCode': 500,
                 'body': f'{order_id} not signifyd approved'}

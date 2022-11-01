@@ -24,7 +24,11 @@ Listens to ObjectCreated:Put and ObjectCreated:Create event on configured S3 buc
 [api: NewStore import]      [api: NewStore import]
 ```
 
-## Environment
+## Environment newstore
+  - tenant = 'frankandoak-staging'
+  - username = manual definition
+  - password = manual definition
+  - host = `https://frankandoak-staging.p.newstore.net` (default)
 
 ### S3 Triggers
 
@@ -52,22 +56,18 @@ triggered. These are defined as `AWS::Lambda::Permission` in the `template.yml`.
 ### Lambda Environment Variables
 
 1. `stn-pricebook-import`
-  - BASE_URL = `https://goorin-brothers.x.newstore.net` (default)
   - ENTITIES = `availabilities` (default; format is CSV without spaces)
-  - NS_PASSWORD = manual definition
-  - NS_USERNAME = manual definition
   - PROVIDER = `glue` (default)
 
 2. `stn-email-import`
-  - BASE_URL = `https://goorin-brothers.x.newstore.net` (default)
   - ENTITIES = `availabilities` (default; format is CSV without spaces)
-  - NS_PASSWORD = manual definition
-  - NS_USERNAME = manual definition
   - PROVIDER = `glue` (default)
 
 3. `stn-step-function`
-  - DESTINATION_BUCKET = `goorin-brothers-x-0-newstore-dmz` (default)
+  - DESTINATION_BUCKET = `frankandoak-s-0-newstore-dmz` (default)
   - DESTINATION_PREFIX = `import_files/availabilities` (default)
+
+
 
 ## Dependencies
 

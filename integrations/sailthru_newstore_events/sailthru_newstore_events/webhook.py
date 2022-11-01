@@ -1,8 +1,8 @@
 import os
 import logging
 from newstore_common.aws import init_root_logger
-from newstore_adapter.connector import NewStoreConnector
 from newstore_adapter.exceptions import NewStoreAdapterException
+from .utils import get_newstore_conn
 
 init_root_logger(__name__)
 LOGGER = logging.getLogger(__name__)
@@ -34,10 +34,7 @@ def _validate_webhook(context):
         'event_filter': filter_events
     }
 
-    ns_handler = NewStoreConnector(
-        tenant=TENANT,
-        context=context
-    )
+    ns_handler = get_newstore_conn(context)
 
     try:
         hook_response = ns_handler.get_integration(SAILTHRU_HOOK_NAME)

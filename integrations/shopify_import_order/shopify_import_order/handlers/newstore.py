@@ -15,11 +15,13 @@ class NShandler():
     username = None
     password = None
     token = None
+    tenant = None
 
-    def __init__(self, host, username, password):
+    def __init__(self, host, username, password, tenant):
         self.host = host
         self.username = username
         self.password = password
+        self.tenant = tenant
 
     def get_token(self):
         if not self.token:
@@ -43,7 +45,7 @@ class NShandler():
     def get_headers(self):
         return {
             'Content-Type': 'application/json',
-            'tenant': os.environ.get('tenant', 'frankandoak'),
+            'tenant': self.get_tenant(),
             'Authorization': f'Bearer {self.get_token()}'
         }
 
@@ -78,7 +80,8 @@ class NShandler():
             response.raise_for_status()
         except HTTPError as ex:
             LOGGER.error(
-                f"Response for order {order_data['external_id']} {response.text}; \nException: {str(ex)}", exc_info=True)
+                f"Response for order {order_data['external_id']} {response.text}; \nException: {str(ex)}",
+                exc_info=True)
             raise
         return response.json()
 
@@ -107,13 +110,13 @@ class NShandler():
             response.raise_for_status()
         except HTTPError as ex:
             LOGGER.info(f'Response: {response.text}; \nException: {str(ex)}', exc_info=True)
-            if "The following products were already returned" in  response.text:
+            if "The following products were already returned" in response.text:
                 return {"repeated_returned": True, "message": response.json().get("message")}
             raise
         success_response = response.json()
         LOGGER.info(f"Response {response.text}")
         success_response["repeated_returned"] = False
-        return  success_response
+        return success_response
 
     def create_order_note(self, order_id: str, text: str, source: str, tags: List[str]):
         url = f'https://{self.host}/v0/d/orders/{order_id}/notes'
@@ -137,3 +140,9 @@ class NShandler():
         response = requests.get(url=url, headers=self.get_headers())
         response.raise_for_status()
         return response.json()
+
+    def get_host(self):
+        return self.host
+
+    def get_tenant(self):
+        return self.tenant

@@ -16,10 +16,11 @@ class NShandler():
     password = None
     token = None
 
-    def __init__(self, host, username, password):
+    def __init__(self, host, username, password, tenant):
         self.host = host
         self.username = username
         self.password = password
+        self.tenant = tenant
 
     def get_token(self):
         if not self.token:
@@ -43,7 +44,7 @@ class NShandler():
     def get_headers(self):
         return {
             'Content-Type': 'application/json',
-            'tenant': os.environ.get('tenant', 'frankandoak'),
+            'tenant': self.tenant,
             'Authorization': f'Bearer {self.get_token()}'
         }
 

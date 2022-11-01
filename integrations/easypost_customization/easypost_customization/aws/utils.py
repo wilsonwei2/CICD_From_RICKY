@@ -34,11 +34,10 @@ def get_param_store():
 def get_newstore_conn(context, raise_errors=True):
     global NEWSTORE_CONN  # pylint: disable=global-statement
     if not NEWSTORE_CONN:
-        NEWSTORE_CONN = NewStoreConnector(
-            tenant=TENANT,
-            context=context,
-            raise_errors=raise_errors
-        )
+        newstore_creds = get_newstore_creds()
+        NEWSTORE_CONN = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
+                                          username=newstore_creds['username'], password=newstore_creds['password'],
+                                          host=newstore_creds['host'], raise_errors=raise_errors)
     return NEWSTORE_CONN
 
 
