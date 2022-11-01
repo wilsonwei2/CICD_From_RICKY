@@ -51,6 +51,7 @@ resources:
       Properties:
         FifoQueue: True
         QueueName: ${self:provider.tenant}-fulfillment-to-netsuite-queue.fifo
+        DelaySeconds: 300
         VisibilityTimeout: 300
         ContentBasedDeduplication: True
         RedrivePolicy:

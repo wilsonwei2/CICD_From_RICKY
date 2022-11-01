@@ -15,7 +15,7 @@ from netsuite_transfer_updates_to_netsuite.helpers.utils import Utils
 from zeep.helpers import serialize_object
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel(logging.INFO)
+LOGGER.setLevel(logging.DEBUG)
 SQS_QUEUE = Utils.get_environment_variable(
     "SQS_QUEUE", "frankandoak-tu-item-receipt-queue.fifo")
 LOGGER.info(F"SQS Queue {SQS_QUEUE}")
@@ -133,7 +133,7 @@ async def create_inventory_adjustment(current_inventory_adjustment):
 
 
 async def get_item_fulfillments(items_received_event):
-    tran_id = items_received_event['shipment_ref']
+    tran_id = items_received_event['order_ref']
     if tran_id.startswith('TO'):
         # In this case the ASN was created in NewStore by NewStore after a Transfer Order was fulfilled in NewStore
         # So we need to fetch the Transfer Order from NetSuite and then the ItemFulfillment for that Transfer Order
@@ -147,7 +147,8 @@ async def get_item_fulfillments(items_received_event):
         item_fulfillments = await get_item_fulfillment(created_from_id=transfer_order['internalId'])
     else:
         # shipment_ref now contains tracking as well, so we need to extract the tranId
-        tran_id = tran_id.split('-')[0].strip()
+        tran_id = tran_id.split(' -')[0].strip()
+        LOGGER.debug(f'Tran ID: {tran_id}')
         item_fulfillments = await get_item_fulfillment(tran_id=tran_id)
 
     if not item_fulfillments:
@@ -206,6 +207,9 @@ def get_item_fulfillment_for_asn(items_received_event, item_fulfillments):
 
 
 def get_item_fulfillment_asn(item_fulfillment):
+    LOGGER.debug(f'Item Fulfillment: {item_fulfillment}')
+    if not item_fulfillment:
+        return None
     if item_fulfillment['customFieldList'] is not None:
         custom_field_list = item_fulfillment['customFieldList']['customField']
         for custom_field in custom_field_list:
