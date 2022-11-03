@@ -68,6 +68,7 @@ async def process_fulfillment(message):
 
     # Before creating the ItemFulfillment, update SalesOrder with correct location in item level
     update_sales_order(sales_order, fulfillment_request)
+    LOGGER.info(f"Updated fulfillment request: {json.dumps(serialize_object(fulfillment_request), indent=4, default=Utils.json_serial)}")
 
     response = create_item_fulfillment(fulfillment_request, sales_order)
     if response:
@@ -143,6 +144,11 @@ def update_sales_order(sales_order, fulfillment_request):
         if item_name in product_ids_in_fulfillment \
                 and not item_is_fulfilled \
                 and not is_rejected:
+
+            for idx, node in enumerate(fulfillment_request['items']['edges']):
+                if item_name == node['node']['productId']:
+                    removed_item = fulfillment_request['items']['edges'].pop(idx)
+                    LOGGER.info(f"Item removed from payload: {removed_item}")
 
             if item_name not in Utils.get_virtual_product_ids_config():
                 # We can only set commitInventory on inventory items and avoid doing so in non-inventory items
