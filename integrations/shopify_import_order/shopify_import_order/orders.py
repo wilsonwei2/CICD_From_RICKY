@@ -455,6 +455,9 @@ def _get_shipping_option(order, shipping_offer_token):
     if 'country_code' in shipping_address:
         shipping_country_code = shipping_address['country_code']
 
+    if 'province_code' in shipping_address:
+        shipping_province_code = shipping_address['province_code']
+
     if shipping_lines:
         if shipping_offer_token is not None:
             shipping_option = {
@@ -497,7 +500,7 @@ def _get_shipping_option(order, shipping_offer_token):
             'tax': 0.0
         }
 
-    if shipping_address['province_code'] in ['HI', 'AK'] or 'po box' in shipping_address['address1'].replace('.', '').lower():
+    if shipping_province_code in ['HI', 'AK'] or 'po box' in shipping_address['address1'].replace('.', '').lower():
         shipping_option['service_level_identifier'] = 'EXPRESS_POST_USA'
 
     LOGGER.debug(f'Returned shipping option is {shipping_option}')
