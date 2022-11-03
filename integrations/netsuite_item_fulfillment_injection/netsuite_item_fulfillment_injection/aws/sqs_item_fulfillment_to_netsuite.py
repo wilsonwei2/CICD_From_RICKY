@@ -145,11 +145,6 @@ def update_sales_order(sales_order, fulfillment_request):
                 and not item_is_fulfilled \
                 and not is_rejected:
 
-            for idx, node in enumerate(fulfillment_request['items']['edges']):
-                if item_name == node['node']['productId']:
-                    removed_item = fulfillment_request['items']['edges'].pop(idx)
-                    LOGGER.info(f"Item removed from payload: {removed_item}")
-
             if item_name not in Utils.get_virtual_product_ids_config():
                 # We can only set commitInventory on inventory items and avoid doing so in non-inventory items
                 item.commitInventory = '_availableQty'
@@ -160,6 +155,8 @@ def update_sales_order(sales_order, fulfillment_request):
             product_ids_in_fulfillment.remove(item_name)
 
             update_items.append(item)
+
+        remove_fulfilled_items_in_request(product_ids_in_fulfillment, fulfillment_request)
 
     sales_order_update.itemList.item = update_items
     sales_order_update.itemList.replaceAll = False
@@ -177,6 +174,13 @@ async def get_sales_order(order_id):
     if not sales_order:
         raise Exception('SalesOrder not found on NetSuite for order %s.' % (order_id))
     return sales_order
+
+
+def remove_fulfilled_items_in_request(item_list, fulfillment_request):
+    for idx, node in enumerate(fulfillment_request['items']['edges']):
+        if node['node']['productId'] in item_list:
+            removed_item = fulfillment_request['items']['edges'].pop(idx)
+            LOGGER.info(f"fulfilled item removed from payload: {removed_item}")
 
 
 def mark_shipped_items(item_fulfillment_items, item_fulfillment):
