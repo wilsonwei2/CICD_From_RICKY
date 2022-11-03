@@ -497,7 +497,7 @@ def _get_shipping_option(order, shipping_offer_token):
             'tax': 0.0
         }
 
-    address_line_1 =  shipping_address['address_line_1'].replace('.','').lower()
+    address_line_1 = shipping_address['address_line_1'].replace('.','').lower()
     if shipping_address['state'] in ['HI', 'AK'] or 'po box' in address_line_1:
         shipping_option['service_level_identifier'] = 'EXPRESS_POST_USA'
 
