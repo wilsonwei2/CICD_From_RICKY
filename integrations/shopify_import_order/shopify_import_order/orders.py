@@ -465,10 +465,7 @@ def _get_shipping_option(order, shipping_offer_token):
         else:
             code = _get_non_null_field(shipping_lines[0], 'code', '').lower()
             title = _get_non_null_field(shipping_lines[0], 'title', '').lower()
-            if shipping_address['state'] in ['HI', 'AK']:
-                service_level_identifier = 'EXPRESS_POST_USA'
-            else:
-                service_level_identifier = shopify_helper.get_shipment_service_level(code, title, shipping_country_code)
+            service_level_identifier = shopify_helper.get_shipment_service_level(code, title, shipping_country_code)
             LOGGER.info(f'Service level identified from is {service_level_identifier}')
             shipping_option = {
                 'service_level_identifier': service_level_identifier,
@@ -499,6 +496,9 @@ def _get_shipping_option(order, shipping_offer_token):
             'price': 0.0,
             'tax': 0.0
         }
+    
+    if shipping_address['state'] in ['HI', 'AK'] or 'po box' in shipping_address['address_line_1'].replace('.','').lower():
+        shipping_option['service_level_identifier'] = 'EXPRESS_POST_USA'
 
     LOGGER.debug(f'Returned shipping option is {shipping_option}')
     return shipping_option
