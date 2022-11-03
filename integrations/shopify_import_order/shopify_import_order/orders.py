@@ -448,7 +448,7 @@ def _get_shipping_option(order, shipping_offer_token):
     the call is made in transform.
     '''
     shipping_lines = order.get('shipping_lines', [])
-
+    shipping_province_code = ''
     shipping_address = order.get('shipping_address', {})
     shipping_country_code = ''
 
