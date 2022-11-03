@@ -67,7 +67,7 @@ async def process_fulfillment(message):
     sales_order = await get_sales_order(order_external_id)
 
     # Before creating the ItemFulfillment, update SalesOrder with correct location in item level
-    update_sales_order(sales_order, fulfillment_request)
+    fulfillment_request = update_sales_order(sales_order, fulfillment_request)
     LOGGER.info(f"Updated fulfillment request: {json.dumps(serialize_object(fulfillment_request), indent=4, default=Utils.json_serial)}")
 
     response = create_item_fulfillment(fulfillment_request, sales_order)
@@ -156,7 +156,7 @@ def update_sales_order(sales_order, fulfillment_request):
 
             update_items.append(item)
 
-        remove_fulfilled_items_in_request(product_ids_in_fulfillment, fulfillment_request)
+    remove_fulfilled_items(product_ids_in_fulfillment, fulfillment_request)
 
     sales_order_update.itemList.item = update_items
     sales_order_update.itemList.replaceAll = False
@@ -168,6 +168,8 @@ def update_sales_order(sales_order, fulfillment_request):
         raise Exception(f'Failed to update sales order: {updated_sales_order}')
 
     LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
+    return fulfillment_request
+
 
 async def get_sales_order(order_id):
     sales_order = nsas.get_sales_order(order_id)
@@ -176,7 +178,7 @@ async def get_sales_order(order_id):
     return sales_order
 
 
-def remove_fulfilled_items_in_request(item_list, fulfillment_request):
+def remove_fulfilled_items(item_list, fulfillment_request):
     for idx, node in enumerate(fulfillment_request['items']['edges']):
         if node['node']['productId'] in item_list:
             removed_item = fulfillment_request['items']['edges'].pop(idx)
