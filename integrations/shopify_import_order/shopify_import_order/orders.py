@@ -452,6 +452,7 @@ def _get_shipping_option(order, shipping_offer_token):
     shipping_country_code = ''
     shipping_province_code = ''
     shipping_address1 = ''
+    shipping_option = {}
 
     if 'address1' in shipping_address:
         shipping_address1 = shipping_address['address1']
