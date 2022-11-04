@@ -469,7 +469,7 @@ def _get_shipping_option(order, shipping_offer_token):
                 'price': 0.0,
                 'tax': 0.0
             }
-        if shipping_province_code in ['HI', 'AK'] or 'po box' in shipping_address1.replace('.', '').lower():
+        elif shipping_province_code in ['HI', 'AK'] or 'po box' in shipping_address1.replace('.', '').lower():
             shipping_option = {
                 'shipping_offer_token': "EXPRESS_POST_USA",
                 'price': 0.0,
