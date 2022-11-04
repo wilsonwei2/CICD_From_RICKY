@@ -477,7 +477,8 @@ def _get_shipping_option(order, shipping_offer_token):
                 shipping_option['service_level_identifier'] = "EXPRESS_POST_USA"
             else:
                 service_level_identifier = shopify_helper.get_shipment_service_level(code, title, shipping_country_code)
-            LOGGER.info(f'Service level identified from is {service_level_identifier}')
+                shipping_option['service_level_identifier'] = service_level_identifier
+            LOGGER.info(f"Service level identified from is {shipping_option['service_level_identifier']}")
             shipping_option = {
                 'service_level_identifier': service_level_identifier,
                 'price': float(shipping_lines[0]['price']),
