@@ -35,7 +35,7 @@ provider:
           Resource: arn:aws:sqs:${self:provider.region}:*:${provider.environment.SQS_NAME}
 
 functions:
-  order_id_to_fr_to_queue:
+  yopto_webhook:
     name: ${self:provider.tenant}-order-id-to-fulfillment-request-to-queue
     handler: order_id_to_fulfillment_request.aws.order_id_to_fr_to_queue.handler
     timeout: 900
