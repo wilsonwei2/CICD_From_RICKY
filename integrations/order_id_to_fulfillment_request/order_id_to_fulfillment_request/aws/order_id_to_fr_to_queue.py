@@ -16,8 +16,9 @@ def handler(event, context): # pylint: disable=W0613
     This is the webhook that is triggered by Yotpo.
     """
     LOGGER.info(f"Event: {event}")
-    order_ids = json.dumps(event['order_ids'])
-    for order_id in order_ids:
+    ids = json.loads(event)
+    LOGGER.info(f"order_ids: {ids['order_ids']}")
+    for order_id in ids['order_ids']:
         _get_fulfillment_requests(order_id)
     return {
         'statusCode': 200
