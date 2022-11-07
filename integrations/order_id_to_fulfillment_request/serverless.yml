@@ -1,4 +1,4 @@
-service: frankandoak-order-id-to-fulfillment-request
+service: frankandoak-order-id-to-fr
 plugins:
   - serverless-python-requirements
 custom:
