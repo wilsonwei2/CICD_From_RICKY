@@ -45,7 +45,7 @@ def _get_fulfillment_requests(order_id):
     fulfillment_requests = ns_handler.get_fulfillment_requests(order_details['order_uuid'])
     LOGGER.info(f"fulfillment requests for order: {order_id} \n {fulfillment_requests}")
 
-    for fulfillment_request in fulfillment_requests:
+    for fulfillment_request in fulfillment_requests['fulfillment_requests']:
         _push_to_queue(fulfillment_request)
     LOGGER.info(f"processed order: {order_id}")
 
