@@ -25,14 +25,6 @@ provider:
     TENANT: ${self:provider.tenant}
     REGION: ${self:provider.region}
     SQS_NAME: ${self:provider.tenant}-fulfillment-to-netsuite-queue.fifo
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - sqs:SendMessage
-            - sqs:ReceiveMessage
-          Resource: arn:aws:sqs:${self:provider.region}:*:${provider.environment.SQS_NAME}
 
 functions:
   yopto_webhook:
