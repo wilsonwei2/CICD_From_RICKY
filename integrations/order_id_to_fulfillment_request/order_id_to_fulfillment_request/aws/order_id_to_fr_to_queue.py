@@ -46,7 +46,8 @@ def _get_fulfillment_requests(order_id):
     LOGGER.info(f"fulfillment requests for order: {order_id} \n {fulfillment_requests}")
 
     for fulfillment_request in fulfillment_requests['fulfillment_requests']:
-        _push_to_queue(fulfillment_request)
+        payload = {"payload": fulfillment_request}
+        _push_to_queue(payload)
     LOGGER.info(f"processed order: {order_id}")
 
 
@@ -55,5 +56,5 @@ def _push_to_queue(message):
     This function pushes the fulfillment request to queue
     """
     sqs_handler = SqsHandler(queue_name=QUEUE_NAME)
-    sqs_handler.push_message(message_group_id=message['id'], message=json.dumps(message))
+    sqs_handler.push_message(message_group_id=message['payload']['id'], message=json.dumps(message))
     LOGGER.info(f'Message pushed to SQS: {sqs_handler.queue_name}')
