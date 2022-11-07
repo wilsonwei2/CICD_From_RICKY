@@ -17,9 +17,9 @@ def handler(event, context): # pylint: disable=W0613
     """
     LOGGER.info(f"Event: {event}")
     ids = json.dumps(event)
-    order_ids = json.loads(ids)
-    LOGGER.info(f"order_ids: {order_ids['order_ids']}")
-    for order_id in order_ids['order_ids']:
+    ids_list = json.loads(ids)
+    LOGGER.info(f"order_ids: {ids_list['order_ids']}")
+    for order_id in ids_list['order_ids']:
         _get_fulfillment_requests(order_id)
     return {
         'statusCode': 200
