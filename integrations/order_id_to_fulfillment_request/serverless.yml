@@ -33,10 +33,9 @@ provider:
             - sqs:SendMessage
             - sqs:ReceiveMessage
           Resource: arn:aws:sqs:${self:provider.region}:*:${provider.environment.SQS_NAME}
-        - Effect: Allow
 
 functions:
-  yotpo_webhook:
+  order_id_to_fr_to_queue:
     name: ${self:provider.tenant}-order-id-to-fulfillment-request-to-queue
     handler: order_id_to_fulfillment_request.aws.order_id_to_fr_to_queue.handler
     timeout: 900
