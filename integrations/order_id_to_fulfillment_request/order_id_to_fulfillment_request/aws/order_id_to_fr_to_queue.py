@@ -9,7 +9,7 @@ LOGGER = logging.getLogger(__name__)
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER.setLevel(LOG_LEVEL)
-QUEUE_NAME = os.environ.get('QUEUE_NAME')
+QUEUE_NAME = os.environ.get('SQS_NAME')
 
 def handler(event, context): # pylint: disable=W0613
     """
