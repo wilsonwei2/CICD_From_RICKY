@@ -27,8 +27,8 @@ provider:
     SQS_NAME: ${self:provider.tenant}-fulfillment-to-netsuite-queue.fifo
 
 functions:
-  yopto_webhook:
-    name: ${self:provider.tenant}-order-id-to-fulfillment-request-to-queue
+  order_id_to_fr:
+    name: ${self:provider.tenant}-order-id-to-fulfillment-request
     handler: order_id_to_fulfillment_request.aws.order_id_to_fr_to_queue.handler
     timeout: 900
     memorySize: 128
