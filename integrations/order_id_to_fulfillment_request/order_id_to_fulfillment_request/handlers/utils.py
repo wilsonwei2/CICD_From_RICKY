@@ -1,4 +1,4 @@
-from yotpo_shopper_loyalty.handlers.newstore import NShandler
+from order_id_to_fulfillment_request.handlers.newstore import NShandler
 from shopify_adapter.connector import ShopifyConnector
 from param_store.client import ParamStore
 from pom_common.shopify import ShopManager

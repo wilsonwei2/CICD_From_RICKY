@@ -16,11 +16,9 @@ def handler(event, context): # pylint: disable=W0613
     This is the webhook that is triggered by Yotpo.
     """
     LOGGER.info(f"Event: {event}")
-    order_ids = json.loads(event['order_ids'])
-    
+    order_ids = json.loads(event['order_ids']) 
     for order_id in order_ids:
         _get_fulfillment_requests(order_id)
-
     return {
         'statusCode': 200
     }
@@ -51,11 +49,10 @@ def _get_fulfillment_requests(order_id):
     LOGGER.info(f"processed order: {order_id}")
 
 
-
 def _push_to_queue(message):
     """
     This function pushes the fulfillment request to queue
     """
     sqs_handler = SqsHandler(queue_name=QUEUE_NAME)
     sqs_handler.push_message(message_group_id=message['id'], message=json.dumps(message))
-    LOGGER.info(f'Message pushed to SQS: {sqs_handler.QUEUE_NAME}')
+    LOGGER.info(f'Message pushed to SQS: {sqs_handler.queue_name}')

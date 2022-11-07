@@ -183,4 +183,4 @@ class NShandler():
         LOGGER.info(f'Getting fulfillment requests from newstore {url}')
         response = requests.get(url=url, headers=self.get_headers())
         response.raise_for_status()
-        return response.json() 
+        return response.json()
