@@ -30,4 +30,4 @@ def get_newstore_conn(context=None):
 
 
 def get_newstore_config():
-    return _get_parameter_store('newstore')
+    return get_param('newstore')
