@@ -448,12 +448,20 @@ def _get_shipping_option(order, shipping_offer_token):
     the call is made in transform.
     '''
     shipping_lines = order.get('shipping_lines', [])
-
     shipping_address = order.get('shipping_address', {})
     shipping_country_code = ''
+    shipping_province_code = ''
+    shipping_address1 = ''
+    shipping_option = {}
+
+    if 'address1' in shipping_address:
+        shipping_address1 = shipping_address['address1']
 
     if 'country_code' in shipping_address:
         shipping_country_code = shipping_address['country_code']
+
+    if 'province_code' in shipping_address:
+        shipping_province_code = shipping_address['province_code']
 
     if shipping_lines:
         if shipping_offer_token is not None:
@@ -465,8 +473,12 @@ def _get_shipping_option(order, shipping_offer_token):
         else:
             code = _get_non_null_field(shipping_lines[0], 'code', '').lower()
             title = _get_non_null_field(shipping_lines[0], 'title', '').lower()
-            service_level_identifier = shopify_helper.get_shipment_service_level(code, title, shipping_country_code)
-            LOGGER.info(f'Service level identified from is {service_level_identifier}')
+            service_level_identifier = ''
+            if shipping_province_code in ['HI', 'AK'] or 'po box' in shipping_address1.replace('.', '').lower():
+                service_level_identifier = "EXPRESS_POST_USA"
+            else:
+                service_level_identifier = shopify_helper.get_shipment_service_level(code, title, shipping_country_code)
+            LOGGER.info(f"Service level identified from is {service_level_identifier}")
             shipping_option = {
                 'service_level_identifier': service_level_identifier,
                 'price': float(shipping_lines[0]['price']),
