@@ -1,0 +1,44 @@
+service: frankandoak-order-id-to-fulfill-req
+plugins:
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - order_id_to_fulfillment_request/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoak
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  iam.role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole"
+  environment:
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
+    SQS_NAME: ${self:provider.tenant}-fulfillment-to-netsuite-queue.fifo
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sqs:SendMessage
+            - sqs:ReceiveMessage
+          Resource: arn:aws:sqs:${self:provider.region}:*:${provider.environment.SQS_NAME}
+
+functions:
+  order_id_to_fullfil_req:
+    name: ${self:provider.tenant}-order-id-to-fulfill-req
+    handler: order_id_to_fulfillment_request.aws.order_id_to_fr_to_queue.handler
+    timeout: 900
+    memorySize: 128
+    events:
+      - http: POST /order_id_to_fulfillment_request
