@@ -10,6 +10,7 @@ LOGGER.setLevel(logging.DEBUG)
 
 TENANT = os.environ.get('TENANT', 'frankandoak')
 STAGE = os.environ.get('STAGE', 'x')
+PARAM_STORE = None
 
 
 def _map_product_ext_identifiers(external_identifiers: list):
