@@ -65,6 +65,11 @@ def get_newstore_config():
     return newstore_config
 
 
+def get_carrier_tracking_urls():
+    carrier_tracking_urls = json.loads(get_param_store().get_param('carrier_tracking_urls'))
+    return carrier_tracking_urls
+
+
 def get_newstore_conn(context=None):
     newstore_creds = get_newstore_config()
     newstore_conn = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
@@ -313,12 +318,13 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
 
 # Used this link as a reference for generating the URL.
 def get_shipping_carrier_url(carrier, tracking_code):
-    if carrier == 'Canada Post':
-        return 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=' + str(tracking_code)
-    if carrier == 'USPS':
-        return 'https://tools.usps.com/go/TrackConfirmAction.action?tLabels=' + str(tracking_code)
-    if 'UPS' in carrier:
-        return 'https://www.ups.com/track?loc=en_US&tracknum=' + str(tracking_code)
+    tracking_urls = get_carrier_tracking_urls()
+    carrier = carrier.replace(' ', '').lower()
+    for company, url in tracking_urls.items():
+        if (company == 'ics' or company == 'canpar') and carrier.startswith(company):
+            return url
+        elif carrier.startswith(company):
+            return url + str(tracking_code)
 
     LOGGER.error(f'Carrier {carrier} not mapped to get shipping carrier URL.')
 
