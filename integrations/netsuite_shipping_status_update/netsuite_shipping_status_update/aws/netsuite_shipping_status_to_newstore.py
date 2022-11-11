@@ -313,12 +313,21 @@ def build_newstore_shipment_request(product_ids, tracking_number, carrier):
 
 # Used this link as a reference for generating the URL.
 def get_shipping_carrier_url(carrier, tracking_code):
-    if carrier == 'Canada Post':
-        return 'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor=' + str(tracking_code)
-    if carrier == 'USPS':
-        return 'https://tools.usps.com/go/TrackConfirmAction.action?tLabels=' + str(tracking_code)
-    if 'UPS' in carrier:
-        return 'https://www.ups.com/track?loc=en_US&tracknum=' + str(tracking_code)
+    carrier = carrier.replace(' ', '').lower()
+    if 'capost' in carrier or 'canadapost' in carrier:
+        return f'https://www.canadapost-postescanada.ca/track-reperage/en#/search?searchFor={str(tracking_code)}'
+    if 'usps' in carrier:
+        return f'https://tools.usps.com/go/TrackConfirmAction.action?tLabels={str(tracking_code)}'
+    if 'ups' in carrier:
+        return f'https://www.ups.com/track?loc=en_US&tracknum={str(tracking_code)}'
+    if 'ics' in carrier:
+        return 'https://www.icscourier.ca/online-services/parcel-tracking.aspx?'
+    if 'canpar' in carrier:
+        return 'https://www.canpar.com/en/tracking/track.htm'
+    if 'fedex' in carrier:
+        return f'https://www.fedex.com/fedextrack/?trknbr={str(tracking_code)}'
+    if 'parcll' in carrier:
+        return f'https://www.parclltrack.com/parcelTracking?id={str(tracking_code)}'
 
     LOGGER.error(f'Carrier {carrier} not mapped to get shipping carrier URL.')
 
