@@ -55,6 +55,7 @@ def _get_fulfillment_requests(order_id):
 
 def get_fulfillment_request(fulfillment_payload):
     fulfillment_id = fulfillment_payload["id"]
+    newstore_creds = json.loads(Utils.get_parameter_store().get_param('newstore'))
 
     graphql_query = """query MyQuery($id: String!, $tenant: String!) {
         fulfillmentRequest(id: $id, tenant: $tenant) {
@@ -87,7 +88,7 @@ def get_fulfillment_request(fulfillment_payload):
         "query": graphql_query,
         "variables": {
             "id": fulfillment_id,
-            "tenant": os.environ.get('TENANT_TEMP')
+            "tenant": newstore_creds['tenant']
         }
     }
     utils_obj = Utils.get_instance()
