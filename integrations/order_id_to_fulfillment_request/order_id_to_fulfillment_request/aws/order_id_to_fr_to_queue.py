@@ -49,7 +49,11 @@ def _get_fulfillment_requests(order_id):
         graphql_fulfillment_request = get_fulfillment_request(fulfillment_request)
         payload = {"payload": graphql_fulfillment_request}
         LOGGER.info(f"Message: {payload}")
-        _push_to_queue(payload)
+        if len(graphql_fulfillment_request['items']['edges']) > 0:
+            _push_to_queue(payload)
+            LOGGER.info(f"Pushed to queue - Fulfillment request id: {payload}")
+        else:
+            LOGGER.info(f"Ignored - Fulfillment request id: {payload}")
     LOGGER.info(f"processed order: {order_id}")
 
 
