@@ -60,7 +60,13 @@ def get_fulfillment_request(fulfillment_payload):
         fulfillmentRequest(id: $id, tenant: $tenant) {
             fulfillmentLocationId       
             id          
-            items(filter: {trackingCode: {isNull: false}}) { 
+            items(filter: {
+                trackingCode: 
+                {
+                    isNull: false
+                    }
+                }
+            ) { 
                 edges {
                     node {
                             id        
