@@ -84,8 +84,9 @@ def get_fulfillment_request(fulfillment_payload):
             "tenant": os.environ.get('TENANT_TEMP')
         }
     }
-
-    graphql_response = Utils.get_ns_handler.graphql_api_call(data) # pylint: disable=E1101
+    utils_obj = Utils.get_instance()
+    ns_handler = utils_obj.get_ns_handler()
+    graphql_response = ns_handler.graphql_api_call(data) # pylint: disable=E1101
     return graphql_response['data']['fulfillmentRequest']
 
 
