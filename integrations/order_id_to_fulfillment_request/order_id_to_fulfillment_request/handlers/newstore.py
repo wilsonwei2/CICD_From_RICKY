@@ -184,3 +184,16 @@ class NShandler():
         response = requests.get(url=url, headers=self.get_headers())
         response.raise_for_status()
         return response.json()
+
+
+    ###
+    # Calls GraphQL API
+    # param query: GraphQL query
+    # param raise_error: flag to whether raise error in case something happens
+    # or just return None and let lambda handle it
+    ###
+    def graphql_api_call(self, query):
+        url = f'https://{self.host}/api/v1/org/data/query'
+        response = requests.post(url=url, json=query)
+        response.raise_for_status()
+        return response.json()
