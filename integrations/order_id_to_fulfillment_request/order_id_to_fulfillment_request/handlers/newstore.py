@@ -194,6 +194,6 @@ class NShandler():
     ###
     def graphql_api_call(self, query):
         url = f'https://{self.host}/api/v1/org/data/query'
-        response = requests.post(url=url, json=query)
+        response = requests.post(url=url, json=query, headers=self.get_headers())
         response.raise_for_status()
         return response.json()

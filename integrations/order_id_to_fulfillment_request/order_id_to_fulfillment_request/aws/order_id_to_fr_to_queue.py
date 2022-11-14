@@ -85,7 +85,7 @@ def get_fulfillment_request(fulfillment_payload):
         }
     }
 
-    graphql_response = Utils.get_ns_handler.graphql_api_call(data)
+    graphql_response = Utils.get_ns_handler.graphql_api_call(data) # pylint: disable=E1101
     return graphql_response['data']['fulfillmentRequest']
 
 
