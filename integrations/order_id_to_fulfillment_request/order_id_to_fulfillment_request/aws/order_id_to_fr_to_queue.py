@@ -55,7 +55,8 @@ def _get_fulfillment_requests(order_id):
 
 def get_fulfillment_request(fulfillment_payload):
     fulfillment_id = fulfillment_payload["id"]
-    newstore_creds = json.loads(Utils.get_parameter_store().get_param('newstore'))
+    utils_obj = Utils.get_instance()
+    newstore_creds = json.loads(utils_obj.get_parameter_store().get_param('newstore'))
 
     graphql_query = """query MyQuery($id: String!, $tenant: String!) {
         fulfillmentRequest(id: $id, tenant: $tenant) {
@@ -91,7 +92,6 @@ def get_fulfillment_request(fulfillment_payload):
             "tenant": newstore_creds['tenant']
         }
     }
-    utils_obj = Utils.get_instance()
     ns_handler = utils_obj.get_ns_handler()
     graphql_response = ns_handler.graphql_api_call(data) # pylint: disable=E1101
     return graphql_response['data']['fulfillmentRequest']
