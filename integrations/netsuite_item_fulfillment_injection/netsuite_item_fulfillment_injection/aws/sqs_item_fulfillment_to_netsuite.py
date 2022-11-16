@@ -76,8 +76,7 @@ async def process_fulfillment(message):
             LOGGER.info('ItemFulfillment created successfully.')
 
         return response
-    else:
-        LOGGER.info('Item fulfillment is not needed.')
+    LOGGER.info('Item fulfillment is not needed.')
 
 
 def create_item_fulfillment(fulfillment_request, sales_order):
@@ -173,9 +172,8 @@ def update_sales_order(sales_order, fulfillment_request):
 
         LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
         return fulfillment_request
-    else:
-        LOGGER.info(f'All the items in the fulfillment request are fulfilled. Ignoring message')
-        return False
+    LOGGER.info(f'All the items in the fulfillment request are fulfilled. Ignoring message')
+    return False
 
 
 async def get_sales_order(order_id):
