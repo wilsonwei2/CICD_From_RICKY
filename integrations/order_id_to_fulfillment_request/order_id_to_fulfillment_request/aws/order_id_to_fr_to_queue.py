@@ -46,9 +46,59 @@ def _get_fulfillment_requests(order_id):
     LOGGER.info(f"fulfillment requests for order: {order_id} \n {fulfillment_requests}")
 
     for fulfillment_request in fulfillment_requests['fulfillment_requests']:
-        payload = {"payload": fulfillment_request}
-        _push_to_queue(payload)
+        graphql_fulfillment_request = get_fulfillment_request(fulfillment_request)
+        payload = {"payload": graphql_fulfillment_request}
+        LOGGER.info(f"Message: {payload}")
+        if len(graphql_fulfillment_request['items']['edges']) > 0:
+            _push_to_queue(payload)
+            LOGGER.info(f"Pushed to queue - Fulfillment request id: {payload}")
+        else:
+            LOGGER.info(f"Ignored - Fulfillment request id: {payload}")
     LOGGER.info(f"processed order: {order_id}")
+
+
+def get_fulfillment_request(fulfillment_payload):
+    fulfillment_id = fulfillment_payload["id"]
+    utils_obj = Utils.get_instance()
+    newstore_creds = json.loads(utils_obj.get_parameter_store().get_param('newstore'))
+
+    graphql_query = """query MyQuery($id: String!, $tenant: String!) {
+        fulfillmentRequest(id: $id, tenant: $tenant) {
+            fulfillmentLocationId       
+            id          
+            items(filter: {
+                trackingCode: 
+                {
+                    isNull: false
+                    }
+                }
+            ) { 
+                edges {
+                    node {
+                            id        
+                            carrier        
+                            productId        
+                            trackingCode        
+                            shippedAt 
+                        }
+                    }
+                }           
+            associateId              
+            serviceLevel              
+            orderId              
+            logicalTimestamp 
+        }
+    }"""
+    data = {
+        "query": graphql_query,
+        "variables": {
+            "id": fulfillment_id,
+            "tenant": newstore_creds['tenant']
+        }
+    }
+    ns_handler = utils_obj.get_ns_handler()
+    graphql_response = ns_handler.graphql_api_call(data) # pylint: disable=E1101
+    return graphql_response['data']['fulfillmentRequest']
 
 
 def _push_to_queue(message):

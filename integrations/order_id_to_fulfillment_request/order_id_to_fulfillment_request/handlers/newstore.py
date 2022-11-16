@@ -184,3 +184,15 @@ class NShandler():
         response = requests.get(url=url, headers=self.get_headers())
         response.raise_for_status()
         return response.json()
+
+
+    def graphql_api_call(self, query):
+        url = f'https://{self.host}/api/v1/org/data/query'
+        response = requests.post(url=url, json=query, headers=self.get_headers())
+        try:
+            response.raise_for_status()
+        except HTTPError as ex:
+            LOGGER.error(
+                f"Response for {query}: {response.text}; \nException: {str(ex)}", exc_info=True)
+            raise
+        return response.json()
