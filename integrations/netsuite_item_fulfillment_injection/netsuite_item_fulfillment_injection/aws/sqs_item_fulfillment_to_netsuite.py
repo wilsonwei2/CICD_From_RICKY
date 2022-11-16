@@ -67,13 +67,16 @@ async def process_fulfillment(message):
     sales_order = await get_sales_order(order_external_id)
 
     # Before creating the ItemFulfillment, update SalesOrder with correct location in item level
-    update_sales_order(sales_order, fulfillment_request)
+    fulfillment_request = update_sales_order(sales_order, fulfillment_request)
+    if fulfillment_request:
+        LOGGER.info(f"Updated fulfillment request: {json.dumps(serialize_object(fulfillment_request), indent=4, default=Utils.json_serial)}")
 
-    response = create_item_fulfillment(fulfillment_request, sales_order)
-    if response:
-        LOGGER.info('ItemFulfillment created successfully.')
+        response = create_item_fulfillment(fulfillment_request, sales_order)
+        if response:
+            LOGGER.info('ItemFulfillment created successfully.')
 
-    return response
+        return response
+    LOGGER.info('Item fulfillment is not needed.')
 
 
 def create_item_fulfillment(fulfillment_request, sales_order):
@@ -155,22 +158,36 @@ def update_sales_order(sales_order, fulfillment_request):
 
             update_items.append(item)
 
-    sales_order_update.itemList.item = update_items
-    sales_order_update.itemList.replaceAll = False
+    remove_fulfilled_items(product_ids_in_fulfillment, fulfillment_request)
 
-    LOGGER.info(f"SalesOrder to update: \n{json.dumps(serialize_object(sales_order_update), indent=4, default=Utils.json_serial)}")
-    result, updated_sales_order = nsas.update_sales_order(sales_order_update)
+    if len(update_items) > 0:
+        sales_order_update.itemList.item = update_items
+        sales_order_update.itemList.replaceAll = False
 
-    if not result:
-        raise Exception(f'Failed to update sales order: {updated_sales_order}')
+        LOGGER.info(f"SalesOrder to update: \n{json.dumps(serialize_object(sales_order_update), indent=4, default=Utils.json_serial)}")
+        result, updated_sales_order = nsas.update_sales_order(sales_order_update)
 
-    LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
+        if not result:
+            raise Exception(f'Failed to update sales order: {updated_sales_order}')
+
+        LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
+        return fulfillment_request
+    LOGGER.info(f'All the items in the fulfillment request are fulfilled. Ignoring message')
+    return False
+
 
 async def get_sales_order(order_id):
     sales_order = nsas.get_sales_order(order_id)
     if not sales_order:
         raise Exception('SalesOrder not found on NetSuite for order %s.' % (order_id))
     return sales_order
+
+
+def remove_fulfilled_items(item_list, fulfillment_request):
+    for idx, node in enumerate(fulfillment_request['items']['edges']):
+        if node['node']['productId'] in item_list:
+            removed_item = fulfillment_request['items']['edges'].pop(idx)
+            LOGGER.info(f"fulfilled item removed from payload: {removed_item}")
 
 
 def mark_shipped_items(item_fulfillment_items, item_fulfillment):
