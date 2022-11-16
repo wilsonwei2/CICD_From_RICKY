@@ -68,13 +68,16 @@ async def process_fulfillment(message):
 
     # Before creating the ItemFulfillment, update SalesOrder with correct location in item level
     fulfillment_request = update_sales_order(sales_order, fulfillment_request)
-    LOGGER.info(f"Updated fulfillment request: {json.dumps(serialize_object(fulfillment_request), indent=4, default=Utils.json_serial)}")
+    if fulfillment_request:
+        LOGGER.info(f"Updated fulfillment request: {json.dumps(serialize_object(fulfillment_request), indent=4, default=Utils.json_serial)}")
 
-    response = create_item_fulfillment(fulfillment_request, sales_order)
-    if response:
-        LOGGER.info('ItemFulfillment created successfully.')
+        response = create_item_fulfillment(fulfillment_request, sales_order)
+        if response:
+            LOGGER.info('ItemFulfillment created successfully.')
 
-    return response
+        return response
+    else:
+        LOGGER.info('Item fulfillment is not needed.')
 
 
 def create_item_fulfillment(fulfillment_request, sales_order):
@@ -158,17 +161,21 @@ def update_sales_order(sales_order, fulfillment_request):
 
     remove_fulfilled_items(product_ids_in_fulfillment, fulfillment_request)
 
-    sales_order_update.itemList.item = update_items
-    sales_order_update.itemList.replaceAll = False
+    if len(update_items) > 0:
+        sales_order_update.itemList.item = update_items
+        sales_order_update.itemList.replaceAll = False
 
-    LOGGER.info(f"SalesOrder to update: \n{json.dumps(serialize_object(sales_order_update), indent=4, default=Utils.json_serial)}")
-    result, updated_sales_order = nsas.update_sales_order(sales_order_update)
+        LOGGER.info(f"SalesOrder to update: \n{json.dumps(serialize_object(sales_order_update), indent=4, default=Utils.json_serial)}")
+        result, updated_sales_order = nsas.update_sales_order(sales_order_update)
 
-    if not result:
-        raise Exception(f'Failed to update sales order: {updated_sales_order}')
+        if not result:
+            raise Exception(f'Failed to update sales order: {updated_sales_order}')
 
-    LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
-    return fulfillment_request
+        LOGGER.info(f'Sales order successfully updated. Current status: {updated_sales_order.status}')
+        return fulfillment_request
+    else:
+        LOGGER.info(f'All the items in the fulfillment request are fulfilled. Ignoring message')
+        return False
 
 
 async def get_sales_order(order_id):
