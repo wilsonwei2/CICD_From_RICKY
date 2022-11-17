@@ -143,8 +143,7 @@ def update_sales_order(sales_order, fulfillment_request):
 
         LOGGER.info(f"Verify if product {item_name} is in {product_ids_in_fulfillment}")
 
-        if item_name in product_ids_in_fulfillment \
-                and item_id in item_ids_in_fulfillment \
+        if (item_id is not None and item_id in item_ids_in_fulfillment) or (item_name in product_ids_in_fulfillment) \
                 and not item_is_fulfilled \
                 and not is_rejected:
 
