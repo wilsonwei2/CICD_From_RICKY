@@ -141,7 +141,7 @@ def update_sales_order(sales_order, fulfillment_request):
             LOGGER.info(f'Skip update of line {item_id}, {item_name} in Netsuite since it is not part of the fulfillment.')
             continue
 
-        LOGGER.info(f"Verify if product {item_id} is in {item_ids_in_fulfillment}")
+        LOGGER.info(f"Verify if product {item_name} is in {product_ids_in_fulfillment}")
 
         if item_id is not None \
                 and item_id in item_ids_in_fulfillment \
