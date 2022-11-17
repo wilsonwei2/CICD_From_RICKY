@@ -185,7 +185,7 @@ async def get_sales_order(order_id):
 
 def remove_fulfilled_items(item_list, fulfillment_request):
     for idx, node in enumerate(fulfillment_request['items']['edges']):
-        if node['node']['productId'] in item_list:
+        if node['node']['id'] in item_list:
             removed_item = fulfillment_request['items']['edges'].pop(idx)
             LOGGER.info(f"fulfilled item removed from payload: {removed_item}")
 
