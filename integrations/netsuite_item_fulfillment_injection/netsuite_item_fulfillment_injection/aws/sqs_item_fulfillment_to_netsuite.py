@@ -144,6 +144,7 @@ def update_sales_order(sales_order, fulfillment_request):
         LOGGER.info(f"Verify if product {item_name} is in {product_ids_in_fulfillment}")
 
         if item_name in product_ids_in_fulfillment \
+                and item_id in item_ids_in_fulfillment \
                 and not item_is_fulfilled \
                 and not is_rejected:
 
@@ -154,11 +155,11 @@ def update_sales_order(sales_order, fulfillment_request):
             if location is None:
                 item.location = nsas.RecordRef(internalId=netsuite_location_id)
 
-            product_ids_in_fulfillment.remove(item_name)
+            item_ids_in_fulfillment.remove(item_id)
 
             update_items.append(item)
 
-    remove_fulfilled_items(product_ids_in_fulfillment, fulfillment_request)
+    remove_fulfilled_items(item_ids_in_fulfillment, fulfillment_request)
 
     if len(update_items) > 0:
         sales_order_update.itemList.item = update_items
