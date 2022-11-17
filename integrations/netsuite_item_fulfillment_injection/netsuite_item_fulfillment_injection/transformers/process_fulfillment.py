@@ -82,8 +82,3 @@ def map_item_fulfillment_packages(fulfillment_request):
         }
         item_fulfillment_packages.append(ItemFulfillmentPackage(**item))
     return item_fulfillment_packages
-
-
-def _get_non_null_field(array, field, default_value):
-    value = array.get(field)
-    return default_value if value is None else value
