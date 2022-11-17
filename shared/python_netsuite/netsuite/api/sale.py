@@ -321,6 +321,35 @@ def create_invoice(data):
 
 def create_item_fulfillment(data):
     item_fulfillment = ItemFulfillment(**data) if isinstance(data, Mapping) else data
+    response = fulfillment(item_fulfillment)
+
+    status_detail = response['body']['writeResponse']['status']['statusDetail']
+    logger.info(f'response.body.statusDetail - 1: {status_detail}')
+
+    if len(status_detail) > 0:
+        code_detail = status_detail[0]['code']
+        logger.info('code_detail %s', code_detail)
+    else:
+        code_detail = ''
+    message_duplicate = code_detail
+
+    r = response.body.writeResponse
+    if r.status.isSuccess:
+        return r.baseRef.internalId
+    elif message_duplicate == 'DUP_RCRD':
+        logger.info("Manage the duplicate item fulfillment Insert Case in Netsuite")
+        item_fulfillment['externalId'] = f'{item_fulfillment["externalId"]}_dup'
+        response = fulfillment(item_fulfillment)
+        r = response.body.writeResponse
+        if r.status.isSuccess:
+            return r.baseRef.internalId
+        else:
+            raise Exception(format_error_message(r.status.statusDetail))
+    else:
+        raise Exception(format_error_message(r.status.statusDetail))
+
+
+def fulfillment(item_fulfillment):
 
     if os.environ.get('netsuite_tba_active', '0') == "1":
         response = client.service.add(item_fulfillment, _soapheaders={
@@ -331,12 +360,7 @@ def create_item_fulfillment(data):
             'passport': passport,
             'applicationInfo': app_info
         })
-
-    r = response.body.writeResponse
-    if r.status.isSuccess:
-        return r.baseRef.internalId
-    else:
-        raise Exception(format_error_message(r.status.statusDetail))
+    return response
 
 
 def initialize_record(record_type, reference_type, reference_internal_id):
