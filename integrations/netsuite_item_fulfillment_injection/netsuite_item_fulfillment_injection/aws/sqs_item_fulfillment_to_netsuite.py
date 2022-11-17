@@ -143,9 +143,12 @@ def update_sales_order(sales_order, fulfillment_request):
 
         LOGGER.info(f"Verify if product {item_name} is in {product_ids_in_fulfillment}")
 
-        if (item_id is not None and item_id in item_ids_in_fulfillment) or (item_name in product_ids_in_fulfillment) \
+        if item_id is not None \
+                and item_id in item_ids_in_fulfillment \
                 and not item_is_fulfilled \
                 and not is_rejected:
+
+            LOGGER.info(f"Item name: {item_name}, Item id: {item_id}")
 
             if item_name not in Utils.get_virtual_product_ids_config():
                 # We can only set commitInventory on inventory items and avoid doing so in non-inventory items
@@ -155,10 +158,12 @@ def update_sales_order(sales_order, fulfillment_request):
                 item.location = nsas.RecordRef(internalId=netsuite_location_id)
 
             item_ids_in_fulfillment.remove(item_id)
+            LOGGER.info(f'Removed: {item_id}, Updated item ids in fulfillment: {item_ids_in_fulfillment}')
 
             update_items.append(item)
 
     remove_fulfilled_items(item_ids_in_fulfillment, fulfillment_request)
+    LOGGER.info(f'Updated fulfillment request: {fulfillment_request}')
 
     if len(update_items) > 0:
         sales_order_update.itemList.item = update_items
