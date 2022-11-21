@@ -13,6 +13,7 @@ LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER.setLevel(LOG_LEVEL)
 SHOPIFY_CHANNEL = os.environ.get('DC_LOCATION', 'BDC1')
+PROVINCE_CODES = json.loads(os.environ.get('PROVINCE_CODES', '["HI", "AK", "PR"]'))
 CITY_SUBSTRING_LIMIT = 49
 
 
@@ -533,7 +534,7 @@ def _check_provice_code_and_po_box(shipping_address):
     if 'province_code' in shipping_address:
         shipping_province_code = shipping_address['province_code']
 
-    return bool(shipping_province_code in ['HI', 'AK'] or _check_po_box(shipping_address1) or _check_po_box(shipping_address2))
+    return bool(shipping_province_code in PROVINCE_CODES or _check_po_box(shipping_address1) or _check_po_box(shipping_address2))
 
 
 def _check_po_box(shipping_address_line):
