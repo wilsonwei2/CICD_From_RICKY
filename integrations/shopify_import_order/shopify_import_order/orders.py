@@ -539,4 +539,5 @@ def _check_provice_code_and_po_box(shipping_address):
 def _check_po_box(shipping_address_line):
     if shipping_address_line is not None:
         shipping_address_line = shipping_address_line.replace('.', '').lower()
-    return bool('po box' in shipping_address_line)
+        return bool('po box' in shipping_address_line)
+    return False
