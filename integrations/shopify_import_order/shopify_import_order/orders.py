@@ -532,10 +532,10 @@ def _check_provice_code_and_po_box(shipping_address):
 
     if 'province_code' in shipping_address:
         shipping_province_code = shipping_address['province_code']
-    
-    return True if shipping_province_code in ['HI', 'AK'] or _check_po_box(shipping_address1) or _check_po_box(shipping_address2) else False
+
+    return bool(shipping_province_code in ['HI', 'AK'] or _check_po_box(shipping_address1) or _check_po_box(shipping_address2))
 
 
 def _check_po_box(shipping_address_line):
     shipping_address_line = shipping_address_line.replace('.', '').lower()
-    return True if 'po box' in shipping_address_line else False
+    return bool('po box' in shipping_address_line)
