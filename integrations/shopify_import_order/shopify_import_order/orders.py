@@ -13,6 +13,7 @@ LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER.setLevel(LOG_LEVEL)
 SHOPIFY_CHANNEL = os.environ.get('DC_LOCATION', 'BDC1')
+PROVINCE_CODES = json.loads(os.environ.get('PROVINCE_CODES', '["HI", "AK", "PR"]'))
 CITY_SUBSTRING_LIMIT = 49
 
 
@@ -450,18 +451,10 @@ def _get_shipping_option(order, shipping_offer_token):
     shipping_lines = order.get('shipping_lines', [])
     shipping_address = order.get('shipping_address', {})
     shipping_country_code = ''
-    shipping_province_code = ''
-    shipping_address1 = ''
     shipping_option = {}
-
-    if 'address1' in shipping_address:
-        shipping_address1 = shipping_address['address1']
 
     if 'country_code' in shipping_address:
         shipping_country_code = shipping_address['country_code']
-
-    if 'province_code' in shipping_address:
-        shipping_province_code = shipping_address['province_code']
 
     if shipping_lines:
         if shipping_offer_token is not None:
@@ -474,7 +467,7 @@ def _get_shipping_option(order, shipping_offer_token):
             code = _get_non_null_field(shipping_lines[0], 'code', '').lower()
             title = _get_non_null_field(shipping_lines[0], 'title', '').lower()
             service_level_identifier = ''
-            if shipping_province_code in ['HI', 'AK'] or 'po box' in shipping_address1.replace('.', '').lower():
+            if shipping_country_code == 'US' and _check_provice_code_and_po_box(shipping_address):
                 service_level_identifier = "EXPRESS_POST_USA"
             else:
                 service_level_identifier = shopify_helper.get_shipment_service_level(code, title, shipping_country_code)
@@ -525,3 +518,27 @@ def _add_shipping_discount_code(order, shipping_discount_info):
         for discount_code in order['discount_codes']:
             if _get_non_null_field(discount_code, 'type', '') == 'shipping':
                 shipping_discount_info['coupon_code'] = discount_code['code']
+
+
+def _check_provice_code_and_po_box(shipping_address):
+    shipping_province_code = ''
+    shipping_address1 = ''
+    shipping_address2 = ''
+
+    if 'address1' in shipping_address:
+        shipping_address1 = shipping_address['address1']
+
+    if 'address2' in shipping_address:
+        shipping_address2 = shipping_address['address2']
+
+    if 'province_code' in shipping_address:
+        shipping_province_code = shipping_address['province_code']
+
+    return bool(shipping_province_code in PROVINCE_CODES or _check_po_box(shipping_address1) or _check_po_box(shipping_address2))
+
+
+def _check_po_box(shipping_address_line):
+    if shipping_address_line is not None:
+        shipping_address_line = shipping_address_line.replace('.', '').lower()
+        return bool('po box' in shipping_address_line)
+    return False
