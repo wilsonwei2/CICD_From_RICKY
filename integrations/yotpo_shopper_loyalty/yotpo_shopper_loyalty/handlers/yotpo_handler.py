@@ -56,7 +56,7 @@ class YotpoHandler:
     def _map_order_data(self, order_data: dict) -> dict:
         yotpo_order = {}
         yotpo_order['customer_email'] = order_data.get('customer_email')
-        yotpo_order['total_amount_cents'] = int(float(order_data.get('grand_total') * 100))
+        yotpo_order['total_amount_cents'] = int(float(order_data.get('subtotal') * 100))
         yotpo_order['currency_code'] = order_data.get('currency')
         yotpo_order['order_id'] = order_data.get('external_id')
         yotpo_order['created_at'] = order_data.get('created_at')
