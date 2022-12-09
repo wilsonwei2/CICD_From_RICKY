@@ -27,7 +27,10 @@ class YotpoHandler:
             'x-api-key': self.yotpo_api_key,
             'x-guid': self.yotpo_api_guid
         }
-        yotpo_order_data = self._map_order_data(order_data)
+        yotpo_order_data, customer_email_present = self._map_order_data(order_data)
+        if not customer_email_present:
+            LOGGER.info('Yotpo order will not be created since customer email is not present.')
+            return True
         LOGGER.info(f'Yotpo order creation payload data: {yotpo_order_data}')
         response = requests.post(self.yotpo_order_url, headers=headers, data=json.dumps(yotpo_order_data))
         LOGGER.info(f'Yotpo order creation response: {response.text}')
@@ -55,7 +58,11 @@ class YotpoHandler:
 
     def _map_order_data(self, order_data: dict) -> dict:
         yotpo_order = {}
-        yotpo_order['customer_email'] = order_data.get('customer_email')
+        customer_email_present = True
+        customer_email = order_data.get('customer_email')
+        if not order_data.get('customer_email'):
+            customer_email_present = False
+        yotpo_order['customer_email'] = customer_email
         yotpo_order['total_amount_cents'] = int(float(order_data.get('subtotal') * 100))
         yotpo_order['currency_code'] = order_data.get('currency')
         yotpo_order['order_id'] = order_data.get('external_id')
@@ -67,7 +74,7 @@ class YotpoHandler:
         yotpo_order['items'] = self._get_order_items(order_data)
         yotpo_order['customer'] = self._get_customer_data(order_data)
         yotpo_order['ignore_ip_ua'] = True
-        return yotpo_order
+        return yotpo_order, customer_email_present
 
     def _get_ns_coupons(self, order_opened_payload) -> list:
         if not order_opened_payload.get('discounts'):
