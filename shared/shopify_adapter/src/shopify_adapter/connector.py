@@ -32,7 +32,7 @@ class ShopifyConnector:
             'Authorization': 'Basic {auth_base64}'.format(auth_base64=base64.b64encode(auth_string.encode()).decode('utf-8'))
         }
         self.shop = shop
-        self.graphql_url = f'https://{shop}.{host}/api/2021-04/graphql.json'
+        self.graphql_url = f'https://{shop}.{host}/api/2022-07/graphql.json'
         if not url:
             self.url = 'https://{shop}.{host}'.format(
                 shop=shop, host=host)
