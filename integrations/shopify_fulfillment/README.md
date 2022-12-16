@@ -12,7 +12,6 @@ There are 4 environment variables that should be set to enable the process of th
   - "RUN_DLQ_FOR": This is the quantty of minutes that it should process the dead letter for, if the dead letter is to be processed for 30 minutes then put the value as 30, if the dead letter should be processed for 2 hours then set this variable to 120. The value should be a interger greater then 0.
   - "SQS_QUEUE_DLQ": Name of the SQS queue that is the dead letter.
 
-
 ## References
 
 - [NewStore Event Stream](https://apidoc.newstore.io/newstore-cloud/hooks_eventstream.html)

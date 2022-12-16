@@ -43,4 +43,3 @@ This should map all the location IDs from Shopify to the location IDs in NewStor
     - "SQS_NAME": Name of the SQS queue to be utilized to save the inventory information
     - "TRIGGER_NAME": Name of the CloudWatch trigger that is responsible for triggering this lambda
     - "SYNC_SHOPIFY_PRODUCTS_LAMBDA_NAME": Name of the lambda sync_shopify_products on AWS
-
