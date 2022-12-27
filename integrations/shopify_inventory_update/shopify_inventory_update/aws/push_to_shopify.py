@@ -28,7 +28,7 @@ STOP_BEFORE_TIMEOUT = 180000
 NO_OF_SLOTS = 4
 
 TENANT = os.environ.get('TENANT', 'frankandoak')
-STAGE = os.environ.get('STAGE', 'x')
+STAGE = os.environ.get('STAGE', 's')
 REGION = os.environ.get('REGION', 'us-east-1')
 
 

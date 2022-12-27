@@ -16,7 +16,7 @@ CONFIG = ParamStoreConfig(TENANT, STAGE, REGION).get_shopify_config()
 class ShopifyAPI:
     def __init__(self):
         shop = CONFIG['shop']
-        self.url = f'https://{shop}.myshopify.com/admin/api/2021-04/graphql.json'
+        self.url = f'https://{shop}.myshopify.com/admin/api/2022-07/graphql.json'
         self.auth_token = CONFIG['password']
         self.products_url = None
 

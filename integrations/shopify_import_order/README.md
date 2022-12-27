@@ -68,6 +68,7 @@ From this, we're most concerned with the `"total_cart_discount_amount"` which gi
 
 For example, if had a discount of 177.46 and quanity of 4, we'd have two line items with a cost of 44.36 and two with a cost of 44.37, summing to the original 177.46.
 
+
 ## Environment newstore
   - tenant = 'frankandoak-staging'
   - username = manual definition
