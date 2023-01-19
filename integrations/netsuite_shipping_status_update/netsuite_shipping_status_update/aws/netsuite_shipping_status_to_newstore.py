@@ -321,9 +321,7 @@ def get_shipping_carrier_url(carrier, tracking_code):
     tracking_urls = get_carrier_tracking_urls()
     carrier = carrier.replace(' ', '').lower()
     for company, url in tracking_urls.items():
-        if (company == 'ics' or company == 'canpar') and carrier.startswith(company):
-            return url
-        elif carrier.startswith(company):
+        if carrier.startswith(company):
             return url + str(tracking_code)
 
     LOGGER.error(f'Carrier {carrier} not mapped to get shipping carrier URL.')
