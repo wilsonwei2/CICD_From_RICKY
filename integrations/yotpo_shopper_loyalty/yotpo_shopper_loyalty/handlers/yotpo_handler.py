@@ -63,7 +63,7 @@ class YotpoHandler:
         if not order_data.get('customer_email'):
             customer_email_present = False
         yotpo_order['customer_email'] = customer_email
-        yotpo_order['total_amount_cents'] = int(float(order_data.get('subtotal') * 100))
+        yotpo_order['total_amount_cents'] = int(float(order_data.get('subtotal') * 100)) - int(float(order_data.get('discount_total', 0) * 100))
         yotpo_order['currency_code'] = order_data.get('currency')
         yotpo_order['order_id'] = order_data.get('external_id')
         yotpo_order['created_at'] = order_data.get('created_at')
