@@ -177,7 +177,7 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
         }
 
         if credit_memo_init_item:
-            cash_refund_item['rate'] = str(item['price_net'])
+            cash_refund_item['rate'] = str(item['price_gross'])
             cash_refund_item['orderLine'] = credit_memo_init_item['orderLine']
             cash_refund_item['line'] = credit_memo_init_item['line']
             credit_memo_init_item_list.remove(credit_memo_init_item)
