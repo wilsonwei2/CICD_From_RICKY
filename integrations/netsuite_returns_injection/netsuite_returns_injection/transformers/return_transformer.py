@@ -148,16 +148,12 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
     sellable = [item['product_id']
                 for item in ns_return['items']
                 if item.get('item_condition') == 'Sellable' or item.get('condition_code') == 1]
+    ns_refund_item_dict = {}
+    for product in ns_return['items']:
+        ns_refund_item_dict[product['product_id']] = {'refund_amount': product['refund_amount'], 'refund_amount_adjusted': product['refund_amount_adjusted']}
+    LOGGER.info(f'ns_refund_item_dict {ns_refund_item_dict}')
     for item in customer_order['products']:
         LOGGER.info(f"Processing product {item}")
-        refund_amount = 0
-        #getting refund amount from refund event for item
-        for product in ns_return['items']:
-            if product['product_id'] == item['id']:
-                refund_amount = product['refund_amount']
-                LOGGER.info(f'item {item["id"]} refund_amount_adjusted {product["refund_amount_adjusted"]} refund_amount {product["refund_amount"]}')
-                break
-        LOGGER.info(f'item {item["id"]} refund amount {refund_amount}')  
         credit_memo_init_item = get_cm_init_element(item, credit_memo_init_item_list)
         if item['status'] != 'returned' \
                 or item['sales_order_item_uuid'] not in returned_order_line_ids \
@@ -185,7 +181,7 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
         }
 
         if credit_memo_init_item:
-            cash_refund_item['rate'] = str(refund_amount)
+            cash_refund_item['rate'] = str(ns_refund_item_dict[item['id']].get('refund_amount_adjusted'))
             cash_refund_item['orderLine'] = credit_memo_init_item['orderLine']
             cash_refund_item['line'] = credit_memo_init_item['line']
             credit_memo_init_item_list.remove(credit_memo_init_item)
