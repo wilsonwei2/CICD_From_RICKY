@@ -149,8 +149,8 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
                 for item in ns_return['items']
                 if item.get('item_condition') == 'Sellable' or item.get('condition_code') == 1]
     ns_refund_item_dict = {}
-    for product in ns_return['items']:
-        ns_refund_item_dict[product['product_id']] = {'refund_amount': product['refund_amount'], 'refund_amount_adjusted': product['refund_amount_adjusted']}
+    for item in ns_return['items']:
+        ns_refund_item_dict[item['product_id']] = {'refund_amount': item['refund_amount'], 'refund_amount_adjusted': item['refund_amount_adjusted']}
     LOGGER.info(f'ns_refund_item_dict {ns_refund_item_dict}')
     for item in customer_order['products']:
         LOGGER.info(f"Processing product {item}")
