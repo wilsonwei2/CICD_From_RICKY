@@ -140,9 +140,11 @@ def map_cash_refund(ns_return, location_id, sales_order, return_authorization=No
         credit_memo_init_item_list = initialized_record['itemList']['item']
 
         #get rate from sales order
-        sales_order_items = sales_order['itemList'].get('item', [])
-        sales_order_item_array = {item.get('line'):item.get('rate') for item in sales_order_items}
+        LOGGER.info(f'sales_order.itemList {sales_order.itemList}')
+        sales_order_items = sales_order.itemList.item
+        sales_order_item_array = {item.line: item.rate for item in sales_order_items}
         LOGGER.info(f'sales_order_item_array {sales_order_item_array}')
+
         for item in credit_memo_init_item_list:
             current_item = {}
             item_name = item['item']['name']
