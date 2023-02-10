@@ -138,12 +138,18 @@ def map_cash_refund(ns_return, location_id, sales_order, return_authorization=No
             'customForm':  RecordRef(internalId=initialized_record['customForm']['internalId']),
         }
         credit_memo_init_item_list = initialized_record['itemList']['item']
+
+        #get rate from sales order
+        sales_order_items = sales_order['itemList'].get('item', [])
+        sales_order_item_array ={item.get('line'):item.get('rate') for item in sales_order_items}
+        LOGGER.info(f'sales_order_item_array {sales_order_item_array}')
         for item in credit_memo_init_item_list:
             current_item = {}
             item_name = item['item']['name']
             current_item['itemName'] = item_name
             current_item['orderLine'] = item['orderLine']
             current_item['line'] = item['line']
+            current_item['rate'] = sales_order_item_array.get(item['line'])
             cm_init_item_list_reduced.append(current_item)
 
         LOGGER.info(f"credit_memo_init_item_list {credit_memo_init_item_list}")
