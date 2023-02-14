@@ -5,7 +5,7 @@ import json
 import logging
 from lambda_utils.sqs.SqsHandler import SqsHandler
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
 MAX_MESSAGE_QUEUE_SIZE = int(os.environ.get('MAX_MESSAGE_QUEUE_SIZE', '20'))
 

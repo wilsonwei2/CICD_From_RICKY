@@ -37,7 +37,7 @@ import netsuite_returns_injection.helpers.sqs_consumer as sqs_consumer
 from netsuite_returns_injection.transformers.return_transformer import get_store_tz_by_customer_order
 from netsuite_returns_injection.helpers.utils import Utils
 
-LOGGER = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.DEBUG)
 SQS_QUEUE = os.environ['SQS_QUEUE']
 TREAT_ALL_ORDERS_AS_HISTORICAL = bool(
@@ -107,7 +107,7 @@ async def process_return(message):
     if not payments_info:
         raise Exception(
             'Payment Account for order %s not found on NewStore' % ns_return['order_id'])
-    LOGGER.info(f'payments_info: \n{json.dumps(payments_info, indent=4)}')
+    LOGGER.info(f'payments_info: {json.dumps(payments_info, indent=4)}')
 
     store_tz = await get_store_tz_by_customer_order(customer_order)
     LOGGER.info(f'Timezone: {store_tz}')
@@ -236,7 +236,7 @@ async def _handle_web_order_return(customer_order, ns_return, payments_info):
             result, return_authorizations = get_return_authorizations(
                 sales_order.internalId)
             LOGGER.info(
-                f'Result: {result}; \n Return Authorizations: {return_authorizations}')
+                f'Result: {result}; Return Authorizations: {return_authorizations}')
             if not (result and return_authorizations and len(return_authorizations) > 0):
                 LOGGER.info(f'ReturnAuthorization for order {ns_return["order_id"]} and SalesOrder {sales_order.tranId} not'
                             f' found on NetSuite')
