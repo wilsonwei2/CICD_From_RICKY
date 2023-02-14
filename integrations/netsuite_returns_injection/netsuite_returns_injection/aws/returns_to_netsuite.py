@@ -37,7 +37,7 @@ import netsuite_returns_injection.helpers.sqs_consumer as sqs_consumer
 from netsuite_returns_injection.transformers.return_transformer import get_store_tz_by_customer_order
 from netsuite_returns_injection.helpers.utils import Utils
 
-LOGGER = logging.getLogger(__file__)
+LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.DEBUG)
 SQS_QUEUE = os.environ['SQS_QUEUE']
 TREAT_ALL_ORDERS_AS_HISTORICAL = bool(
