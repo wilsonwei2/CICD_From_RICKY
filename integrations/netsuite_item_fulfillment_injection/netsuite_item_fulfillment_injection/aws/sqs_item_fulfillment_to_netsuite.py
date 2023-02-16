@@ -108,7 +108,7 @@ def update_sales_order(sales_order, fulfillment_request):
     update_items = []
 
     for item in sales_order_update.itemList.item:
-        if len(item.item.name.split(' ')) < 3:
+        if len(item.item.name.split(' ')) < 3 or item.item.name.split(' ')[0] in Utils.get_non_inventory_items_list():
             continue
 
         is_rejected = False
