@@ -372,3 +372,5 @@ def get_price_adjustment_refund(discounts, ns_return, location_id, currency, ite
     if location_id is not None:
         price_adjustment_refund_item['location'] = RecordRef(
             internalId=location_id)
+
+    return price_adjustment_refund_item
