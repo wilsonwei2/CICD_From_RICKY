@@ -220,8 +220,9 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
                 item_custom_field_list)
 
         cash_refund_items.append(cash_refund_item)
-
+        
         if len(item['discounts']) > 0:
+            total_discount = 0
             coupon_code = item['discounts'][0]['coupon_code']
             if coupon_code:
                 item_custom_field_list.append(
@@ -230,11 +231,14 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
                         value=coupon_code
                     )
                 )
+            for discount in item['discounts']:
+                total_discount += discount['price_adjustment']
+            
 
             price_adjustment_refund_item = {
                 'item': RecordRef(internalId=int(NETSUITE_CONFIG['shopify_discount_item_id'])),
                 'price': RecordRef(internalId=-1),
-                'rate': str('-' + str(abs(item['discounts'][0]['price_adjustment']))),
+                'rate': str('-' + str(abs(total_discount))),
                 'location': RecordRef(internalId=get_discount_location(ns_return, location_id)),
                 'taxCode': RecordRef(internalId=TaxManager.get_refund_discount_item_tax_code_id(currency))
             }
