@@ -222,28 +222,7 @@ async def map_cash_refund_items(customer_order, ns_return, _, location_id=None, 
         cash_refund_items.append(cash_refund_item)
 
         if len(item['discounts']) > 0:
-            total_discount = calculate_discounts(item['discounts'])
-            coupon_code = item['discounts'][0]['coupon_code']
-            if coupon_code:
-                item_custom_field_list.append(
-                    StringCustomFieldRef(
-                        scriptId='custcol_nws_promocode',
-                        value=coupon_code
-                    )
-                )
-
-            price_adjustment_refund_item = {
-                'item': RecordRef(internalId=int(NETSUITE_CONFIG['shopify_discount_item_id'])),
-                'price': RecordRef(internalId=-1),
-                'rate': str('-' + str(abs(total_discount))),
-                'location': RecordRef(internalId=get_discount_location(ns_return, location_id)),
-                'taxCode': RecordRef(internalId=TaxManager.get_refund_discount_item_tax_code_id(currency))
-            }
-
-            if location_id is not None:
-                price_adjustment_refund_item['location'] = RecordRef(
-                    internalId=location_id)
-
+            price_adjustment_refund_item = get_price_adjustment_refund(item['discounts'], ns_return, location_id, currency, item_custom_field_list)
             cash_refund_items.append(price_adjustment_refund_item)
     return cash_refund_items
 
@@ -368,8 +347,28 @@ def map_custom_fields(customer_order):
 
     return custom_fields_list
 
-def calculate_discounts(discounts):
+def get_price_adjustment_refund(discounts, ns_return, location_id, currency, item_custom_field_list):
     total_discount = 0
     for discount in discounts:
         total_discount += discount['price_adjustment']
-    return total_discount
+
+    coupon_code = discounts[0]['coupon_code']
+    if coupon_code:
+        item_custom_field_list.append(
+            StringCustomFieldRef(
+                scriptId='custcol_nws_promocode',
+                value=coupon_code
+            )
+        )
+
+    price_adjustment_refund_item = {
+        'item': RecordRef(internalId=int(NETSUITE_CONFIG['shopify_discount_item_id'])),
+        'price': RecordRef(internalId=-1),
+        'rate': str('-' + str(abs(total_discount))),
+        'location': RecordRef(internalId=get_discount_location(ns_return, location_id)),
+        'taxCode': RecordRef(internalId=TaxManager.get_refund_discount_item_tax_code_id(currency))
+    }
+
+    if location_id is not None:
+        price_adjustment_refund_item['location'] = RecordRef(
+            internalId=location_id)
