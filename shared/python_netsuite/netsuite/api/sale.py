@@ -252,8 +252,8 @@ def get_transaction(externalId, transactionType):
     )
     result = search_records_using(transaction_search)
 
-    logger.info(f'get_transaction searching for: \n{transaction_search}')
-    logger.info(f'get_transaction result: \n{result}')
+    logger.info(f'get_transaction searching for: {transaction_search}')
+    logger.info(f'get_transaction result: {result}')
 
     r = result.body.searchResult
     if r.status.isSuccess:
