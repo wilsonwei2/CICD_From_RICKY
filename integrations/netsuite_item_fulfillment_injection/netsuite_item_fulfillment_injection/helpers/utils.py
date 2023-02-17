@@ -65,6 +65,10 @@ class Utils():
         return json.loads(Utils._get_param_store().get_param('netsuite/newstore_to_netsuite_locations'))
 
     @staticmethod
+    def get_non_inventory_items_list():
+        return Utils._get_param_store().get_param('non_inventory_items').split(',')
+
+    @staticmethod
     def is_store(store_id):
         for dist_center in Utils.get_distribution_centres():
             if dist_center.lower() == store_id.lower():
