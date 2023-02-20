@@ -148,12 +148,7 @@ def map_cash_refund(ns_return, location_id, sales_order, return_authorization=No
         for item in credit_memo_init_item_list:
             current_item = {}
             item_name = item['item']['name']
-            rate = 0
-            for sales_order_item in sales_order_item_array:
-                if sales_order_item['name'] == item_name:
-                    rate = sales_order_item['rate']
-                    sales_order_item_array.remove(sales_order_item)
-                    break
+            rate = get_sales_order_rate(item_name, sales_order_item_array)
 
             current_item['itemName'] = item_name
             current_item['orderLine'] = item['orderLine']
@@ -258,3 +253,12 @@ def get_phone_from_object(phone_object):
                 return phone
         phone = '5555555555'
     return get_formated_phone(phone)
+
+def get_sales_order_rate(item_name, sales_order_item_array):
+    rate = 0
+    for sales_order_item in sales_order_item_array:
+        if sales_order_item['name'] == item_name:
+            rate = sales_order_item['rate']
+            sales_order_item_array.remove(sales_order_item)
+            break
+    return rate
