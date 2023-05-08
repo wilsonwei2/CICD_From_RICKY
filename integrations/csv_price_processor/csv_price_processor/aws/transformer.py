@@ -26,7 +26,7 @@ class _FixDictReader(csv.DictReader):
                 raise
             raise StopIteration
 
-def csv_to_pricebooks(csvfile, currency, catalog, is_sale):
+def csv_to_pricebooks(csvfile, currency, catalog, is_sale, is_promo):
     reader = _FixDictReader(csvfile)
 
     pricebook_name = 'default' if currency == 'CAD' else f'{currency.lower()}-prices'
@@ -47,6 +47,10 @@ def csv_to_pricebooks(csvfile, currency, catalog, is_sale):
 
             # skip 0 prices for sale prices
             if price_value == 0 and is_sale:
+                continue
+
+            # skip 0 prices for promo prices
+            if price_value == 0 and is_promo:
                 continue
 
             price_book['items'].append({

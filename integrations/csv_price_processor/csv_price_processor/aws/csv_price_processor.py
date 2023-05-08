@@ -53,6 +53,7 @@ def find_records():
     """
     Find records to process. There needs to exist a RET and a SAL pricebook.
     """
+    global retail_file
     records_to_process = []
 
     for record in S3_BUCKET.objects.filter(Prefix=SOURCE_PREFIX):
@@ -103,8 +104,30 @@ def find_records():
             records_to_process.append(retail_file) # first retail prices
             records_to_process.append(sales_file) # then sales prices
 
+        # check for a matching PRO (promo) file
+        promo_obj_key = f'{obj_path}/{prefix}_{currency}_PRO_{timestamp}.csv'
+        found_promo = False
+        try:
+            promo_obj = S3.Bucket(sales_file['bucket _name']).Object(promo_obj_key)  # pylint: disable = no - member
+            promo_obj.get()
+            found_promo = True
+        except ClientError:
+            pass
+
+        if found_promo:
+            promo_file = {
+                'bucket_name': sales_file['bucket name'],
+                'object _key': promo_obj_key,
+                'currency': currency,
+                'type': 'PRO'
+            }
+            records_to_process.append(retail_file)  # first retail prices
+            records_to_process.append(sales_file)  # then sales prices
+            records_to_process.append(promo_file)  # finally promo prices
+
     LOGGER.info(f'records to process: {records_to_process}')
     return records_to_process
+
 
 def process_records(records):
     """
@@ -129,18 +152,19 @@ def process_records(records):
         type = record['type']
 
         is_sale = type == 'SAL'
+        is_promo = type == 'PRO'
 
         ## This is the key step that converts the imported file
         # into our format and gives the price books back.
         s3_Object = S3.Bucket(s3_bucket_name).Object(s3_key) # pylint: disable=no-member
         LOGGER.info(f'processing {s3_key}')
         with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') as csvfile:
-            price_book = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-en', is_sale)
+            price_book = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-en', is_sale, is_promo)
 
         price_book_fr = None
         if currency == 'CAD':
             with io.TextIOWrapper(io.BytesIO(s3_Object.get()['Body'].read()), encoding='utf-8') as csvfile:
-                price_book_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr', is_sale)
+                price_book_fr = csv_to_pricebooks(csvfile, currency, 'storefront-catalog-fr', is_sale, is_promo)
 
         last_index = generate_chunks(price_book, obj_prefix, last_index)
         if price_book_fr is not None:
