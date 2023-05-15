@@ -35,7 +35,8 @@ class Utils():
     _netsuite_config = {}
     _newstore_to_netsuite_locations = {}
     _newstore_to_netsuite_payments = {}
-    _newstore_to_netsuite_payment_methods = {} # pylint: disable=invalid-name
+    _newstore_to_netsuite_payment_methods = {}  # pylint: disable=invalid-name
+    _newstore_to_netsuite_payment_account = {}
     _newstore_giftcard_ids = ''
     _dc_timezone_mapping = {}
     _newstore_to_netsuite_channels = {}
@@ -189,7 +190,8 @@ class Utils():
         total = 0
         for trans in refund_transactions:
             total += abs(trans['refund_amount']
-                         ) if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(trans['capture_amount'])
+                         ) if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(
+                trans['capture_amount'])
 
         refund_total = round(refund_total, 2)
         total = round(total, 2)
@@ -306,12 +308,12 @@ class Utils():
     @staticmethod
     def get_nws_to_netsuite_account(payment_type):
         if payment_type == 'account':
-            if not Utils._newstore_to_netsuite_payment_methods:
-                Utils._newstore_to_netsuite_payment_methods = json.loads(
+            if not Utils._newstore_to_netsuite_payment_account:
+                Utils._newstore_to_netsuite_payment_account = json.loads(
                     Utils._get_param_store().get_param(
                         f'netsuite/newstore_to_netsuite_payment_{payment_type}')
                 )
-            return Utils._newstore_to_netsuite_payment_methods
+            return Utils._newstore_to_netsuite_payment_account
 
         # payment type is 'items'
         if not Utils._newstore_to_netsuite_payments:
