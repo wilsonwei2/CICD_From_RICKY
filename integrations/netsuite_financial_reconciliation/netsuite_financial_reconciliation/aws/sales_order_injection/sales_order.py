@@ -108,7 +108,7 @@ def get_customer_internal_id(order_event, order_data, consumer):  # pylint: disa
         elif consumer:
             first_name = consumer.get('first_name', '-')
             last_name = consumer.get('last_name', '-')
-            phone_number = consumer.get('phone_number')
+            phone_number = consumer.get('phone_number', ' ')
 
         first_name = remove_incompatible_chars(first_name)
         last_name = remove_incompatible_chars(last_name)
@@ -154,7 +154,7 @@ def get_customer_internal_id(order_event, order_data, consumer):  # pylint: disa
             if consumer:
                 first_name = consumer.get('first_name', '-')
                 last_name = consumer.get('last_name', '-')
-                phone_number = consumer.get('phone_number')
+                phone_number = consumer.get('phone_number', ' ')
             elif address:
                 first_name = address['firstName']
                 last_name = address['lastName']
