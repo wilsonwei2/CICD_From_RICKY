@@ -60,7 +60,9 @@ async def process_appeasement(message):
 async def handle_online_order(event_refund, payments_info, customer_order, store_tz):
     Utils.replace_associate_id_for_email(customer_order=customer_order)
     consumer = await get_consumer_info(customer_order.get('consumer', {}).get('email'))
-    cash_refund = await pa.transform_online_order_refund(consumer, event_refund, customer_order, payments_info, store_tz)
+    sales_order = get_sales_order(customer_order['sales_order_external_id'])
+    cash_refund = await pa.transform_online_order_refund(sales_order, consumer, event_refund, customer_order,
+                                                         payments_info, store_tz)
     LOGGER.info(
         f"Transformed refund data: \n {json.dumps(serialize_object(cash_refund), indent=4, default=Utils.json_serial)}")
     return await handle_generic_return(cash_refund=cash_refund)
@@ -145,3 +147,10 @@ async def get_store_tz_by_customer_order(customer_order):
             return Utils.get_dc_timezone_mapping_config()[fulfillment_location]
 
     return Utils.get_dc_timezone_mapping_config()['DEFAULT']
+
+
+async def get_sales_order(order_id):
+    LOGGER.info('Getting SalesOrder from NetSuite.')
+    sales_order = ns_s.get_sales_order(order_id)
+    assert sales_order, "Couldn't get Salesorder from Netsuite."
+    return sales_order

@@ -28,7 +28,7 @@ NEWSTORE_TO_NETSUITE_CHANNEL = Utils.get_nws_to_netsuite_channel()
 NEWSTORE_TO_NETSUITE_PAYMENT_ITEMS = Utils.get_nws_to_netsuite_payment()
 
 
-async def transform_online_order_refund(consumer, event_refund, customer_order, payments_info, store_tz):
+async def transform_online_order_refund(sales_order, consumer, event_refund, customer_order, payments_info, store_tz):
     LOGGER.info('Processing online order refund')
 
     location_id, _, subsidiary_id = map_location(customer_order)
@@ -80,7 +80,7 @@ async def transform_online_order_refund(consumer, event_refund, customer_order, 
         cash_refund_item + payment_items + [TaxManager.get_tax_offset_line_item(event_refund['currency'])])
     cash_refund['entity'] = customer
     cash_refund['currency'] = RecordRef(internalId=currency_id)
-
+    cash_refund['class'] = RecordRef(internalId=sales_order['class']['internalId'])
     return cash_refund
 
 

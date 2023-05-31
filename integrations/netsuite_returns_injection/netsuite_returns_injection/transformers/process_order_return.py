@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
 
 
-async def transform_order(cash_sale, ns_return, payments_info, customer_order=None, store_tz='America/New_York'):
+async def transform_order(sales_order, cash_sale, ns_return, payments_info, customer_order=None, store_tz='America/New_York'):
     customer = None
     cash_refund = _get_cash_refund(ns_return=ns_return,
                                    cash_sale=cash_sale,
@@ -41,6 +41,7 @@ async def transform_order(cash_sale, ns_return, payments_info, customer_order=No
 
         cash_refund['entity'] = customer
         cash_refund['currency'] = RecordRef(internalId=Utils.get_currency_id(ns_return['currency']))
+        cash_refund['class'] = RecordRef(internalId=sales_order['class']['internalId'])
 
     # This verifies the transactions on NewStore
     if not Utils.verify_all_transac_refunded(refund_transactions, ns_return['total_refund_amount']):
