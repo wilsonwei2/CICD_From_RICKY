@@ -35,7 +35,8 @@ class Utils():
     _netsuite_config = {}
     _newstore_to_netsuite_locations = {}
     _newstore_to_netsuite_payments = {}
-    _newstore_to_netsuite_payment_methods = {} # pylint: disable=invalid-name
+    _newstore_to_netsuite_payment_methods = {}  # pylint: disable=invalid-name
+    _newstore_to_netsuite_payment_account = {}
     _newstore_giftcard_ids = ''
     _dc_timezone_mapping = {}
     _newstore_to_netsuite_channels = {}
@@ -188,8 +189,8 @@ class Utils():
     def verify_all_transac_refunded(refund_transactions, refund_total):
         total = 0
         for trans in refund_transactions:
-            total += abs(trans['refund_amount']
-                         ) if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(trans['capture_amount'])
+            total += abs(trans['refund_amount']) if trans['reason'] == 'refund' \
+                                                    or trans['capture_amount'] == 0 else abs(trans['capture_amount'])
 
         refund_total = round(refund_total, 2)
         total = round(total, 2)
@@ -302,3 +303,40 @@ class Utils():
     def _format_country_name(country_name):
         func = lambda s: s[:1].lower() + s[1:] if s else ''
         return f'_{func(country_name).replace(" ", "")}'
+
+    @staticmethod
+    def get_nws_to_netsuite_account(payment_type):
+        if payment_type == 'account':
+            if not Utils._newstore_to_netsuite_payment_account:
+                Utils._newstore_to_netsuite_payment_account = json.loads(
+                    Utils._get_param_store().get_param(
+                        f'netsuite/newstore_to_netsuite_payment_{payment_type}')
+                )
+            return Utils._newstore_to_netsuite_payment_account
+
+        # payment type is 'items'
+        if not Utils._newstore_to_netsuite_payments:
+            Utils._newstore_to_netsuite_payments = json.loads(
+                Utils._get_param_store().get_param(
+                    f'netsuite/newstore_to_netsuite_payment_{payment_type}')
+            )
+        return Utils._newstore_to_netsuite_payments
+
+    @staticmethod
+    def get_account_based_payment_method(payment_method, payment_provider, currency):
+        account_id = None
+        account_config = {}
+        if payment_provider:
+            account_config = Utils.get_nws_to_netsuite_account("account")[payment_method].get(payment_provider, None)
+            # For BOPIS shopify/returnly orders, this fallback is needed for paypal, sezzle etc.
+            if not account_config:
+                account_config = Utils.get_nws_to_netsuite_account("account").get(payment_method, {})
+        else:
+            account_config = Utils.get_nws_to_netsuite_account("account").get(payment_method, {})
+
+        if isinstance(account_config, numbers.Number):
+            account_id = account_config
+        else:
+            account_id = account_config.get(currency.lower(), '')
+
+        return account_id
