@@ -189,9 +189,8 @@ class Utils():
     def verify_all_transac_refunded(refund_transactions, refund_total):
         total = 0
         for trans in refund_transactions:
-            total += abs(trans['refund_amount']
-                         ) if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(
-                trans['capture_amount'])
+            total += abs(trans['refund_amount']) \
+                if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(trans['capture_amount'])
 
         refund_total = round(refund_total, 2)
         total = round(total, 2)
