@@ -35,7 +35,7 @@ class Utils():
     _netsuite_config = {}
     _newstore_to_netsuite_locations = {}
     _newstore_to_netsuite_payments = {}
-    _newstore_to_netsuite_payment_methods = {} # pylint: disable=invalid-name
+    _newstore_to_netsuite_payment_methods = {}  # pylint: disable=invalid-name
     _newstore_giftcard_ids = ''
     _dc_timezone_mapping = {}
     _newstore_to_netsuite_channels = {}
@@ -159,7 +159,8 @@ class Utils():
     def is_endless_aisle(order_payload):
         if order_payload.get('channel_type', '') == 'store':
             for shipping_option in order_payload['shipment_details']:
-                if shipping_option['shipping_option']['shipping_type'] == 'traditional_carrier' or shipping_option['shipping_option']['shipping_type'] == 'same_day_delivery':
+                if shipping_option['shipping_option']['shipping_type'] == 'traditional_carrier' or \
+                    shipping_option['shipping_option']['shipping_type'] == 'same_day_delivery':
                     return True
         return False
 
@@ -189,7 +190,8 @@ class Utils():
         total = 0
         for trans in refund_transactions:
             total += abs(trans['refund_amount']
-                         ) if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(trans['capture_amount'])
+                         ) if trans['reason'] == 'refund' or trans['capture_amount'] == 0 else abs(
+                trans['capture_amount'])
 
         refund_total = round(refund_total, 2)
         total = round(total, 2)
