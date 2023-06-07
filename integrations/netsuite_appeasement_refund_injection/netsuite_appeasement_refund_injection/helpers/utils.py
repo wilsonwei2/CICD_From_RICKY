@@ -118,8 +118,26 @@ class Utils():
     def is_endless_aisle(order_payload):
         if order_payload.get('channel_type', '') == 'web':
             return True
-        return order_payload.get('channel_type', '') == 'store' and \
-            order_payload['shipment_details'][0]['shipping_option']['shipping_type'] == 'traditional_carrier'
+        # need to loop through all the lines in the shipment_details, if any 1 line is not "in_store_handover", it is an endless aisle
+        # if the order is endless aisle, online or mixed cart, this func need to return true
+        in_store_handover_count = 0
+        items_count = 0
+        if order_payload.get('channel_type', '') == 'store':
+            for shipment_detail in order_payload['shipment_details']:
+                items_count = items_count + 1
+                if shipment_detail['shipping_option']['shipping_type'] == "in_store_handover":
+                    in_store_handover_count = in_store_handover_count + 1
+                if in_store_handover_count == 0:
+                    is_endless_aisle = True
+                    return is_endless_aisle
+                if items_count != in_store_handover_count:
+                    is_mixed_cart = True
+                    return is_mixed_cart
+        # If we get here, that means the order is not a web channel, endless aisle and mixed cart
+        return False
+
+        # return order_payload.get('channel_type', '') == 'store' and \
+        # order_payload['shipment_details'][0]['shipping_option']['shipping_type'] == 'traditional_carrier'
 
     @staticmethod
     def get_one_of_these_fields(params={}, fields=[]):

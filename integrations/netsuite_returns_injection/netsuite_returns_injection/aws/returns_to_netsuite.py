@@ -167,7 +167,7 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
             LOGGER.info(
                 f'Original Order Payment Info: {json.dumps(payments_info, indent=4)}')
     else:
-        order_id = ns_return['order id']
+        order_id = ns_return['order_id']
         external_order_id = customer_order['sales_order_external_id']
         sales_order = search_sales_order(order_id, external_order_id)
         if not sales_order:

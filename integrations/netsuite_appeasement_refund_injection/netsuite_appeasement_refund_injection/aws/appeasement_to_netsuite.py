@@ -60,7 +60,7 @@ async def process_appeasement(message):
 async def handle_online_order(event_refund, payments_info, customer_order, store_tz):
     Utils.replace_associate_id_for_email(customer_order=customer_order)
     consumer = await get_consumer_info(customer_order.get('consumer', {}).get('email'))
-    sales_order = get_sales_order(customer_order['sales_order_external_id'])
+    sales_order = await get_sales_order(customer_order['sales_order_external_id'])
     cash_refund = await pa.transform_online_order_refund(sales_order, consumer, event_refund, customer_order,
                                                          payments_info, store_tz)
     LOGGER.info(
