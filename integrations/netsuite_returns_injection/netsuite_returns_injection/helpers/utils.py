@@ -159,7 +159,7 @@ class Utils():
     def is_endless_aisle(order_payload):
         if order_payload.get('channel_type', '') == 'store':
             for shipping_option in order_payload['shipment_details']:
-                if shipping_option['shipping_option']['shipping_type'] == 'traditional_carrier':
+                if shipping_option['shipping_option']['shipping_type'] == 'traditional_carrier' or shipping_option['shipping_option']['shipping_type'] == 'same_day_delivery':
                     return True
         return False
 
