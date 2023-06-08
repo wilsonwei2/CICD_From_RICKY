@@ -76,6 +76,12 @@ async def transform_online_order_refund(sales_order, consumer, event_refund, cus
                                                subsidiary_id=subsidiary_id,
                                                location_id=location_id)
 
+    LOGGER.info('Map payment method')
+    payment_method = payments_info['instruments'][0]['payment_method']
+    payment_provider = payments_info['instruments'][0]['payment_provider']
+    currency = payments_info['instruments'][0]['currency']
+    cash_refund['paymentMethod'] = RecordRef(internalId=Utils.get_payment_item_id(payment_method, payment_provider, currency, 'methods'))
+
     cash_refund['itemList'] = CashRefundItemList(
         cash_refund_item + payment_items + [TaxManager.get_tax_offset_line_item(event_refund['currency'])])
     cash_refund['entity'] = customer

@@ -7,6 +7,7 @@ from pytz import timezone
 from pytz.exceptions import UnknownTimeZoneError
 from param_store.client import ParamStore
 from newstore_adapter.connector import NewStoreConnector
+import numbers
 
 LOGGER = logging.getLogger()
 LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'info').upper() or 'INFO'
@@ -28,6 +29,7 @@ class Utils():
     _newstore_to_netsuite_payments = {}
     _dc_timezone_mapping = {}
     _newstore_to_netsuite_channels = {}
+    _newstore_to_netsuite_payment_methods = {}
 
     @staticmethod
     def get_newstore_conn(context=None):
@@ -201,3 +203,42 @@ class Utils():
         if isinstance(obj, (datetime, date)):
             return obj.isoformat()
         raise TypeError("Type %s not serializable" % type(obj))
+
+    @staticmethod
+    def get_nws_to_netsuite_payment_methods(payment_type):
+        if payment_type == 'methods':
+            if not Utils._newstore_to_netsuite_payment_methods:
+                Utils._newstore_to_netsuite_payment_methods = json.loads(
+                    Utils._get_param_store().get_param(
+                        f'netsuite/newstore_to_netsuite_payment_{payment_type}')
+                )
+            return Utils._newstore_to_netsuite_payment_methods
+
+        # payment type is 'items'
+        if not Utils._newstore_to_netsuite_payment_methods:
+            Utils._newstore_to_netsuite_payment_methods = json.loads(
+                Utils._get_param_store().get_param(
+                    f'netsuite/newstore_to_netsuite_payment_{payment_type}')
+            )
+        return Utils._newstore_to_netsuite_payment_methods
+
+    @staticmethod
+    def get_payment_item_id(payment_method, payment_provider, currency, payment_type):
+        payment_item_id = None
+        payment_config = {}
+        if payment_provider:
+            payment_config = Utils.get_nws_to_netsuite_payment_methods(payment_type)[payment_method].get(
+                payment_provider, None)
+            # For BOPIS shopify/returnly orders, this fallback is needed for paypal, sezzle etc.
+            if not payment_config:
+                payment_config = Utils.get_nws_to_netsuite_payment_methods(payment_type).get(
+                    payment_method, {})
+        else:
+            payment_config = Utils.get_nws_to_netsuite_payment_methods(payment_type).get(
+                payment_method, {})
+        if isinstance(payment_config, numbers.Number):
+            payment_item_id = payment_config
+        else:
+            payment_item_id = payment_config.get(currency.lower(), '')
+
+        return payment_item_id

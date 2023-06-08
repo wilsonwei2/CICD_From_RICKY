@@ -137,6 +137,8 @@ async def _update_payments_info_if_needed(customer_order, payments_info):
 
 async def _handle_store_order_return(customer_order, ns_return, payments_info, store_tz, is_blind_return):
     cash_sale = None
+    sales_order = None
+
     is_historical = Utils.get_extended_attribute(
         customer_order['extended_attributes'], 'is_historical')
 
@@ -166,7 +168,7 @@ async def _handle_store_order_return(customer_order, ns_return, payments_info, s
                     'Payment Account for original order %s not found on NewStore' % original_order.externalId)
             LOGGER.info(
                 f'Original Order Payment Info: {json.dumps(payments_info, indent=4)}')
-    else:
+    if not is_blind_return and is_endless_aisle:
         order_id = ns_return['order_id']
         external_order_id = customer_order['sales_order_external_id']
         sales_order = search_sales_order(order_id, external_order_id)
