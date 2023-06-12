@@ -50,7 +50,7 @@ def _process_order(order_json):
     if (order_payload.get('channel_type')) == 'web':
         return _disable_ns_coupons(coupon_codes, mapped_coupon_result)
     if (order_payload.get('channel_type')) == 'store':
-        if _disable_shopify_coupons(coupon_codes) and _create_yotpo_order(order_payload):
+        if _disable_shopify_coupons(coupon_codes) and _create_yotpo_order(order_payload) and _disable_ns_coupons(coupon_codes, mapped_coupon_result):
             return True
     return False
 
@@ -120,7 +120,7 @@ def perform_data_mapping(payload):
     for item in payload['items']:
         for discount in item['discounts']:
             coupon_code = discount['coupon_code']
-            value = discount['value']
+            value = discount['price_adjustment']
             action = discount['action']
             level = discount['level']
 
