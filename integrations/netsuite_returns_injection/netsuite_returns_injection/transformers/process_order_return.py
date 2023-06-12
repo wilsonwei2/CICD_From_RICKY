@@ -14,12 +14,14 @@ LOGGER = logging.getLogger(__file__)
 LOGGER.setLevel(logging.INFO)
 
 
-async def transform_order(cash_sale, ns_return, payments_info, customer_order=None, store_tz='America/New_York'):
+async def transform_order(sales_order, cash_sale, ns_return, payments_info, customer_order=None,
+                          store_tz='America/New_York'):
     customer = None
     cash_refund = _get_cash_refund(ns_return=ns_return,
                                    cash_sale=cash_sale,
                                    store_tz=store_tz)
-    subsidiary_id = int(Utils.get_netsuite_config()['subsidiary_ca_internal_id']) if not cash_sale else int(cash_sale['subsidiary']['internalId'])
+    subsidiary_id = int(Utils.get_netsuite_config()['subsidiary_ca_internal_id']) if not cash_sale else int(
+        cash_sale['subsidiary']['internalId'])
     cash_refund_items = await map_cash_refund_items(customer_order,
                                                     ns_return,
                                                     subsidiary_id)
@@ -28,6 +30,13 @@ async def transform_order(cash_sale, ns_return, payments_info, customer_order=No
                                                                  ns_return=ns_return,
                                                                  store_tz=store_tz,
                                                                  subsidiary_id=subsidiary_id)
+
+    payment_method = payments_info['instruments'][0]['payment_method']
+    payment_provider = payments_info['instruments'][0]['payment_provider']
+    currency = payments_info['instruments'][0]['currency']
+
+    cash_refund['paymentMethod'] = RecordRef(
+        internalId=Utils.get_payment_item_id(payment_method, payment_provider, currency, 'methods'))
 
     if not cash_sale:
         LOGGER.info('Create standalone CashRefund')
@@ -41,16 +50,26 @@ async def transform_order(cash_sale, ns_return, payments_info, customer_order=No
 
         cash_refund['entity'] = customer
         cash_refund['currency'] = RecordRef(internalId=Utils.get_currency_id(ns_return['currency']))
+        if sales_order:
+            cash_refund['class'] = RecordRef(internalId=sales_order['class']['internalId'])
+        else:
+            # for blind return, which does not have sales order
+            if ns_return["currency"] == "CAD":
+                cash_refund['class'] = RecordRef(internalId='13')
+            else:
+                cash_refund['class'] = RecordRef(internalId='14')
 
     # This verifies the transactions on NewStore
     if not Utils.verify_all_transac_refunded(refund_transactions, ns_return['total_refund_amount']):
         LOGGER.error(f'transform_order - refund_transactions {refund_transactions}')
-        raise Exception('The payments for this order have not been fully refunded yet, it will only be injected upon full refund.')
+        raise Exception(
+            'The payments for this order have not been fully refunded yet, it will only be injected upon full refund.')
 
     # This verifies the payment items added to the Refund
     if not Utils.verify_all_payments_refunded(payment_items, ns_return['total_refund_amount']):
         LOGGER.debug(f'transform_order - payment_items {payment_items}')
-        raise Exception('The payments for this order were not all mapped to payments item. Verify logs for more details.')
+        raise Exception(
+            'The payments for this order were not all mapped to payments item. Verify logs for more details.')
 
     return {
         'customer': customer,
@@ -115,6 +134,7 @@ def map_shipping_billing_address(customer_order, return_parsed):
     return_parsed['billing_address'] = billing_address
 
     return return_parsed
+
 
 def build_shipping_address(address, countries):
     return build_address(address=address,
