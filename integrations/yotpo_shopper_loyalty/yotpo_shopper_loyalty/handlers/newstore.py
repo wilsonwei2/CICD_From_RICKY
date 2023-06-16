@@ -79,7 +79,7 @@ class NShandler():
             response.raise_for_status()
         except HTTPError as ex:
             LOGGER.error(
-                f"Response for order {order_data['external_id']} {response.text}; \nException: {str(ex)}", exc_info=True)
+                f"Response for order {order_data['external_id']}{response.text}; \nException: {str(ex)}", exc_info=True)
             raise
         return response.json()
 
@@ -108,13 +108,13 @@ class NShandler():
             response.raise_for_status()
         except HTTPError as ex:
             LOGGER.info(f'Response: {response.text}; \nException: {str(ex)}', exc_info=True)
-            if "The following products were already returned" in  response.text:
+            if "The following products were already returned" in response.text:
                 return {"repeated_returned": True, "message": response.json().get("message")}
             raise
         success_response = response.json()
         LOGGER.info(f"Response {response.text}")
         success_response["repeated_returned"] = False
-        return  success_response
+        return success_response
 
     def create_order_note(self, order_id: str, text: str, source: str, tags: List[str]):
         url = f'https://{self.host}/v0/d/orders/{order_id}/notes'
@@ -163,17 +163,31 @@ class NShandler():
         response.raise_for_status()
         return response.json()
 
-    def get_coupons(self, coupon_codes: List[str]):
-        filter_string = "&filter[code]=".join(coupon_codes)
-        url = f'https://{self.host}/v0/d/coupons?filter[code]={filter_string}'
+    def get_coupons(self, target_coupon_name: str):
+        url = f'https://{self.host}/v0/promotions/coupon?page=1&count=1000&name={target_coupon_name}'
         LOGGER.info("Get Coupons")
         response = requests.get(url, headers=self.get_headers())
         response.raise_for_status()
-        return response.json().get('items')
+        return response.json()['items'][0]['coupon']
 
-    def disable_coupon(self, coupon_id: str):
-        url = f'https://{self.host}/v0/d/coupons/{coupon_id}'
+    def disable_coupon(self, coupon_code: str, coupon_items_to_disable: dict):
+        code_id = ''
+        coupon_id = coupon_items_to_disable["id"]
+        for code in coupon_items_to_disable["codes"]:
+            if coupon_code == code["name"]:
+                code_id = code["id"]
+
+        url = f'https://{self.host}/v0/promotions/coupon/{coupon_id}/code/{code_id}'
         LOGGER.info("Disable Coupon")
-        response = requests.patch(url, headers=self.get_headers(), json={"is_enabled": False})
+
+        body = {
+            "id": code_id,
+            "name": coupon_items_to_disable["name"],
+            "redemptions": 0,
+            "active": False
+        }
+
+        LOGGER.info(f'request body: {body}')
+        response = requests.patch(url, headers=self.get_headers(), json=body)
         response.raise_for_status()
-        return response.json()
+        return response
