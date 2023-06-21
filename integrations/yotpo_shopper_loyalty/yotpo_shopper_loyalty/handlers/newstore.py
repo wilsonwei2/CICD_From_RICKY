@@ -168,7 +168,7 @@ class NShandler():
         LOGGER.info("Get Coupons")
         response = requests.get(url, headers=self.get_headers())
         response.raise_for_status()
-        return response.json()['items'][0]['coupon']
+        return response.json()['items']
 
     def disable_coupon(self, coupon_code: str, coupon_items_to_disable: dict):
         code_id = ''

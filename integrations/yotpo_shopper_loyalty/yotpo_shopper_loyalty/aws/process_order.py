@@ -50,7 +50,8 @@ def _process_order(order_json):
     if (order_payload.get('channel_type')) == 'web':
         return _disable_ns_coupons(coupon_codes, mapped_coupon_result)
     if (order_payload.get('channel_type')) == 'store':
-        if _disable_shopify_coupons(coupon_codes) and _create_yotpo_order(order_payload) and _disable_ns_coupons(coupon_codes, mapped_coupon_result):
+        if _disable_shopify_coupons(coupon_codes) and _create_yotpo_order(order_payload) and _disable_ns_coupons(
+            coupon_codes, mapped_coupon_result):
             return True
     return False
 
@@ -62,6 +63,20 @@ def _disable_ns_coupons(coupon_codes, mapped_coupon_result):
     try:
         LOGGER.info(f'Disabling coupons: {coupon_codes}')
 
+        # For historical coupon
+        historical_coupon_name = ''
+        config_value_array = ["624558", "624559", "624560", "624561", "665619", "718330", "718331", "718332"]
+
+        for coupon_code in coupon_codes:
+            for config_value in config_value_array:
+                historical_coupon_name = coupon_code + "_" + config_value
+                coupon_items_to_disable = NEWSTORE_HANDLER.get_coupons(historical_coupon_name)
+
+                if len(coupon_items_to_disable) != 0:
+                    disabled_coupon = NEWSTORE_HANDLER.disable_coupon(coupon_code, coupon_items_to_disable[0]['coupon'])
+                    return True
+
+        # For new coupon
         coupon_name_prefix = 'YOTPO_AWS_'
 
         # Iterate over the array
@@ -82,7 +97,7 @@ def _disable_ns_coupons(coupon_codes, mapped_coupon_result):
 
                     target_coupon_info = NEWSTORE_HANDLER.get_coupons(target_coupon_name)
 
-                    NEWSTORE_HANDLER.disable_coupon(coupon_code, target_coupon_info)
+                    NEWSTORE_HANDLER.disable_coupon(coupon_code, target_coupon_info[0]['coupon'])
         return True
     except HTTPError as exc:
         LOGGER.exception('Some error occurred while disabling coupons on Newstore')
@@ -116,6 +131,7 @@ def _create_yotpo_order(order_payload):
 
 def perform_data_mapping(payload):
     coupon_mapping = {}
+    temp_value = 0
 
     for item in payload['items']:
         for discount in item['discounts']:
@@ -130,7 +146,8 @@ def perform_data_mapping(payload):
                     'amount': 0
                 }
 
-            coupon_mapping[coupon_code]['amount'] += value
+            temp_value += value
+            coupon_mapping[coupon_code]['amount'] = int(round(temp_value))
 
             if action == 'fixed' and level == 'order':
                 coupon_mapping[coupon_code]['type'] = 'CartLevelFixed'
