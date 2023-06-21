@@ -50,8 +50,7 @@ def _process_order(order_json):
     if (order_payload.get('channel_type')) == 'web':
         return _disable_ns_coupons(coupon_codes, mapped_coupon_result)
     if (order_payload.get('channel_type')) == 'store':
-        if _disable_shopify_coupons(coupon_codes) and _create_yotpo_order(order_payload) and _disable_ns_coupons(
-            coupon_codes, mapped_coupon_result):
+        if _disable_shopify_coupons(coupon_codes) and _create_yotpo_order(order_payload) and _disable_ns_coupons(coupon_codes, mapped_coupon_result):
             return True
     return False
 
@@ -73,7 +72,7 @@ def _disable_ns_coupons(coupon_codes, mapped_coupon_result):
                 coupon_items_to_disable = NEWSTORE_HANDLER.get_coupons(historical_coupon_name)
 
                 if len(coupon_items_to_disable) != 0:
-                    disabled_coupon = NEWSTORE_HANDLER.disable_coupon(coupon_code, coupon_items_to_disable[0]['coupon'])
+                    disabled_coupon = NEWSTORE_HANDLER.disable_coupon(coupon_code, coupon_items_to_disable[0]['coupon']) #pylint: disable=W0612
                     return True
 
         # For new coupon
