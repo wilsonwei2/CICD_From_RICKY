@@ -13,7 +13,7 @@ LOG_LEVEL_SET = os.environ.get('LOG_LEVEL', 'INFO') or 'INFO'
 LOG_LEVEL = logging.DEBUG if LOG_LEVEL_SET.lower() in ['debug'] else logging.INFO
 LOGGER.setLevel(LOG_LEVEL)
 SHOPIFY_CHANNEL = os.environ.get('DC_LOCATION', 'BDC1')
-PROVINCE_CODES = json.loads(os.environ.get('PROVINCE_CODES', '["HI", "AK", "PR"]'))
+PROVINCE_CODES = json.loads(os.environ.get('PROVINCE_CODES', '["YT", "NU", "HI", "AK", "PR"]'))
 CITY_SUBSTRING_LIMIT = 49
 
 
@@ -469,6 +469,8 @@ def _get_shipping_option(order, shipping_offer_token):
             service_level_identifier = ''
             if shipping_country_code == 'US' and _check_provice_code_and_po_box(shipping_address):
                 service_level_identifier = "EXPRESS_POST_USA"
+            elif shipping_country_code == 'CA' and _check_provice_code_and_po_box(shipping_address):
+                service_level_identifier = "REGULAR_PARCEL"
             else:
                 service_level_identifier = shopify_helper.get_shipment_service_level(code, title, shipping_country_code)
             LOGGER.info(f"Service level identified from is {service_level_identifier}")
