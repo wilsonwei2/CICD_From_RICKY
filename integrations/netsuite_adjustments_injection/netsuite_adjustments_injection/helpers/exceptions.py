@@ -1,2 +1,0 @@
-class StoreMappingException(Exception):
-    pass
