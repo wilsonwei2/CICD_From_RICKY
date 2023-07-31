@@ -22,7 +22,7 @@ parameters:
     default: "python"
   version:
     type: string
-    default: "3.9-buster"
+    default: "3.7-buster"
 
 executors:
   default:
