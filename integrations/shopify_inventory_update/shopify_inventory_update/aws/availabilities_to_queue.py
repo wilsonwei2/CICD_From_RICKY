@@ -56,8 +56,8 @@ def handler(event, context):
     """
 
     LOGGER.info('Start of availablities_to_queue')
-    LOGGER.info('Event : %s', json.dumps(event))
-    LOGGER.info('Context : %s', json.dumps(context))
+    LOGGER.info('Event: %s', json.dumps(event))
+    LOGGER.info('Context: %s', json.dumps(context))
 
     if BLOCK_CONCURRENT_EXECUTION:
         if _is_blocked():
