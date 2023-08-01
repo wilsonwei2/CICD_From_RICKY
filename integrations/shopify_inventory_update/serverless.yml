@@ -1,0 +1,126 @@
+service: frankandoak-shopify-inventory-update
+
+plugins:
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: false
+
+package:
+  exclude:
+    - ./**
+  include:
+    - shopify_inventory_update/**
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'x'}
+  tenant: frankandoaknew
+  region: us-east-1
+  deploymentBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz-deploy
+  configBucket: ${self:provider.tenant}-${self:provider.stage}-0-newstore-dmz
+  dynamo_table_name: ${self:provider.tenant}-availability-job-save-state
+  dynamo_mapping_table_name: ${self:provider.tenant}-product-inventory-mapping
+  role: !Sub 'arn:aws:iam::${AWS::AccountId}:role/LambdaExecutionRole'
+  environment:
+    STAGE: ${self:provider.stage}
+    TENANT: ${self:provider.tenant}
+    REGION: ${self:provider.region}
+    newstore_auth_lambda: ${self:provider.tenant}-auth-token-generator-${self:provider.stage}-get_auth_token
+    newstore_url_api: ${self:provider.tenant}.${self:provider.stage}.newstore.net
+    newstore_use_auth_lambda: 1
+
+functions:
+  create_inventory_export_job:
+    name: ${self:provider.tenant}-create-inventory-export-job
+    handler: shopify_inventory_update.aws.create_availability_export_job.handler
+    timeout: 600
+    memorysize: 128
+    events:
+      - schedule:
+          rate: rate(15 minutes)
+          enable: true
+          name: inventory-create-export-job
+      - schedule:
+          rate: cron(0 6 * * ? *)
+          enable: true
+          name: inventory-full_export-trigger
+    environment:
+      STAGE: ${self:provider.stage}
+      TENANT: ${self:provider.tenant}
+      REGION: ${self:provider.region}
+      LOG_LEVEL: info
+      PUSH_TO_QUEUE_LAMBDA_NAME: ${self:provider.tenant}-availabilities-to-queue
+      FORCE_CHECKING_FOR_JOB: True
+      S3_BUCKET_NAME: ${self:provider.configBucket}
+  availabilities_to_queue:
+    name: ${self:provider.tenant}-availabilities-to-queue
+    handler: shopify_inventory_update.aws.availabilities_to_queue.handler
+    timeout: 900
+    memorysize: 2048
+    # reservedConcurrency: 1    // if this can be used disable BLOCK_CONCURRENT_EXECUTION
+    events:
+      - schedule:
+          rate: rate(1 hour)
+          enable: true
+          name: availabilities_to_queue_worker
+    environment:
+      STAGE: ${self:provider.stage}
+      TENANT: ${self:provider.tenant}
+      REGION: ${self:provider.region}
+      LOG_LEVEL: info
+      SQS_NAME: !GetAtt shopifyAvailabilityItemQueue.QueueName
+      PUSH_TO_SHOPIFY_LAMBDA_NAME: ${self:provider.tenant}-inventory-push-to-shopify
+      FORCE_CHECKING_FOR_JOB: True
+      DYNAMODB_TABLE_NAME: ${self:provider.dynamo_table_name}
+      S3_BUCKET_NAME: ${self:provider.deploymentBucket}
+      BLOCK_CONCURRENT_EXECUTION: True
+  inventory_push_to_shopify:
+    name: ${self:provider.tenant}-inventory-push-to-shopify
+    handler: shopify_inventory_update.aws.push_to_shopify.handler
+    timeout: 900
+    memorysize: 256
+    # reservedConcurrency: 1    // if this can be used disable BLOCK_CONCURRENT_EXECUTION
+    events:
+      - schedule:
+          rate: rate(2 minutes)
+          enable: true
+          name: shopify_availability_export_worker
+    environment:
+      SQS_NAME: !GetAtt shopifyAvailabilityItemQueue.QueueName
+      STAGE: ${self:provider.stage}
+      TENANT: ${self:provider.tenant}
+      REGION: ${self:provider.region}
+      LOG_LEVEL: info
+      TRIGGER_NAME: shopify_availability_export_worker
+      BLOCK_CONCURRENT_EXECUTION: True
+      DYNAMODB_TABLE_NAME: ${self:provider.dynamo_table_name}
+
+resources:
+  Resources:
+    shopifyAvailabilityItemQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+          VisibilityTimeout: 60
+          QueueName: ${self:provider.tenant}-shopify-availability-item
+          RedrivePolicy:
+            maxReceiveCount: 3
+            deadLetterTargetArn: !GetAtt shopifyAvailabilityItemDeadLetterQueue.Arn
+    shopifyAvailabilityItemDeadLetterQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+          QueueName: ${self:provider.tenant}-shopify-availabilities-export-dlq
+    availabilityJobSaveState:
+        Type: "AWS::DynamoDB::Table"
+        Properties:
+          AttributeDefinitions:
+            - AttributeName: identifier
+              AttributeType: S
+          KeySchema:
+            - AttributeName: identifier
+              KeyType: HASH
+          TableName: ${self:provider.dynamo_table_name}
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1

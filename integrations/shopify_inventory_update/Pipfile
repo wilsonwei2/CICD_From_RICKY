@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+
+[packages]
+newstore-adapter = {path = "./../../shared/newstore_adapter"}
+param_store = {path = "./../../shared/3.6/param_store"}
+pom-common = {path = "./../../shared/pom_common"}
+aiohttp = ">=2.3.1"
+aiobotocore = "*"
+requests = "*"
+boto3="*"
+
+[requires]
+python_version = "3.7"
