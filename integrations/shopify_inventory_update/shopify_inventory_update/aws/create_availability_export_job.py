@@ -25,6 +25,10 @@ LAST_UPDATED_KEY = 'last_updated_at'
 DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
 CONCURRENT_EXECUTION_BLOCKED_KEY = 'push_to_queue_concurrent_execution_blocked'
 
+# RICKY: 
+# This lambda ONLY check for lock, before it actually create the job
+# The lock creation (The key is "push_to_queue_concurrent_execution_blocked") is start from second lambda, when pulling the job
+# The lock is also released from second lambda, when all the messages are pushed to the queue by the second lambda 
 
 def handler(event, context):
     """
@@ -38,8 +42,15 @@ def handler(event, context):
     """
     LOGGER.info('Start of create_availablitiy_export_job')
 
-    if _is_blocked():
+    is_blocked = _is_blocked()
+
+    if is_blocked:
+        LOGGER.info('Push to queue is running, creating the job is blocked.')
         return 'Push to queue is running, creating the job is blocked.'
+    
+    if is_blocked == None:
+        LOGGER.info('Fail to get into DynamoDB for log')
+        return
 
     LOGGER.info('Event : %s', json.dumps(event))
     is_full = False
@@ -61,6 +72,7 @@ def handler(event, context):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     result = loop.run_until_complete(_create_export_availabilities_job(context, is_full))
+    LOGGER.info('result of _create_export_availabilities_job', result)
     loop.stop()
     loop.close()
     return result
@@ -74,6 +86,8 @@ async def _create_export_availabilities_job(context, is_full: False):
     """
     newstore_creds = json.loads(
         get_parameter_store().get_param('newstore'))
+    if newstore_creds == None:
+        return
     ns_handler = NewStoreConnector(tenant=newstore_creds['tenant'], context=context,
                                    username=newstore_creds['username'], password=newstore_creds['password'],
                                    host=newstore_creds['host'])
@@ -125,8 +139,14 @@ def _get_last_entry_object(is_full):
 
 
 def get_parameter_store(tenant=TENANT, stage=STAGE):
-    param_store = ParamStore(tenant, stage)
-    return param_store
+    try:
+        LOGGER.info('get_parameter_store')
+        param_store = ParamStore(tenant, stage)
+        return param_store
+    except Exception as ex:
+        LOGGER.info(ex)
+        LOGGER.critical("Error during get_parameter_store.")
+        return None
 
 
 def save_last_updated_to_dynamo_db(last_updated_at):
@@ -150,14 +170,19 @@ def save_last_updated_to_dynamo_db(last_updated_at):
 
 
 def _is_blocked():
-    response = get_item(table_name=DYNAMODB_TABLE_NAME, item={
-        'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
-    })
+    try:
+        response = get_item(table_name=DYNAMODB_TABLE_NAME, item={
+            'identifier': str(CONCURRENT_EXECUTION_BLOCKED_KEY)
+        })
 
-    if response is None:
+        if response is None:
+            return False
+
+        if 'blocked' in response:
+            return response['blocked'] == 'True'
+
         return False
-
-    if 'blocked' in response:
-        return response['blocked'] == 'True'
-
-    return False
+    except Exception as ex:
+        LOGGER.info(ex)
+        LOGGER.critical("Error during _is_blocked")
+        return None

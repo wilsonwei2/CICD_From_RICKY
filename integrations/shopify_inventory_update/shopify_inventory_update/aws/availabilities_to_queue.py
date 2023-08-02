@@ -78,6 +78,7 @@ def handler(event, context):
         loop.stop()
         loop.close()
     finally:
+        LOGGER.info('All done. Release the lock.')
         _set_blocked_state(False)
 
     LOGGER.info('End of availablities_to_queue')

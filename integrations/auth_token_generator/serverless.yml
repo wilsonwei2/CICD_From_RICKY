@@ -22,6 +22,7 @@ provider:
 
 functions:
   get_auth_token:
+    name: ${self:provider.tenant}-auth-token-generator
     handler: auth_token_generator.lambdas.auth_token_generator.handler
     environment:
       LOG_LEVEL: INFO

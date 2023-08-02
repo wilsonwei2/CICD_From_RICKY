@@ -33,6 +33,9 @@ REGION = os.environ.get('REGION', 'us-east-1')
 
 JOB_STATE_KEY = 'current_job_state'
 
+# RICKY: 
+# The lock creation (The key is "concurrent_execution_blocked") is start from third lambda, when pulling the messages from the queue
+# The lock is also released from third lambda, when all the messages are updated in Shopify
 
 def handler(event, context):
     """
@@ -63,6 +66,7 @@ def handler(event, context):
         loop.stop()
         loop.close()
     finally:
+        LOGGER.info('All done. Release the lock. Job ID: %s', response)
         _set_blocked_state(False)
 
     LOGGER.info('End of push_to_shopify. Job ID: %s', response)
@@ -181,6 +185,7 @@ async def _update_variant_at_shopify(products, shopify_connectors, location_id):
         if currency in products:
             try:
                 LOGGER.debug(f'Process products for {currency}')
+                # RICKY: Is there any need to read the current ATP from NOM again?? Because the products array was from export
                 country_products = await _create_deltas_for_inventory(products[currency], shopify_connector, location_id)
                 if len(country_products) > 0:
                     LOGGER.debug(f'Sending deltas to Shopify ({currency}) location {location_id}: {country_products}')
@@ -198,6 +203,7 @@ async def _create_deltas_for_inventory(products, shopify_connector, location_id)
     LOGGER.debug('Response from transform ')
     LOGGER.debug(inventory_shopify)
     for product in products:
+        # RICKY: Can we get a group of products from Shopify GraphQL, instead of one by one??
         formated_variant = f'gid://shopify/InventoryItem/{product["inventory_item_id"]}'
         if formated_variant in inventory_shopify:
             product['delta'] = product['atp'] - inventory_shopify[formated_variant]
