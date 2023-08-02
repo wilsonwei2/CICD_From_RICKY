@@ -22,7 +22,7 @@ TENANT = os.environ['TENANT'] or 'frankandoak'
 STAGE = os.environ.get('STAGE', 'x')
 REGION = os.environ.get('REGION', 'us-east-1')
 LAST_UPDATED_KEY = 'last_updated_at'
-DYNAMODB_TABLE_NAME = 'frankandoak-availability-job-save-state'
+DYNAMODB_TABLE_NAME = 'frankandoaknew-availability-job-save-state'
 CONCURRENT_EXECUTION_BLOCKED_KEY = 'push_to_queue_concurrent_execution_blocked'
 
 # RICKY: 
