@@ -77,7 +77,7 @@ def get_token(context):
         result["expires_at"] = get_token_expiry(result["access_token"])
         return result
 
-    LOGGER.info(f'Token already exists')
+    LOGGER.info(f'Token already exists!')
     return TOKEN
 
 
